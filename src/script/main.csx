@@ -1,3 +1,4 @@
+#4
 Console.WriteLine("Started...");
 
 SystemEvents.PowerModeChanged += OnPowerModeChanged;
@@ -11,10 +12,10 @@ Keyboard.RegisterHotkeys(new Hotkeys{
     { Keys.Control|Keys.Alt|Keys.D, _=> RunUrlWithSelection("dexonline.ro/definitie/{0}") },
     { Keys.Control|Keys.Alt|Keys.F, _=> RestartFirefox() },
     { Keys.Control|Keys.Alt|Keys.W, _=> Process.Start(@"http://www.meteoromania.ro/anm/?lang=ro_ro") },
-    { Keys.Control|Keys.Alt|Keys.H, _=> Process.Start(@"http://www.accuweather.com/en/ro/bucuresti/287430/hourly-weather-forecast/287430") },    
+    { Keys.Control|Keys.Alt|Keys.H, _=> Process.Start(@"http://www.accuweather.com/en/ro/bucuresti/287430/hourly-weather-forecast/287430") },
 });
 
-Keyboard.RegisterHotkey(Keys.Control|Keys.Alt|Keys.S, _=> 
+Keyboard.RegisterHotkey(Keys.Control|Keys.Alt|Keys.S, _=>
 {
     var result = MessageBox.Show("Sleep?", "Confirmation", MessageBoxButtons.YesNo);
     if(result == DialogResult.Yes)
