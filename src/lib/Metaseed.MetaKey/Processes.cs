@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -15,6 +16,8 @@ namespace Metaseed.MetaKey
     [Export(typeof(IProcesses))]
     public sealed class Processes : IProcesses
     {
+        private Processes() { }
+        public static Processes Instance = new Processes();
         const uint WM_CLOSE = 0x0010;
         private const short OneSecond = 1000;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using WinReg = Microsoft.Win32.Registry;
 
@@ -13,6 +14,9 @@ namespace Metaseed.MetaKey
     [Export(typeof(IRegistry))]
     public class Registry : IRegistry
     {
+        private Registry() { }
+
+        public static Registry Instance = new Registry();
         void IDisposable.Dispose()
         {
         }

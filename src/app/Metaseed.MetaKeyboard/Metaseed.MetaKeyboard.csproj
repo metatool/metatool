@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-       <RootNamespace>Metaseed.MetaKey</RootNamespace>
+    <RootNamespace>Metaseed.MetaKeyboard</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon />
     <StartupObject />
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\pkg\Metaseed.MetaKey</OutputPath>
+    <OutputPath>..\..\pkg\Metaseed.MetaKeyboard</OutputPath>
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Metaseed.WindowsInput\Metaseed.WindowsInput.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.MetaKey\Metaseed.MetaKey.csproj" />
   </ItemGroup>
 
 </Project>

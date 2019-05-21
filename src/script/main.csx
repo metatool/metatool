@@ -1,4 +1,9 @@
-#4
+#! "netcoreapp3.0"
+#r "nuget:Metaseed.MetaKey,1.0.0"
+using Metaseed.MetaKey;
+using System;
+using System.Windows.Forms;
+
 Console.WriteLine("Started...");
 
 SystemEvents.PowerModeChanged += OnPowerModeChanged;

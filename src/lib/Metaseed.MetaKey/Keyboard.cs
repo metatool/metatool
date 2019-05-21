@@ -25,6 +25,12 @@ namespace Metaseed.MetaKey
         private KeyboardHook keyboardHook = new KeyboardHook();
         private InputSimulator inputSimulator = new InputSimulator();
 
+        private Keyboard()
+        {
+        }
+
+        public static IKeyboard Default = new Keyboard();
+
         void IDisposable.Dispose()
         {
             keyboardHook.Dispose();

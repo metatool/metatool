@@ -4,13 +4,11 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using ScriptCs.Contracts;
 
 namespace Metaseed.MetaKey
 {
 
-    [Export(typeof(IScriptHostFactory))]
-    public sealed class AutoHotkey : IScriptPack, IScriptPackContext, IDisposable, IScriptHost, IScriptHostFactory
+    public sealed class AutoHotkey :  IDisposable 
     {
         private bool disposed;
         
@@ -34,20 +32,6 @@ namespace Metaseed.MetaKey
             };
         }
 
-        IScriptPackContext IScriptPack.GetContext()
-        {
-            return this;
-        }
-
-        void IScriptPack.Initialize(IScriptPackSession session)
-        {
-            session.AddReference("System.Windows.Forms");
-            Array.ForEach(new[] { "System.Windows.Forms", "System.Diagnostics", "System.Threading", "Microsoft.Win32" }, session.ImportNamespace);
-        }
-
-        void IScriptPack.Terminate()
-        {
-        }
 
         void IDisposable.Dispose()
         {
@@ -68,9 +52,5 @@ namespace Metaseed.MetaKey
             }
         }
 
-        IScriptHost IScriptHostFactory.CreateScriptHost(IScriptPackManager scriptPackManager, string[] scriptArgs)
-        {
-            return this;
-        }
     }
 }
