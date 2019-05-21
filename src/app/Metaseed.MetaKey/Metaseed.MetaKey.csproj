@@ -18,12 +18,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="InputSimulatorPlus" Version="1.0.7" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Metaseed.WinInput.csproj" />
   </ItemGroup>
 
 </Project>
