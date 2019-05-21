@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{920963F4-8205-4A1E-8ED3-9467B5D94794}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{4743D69C-2D08-44CE-93DE-D00692C18D82}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lib", "lib\lib.csproj", "{AA18456E-452B-436A-BCDF-E61D94F1A53A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "test\test.csproj", "{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{7B748A36-C415-494D-B3BD-B6A78EEF8737}"
+	ProjectSection(SolutionItems) = preProject
+		script\AutoHotkey.csx = script\AutoHotkey.csx
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MetaKey", "app\Metaseed.MetaKey\Metaseed.MetaKey.csproj", "{EA4846A5-1919-420B-BAE9-3A6B02BAE9B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA18456E-452B-436A-BCDF-E61D94F1A53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA18456E-452B-436A-BCDF-E61D94F1A53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA18456E-452B-436A-BCDF-E61D94F1A53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA18456E-452B-436A-BCDF-E61D94F1A53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA4846A5-1919-420B-BAE9-3A6B02BAE9B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA4846A5-1919-420B-BAE9-3A6B02BAE9B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA4846A5-1919-420B-BAE9-3A6B02BAE9B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA4846A5-1919-420B-BAE9-3A6B02BAE9B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AA18456E-452B-436A-BCDF-E61D94F1A53A} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
+		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3} = {920963F4-8205-4A1E-8ED3-9467B5D94794}
+		{EA4846A5-1919-420B-BAE9-3A6B02BAE9B1} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}
+	EndGlobalSection
+EndGlobal
