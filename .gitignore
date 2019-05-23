@@ -156,3 +156,5 @@ $RECYCLE.BIN/
 .DS_Store
 .vs
 pkg
+*/package/**
+/src/packages
