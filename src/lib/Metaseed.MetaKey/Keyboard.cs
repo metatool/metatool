@@ -8,7 +8,17 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
+namespace Metaseed.MetaKeyboard
+{
+    public static class aa
+    {
+        public static string Down(this Keys a)
+        {
+            return "";
+        }
+    }
 
+}
 namespace Metaseed.MetaKey
 {
     public interface IKeyboard : IService
@@ -22,8 +32,8 @@ namespace Metaseed.MetaKey
     [Export(typeof(IKeyboard))]
     public sealed class Keyboard : IKeyboard
     {
-        private KeyboardHook keyboardHook = new KeyboardHook();
-        private InputSimulator inputSimulator = new InputSimulator();
+        private readonly KeyboardHook keyboardHook = new KeyboardHook();
+        private readonly InputSimulator inputSimulator = new InputSimulator();
 
         private Keyboard()
         {

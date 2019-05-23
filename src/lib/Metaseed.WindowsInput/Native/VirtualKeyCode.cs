@@ -1,7 +1,7 @@
 ﻿namespace WindowsInput.Native
 {
     /// <summary>
-    /// The list of VirtualKeyCodes (see: http://msdn.microsoft.com/en-us/library/ms645540(VS.85).aspx)
+    /// The list of VirtualKeyCodes (see: https://docs.microsoft.com/en-us/windows/desktop/inputdev/virtual-key-codes)
     /// </summary>
     public enum VirtualKeyCode //: UInt16
     {

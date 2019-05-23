@@ -12,12 +12,17 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "test\test.csproj", "{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{7B748A36-C415-494D-B3BD-B6A78EEF8737}"
+	ProjectSection(SolutionItems) = preProject
+		script\AutoHotkey.csx = script\AutoHotkey.csx
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.WindowsInput", "lib\Metaseed.WindowsInput\Metaseed.WindowsInput.csproj", "{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MetaKey", "lib\Metaseed.MetaKey\Metaseed.MetaKey.csproj", "{9D1FC5BF-0B54-4BBF-B692-A2573B9CB110}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.WindowsInput", "lib\Metaseed.WindowsInput\Metaseed.WindowsInput.csproj", "{7B656816-51E1-40EA-8CCB-A39FC0A9182E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.MetaKeyboard", "app\Metaseed.MetaKeyboard\Metaseed.MetaKeyboard.csproj", "{5F6416A8-469F-4926-B036-5C5A5D017EE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.MetaKeyboard", "app\Metaseed.MetaKeyboard\Metaseed.MetaKeyboard.csproj", "{8C82A166-DB74-4942-A988-A90829F09AF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.InputHook", "lib\Metaseed.InputHook\Metaseed.InputHook.csproj", "{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,27 +34,32 @@ Global
 		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9D1FC5BF-0B54-4BBF-B692-A2573B9CB110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D1FC5BF-0B54-4BBF-B692-A2573B9CB110}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D1FC5BF-0B54-4BBF-B692-A2573B9CB110}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D1FC5BF-0B54-4BBF-B692-A2573B9CB110}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B656816-51E1-40EA-8CCB-A39FC0A9182E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B656816-51E1-40EA-8CCB-A39FC0A9182E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B656816-51E1-40EA-8CCB-A39FC0A9182E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B656816-51E1-40EA-8CCB-A39FC0A9182E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C82A166-DB74-4942-A988-A90829F09AF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C82A166-DB74-4942-A988-A90829F09AF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C82A166-DB74-4942-A988-A90829F09AF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C82A166-DB74-4942-A988-A90829F09AF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F6416A8-469F-4926-B036-5C5A5D017EE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F6416A8-469F-4926-B036-5C5A5D017EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F6416A8-469F-4926-B036-5C5A5D017EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F6416A8-469F-4926-B036-5C5A5D017EE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A44E5DA7-B374-4A67-89C0-DD73FE2EE3E3} = {920963F4-8205-4A1E-8ED3-9467B5D94794}
+		{3549CD6F-80F8-450F-B99E-CF0A736B1F2A} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{9D1FC5BF-0B54-4BBF-B692-A2573B9CB110} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
-		{7B656816-51E1-40EA-8CCB-A39FC0A9182E} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
-		{8C82A166-DB74-4942-A988-A90829F09AF7} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
+		{5F6416A8-469F-4926-B036-5C5A5D017EE6} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
+		{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}

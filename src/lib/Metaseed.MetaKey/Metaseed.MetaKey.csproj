@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;net472;</TargetFrameworks>
        <RootNamespace>Metaseed.MetaKey</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon />
