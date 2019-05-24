@@ -9,13 +9,6 @@ using Gma.System.MouseKeyHook;
 
 namespace Metaseed.Input
 {
-    public interface ICombination : IKeyEvents
-    {
-        ICombination With(Keys              chordKey);
-        ICombination With(IEnumerable<Keys> keys);
-        ISequence    Then(Keys              key);
-        ISequence    Then(ICombination      combination);
-    }
 
     public class Combination : ICombination
     {

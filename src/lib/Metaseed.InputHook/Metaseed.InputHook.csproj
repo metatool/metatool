@@ -45,14 +45,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeyEventArgsExt.cs" />
-    <Compile Include="Combination.cs" />
-    <Compile Include="KeyboardHook.cs" />
-    <Compile Include="Keyboard.cs" />
-    <Compile Include="KeyCombinationExtensions.cs" />
-    <Compile Include="KeysExtensions.cs" />
+    <Compile Include="Keyboard\ICombination.cs" />
+    <Compile Include="Keyboard\IKeyEvents.cs" />
+    <Compile Include="Keyboard\Implementation\KeyboardHook\ProcessKeyExtension.cs" />
+    <Compile Include="Keyboard\Implementation\KeyEventType.cs" />
+    <Compile Include="Keyboard\ISequence.cs" />
+    <Compile Include="Keyboard\KeyEventArgsExt.cs" />
+    <Compile Include="Keyboard\Implementation\Combination.cs" />
+    <Compile Include="Keyboard\Implementation\KeyboardHook.cs" />
+    <Compile Include="Keyboard\Keyboard.cs" />
+    <Compile Include="Keyboard\Implementation\KeyboardHook\KeyCombinationExtensions.cs" />
+    <Compile Include="Keyboard\KeysExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sequence.cs" />
+    <Compile Include="Keyboard\Implementation\Sequence.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
