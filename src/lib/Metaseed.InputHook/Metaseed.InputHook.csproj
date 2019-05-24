@@ -45,9 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KeyEventArgsExt.cs" />
     <Compile Include="Combination.cs" />
     <Compile Include="KeyboardHook.cs" />
     <Compile Include="Keyboard.cs" />
+    <Compile Include="KeyCombinationExtensions.cs" />
     <Compile Include="KeysExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sequence.cs" />

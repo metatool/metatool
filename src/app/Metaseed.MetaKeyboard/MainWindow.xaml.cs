@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Metaseed.Input;
+using Keyboard = Metaseed.Input.Keyboard;
 
 namespace Metaseed.MetaKeyboard
 {
@@ -25,18 +26,18 @@ namespace Metaseed.MetaKeyboard
         public MainWindow()
         {
             InitializeComponent();
-            //KeyboardHook.Keys("Ctrl+E,A").Down(() => Console.WriteLine("dddddddd"));
-            //Keys.B.Down(() => Console.WriteLine("sss"));
-            //Keys.A.With(Keys.ShiftKey).With(Keys.Control).Then(Keys.B).Down(()=>Console.WriteLine("bbbbbbb"));
-            Keys.Z.With(Keys.Escape).Down(()=>
+            Keyboard.Hotkey("Ctrl+M,A").Hit(e => Console.WriteLine($"Hello from sequence hotkey: {e}"));
+            Keys.B.Hit(e => Console.WriteLine("sss"));
+            Keys.A.With(Keys.ShiftKey).With(Keys.Control).Then(Keys.B).Hit(e =>Console.WriteLine("bbbbbbb"));
+            Keys.Z.With(Keys.Escape).Hit(e =>
             {
                 Console.WriteLine("esc");
             });
-                        Keys.Z.With(Keys.CapsLock).Down(()=>
+                        Keys.Z.With(Keys.CapsLock).Hit(e =>
             {
                 Console.WriteLine("esc");
             });
-            KeyboardHook.Run();
+            Keyboard.Hook();
         }
     }
 }

@@ -2,16 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Metaseed.Input;
 
 namespace Metaseed.Input
 {
-    public interface ISequence : IKeyEvents
-    {
-        ISequence Then(Keys         key);
-        ISequence Then(ICombination combination);
-    }
-
     public class Sequence : ISequence
     {
         internal static List<(string str, string toStr)> KeyStringsPairs = new List<(string str, string toStr)>
@@ -69,7 +62,7 @@ namespace Metaseed.Input
             }
         }
 
-        public void Down(Action action)
+        public void Hit(Action<KeyEventArgsExt> action)
         {
             KeyboardHook.Sequences.Add(this._sequence, action);
         }

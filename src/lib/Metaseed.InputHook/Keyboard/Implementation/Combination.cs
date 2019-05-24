@@ -9,11 +9,6 @@ using Gma.System.MouseKeyHook;
 
 namespace Metaseed.Input
 {
-    public interface IKeyEvents
-    {
-        void Down(Action action);
-    }
-
     public interface ICombination : IKeyEvents
     {
         ICombination With(Keys              chordKey);
@@ -30,6 +25,7 @@ namespace Metaseed.Input
         {
             _combination = combination;
         }
+
         internal Combination(Keys triggerKey, Keys chord = Keys.None)
         {
             ;
@@ -59,27 +55,25 @@ namespace Metaseed.Input
             return this.Then(new Combination(key));
         }
 
-        public void Down(Action action)
+        public void Hit(Action<KeyEventArgsExt> action)
         {
             KeyboardHook.Combinations.Add(this._combination, action);
         }
 
         internal static ICombination FromString(string keys)
-        {            
+        {
             keys = Sequence.KeyStringsPairs.Aggregate(keys, (acc, p) => acc.Replace(p.str, p.toStr));
             try
             {
-
                 var combination = Gma.System.MouseKeyHook.Combination.FromString(keys);
                 return new Combination(combination);
             }
             catch (ArgumentException ex)
             {
                 MessageBox.Show(
-                    $@"Could not Parse the keys;{Environment.NewLine}{ex.Message} please use the below string (i.e. Control+Z):{Environment.NewLine} {string.Join(", ",Enum.GetNames(typeof(Keys)))}");
+                    $@"Could not Parse the keys;{Environment.NewLine}{ex.Message} please use the below string (i.e. Control+Z):{Environment.NewLine} {string.Join(", ", Enum.GetNames(typeof(Keys)))}");
                 throw ex;
             }
-
         }
 
         public override bool Equals(object obj)

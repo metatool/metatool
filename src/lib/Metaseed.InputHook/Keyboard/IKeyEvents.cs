@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Metaseed.Input
 {
-    class Keyboard
+    public interface IKeyEvents
     {
+        void Hit(Action<Input.KeyEventArgsExt> action);
     }
 }

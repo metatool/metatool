@@ -8,7 +8,7 @@ namespace Metaseed.Input
 {
     public static class KeysExtensions
     {
-        public static void Down(this Keys key, Action action)
+        public static void Hit(this Keys key, Action<KeyEventArgsExt> action)
         {
             KeyboardHook.Combinations.Add(new Combination(key)._combination, action);
         }
