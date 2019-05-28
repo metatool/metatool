@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Gma.System.MouseKeyHook;
+using Metaseed.Input.MouseKeyHook;
 using Metaseed.InputHook;
 using Metaseed.KeyboardHook;
 using KeyCombinationExtensions = Metaseed.KeyboardHook.KeyCombinationExtensions;
@@ -14,8 +14,8 @@ namespace Metaseed.Input
     public class KeyboardHook
     {
         internal static IDictionary< (Keys,KeyEventType), Action<KeyEventArgsExt>> Keys = new Dictionary< (Keys,KeyEventType), Action<KeyEventArgsExt>>();
-        internal static IDictionary< Gma.System.MouseKeyHook.Combination, Action<KeyEventArgsExt>> Combinations = new Dictionary< Gma.System.MouseKeyHook.Combination, Action<KeyEventArgsExt>>();
-        internal static IDictionary< Gma.System.MouseKeyHook.Sequence, Action<KeyEventArgsExt>> Sequences = new Dictionary< Gma.System.MouseKeyHook.Sequence, Action<KeyEventArgsExt>>();
+        internal static IDictionary< Metaseed.Input.MouseKeyHook.Combination, Action<KeyEventArgsExt>> Combinations = new Dictionary< Metaseed.Input.MouseKeyHook.Combination, Action<KeyEventArgsExt>>();
+        internal static IDictionary< Metaseed.Input.MouseKeyHook.Sequence, Action<KeyEventArgsExt>> Sequences = new Dictionary< Metaseed.Input.MouseKeyHook.Sequence, Action<KeyEventArgsExt>>();
 
         public static void Run()
         {

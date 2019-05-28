@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Gma.System.MouseKeyHook;
+using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input;
 
 namespace Metaseed.InputHook
@@ -25,7 +25,7 @@ namespace Metaseed.InputHook
                     {
                         if (keysDown.TryGetValue(args.KeyCode, out var action))
                         {
-                            action(new KeyEventArgsExt(args as Gma.System.MouseKeyHook.KeyEventArgsExt));
+                            action(new KeyEventArgsExt(args as Metaseed.Input.MouseKeyHook.KeyEventArgsExt));
                         }
                     };
                 }
@@ -38,7 +38,7 @@ namespace Metaseed.InputHook
                 {
                     if (keysUp.TryGetValue(args.KeyCode, out var action))
                     {
-                        action(new KeyEventArgsExt(args as Gma.System.MouseKeyHook.KeyEventArgsExt));
+                        action(new KeyEventArgsExt(args as Metaseed.Input.MouseKeyHook.KeyEventArgsExt));
                     }
                 };
             }
@@ -49,7 +49,7 @@ namespace Metaseed.InputHook
                 {
                     if (keysPress.TryGetValue((Keys)(args.KeyChar), out var action))
                     {
-                        action(new KeyPressEventArgsExt(args as Gma.System.MouseKeyHook.KeyPressEventArgsExt));
+                        action(new KeyPressEventArgsExt(args as Metaseed.Input.MouseKeyHook.KeyPressEventArgsExt));
                     }
                 };
             }

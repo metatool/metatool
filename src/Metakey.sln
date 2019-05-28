@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.MetaKeyboard", "ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.InputHook", "lib\Metaseed.InputHook\Metaseed.InputHook.csproj", "{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MouseKeyHook", "lib\MouseKeyHook\MouseKeyHook.csproj", "{F52AA97E-180A-40ED-8F2B-09080171D6C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.MouseKeyHook", "lib\MouseKeyHook\Metaseed.MouseKeyHook.csproj", "{F52AA97E-180A-40ED-8F2B-09080171D6C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

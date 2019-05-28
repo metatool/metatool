@@ -5,16 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using Gma.System.MouseKeyHook;
+using Metaseed.Input.MouseKeyHook;
 
 namespace Metaseed.Input
 {
 
     public class Combination : ICombination
     {
-        internal Gma.System.MouseKeyHook.Combination _combination;
+        internal Metaseed.Input.MouseKeyHook.Combination _combination;
 
-        private Combination(Gma.System.MouseKeyHook.Combination combination)
+        private Combination(Metaseed.Input.MouseKeyHook.Combination combination)
         {
             _combination = combination;
         }
@@ -22,7 +22,7 @@ namespace Metaseed.Input
         internal Combination(Keys triggerKey, Keys chord = Keys.None)
         {
             ;
-            _combination = Gma.System.MouseKeyHook.Combination.TriggeredBy(triggerKey);
+            _combination = Metaseed.Input.MouseKeyHook.Combination.TriggeredBy(triggerKey);
             if (chord != Keys.None) _combination = _combination.With(chord);
         }
 
@@ -58,7 +58,7 @@ namespace Metaseed.Input
             keys = Sequence.KeyStringsPairs.Aggregate(keys, (acc, p) => acc.Replace(p.str, p.toStr));
             try
             {
-                var combination = Gma.System.MouseKeyHook.Combination.FromString(keys);
+                var combination = Metaseed.Input.MouseKeyHook.Combination.FromString(keys);
                 return new Combination(combination);
             }
             catch (ArgumentException ex)

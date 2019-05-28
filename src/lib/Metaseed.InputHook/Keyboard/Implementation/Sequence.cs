@@ -21,16 +21,16 @@ namespace Metaseed.Input
         };
 
 
-        private Gma.System.MouseKeyHook.Sequence _sequence;
+        private Metaseed.Input.MouseKeyHook.Sequence _sequence;
 
-        private Sequence(Gma.System.MouseKeyHook.Sequence sequence)
+        private Sequence(Metaseed.Input.MouseKeyHook.Sequence sequence)
         {
             this._sequence = sequence;
         }
 
         internal Sequence(params ICombination[] combinations)
         {
-            _sequence = Gma.System.MouseKeyHook.Sequence.Of(combinations.Select(c => ((Combination) c)._combination)
+            _sequence = Metaseed.Input.MouseKeyHook.Sequence.Of(combinations.Select(c => ((Combination) c)._combination)
                 .ToArray());
         }
 
@@ -41,7 +41,7 @@ namespace Metaseed.Input
 
         public ISequence Then(ICombination combination)
         {
-            _sequence = Gma.System.MouseKeyHook.Sequence.Of(_sequence.Append(((Combination) combination)._combination)
+            _sequence = Metaseed.Input.MouseKeyHook.Sequence.Of(_sequence.Append(((Combination) combination)._combination)
                 .ToArray());
             return this;
         }
@@ -51,7 +51,7 @@ namespace Metaseed.Input
             try
             {
                 keys = KeyStringsPairs.Aggregate(keys, (acc, p) => acc.Replace(p.str, p.toStr));
-                var sequence = Gma.System.MouseKeyHook.Sequence.FromString(keys);
+                var sequence = Metaseed.Input.MouseKeyHook.Sequence.FromString(keys);
                 return new Sequence(sequence);
             }
             catch (ArgumentException ex)
