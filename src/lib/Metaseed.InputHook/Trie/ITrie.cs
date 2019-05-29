@@ -1,18 +1,20 @@
-// This code is distributed under MIT license. Copyright (c) 2013 George Mamaladze
-// See license.txt or http://opensource.org/licenses/mit-license.php
+using System;
 using System.Collections.Generic;
 
-namespace Gma.DataStructures.StringSearch
+namespace Metaseed.DataStructures
 {
     /// <summary>
     /// Interface to be implemented by a data structure 
-    /// which allows adding values <see cref="TValue"/> associated with <b>string</b> keys.
+    /// which allows adding values <see cref="TValue"/> associated with keys.
     /// The interface allows retrieveal of multiple values 
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public interface ITrie<TValue>
+    public interface ITrie<TKey,TValue>
     {
-        IEnumerable<TValue> Retrieve(string query);
-        void Add(string key, TValue value);
+        IEnumerable<TValue> Get(IList<TKey> query);
+        void Add(IList<TKey> query, TValue value);
+        bool Remove(IList<TKey> query, Predicate<TValue> predicate);
+        bool Remove(IList<TKey> query);
+
     }
 }

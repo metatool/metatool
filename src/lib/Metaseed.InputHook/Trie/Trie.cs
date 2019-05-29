@@ -1,19 +1,25 @@
-// This code is distributed under MIT license. Copyright (c) 2013 George Mamaladze
-// See license.txt or http://opensource.org/licenses/mit-license.php
+using System;
 using System.Collections.Generic;
 
-namespace Gma.DataStructures.StringSearch
+namespace Metaseed.DataStructures
 {
-    public class Trie<TValue> : TrieNode<TValue>, ITrie<TValue>
+    public class Trie<TKey,TValue> : TrieNode<TKey,TValue>, ITrie<TKey,TValue>
     {
-        public IEnumerable<TValue> Retrieve(string query)
+        public IEnumerable<TValue> Get(IList<TKey> query)
         {
-            return Retrieve(query, 0);
+            return Get(query, 0);
         }
 
-        public void Add(string key, TValue value)
+        public void Add(IList<TKey> query, TValue value)
         {
-            Add(key, 0, value);
+            Add(query, 0, value);
+        }
+
+        public bool Remove(IList<TKey> query,Predicate<TValue> predicate = null)
+        {
+            var r = Remove(query, 0, predicate);
+            CleanPath(query, 0);
+            return r;
         }
     }
 }

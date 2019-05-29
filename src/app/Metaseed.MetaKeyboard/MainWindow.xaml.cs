@@ -26,7 +26,7 @@ namespace Metaseed.MetaKeyboard
         public MainWindow()
         {
             InitializeComponent();
-            new KeysConverter().ConvertToString(Keys.B)
+            new KeysConverter().ConvertToString(Keys.B);
             Keyboard.Hotkey("Ctrl+M,A").Hit(e => Console.WriteLine($"Hello from sequence hotkey: {e}"));
             Keys.B.Hit(e => Console.WriteLine("sss"));
             Keys.A.With(Keys.ShiftKey).With(Keys.Control).Then(Keys.B).Hit(e =>Console.WriteLine("bbbbbbb"));

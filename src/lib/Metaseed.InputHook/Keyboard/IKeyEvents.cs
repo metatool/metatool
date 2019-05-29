@@ -8,6 +8,6 @@ namespace Metaseed.Input
 {
     public interface IKeyEvents
     {
-        void Hit(Action<Input.KeyEventArgsExt> action);
+        void Hit(Action<KeyEventArgsExt> action);
     }
 }

@@ -64,7 +64,7 @@ namespace Metaseed.KeyboardHook
                 if (action == null)
                     reset?.Invoke(e as KeyEventArgsExt);
                 else
-                    action.Invoke(new Input.KeyEventArgsExt(e as KeyEventArgsExt));
+                    action.Invoke(e as KeyEventArgsExt);
             };
         }
 

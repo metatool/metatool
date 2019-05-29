@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.WinApi;
 
-namespace Metaseed.Input.MouseKeyHook
+namespace Metaseed.Input
 {
     /// <summary>
     ///     Provides extended data for the <see cref='KeyListener.KeyPress' /> event.

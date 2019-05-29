@@ -25,7 +25,7 @@ namespace Metaseed.InputHook
                     {
                         if (keysDown.TryGetValue(args.KeyCode, out var action))
                         {
-                            action(new KeyEventArgsExt(args as Metaseed.Input.MouseKeyHook.KeyEventArgsExt));
+                            action(args as KeyEventArgsExt);
                         }
                     };
                 }
@@ -38,7 +38,7 @@ namespace Metaseed.InputHook
                 {
                     if (keysUp.TryGetValue(args.KeyCode, out var action))
                     {
-                        action(new KeyEventArgsExt(args as Metaseed.Input.MouseKeyHook.KeyEventArgsExt));
+                        action(args as KeyEventArgsExt);
                     }
                 };
             }
@@ -49,7 +49,7 @@ namespace Metaseed.InputHook
                 {
                     if (keysPress.TryGetValue((Keys)(args.KeyChar), out var action))
                     {
-                        action(new KeyPressEventArgsExt(args as Metaseed.Input.MouseKeyHook.KeyPressEventArgsExt));
+//                        action(args as KeyPressEventArgsExt);
                     }
                 };
             }

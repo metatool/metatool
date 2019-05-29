@@ -1,72 +1,107 @@
-// This code is distributed under MIT license. Copyright (c) 2013 George Mamaladze
-// See license.txt or http://opensource.org/licenses/mit-license.php
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Gma.DataStructures.StringSearch
+namespace Metaseed.DataStructures
 {
-    public abstract class TrieNodeBase<TValue>
+    public abstract class TrieNodeBase<TKey, TValue>
     {
-        protected abstract int KeyLength { get; }
-
         protected abstract IEnumerable<TValue> Values();
 
-        protected abstract IEnumerable<TrieNodeBase<TValue>> Children();
+        protected abstract IEnumerable<TrieNodeBase<TKey, TValue>> Children();
 
-        public void Add(string key, int position, TValue value)
+        public void Add(IList<TKey> query, int position, TValue value)
         {
-            if (key == null) throw new ArgumentNullException("key");
-            if (EndOfString(position, key))
+            if (query == null) throw new ArgumentNullException(nameof(query));
+            if (EndOfKeySequence(position, query))
             {
                 AddValue(value);
                 return;
             }
 
-            TrieNodeBase<TValue> child = GetOrCreateChild(key[position]);
-            child.Add(key, position + 1, value);
+            var child = GetOrCreateChild(query[position]);
+            child.Add(query, position+1, value);
         }
 
-        protected abstract void AddValue(TValue value);
+        protected abstract void AddValue(TValue               value);
+        protected abstract bool RemoveValue(Predicate<TValue> predicate);
 
-        protected abstract TrieNodeBase<TValue> GetOrCreateChild(char key);
+        protected abstract bool IsRemovable(IList<TKey> query, int position);
 
-        protected virtual IEnumerable<TValue> Retrieve(string query, int position)
+        protected TrieNodeBase<TKey, TValue> CleanPath(IList<TKey> query, int position)
         {
-            return
-                EndOfString(position, query)
-                    ? ValuesDeep()
-                    : SearchDeep(query, position);
+            if (query == null) throw new ArgumentNullException(nameof(query));
+
+            TrieNodeBase<TKey, TValue> candidate = null;
+            TrieNodeBase<TKey, TValue> parent    = null;
+            var                        k         = default(TKey);
+            do
+            {
+                if (IsRemovable(query, position) && candidate == null)
+                {
+                    candidate = GetChildOrNull(query, position);
+                    parent    = this;
+                    k         = query[position];
+                }
+                else
+                    candidate = null;
+            } while (!EndOfKeySequence(position++, query));
+
+            if (candidate != null)
+            {
+                parent.RemoveChild(k);
+            }
+
+            return candidate;
         }
 
-        protected virtual IEnumerable<TValue> SearchDeep(string query, int position)
+        protected abstract void RemoveChild(TKey key);
+
+        protected bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
         {
-            TrieNodeBase<TValue> nextNode = GetChildOrNull(query, position);
+            if (query == null) throw new ArgumentNullException(nameof(query));
+
+            if (EndOfKeySequence(position, query))
+            {
+                return RemoveValue(predicate);
+            }
+
+            var node = GetChildOrNull(query, position);
+            return node != null && node.Remove(query, position + 1, predicate);
+        }
+
+        protected abstract TrieNodeBase<TKey, TValue> GetOrCreateChild(TKey key);
+
+        protected virtual IEnumerable<TValue> Get(IList<TKey> query, int position)
+        {
+            return EndOfKeySequence(position, query)
+                ? ValuesDeep()
+                : SearchDeep(query, position);
+        }
+
+        protected virtual IEnumerable<TValue> SearchDeep(IList<TKey> query, int position)
+        {
+            var nextNode = GetChildOrNull(query, position);
             return nextNode != null
-                       ? nextNode.Retrieve(query, position + nextNode.KeyLength)
-                       : Enumerable.Empty<TValue>();
+                ? nextNode.Get(query, position + 1)
+                : Enumerable.Empty<TValue>();
         }
 
-        protected abstract TrieNodeBase<TValue> GetChildOrNull(string query, int position);
+        protected abstract TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position);
 
-        private static bool EndOfString(int position, string text)
+        private static bool EndOfKeySequence(int position, IList<TKey> query)
         {
-            return position >= text.Length;
+            return position >= query.Count;
         }
 
         private IEnumerable<TValue> ValuesDeep()
         {
-            return 
-                Subtree()
-                    .SelectMany(node => node.Values());
+            return Subtree().SelectMany(node => node.Values());
         }
 
-        protected IEnumerable<TrieNodeBase<TValue>> Subtree()
+        protected IEnumerable<TrieNodeBase<TKey, TValue>> Subtree()
         {
-            return
-                Enumerable.Repeat(this, 1)
-                    .Concat(Children().SelectMany(child => child.Subtree()));
+            return Enumerable.Repeat(this, 1).Concat(Children().SelectMany(child => child.Subtree()));
         }
     }
 }
