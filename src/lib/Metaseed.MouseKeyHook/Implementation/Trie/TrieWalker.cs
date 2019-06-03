@@ -27,6 +27,14 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             return true;
         }
 
+        public bool TryGoToChild(Func<TKey,TKey,TKey> aggregateFunc)
+        {
+            var node = CurrentNode.GetChildOrNull(aggregateFunc);
+            if (node == null) return false;
+            CurrentNode = node;
+            return true;
+        }
+
         public void GoToRoot()
         {
             CurrentNode = _trie;

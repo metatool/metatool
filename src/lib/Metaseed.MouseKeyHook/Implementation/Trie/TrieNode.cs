@@ -47,6 +47,11 @@ namespace Metaseed.DataStructures
             return result;
         }
 
+        internal TrieNode<TKey, TValue> GetChildOrNull( Func<TKey,TKey,TKey> aggregateFunc )
+        {
+            TKey key = _children.Keys.Aggregate(default(TKey),aggregateFunc);
+            return GetChildOrNull(key);
+        }
         internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)
         {
 

@@ -18,22 +18,20 @@ namespace Metaseed.Input.MouseKeyHook
     {
         private readonly Chord _chord;
         private Key _key;
-        internal Combination(Keys triggerKey, KeyAction action, KeyEventType eventType = KeyEventType.Down) : this(triggerKey,null, action, eventType) { }
-        internal Combination(Keys triggerKey,Keys chordKey, KeyAction action,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,new Keys[] { chordKey },action, eventType) { }
-        internal Combination(Keys triggerKey,  IEnumerable<Keys> chordKeys, KeyAction action, KeyEventType eventType = KeyEventType.Down)
-            : this(triggerKey, new Chord(chordKeys?? Enumerable.Empty<Keys>()), action, eventType){}
+        internal Combination(Keys triggerKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,null,  eventType) { }
+        internal Combination(Keys triggerKey,Keys chordKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,new Keys[] { chordKey }, eventType) { }
+        internal Combination(Keys triggerKey,  IEnumerable<Keys> chordKeys,  KeyEventType eventType = KeyEventType.Down)
+            : this(triggerKey, new Chord(chordKeys?? Enumerable.Empty<Keys>()), eventType){}
 
-        private Combination(Keys triggerKey, Chord chord, KeyAction action, KeyEventType eventType = KeyEventType.Down)
+        private Combination(Keys triggerKey, Chord chord, KeyEventType eventType = KeyEventType.Down)
         {
             EventType = eventType;
             TriggerKey = triggerKey.Normalize();
             _chord = chord;
-            Actions.Add(action);
             _key = new Key(TriggerKey, EventType);
             
         }
 
-        internal List<KeyAction> Actions = new List<KeyAction>();
 
         internal Key Key => _key;
         public readonly KeyEventType EventType { get; }

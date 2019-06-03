@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,63 +14,63 @@ namespace Metaseed.Input.MouseKeyHook
 {
     public class KeyboardHook
     {
-        internal static IDictionary< Keys, Action<KeyEventArgsExt>> KeyDown = new Dictionary<Keys, Action<KeyEventArgsExt>>();
-        internal static IDictionary< Keys, Action<KeyPressEventArgsExt>> KeyPress = new Dictionary<Keys, Action<KeyPressEventArgsExt>>();
-        internal static IDictionary< Keys, Action<KeyEventArgsExt>> KeyUp = new Dictionary<Keys, Action<KeyEventArgsExt>>();
-        internal static IDictionary<ICombination, Action<KeyEventArgsExt>> Combinations = new Dictionary<ICombination, Action<KeyEventArgsExt>>();
-        internal static IDictionary<Sequence, Action<KeyEventArgsExt>> Sequences = new Dictionary<Sequence, Action<KeyEventArgsExt>>();
-        private static readonly Trie<Key,Combination>  _trie = new Trie<Key,Combination>();
-        private static readonly TrieWalker<Key, Combination> _trieWalker = new TrieWalker<Key,Combination>(_trie);
+        internal IDictionary<Keys, Action<KeyEventArgsExt>> KeyDown = new Dictionary<Keys, Action<KeyEventArgsExt>>();
+        internal IDictionary<Keys, Action<KeyPressEventArgsExt>> KeyPress = new Dictionary<Keys, Action<KeyPressEventArgsExt>>();
+        internal IDictionary<Keys, Action<KeyEventArgsExt>> KeyUp = new Dictionary<Keys, Action<KeyEventArgsExt>>();
+        internal IDictionary<ICombination, Action<KeyEventArgsExt>> Combinations = new Dictionary<ICombination, Action<KeyEventArgsExt>>();
+        internal IDictionary<Sequence, Action<KeyEventArgsExt>> Sequences = new Dictionary<Sequence, Action<KeyEventArgsExt>>();
+        private readonly Trie<Combination, KeyAction> _trie = new Trie<Combination, KeyAction>();
+        private readonly TrieWalker<Combination, KeyAction> _trieWalker = new TrieWalker<Combination, KeyAction>(_trie);
 
-        public static void AddCombination(Combination combination)
+        public void AddCombination(IList<Combination> combination, KeyAction action)
         {
-            _trie.Add(new List<Key>{combination.Key}, combination);
+            _trie.Add(combination, action);
         }
 
-        public static void Run()
+        public void AddCombination(Combination combination, KeyAction action)
         {
-            if(Combinations.Count>0)
-                CombinationExtensions.ProcessCombination(Hook.GlobalEvents(), Combinations);
-            if (Sequences.Count > 0)
-                Hook.GlobalEvents().ProcessSequence(Sequences);
+            _trie.Add(new List<Combination>() { combination }, action);
+        }
 
+        public void Run()
+        {
             var source = Hook.GlobalEvents();
             _trieWalker.GoToRoot();
-            source.KeyDown += (sender, args) =>
+
+            void keyEventProcess(KeyEventType eventType, KeyEventArgs args)
             {
-                var key = new Key(args.KeyCode, KeyEventType.Down);
-                var b = _trieWalker.TryGoToChild(key);
+
+                var state = KeyboardState.GetCurrent();
+                var b = _trieWalker.TryGoToChild((acc, key) =>
+                {
+                    var mach = key.Chord.All(state.IsDown);
+                    if (!mach) return acc;
+                    if (acc == null) return key;
+                    return acc.ChordLength >= key.ChordLength ? acc : key;
+                });
                 if (!b)
                 {
                     _trieWalker.GoToRoot();
                     return;
                 }
-                var state = KeyboardState.GetCurrent();
-                var maxLength = 0;
-                List<KeyAction> actions = null;
-                foreach (var current in _trieWalker.CurrentValues)
-                {
-                    var matches = current.Chord.All(state.IsDown);
-                    if (!matches) continue;
-                    if (maxLength > current.ChordLength) continue;
-                    maxLength = current.ChordLength;
-                    actions   = current.Actions;
-                }
+                // on child
+                var actions = _trieWalker.CurrentValues as IList<KeyAction>;
+                Debug.Assert(actions != null, nameof(actions) + " != null");
 
-                if (actions == null)
-                {
-                    _trieWalker.GoToRoot();
-                    return;
-                }
-
+                // wait for next key
                 if (actions.Count == 0) return;
 
+                // execute and go to root
                 actions[1].Action?.Invoke(args);
                 _trieWalker.GoToRoot();
-            };
+            }
+
+            source.KeyDown += (sender, args) => keyEventProcess(KeyEventType.Down, args);
+            source.KeyUp += (sender, args) => keyEventProcess(KeyEventType.Up, args);
+
         }
 
-        internal static IKeyEvents HotKey(string keys)
+        internal IKeyEvents HotKey(string keys)
         {
             if (keys.Contains(','))
             {
