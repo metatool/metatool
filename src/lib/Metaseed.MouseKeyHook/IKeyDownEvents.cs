@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Metaseed.Input
 {
-    public interface IKeyEvents
+    public interface IKeyDownEvents
     {
-        void Hit(string actionId, string description, Action<KeyEventArgsExt> action);
+        void Down(string actionId, string description, Action<KeyEventArgsExt> action);
     }
 }

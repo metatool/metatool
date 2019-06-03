@@ -22,6 +22,9 @@ namespace Metaseed.DataStructures
             _values.Clear();
         }
 
+        protected internal override int ChildrenCount => _children.Count;
+
+
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {
@@ -50,6 +53,7 @@ namespace Metaseed.DataStructures
         internal TrieNode<TKey, TValue> GetChildOrNull( Func<TKey,TKey,TKey> aggregateFunc )
         {
             TKey key = _children.Keys.Aggregate(default(TKey),aggregateFunc);
+            if (EqualityComparer<TKey>.Default.Equals(key,default(TKey))) return null;
             return GetChildOrNull(key);
         }
         internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)

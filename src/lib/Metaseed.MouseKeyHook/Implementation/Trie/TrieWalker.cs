@@ -17,6 +17,9 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
         }
 
         private TrieNode<TKey, TValue> CurrentNode { get; set; }
+        public bool IsOnRoot => CurrentNode == _trie;
+
+        public int ChildrenCount => CurrentNode.ChildrenCount;
         public IEnumerable<TValue> CurrentValues => CurrentNode.Values();
 
         public bool TryGoToChild(TKey key)

@@ -124,9 +124,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.InputHook.csproj">
+    <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj">
       <Project>{112272bb-9a8e-4cfe-94ac-5aec9446eff7}</Project>
-      <Name>Metaseed.InputHook</Name>
+      <Name>Metaseed.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj">
+      <Project>{f00b3040-c762-4b24-b660-6590a32dc874}</Project>
+      <Name>Metaseed.MouseKeyHook</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -18,23 +18,23 @@ namespace Metaseed.Input.MouseKeyHook
     {
         private readonly Chord _chord;
         private Key _key;
-        internal Combination(Keys triggerKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,null,  eventType) { }
-        internal Combination(Keys triggerKey,Keys chordKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,new Keys[] { chordKey }, eventType) { }
-        internal Combination(Keys triggerKey,  IEnumerable<Keys> chordKeys,  KeyEventType eventType = KeyEventType.Down)
+        public Combination(Keys triggerKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,null,  eventType) { }
+        public Combination(Keys triggerKey,Keys chordKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,new Keys[] { chordKey }, eventType) { }
+        public Combination(Keys triggerKey,  IEnumerable<Keys> chordKeys,  KeyEventType eventType = KeyEventType.Down)
             : this(triggerKey, new Chord(chordKeys?? Enumerable.Empty<Keys>()), eventType){}
 
         private Combination(Keys triggerKey, Chord chord, KeyEventType eventType = KeyEventType.Down)
         {
             EventType = eventType;
             TriggerKey = triggerKey.Normalize();
-            _chord = chord;
+            _chord = chord?? new Chord(Enumerable.Empty<Keys>());
             _key = new Key(TriggerKey, EventType);
             
         }
 
 
         internal Key Key => _key;
-        public readonly KeyEventType EventType { get; }
+        public KeyEventType EventType { get; }
         /// <summary>
         ///     Last key which triggers the combination.
         /// </summary>
@@ -83,18 +83,12 @@ namespace Metaseed.Input.MouseKeyHook
 
         public ISequence Then(ICombination combination)
         {
-            return new Sequence(this, combination);
+            return new Sequence(this, combination as Combination);
         }
 
         public ISequence Then(Keys key)
         {
             return this.Then(new Combination(key));
-        }
-
-        public void Hit(string actionId, string description, Action<KeyEventArgsExt> action)
-        {
-            this.Actions.Add(new KeyAction(actionId, description, action));
-            //            KeyboardHook.Combinations.Add(this._combination, action);
         }
 
         /// <summary>
@@ -123,12 +117,6 @@ namespace Metaseed.Input.MouseKeyHook
         {
             return With(Keys.Shift);
         }
-
-        Func<EventArgs, bool> GetStateFunc()
-        {
-
-        }
-
 
         /// <inheritdoc />
         public override string ToString()

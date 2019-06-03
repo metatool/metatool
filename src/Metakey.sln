@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MetaKey", "lib\Met
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.MetaKeyboard", "app\Metaseed.MetaKeyboard\Metaseed.MetaKeyboard.csproj", "{5F6416A8-469F-4926-B036-5C5A5D017EE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.InputHook", "lib\Metaseed.InputHook\Metaseed.InputHook.csproj", "{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Input", "lib\Metaseed.InputHook\Metaseed.Input.csproj", "{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MouseKeyHook", "lib\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj", "{F00B3040-C762-4B24-B660-6590A32DC874}"
 EndProject

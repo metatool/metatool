@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Metaseed.Input
 {
-    public interface ISequence : IKeyEvents
+    public interface ISequence
     {
         ISequence Then(Keys key);
         ISequence Then(ICombination combination);

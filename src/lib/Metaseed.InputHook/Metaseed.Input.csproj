@@ -3,13 +3,13 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFrameworks>netcoreapp3.0;net472</TargetFrameworks>
-       <RootNamespace>Metaseed.InputHook</RootNamespace>
+       <RootNamespace>Metaseed.Input</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\pkg\Metaseed.InputHook</OutputPath>
+    <OutputPath>..\..\pkg\Metaseed.Input</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Keyboard\Implementation\KeyboardHook\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

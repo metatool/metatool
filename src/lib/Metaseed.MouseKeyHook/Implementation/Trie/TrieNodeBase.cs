@@ -6,9 +6,12 @@ namespace Metaseed.DataStructures
 {
     public abstract class TrieNodeBase<TKey, TValue>
     {
-        protected abstract IEnumerable<TValue> Values();
+        protected internal abstract IEnumerable<TValue> Values();
 
         protected abstract IEnumerable<TrieNodeBase<TKey, TValue>> Children();
+
+        protected abstract void RemoveChild(TKey key);
+        protected  internal abstract int ChildrenCount { get; }
 
         public void Add(IList<TKey> query, int position, TValue value)
         {
@@ -55,7 +58,6 @@ namespace Metaseed.DataStructures
             return candidate;
         }
 
-        protected abstract void RemoveChild(TKey key);
 
         protected bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
         {
@@ -88,6 +90,7 @@ namespace Metaseed.DataStructures
         }
 
         protected abstract TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position);
+
 
         private static bool EndOfKeySequence(int position, IList<TKey> query)
         {

@@ -32,17 +32,6 @@ namespace Metaseed.Input.MouseKeyHook
             return this;
         }
 
-        ICombination With(Keys chordKey)
-        {
-        }
-
-        ICombination With(IEnumerable<Keys> keys);
-
-        public void Hit(Action<KeyEventArgsExt> action)
-        {
-
-        }
-
         static string PreProcess(string keys)
         {
             var query = new StringBuilder(keys).Replace(" ", ""); // remove space

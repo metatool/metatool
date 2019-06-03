@@ -30,13 +30,13 @@ namespace Metaseed.Input.MouseKeyHook
         ///     This optional action will be executed when some key was pressed but it was not part of any wanted combinations.
         /// </param>
         public static void OnCombination(this IKeyboardEvents source,
-            IEnumerable<KeyValuePair<Combination, Action>> map, Action reset = null)
+            IEnumerable<KeyValuePair<ICombination, Action>> map, Action reset = null)
         {
             var watchlists = map.GroupBy(k => k.Key.TriggerKey)
                 .ToDictionary(g => g.Key, g => g.ToArray());
             source.KeyDown += (sender, e) =>
             {
-                KeyValuePair<Combination, Action>[] element;
+                KeyValuePair<ICombination, Action>[] element;
                 var found = watchlists.TryGetValue(e.KeyCode, out element);
                 if (!found)
                 {
@@ -78,7 +78,7 @@ namespace Metaseed.Input.MouseKeyHook
         public static void OnSequence(this IKeyboardEvents source, IEnumerable<KeyValuePair<Sequence, Action>> map)
         {
             var actBySeq = map.ToArray();
-            var endsWith = new Func<Queue<Combination>, Sequence, bool>((chords, sequence) =>
+            var endsWith = new Func<Queue<ICombination>, Sequence, bool>((chords, sequence) =>
             {
                 var skipCount = chords.Count - sequence.Length;
                 return skipCount >= 0 && chords.Skip(skipCount).SequenceEqual(sequence);
@@ -86,9 +86,9 @@ namespace Metaseed.Input.MouseKeyHook
 
             var max = actBySeq.Select(p => p.Key).Max(c => c.Length);
             var min = actBySeq.Select(p => p.Key).Min(c => c.Length);
-            var buffer = new Queue<Combination>(max);
+            var buffer = new Queue<ICombination>(max);
 
-            var wrapMap = actBySeq.SelectMany(p => p.Key).Select(c => new KeyValuePair<Combination, Action>(c, () =>
+            var wrapMap = actBySeq.SelectMany(p => p.Key).Select(c => new KeyValuePair<ICombination, Action>(c, () =>
             {
                 buffer.Enqueue(c);
                 if (buffer.Count > max) buffer.Dequeue();

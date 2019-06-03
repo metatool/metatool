@@ -10,7 +10,6 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\pkg\Metaseed.Input.MouseKeyHook</OutputPath>
-    <DocumentationFile>..\..\pkg\Metaseed.Input.MouseKeyHook\Metaseed.Input.MouseKeyHook.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

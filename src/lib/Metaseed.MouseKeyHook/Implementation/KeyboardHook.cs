@@ -14,22 +14,22 @@ namespace Metaseed.Input.MouseKeyHook
 {
     public class KeyboardHook
     {
-        internal IDictionary<Keys, Action<KeyEventArgsExt>> KeyDown = new Dictionary<Keys, Action<KeyEventArgsExt>>();
-        internal IDictionary<Keys, Action<KeyPressEventArgsExt>> KeyPress = new Dictionary<Keys, Action<KeyPressEventArgsExt>>();
-        internal IDictionary<Keys, Action<KeyEventArgsExt>> KeyUp = new Dictionary<Keys, Action<KeyEventArgsExt>>();
-        internal IDictionary<ICombination, Action<KeyEventArgsExt>> Combinations = new Dictionary<ICombination, Action<KeyEventArgsExt>>();
-        internal IDictionary<Sequence, Action<KeyEventArgsExt>> Sequences = new Dictionary<Sequence, Action<KeyEventArgsExt>>();
         private readonly Trie<Combination, KeyAction> _trie = new Trie<Combination, KeyAction>();
-        private readonly TrieWalker<Combination, KeyAction> _trieWalker = new TrieWalker<Combination, KeyAction>(_trie);
+        private readonly TrieWalker<Combination, KeyAction> _trieWalker;
 
-        public void AddCombination(IList<Combination> combination, KeyAction action)
+        public KeyboardHook()
         {
-            _trie.Add(combination, action);
+            _trieWalker = new TrieWalker<Combination, KeyAction>(_trie);
         }
 
-        public void AddCombination(Combination combination, KeyAction action)
+        public void Add(IList<ICombination> combination, KeyAction action)
         {
-            _trie.Add(new List<Combination>() { combination }, action);
+            _trie.Add(combination as List<Combination>, action);
+        }
+
+        public void Add(ICombination combination, KeyAction action)
+        {
+            _trie.Add(new List<Combination>() { combination as Combination }, action);
         }
 
         public void Run()
@@ -37,47 +37,44 @@ namespace Metaseed.Input.MouseKeyHook
             var source = Hook.GlobalEvents();
             _trieWalker.GoToRoot();
 
-            void keyEventProcess(KeyEventType eventType, KeyEventArgs args)
+            void KeyEventProcess(KeyEventType eventType, KeyEventArgsExt args)
             {
+                // only process key UP and Press event on root
+                if (eventType != KeyEventType.Down && !_trieWalker.IsOnRoot) return;
 
-                var state = KeyboardState.GetCurrent();
-                var b = _trieWalker.TryGoToChild((acc, key) =>
+                var keyboardState = KeyboardState.GetCurrent();
+                var success = _trieWalker.TryGoToChild((acc, key) =>
                 {
-                    var mach = key.Chord.All(state.IsDown);
+                    if (args.KeyCode != key.TriggerKey || eventType != key.EventType) return acc;
+                    var mach = key.Chord.All(keyboardState.IsDown);
                     if (!mach) return acc;
                     if (acc == null) return key;
                     return acc.ChordLength >= key.ChordLength ? acc : key;
                 });
-                if (!b)
+
+                // no match, to root
+                if (!success)
                 {
                     _trieWalker.GoToRoot();
                     return;
                 }
-                // on child
-                var actions = _trieWalker.CurrentValues as IList<KeyAction>;
+
+                // on matched child
+                var actions = _trieWalker.CurrentValues as List<KeyAction>;
                 Debug.Assert(actions != null, nameof(actions) + " != null");
 
-                // wait for next key
-                if (actions.Count == 0) return;
+                // execute
+                actions.ForEach(a => a.Action?.Invoke(args));
 
-                // execute and go to root
-                actions[1].Action?.Invoke(args);
-                _trieWalker.GoToRoot();
+                // no children 
+                if(_trieWalker.ChildrenCount == 0) _trieWalker.GoToRoot();
             }
 
-            source.KeyDown += (sender, args) => keyEventProcess(KeyEventType.Down, args);
-            source.KeyUp += (sender, args) => keyEventProcess(KeyEventType.Up, args);
+            source.KeyDown += (sender, args) => KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);
+            source.KeyUp += (sender, args) => KeyEventProcess(KeyEventType.Up, args as KeyEventArgsExt);
 
         }
 
-        internal IKeyEvents HotKey(string keys)
-        {
-            if (keys.Contains(','))
-            {
-                return Sequence.FromString(keys);
-            }
 
-            return Combination.FromString(keys);
-        }
     }
 }
