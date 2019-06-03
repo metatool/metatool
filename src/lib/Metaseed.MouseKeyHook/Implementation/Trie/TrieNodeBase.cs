@@ -72,7 +72,7 @@ namespace Metaseed.DataStructures
 
         protected abstract TrieNodeBase<TKey, TValue> GetOrCreateChild(TKey key);
 
-        protected virtual IEnumerable<TValue> Get(IList<TKey> query, int position)
+        protected internal virtual IEnumerable<TValue> Get(IList<TKey> query, int position)
         {
             return EndOfKeySequence(position, query)
                 ? ValuesDeep()

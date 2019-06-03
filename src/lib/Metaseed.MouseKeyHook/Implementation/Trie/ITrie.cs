@@ -15,6 +15,7 @@ namespace Metaseed.DataStructures
         void Add(IList<TKey> query, TValue value);
         bool Remove(IList<TKey> query, Predicate<TValue> predicate);
         bool Remove(IList<TKey> query);
+        void Clear();
 
     }
 }

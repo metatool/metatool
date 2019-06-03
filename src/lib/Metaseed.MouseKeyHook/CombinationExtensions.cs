@@ -1,23 +1,18 @@
-﻿// This code is distributed under MIT license.
+﻿// This code is distributed under MIT license. 
 // Copyright (c) 2010-2018 George Mamaladze
 // See license.txt or https://mit-license.org/
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Metaseed.Input;
 using Metaseed.Input.MouseKeyHook.Implementation;
-using Metaseed.Input.MouseKeyHook;
 
-namespace Metaseed.KeyboardHook
+namespace Metaseed.Input.MouseKeyHook
 {
-
-    using Combination = Metaseed.Input.MouseKeyHook.Combination;
-    using Sequence = Metaseed.Input.MouseKeyHook.Sequence;
     /// <summary>
     ///     Extension methods to detect key combinations
     /// </summary>
-    public static class KeyCombinationExtensions
+    public static class CombinationExtensions
     {
         /// <summary>
         ///     Detects a key or key combination and triggers the corresponding action.
@@ -34,23 +29,22 @@ namespace Metaseed.KeyboardHook
         /// <param name="reset">
         ///     This optional action will be executed when some key was pressed but it was not part of any wanted combinations.
         /// </param>
-        public static void ProcessCombination(this IKeyboardEvents source,
-            IEnumerable<KeyValuePair<Combination, Action<Metaseed.Input.KeyEventArgsExt>>> map, Action<KeyEventArgsExt> reset = null)
+        public static void OnCombination(this IKeyboardEvents source,
+            IEnumerable<KeyValuePair<Combination, Action>> map, Action reset = null)
         {
             var watchlists = map.GroupBy(k => k.Key.TriggerKey)
                 .ToDictionary(g => g.Key, g => g.ToArray());
             source.KeyDown += (sender, e) =>
             {
-                KeyValuePair<Combination, Action<Input.KeyEventArgsExt>>[] element;
+                KeyValuePair<Combination, Action>[] element;
                 var found = watchlists.TryGetValue(e.KeyCode, out element);
                 if (!found)
                 {
-                    reset?.Invoke(e as KeyEventArgsExt);
+                    reset?.Invoke();
                     return;
                 }
-
                 var state = KeyboardState.GetCurrent();
-                Action<Input.KeyEventArgsExt> action = null;
+                var action = reset;
                 var maxLength = 0;
                 foreach (var current in element)
                 {
@@ -60,11 +54,7 @@ namespace Metaseed.KeyboardHook
                     maxLength = current.Key.ChordLength;
                     action = current.Value;
                 }
-
-                if (action == null)
-                    reset?.Invoke(e as KeyEventArgsExt);
-                else
-                    action.Invoke(e as KeyEventArgsExt);
+                action?.Invoke();
             };
         }
 
@@ -85,7 +75,7 @@ namespace Metaseed.KeyboardHook
         ///     case only action corresponding
         ///     to 'A,B,C' will be triggered.
         /// </param>
-        public static void ProcessSequence(this IKeyboardEvents source, IEnumerable<KeyValuePair<Sequence, Action<Metaseed.Input.KeyEventArgsExt>>> map)
+        public static void OnSequence(this IKeyboardEvents source, IEnumerable<KeyValuePair<Sequence, Action>> map)
         {
             var actBySeq = map.ToArray();
             var endsWith = new Func<Queue<Combination>, Sequence, bool>((chords, sequence) =>
@@ -98,7 +88,7 @@ namespace Metaseed.KeyboardHook
             var min = actBySeq.Select(p => p.Key).Min(c => c.Length);
             var buffer = new Queue<Combination>(max);
 
-            var wrapMap = actBySeq.SelectMany(p => p.Key).Select(c => new KeyValuePair<Combination, Action<Input.KeyEventArgsExt>>(c, e =>
+            var wrapMap = actBySeq.SelectMany(p => p.Key).Select(c => new KeyValuePair<Combination, Action>(c, () =>
             {
                 buffer.Enqueue(c);
                 if (buffer.Count > max) buffer.Dequeue();
@@ -109,10 +99,10 @@ namespace Metaseed.KeyboardHook
                     .OrderBy(pair => pair.Key.Length)
                     .Select(pair => pair.Value)
                     .LastOrDefault()
-                    ?.Invoke(e);
+                    ?.Invoke();
             }));
 
-            ProcessCombination(source, wrapMap, _ => buffer.Clear());
+            OnCombination(source, wrapMap, buffer.Clear);
         }
     }
 }

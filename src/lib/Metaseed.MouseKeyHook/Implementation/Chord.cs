@@ -63,13 +63,22 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             return Equals((Chord) obj);
         }
 
+        private int _hash = 0;
         public override int GetHashCode()
         {
+            if (_hash != 0) return _hash;
+            var hc = _keys.Length;
+            foreach (var t in _keys)
+            {
+                hc = (int) unchecked(hc * 314159 + t);
+            }
             unchecked
             {
-                return (_keys.Length + 13) ^
-                       ((_keys.Length != 0 ? (int) _keys[0] ^ (int) _keys[_keys.Length - 1] : 0) * 397);
+              _hash = (_keys.Length + 13) ^
+                       ((_keys.Length != 0 ? (int) hc : 0) * 397);
             }
+
+            return _hash;
         }
     }
 }

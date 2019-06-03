@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 
 namespace Metaseed.DataStructures
 {
@@ -15,13 +16,19 @@ namespace Metaseed.DataStructures
             _values   = new List<TValue>();
         }
 
+        internal void Clear()
+        {
+            _children.Clear();
+            _values.Clear();
+        }
+
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {
             return _children.Values;
         }
 
-        protected override IEnumerable<TValue> Values()
+        protected internal override IEnumerable<TValue> Values()
         {
             return _values;
         }
@@ -40,13 +47,17 @@ namespace Metaseed.DataStructures
             return result;
         }
 
-        protected override TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position)
+        internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)
         {
-            if (query == null) throw new ArgumentNullException(nameof(query));
-            return
-                _children.TryGetValue(query[position], out var childNode)
+
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            return _children.TryGetValue(key, out var childNode)
                     ? childNode
                     : null;
+        }
+        protected override TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position)
+        {
+            return GetChildOrNull(query[position]);
         }
 
         protected override void AddValue(TValue value)

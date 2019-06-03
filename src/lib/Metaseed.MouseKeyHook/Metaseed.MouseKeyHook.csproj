@@ -13,4 +13,10 @@
     <DocumentationFile>..\..\pkg\Metaseed.Input.MouseKeyHook\Metaseed.Input.MouseKeyHook.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Input\**" />
+    <EmbeddedResource Remove="Input\**" />
+    <None Remove="Input\**" />
+  </ItemGroup>
+
 </Project>

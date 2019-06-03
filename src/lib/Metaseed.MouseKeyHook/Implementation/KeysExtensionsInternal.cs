@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Metaseed.Input.MouseKeyHook.Implementation
 {
-    internal static class KeysExtensions
+    internal static class KeysExtensionsInternal
     {
         public static Keys Normalize(this Keys key)
         {

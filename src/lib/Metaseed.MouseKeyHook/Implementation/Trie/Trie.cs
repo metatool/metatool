@@ -21,5 +21,10 @@ namespace Metaseed.DataStructures
             CleanPath(query, 0);
             return r;
         }
+
+        public void Clear()
+        {
+            this.Clear();
+        }
     }
 }

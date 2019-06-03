@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Metaseed.Input.MouseKeyHook;
-
-namespace Metaseed.Input
+﻿namespace Metaseed.Input
 {
     public class Keyboard
     {
