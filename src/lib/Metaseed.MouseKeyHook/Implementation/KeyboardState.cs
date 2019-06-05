@@ -61,8 +61,8 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         private bool IsDownRaw(Keys key)
         {
             var keyState = GetKeyState(key);
-            var rawState = KeyboardNativeMethods.GetAsyncKeyState((int)key);
-            Console.WriteLine($"state:{keyState};R:{rawState}");
+//            var rawState = KeyboardNativeMethods.GetAsyncKeyState((int)key);
+//            Console.WriteLine($"state:{keyState};R:{rawState}");
             var isDown = GetHighBit(keyState);
             return isDown;
         }

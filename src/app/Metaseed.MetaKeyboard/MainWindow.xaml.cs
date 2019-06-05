@@ -26,10 +26,10 @@ namespace Metaseed.MetaKeyboard
             InitializeComponent();
             new KeysConverter().ConvertToString(Keys.B);
 //            Keyboard.Hotkey("Ctrl+M,A").Hit(e => Console.WriteLine($"Hello from sequence hotkey: {e}"));
-            Keys.B.Down("metaseed.b.down","b down", e => Console.WriteLine("sss"));
-            Keys.B.Up("metaseed.b.up","b up", e => Console.WriteLine("sss_up"));
-            Keys.A.With(Keys.ShiftKey).With(Keys.Control).Down("metaseed.shif+ctrl+a", "don",e =>Console.WriteLine("shifth+ctrl+a"));
-            Keys.Z.With(Keys.Escape).Then(Keys.C).Down("aa","bbbbb",()=>
+//            Keys.B.Down("metaseed.b.down","b down", e => Console.WriteLine("sss"));
+//            Keys.B.Up("metaseed.b.up","b up", e => Console.WriteLine("sss_up"));
+//            Keys.A.With(Keys.ShiftKey).With(Keys.Control).Down("metaseed.shif+ctrl+a", "don",e =>Console.WriteLine("shifth+ctrl+a"));
+            Keys.Z.With(Keys.ShiftKey).Then(Keys.C).Down("aa","bbbbb",()=>
             {
                 Console.WriteLine("esc");
             });

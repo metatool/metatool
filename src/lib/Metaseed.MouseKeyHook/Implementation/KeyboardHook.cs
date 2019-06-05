@@ -24,7 +24,7 @@ namespace Metaseed.Input.MouseKeyHook
 
         public void Add(IList<ICombination> combination, KeyAction action)
         {
-            _trie.Add(combination as List<Combination>, action);
+            _trie.Add(new List<Combination>(combination.Cast<Combination>()), action);
         }
 
         public void Add(ICombination combination, KeyAction action)
