@@ -23,6 +23,11 @@ namespace WindowsInput
             _inputList = new List<INPUT>();
         }
 
+        public void Clear()
+        {
+            _inputList.Clear();
+        }
+
         /// <summary>
         /// Returns the list of <see cref="INPUT"/> messages as a <see cref="System.Array"/> of <see cref="INPUT"/> messages.
         /// </summary>

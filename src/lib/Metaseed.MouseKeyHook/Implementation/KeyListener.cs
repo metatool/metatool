@@ -2,6 +2,7 @@
 // Copyright (c) 2015 George Mamaladze
 // See license.txt or https://mit-license.org/
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook.WinApi;
@@ -57,7 +58,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             }
 
             InvokeKeyUp(eDownUp);
-
+Console.WriteLine(eDownUp.ToString());            
             return !eDownUp.Handled;
         }
 

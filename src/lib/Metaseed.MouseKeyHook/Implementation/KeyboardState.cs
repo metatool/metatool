@@ -20,6 +20,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
     /// </remarks>
     public class KeyboardState
     {
+        public static ISet<Keys> OnToggleKeys = new SortedSet<Keys>();
         private readonly byte[] m_KeyboardStateNative;
 
         private KeyboardState(byte[] keyboardStateNative)
@@ -51,6 +52,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         /// <returns><b>true</b> if key was down, <b>false</b> - if key was up.</returns>
         public bool IsDown(Keys key)
         {
+            if (OnToggleKeys.Contains(key)) return true;
             if ((int)key < 256) return IsDownRaw(key);
             if (key == Keys.Alt) return IsDownRaw(Keys.LMenu) || IsDownRaw(Keys.RMenu);
             if (key == Keys.Shift) return IsDownRaw(Keys.LShiftKey) || IsDownRaw(Keys.RShiftKey);
@@ -61,9 +63,10 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         private bool IsDownRaw(Keys key)
         {
             var keyState = GetKeyState(key);
-//            var rawState = KeyboardNativeMethods.GetAsyncKeyState((int)key);
-//            Console.WriteLine($"state:{keyState};R:{rawState}");
+
+//            var rawState = KeyboardNativeMethods.GetAsyncKeyState((UInt16)Keys.CapsLock);
             var isDown = GetHighBit(keyState);
+//            Console.WriteLine($"{key}-state:{isDown};R:{rawState < 0}");
             return isDown;
         }
 

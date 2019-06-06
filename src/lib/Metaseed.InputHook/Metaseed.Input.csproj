@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\Metaseed.WindowsInput\Metaseed.WindowsInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>

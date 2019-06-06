@@ -29,14 +29,21 @@ namespace Metaseed.MetaKeyboard
 //            Keys.B.Down("metaseed.b.down","b down", e => Console.WriteLine("sss"));
 //            Keys.B.Up("metaseed.b.up","b up", e => Console.WriteLine("sss_up"));
 //            Keys.A.With(Keys.ShiftKey).With(Keys.Control).Down("metaseed.shif+ctrl+a", "don",e =>Console.WriteLine("shifth+ctrl+a"));
-            Keys.Z.With(Keys.ShiftKey).Then(Keys.C).Down("aa","bbbbb",()=>
-            {
-                Console.WriteLine("esc");
-            });
-//                        Keys.Z.With(Keys.CapsLock).Down(e =>
+//            Keys.Z.With(Keys.ShiftKey).Then(Keys.C).Down("aa","bbbbb",()=>
 //            {
 //                Console.WriteLine("esc");
 //            });
+ToggleKeys.CapsLock.AlwaysOn();
+            Keys.H.With(Keys.CapsLock).Down("","",e=>
+            {
+                Keyboard.Send(Keys.Left);
+                e.Handled = true;
+            });
+            Keys.A.With(Keys.Control).Down("","",e=>Console.WriteLine("sssssssssssssssss"));
+            //                        Keys.Z.With(Keys.CapsLock).Down(e =>
+            //            {
+            //                Console.WriteLine("esc");
+            //            });
             Keyboard.Hook();
         }
     }

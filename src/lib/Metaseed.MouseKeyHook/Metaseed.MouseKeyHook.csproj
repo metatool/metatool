@@ -6,6 +6,7 @@
        <RootNamespace>Metaseed.Input.MouseKeyHook</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

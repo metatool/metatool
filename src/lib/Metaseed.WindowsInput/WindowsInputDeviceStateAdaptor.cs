@@ -148,10 +148,15 @@ namespace WindowsInput
         /// 
         /// These left- and right-distinguishing constants are available to an application only through the GetKeyboardState, SetKeyboardState, GetAsyncKeyState, GetKeyState, and MapVirtualKey functions. 
         /// </remarks>
-        public bool IsTogglingKeyInEffect(VirtualKeyCode keyCode)
+        public bool IsToggleKeyOn(VirtualKeyCode keyCode)
         {
-            Int16 result = NativeMethods.GetKeyState((UInt16)keyCode);
-            return (result & 0x01) == 0x01;
+            if (keyCode != VirtualKeyCode.INSERT && keyCode != VirtualKeyCode.NUMLOCK &&
+                (keyCode != VirtualKeyCode.CAPITAL && keyCode != VirtualKeyCode.SCROLL))
+                throw new NotSupportedException("Numlock,CapsLock,ScrollLock and Insert Keys Supported Only.");
+            var keyState = NativeMethods.GetKeyState((UInt16)keyCode);
+            if (keyCode == VirtualKeyCode.INSERT || keyCode == VirtualKeyCode.CAPITAL)
+                return (uint)(keyState & 1) > 0U;
+            return (uint)(keyState & 32769) > 0U;
         }
     }
 }

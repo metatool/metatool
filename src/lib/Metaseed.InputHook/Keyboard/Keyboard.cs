@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Forms;
+using WindowsInput.Native;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 
@@ -31,6 +33,12 @@ namespace Metaseed.Input
 
             var combination =  Combination.FromString(keys) as Combination;
             Add(combination, new KeyAction(actionId, description, e => action()));
+        }
+
+        public static void Send(Keys key)
+        {
+            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)key);
+
         }
 
         public static void Hook()

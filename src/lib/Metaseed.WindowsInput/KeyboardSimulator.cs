@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using WindowsInput.Native;
 
@@ -10,7 +13,7 @@ namespace WindowsInput
     /// </summary>
     public class KeyboardSimulator : IKeyboardSimulator
     {
-        private readonly IInputSimulator _inputSimulator;
+        private readonly IInputSimulator inputSimulator;
 
         /// <summary>
         /// The instance of the <see cref="IInputMessageDispatcher"/> to use for dispatching <see cref="INPUT"/> messages.
@@ -25,7 +28,7 @@ namespace WindowsInput
         {
             if (inputSimulator == null) throw new ArgumentNullException("inputSimulator");
 
-            _inputSimulator = inputSimulator;
+            this.inputSimulator = inputSimulator;
             _messageDispatcher = new WindowsInputMessageDispatcher();
         }
 
@@ -44,7 +47,7 @@ namespace WindowsInput
                     string.Format("The {0} cannot operate with a null {1}. Please provide a valid {1} instance to use for dispatching {2} messages.",
                     typeof(KeyboardSimulator).Name, typeof(IInputMessageDispatcher).Name, typeof(INPUT).Name));
 
-            _inputSimulator = inputSimulator;
+            this.inputSimulator = inputSimulator;
             _messageDispatcher = messageDispatcher;
         }
 
@@ -52,21 +55,18 @@ namespace WindowsInput
         /// Gets the <see cref="IMouseSimulator"/> instance for simulating Mouse input.
         /// </summary>
         /// <value>The <see cref="IMouseSimulator"/> instance.</value>
-        public IMouseSimulator Mouse { get { return _inputSimulator.Mouse; } }
+        public IMouseSimulator Mouse { get { return inputSimulator.Mouse; } }
 
-        private void ModifiersDown(InputBuilder builder, IEnumerable<VirtualKeyCode> modifierKeyCodes)
+        private static void ModifiersDown(InputBuilder builder, IEnumerable<VirtualKeyCode> modifierKeyCodes)
         {
             if (modifierKeyCodes == null) return;
             foreach (var key in modifierKeyCodes) builder.AddKeyDown(key);
         }
 
-        private void ModifiersUp(InputBuilder builder, IEnumerable<VirtualKeyCode> modifierKeyCodes)
+        private static void ModifiersUp(InputBuilder builder, IEnumerable<VirtualKeyCode> modifierKeyCodes)
         {
             if (modifierKeyCodes == null) return;
-
-            // Key up in reverse (I miss LINQ)
-            var stack = new Stack<VirtualKeyCode>(modifierKeyCodes);
-            while (stack.Count > 0) builder.AddKeyUp(stack.Pop());
+            foreach (var key in modifierKeyCodes.Reverse()) builder.AddKeyUp(key);
         }
 
         private void KeysPress(InputBuilder builder, IEnumerable<VirtualKeyCode> keyCodes)
@@ -149,7 +149,7 @@ namespace WindowsInput
         /// <param name="keyCode">The key to simulate</param>
         public IKeyboardSimulator ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode)
         {
-            ModifiedKeyStroke(modifierKeyCodes, new[] {keyCode});
+            ModifiedKeyStroke(modifierKeyCodes, new[] { keyCode });
             return this;
         }
 
@@ -161,7 +161,7 @@ namespace WindowsInput
         /// <param name="keyCodes">The list of keys to simulate</param>
         public IKeyboardSimulator ModifiedKeyStroke(VirtualKeyCode modifierKey, IEnumerable<VirtualKeyCode> keyCodes)
         {
-            ModifiedKeyStroke(new [] {modifierKey}, keyCodes);
+            ModifiedKeyStroke(new[] { modifierKey }, keyCodes);
             return this;
         }
 
@@ -182,15 +182,57 @@ namespace WindowsInput
             return this;
         }
 
+        class ToggleKeyCarer : IDisposable
+        {
+            private readonly VirtualKeyCode _key;
+            private readonly InputBuilder _inputBuilder;
+            private readonly IInputDeviceStateAdaptor _inputDeviceState = new WindowsInputDeviceStateAdaptor();
+            readonly bool _isCapsLockToggled = false;
+            public ToggleKeyCarer(VirtualKeyCode key, InputBuilder inputBuilder)
+            {
+                _key = key;
+                _inputBuilder = inputBuilder;
+
+                if (_inputDeviceState.IsToggleKeyOn(key))
+                {
+                    _isCapsLockToggled = true;
+                    inputBuilder.AddKeyPress(key);
+                }
+            }
+
+            public void Dispose()
+            {
+                if (_isCapsLockToggled) _inputBuilder.AddKeyPress(_key);
+            }
+
+        }
+
         /// <summary>
         /// Calls the Win32 SendInput method with a stream of KeyDown and KeyUp messages in order to simulate uninterrupted text entry via the keyboard.
         /// </summary>
         /// <param name="text">The text to be simulated.</param>
-        public IKeyboardSimulator TextEntry(string text)
+        public IKeyboardSimulator Type(string text, bool takeCareOfCapsLock = false)
         {
+
+
             if (text.Length > UInt32.MaxValue / 2) throw new ArgumentException(string.Format("The text parameter is too long. It must be less than {0} characters.", UInt32.MaxValue / 2), "text");
-            var inputList = new InputBuilder().AddCharacters(text).ToArray();
-            SendSimulatedInput(inputList);
+
+
+            var inputBuilder = new InputBuilder();
+
+            if (takeCareOfCapsLock)
+            {
+                using (var capsLockCare = new ToggleKeyCarer(VirtualKeyCode.CAPITAL, inputBuilder))
+                {
+                    inputBuilder = inputBuilder.AddCharacters(text);
+                }
+            }
+            else
+            {
+                inputBuilder = inputBuilder.AddCharacters(text);
+            }
+
+            SendSimulatedInput(inputBuilder.ToArray());
             return this;
         }
 
@@ -198,7 +240,7 @@ namespace WindowsInput
         /// Simulates a single character text entry via the keyboard.
         /// </summary>
         /// <param name="character">The unicode character to be simulated.</param>
-        public IKeyboardSimulator TextEntry(char character)
+        public IKeyboardSimulator Type(char character)
         {
             var inputList = new InputBuilder().AddCharacter(character).ToArray();
             SendSimulatedInput(inputList);
@@ -223,6 +265,39 @@ namespace WindowsInput
         {
             Thread.Sleep(timeout);
             return this;
+        }
+
+        /// <summary>
+        /// Presses the given keys and releases them when the returned object is disposed.
+        /// using (Keyboard.Pressing(VirtualKeyCode.CONTROL))
+        /// {
+        ///    Keyboard.Type(VirtualKeyCode.VK_E);
+        /// }
+        /// </summary>
+        public static IDisposable Pressing(params VirtualKeyCode[] virtualKeys)
+        {
+            return new KeyPressingActivation(virtualKeys);
+        }
+
+        private class KeyPressingActivation : IDisposable
+        {
+            private readonly VirtualKeyCode[] _virtualKeys;
+            private readonly WindowsInputMessageDispatcher _messageDispatcher = new WindowsInputMessageDispatcher();
+            private readonly InputBuilder _builder = new InputBuilder();
+
+            public KeyPressingActivation(VirtualKeyCode[] virtualKeys)
+            {
+                _virtualKeys = virtualKeys;
+                ModifiersDown(_builder, _virtualKeys);
+                _messageDispatcher.DispatchInput(_builder.ToArray());
+            }
+
+            public void Dispose()
+            {
+                _builder.Clear();
+                ModifiersUp(_builder, _virtualKeys);
+                _messageDispatcher.DispatchInput(_builder.ToArray());
+            }
         }
     }
 }

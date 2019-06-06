@@ -75,13 +75,13 @@ namespace WindowsInput
         /// Simulates uninterrupted text entry via the keyboard.
         /// </summary>
         /// <param name="text">The text to be simulated.</param>
-        IKeyboardSimulator TextEntry(string text);
+        IKeyboardSimulator Type(string text, bool takeCareOfCapsLock = false);
 
         /// <summary>
         /// Simulates a single character text entry via the keyboard.
         /// </summary>
         /// <param name="character">The unicode character to be simulated.</param>
-        IKeyboardSimulator TextEntry(char character);
+        IKeyboardSimulator Type(char character);
 
         /// <summary>
         /// Sleeps the executing thread to create a pause between simulated inputs.

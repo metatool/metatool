@@ -61,6 +61,13 @@ namespace Metaseed.Input
         /// </summary>
         public bool IsExtendedKey { get; }
 
+        public override string ToString()
+        {
+            var dt = DateTime.Now;
+            dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
+            var d = IsKeyUp ? "Up  " : "Down";
+            return $"{dt:hh:mm:ss.FFF, 16}-{KeyCode}-{d}-Handled:{Handled}-Scan:{ScanCode}";
+        }
         internal static KeyEventArgsExt FromRawDataApp(CallbackData data)
         {
             var wParam = data.WParam;

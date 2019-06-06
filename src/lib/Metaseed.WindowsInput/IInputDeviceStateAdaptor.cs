@@ -50,6 +50,6 @@ namespace WindowsInput
         /// <returns>
         /// 	<c>true</c> if the toggling key is toggled on (in-effect); otherwise, <c>false</c>.
         /// </returns>
-        bool IsTogglingKeyInEffect(VirtualKeyCode keyCode);
+        bool IsToggleKeyOn(VirtualKeyCode keyCode);
     }
 }
