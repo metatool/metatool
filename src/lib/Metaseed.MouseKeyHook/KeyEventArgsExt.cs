@@ -65,8 +65,8 @@ namespace Metaseed.Input
         {
             var dt = DateTime.Now;
             dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
-            var d = IsKeyUp ? "Up  " : "Down";
-            return $"{dt:hh:mm:ss.FFF, 16}-{KeyCode}-{d}-Handled:{Handled}-Scan:{ScanCode}";
+            var d = IsKeyUp ? "Up" : "Down";
+            return $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}";
         }
         internal static KeyEventArgsExt FromRawDataApp(CallbackData data)
         {

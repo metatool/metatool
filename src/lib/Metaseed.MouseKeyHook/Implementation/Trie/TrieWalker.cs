@@ -30,9 +30,9 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             return true;
         }
 
-        public bool TryGoToChild(Func<TKey,TKey,TKey> aggregateFunc)
+        public bool TryGoToChild(Func<TKey,TKey,TKey> aggregateFunc, TKey initialKey = default(TKey))
         {
-            var node = CurrentNode.GetChildOrNull(aggregateFunc);
+            var node = CurrentNode.GetChildOrNull(aggregateFunc, initialKey);
             if (node == null) return false;
             CurrentNode = node;
             return true;

@@ -22,32 +22,12 @@ namespace Metaseed.Input
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
         private bool handled;
+
+        private IDisposable keyDownActionToken;
+        private IDisposable keyUpActionToken;
         private ToggleKeys(Keys key)
         {
             _key = key;
-
-            key.Down($"Metaseed.AlwaysOnOff_{key}_Down", "", e =>
-            {
-
-                if (!_isAlwaysOn.HasValue) return;
-
-                if (_confirmAlwaysOnOffSate)
-                {
-                    _confirmAlwaysOnOffSate = false;
-                    var on = Control.IsKeyLocked(_key);
-                    if (on && !_isAlwaysOn.Value || !on && _isAlwaysOn.Value)
-                        return;
-                }
-
-                handled = KeyboardState.OnToggleKeys.Add(key);
-                e.Handled = true;
-            });
-            key.Up($"Metaseed.AlwaysOnOff_{key}_Up", "", e =>
-            {
-                if (!_isAlwaysOn.HasValue) return;
-                if (handled) KeyboardState.OnToggleKeys.Remove(key);
-            });
-
         }
 
         public ToggleKeyState State
@@ -61,13 +41,46 @@ namespace Metaseed.Input
 
         }
 
-        void Map(Keys key)
+        void InstallHook()
         {
+            if (keyDownActionToken == null)
+                keyDownActionToken = _key.Down($"Metaseed.AlwaysOnOff_{_key}_Down", "", e =>
+                {
 
+                    if (!_isAlwaysOn.HasValue) return;
+
+                    if (_confirmAlwaysOnOffSate)
+                    {
+                        _confirmAlwaysOnOffSate = false;
+                        var on = Control.IsKeyLocked(_key);
+                        if (on && !_isAlwaysOn.Value || !on && _isAlwaysOn.Value)
+                            return;
+                    }
+
+                    handled = KeyboardState.OnToggleKeys.Add(_key);
+                    e.Handled = true;
+                });
+            if (keyUpActionToken == null)
+                keyUpActionToken = _key.Up($"Metaseed.AlwaysOnOff_{_key}_Up", "", e =>
+                {
+                    if (!_isAlwaysOn.HasValue) return;
+                    if (handled) KeyboardState.OnToggleKeys.Remove(_key);
+                    e.Handled = true;
+                });
+        }
+
+        void RemoveHook()
+        {
+            keyDownActionToken?.Dispose();
+            keyDownActionToken = null;
+            keyUpActionToken?.Dispose();
+            keyUpActionToken = null;
         }
 
         public void AlwaysOn()
         {
+            InstallHook();
+
             switch (State)
             {
                 case ToggleKeyState.Off:
@@ -82,10 +95,11 @@ namespace Metaseed.Input
                 case ToggleKeyState.AlwaysOn:
                     break;
             }
-
         }
         public void AlwaysOff()
         {
+            InstallHook();
+
             switch (State)
             {
                 case ToggleKeyState.AlwaysOff:
@@ -105,6 +119,7 @@ namespace Metaseed.Input
 
         public void Off()
         {
+            RemoveHook();
             switch (State)
             {
                 case ToggleKeyState.Off:
@@ -124,6 +139,7 @@ namespace Metaseed.Input
         }
         public void On()
         {
+            RemoveHook();
             switch (State)
             {
                 case ToggleKeyState.Off:

@@ -4,5 +4,5 @@ using System.Text;
 
 namespace Metaseed.Input
 {
-    public enum KeyEventType { Down, Up, Press}
+    public enum KeyEventType { Down, Up, Press,Hit}
 }

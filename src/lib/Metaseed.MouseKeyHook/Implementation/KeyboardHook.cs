@@ -14,28 +14,50 @@ namespace Metaseed.Input.MouseKeyHook
 {
     public class KeyboardHook
     {
-        private readonly Trie<Combination, KeyAction> _trie = new Trie<Combination, KeyAction>();
-        private readonly TrieWalker<Combination, KeyAction> _trieWalker;
+        private readonly Trie<ICombination, KeyAction> _trie = new Trie<ICombination, KeyAction>();
+        private readonly TrieWalker<ICombination, KeyAction> _trieWalker;
+        public readonly IKeyboardMouseEvents EventSource;
 
         public KeyboardHook()
         {
-            _trieWalker = new TrieWalker<Combination, KeyAction>(_trie);
+            _trieWalker = new TrieWalker<ICombination, KeyAction>(_trie);
+            EventSource = Hook.GlobalEvents();
+
         }
 
-        public void Add(IList<ICombination> combination, KeyAction action)
+        public class CombinationRemoveToken: IDisposable
         {
-            _trie.Add(new List<Combination>(combination.Cast<Combination>()), action);
+            private readonly ITrie<ICombination, KeyAction> _trie;
+            private readonly IList<ICombination> _combinations;
+            private readonly KeyAction _action;
+
+            public CombinationRemoveToken(ITrie<ICombination,KeyAction> trie,IList<ICombination> combinations, KeyAction action)
+            {
+                _trie = trie;
+                _combinations = combinations;
+                _action = action;
+            }
+            public void Dispose()
+            {
+                var r = _trie.Remove(_combinations, action => action == _action);
+                Console.WriteLine(r);
+            }
+        }
+        public IDisposable Add(IList<ICombination> combination, KeyAction action)
+        {
+            _trie.Add(combination, action);
+            return new CombinationRemoveToken(_trie, combination, action);
         }
 
-        public void Add(ICombination combination, KeyAction action)
+        public IDisposable Add(ICombination combination, KeyAction action)
         {
-            _trie.Add(new List<Combination>() { combination as Combination }, action);
+            return Add(new List<ICombination>{combination}, action);
         }
 
         public void Run()
         {
-            var source = Hook.GlobalEvents();
             _trieWalker.GoToRoot();
+            Keys lastDownKeys = Keys.None;
 
             void KeyEventProcess(KeyEventType eventType, KeyEventArgsExt args)
             {
@@ -64,14 +86,29 @@ namespace Metaseed.Input.MouseKeyHook
                 Debug.Assert(actions != null, nameof(actions) + " != null");
 
                 // execute
-                actions.ForEach(a => a.Action?.Invoke(args));
+                try
+                {
+                    actions.ForEach(a => a.Action?.Invoke(args));
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
 
                 // no children 
                 if(_trieWalker.ChildrenCount == 0) _trieWalker.GoToRoot();
             }
 
-            source.KeyDown += (sender, args) => KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);
-            source.KeyUp += (sender, args) => KeyEventProcess(KeyEventType.Up, args as KeyEventArgsExt);
+            EventSource.KeyDown += (sender, args) =>
+            {
+                lastDownKeys = args.KeyCode;
+                KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);
+            };
+            EventSource.KeyUp += (sender, args) =>
+            {
+                KeyEventProcess(KeyEventType.Up, args as KeyEventArgsExt);
+                if (args.KeyCode == lastDownKeys) KeyEventProcess(KeyEventType.Hit,args as KeyEventArgsExt);
+            };
 
         }
 

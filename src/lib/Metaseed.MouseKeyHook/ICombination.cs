@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Metaseed.Input
@@ -18,5 +19,6 @@ namespace Metaseed.Input
 
         ISequence Then(Keys key);
         ISequence Then(ICombination combination);
+
     }
 }

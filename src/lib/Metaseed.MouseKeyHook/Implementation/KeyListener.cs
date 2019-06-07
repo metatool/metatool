@@ -34,6 +34,8 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (handler == null || e.Handled || e.IsNonChar)
                 return;
             handler(this, e);
+            Console.WriteLine(e.ToString());
+
         }
 
         public void InvokeKeyUp(KeyEventArgsExt e)
@@ -58,7 +60,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             }
 
             InvokeKeyUp(eDownUp);
-Console.WriteLine(eDownUp.ToString());            
+            Console.WriteLine(eDownUp.ToString());            
             return !eDownUp.Handled;
         }
 

@@ -15,6 +15,11 @@ namespace Metaseed.DataStructures
             Add(query, 0, value);
         }
 
+        public void Add(TKey key, TValue value)
+        {
+            Add(new List<TKey>{key},0, value);
+        }
+
         public bool Remove(IList<TKey> query,Predicate<TValue> predicate = null)
         {
             var r = Remove(query, 0, predicate);

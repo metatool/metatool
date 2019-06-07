@@ -34,7 +34,13 @@ namespace Metaseed.Input
             : this(keyChar, Environment.TickCount)
         {
         }
-
+        public override string ToString()
+        {
+            var dt = DateTime.Now;
+            dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
+            string et = "Press";
+            return $"{dt:hh:mm:ss.fff}  {KeyChar,-16}{et,-6}Handled:{Handled,-8} IsNoChar:{IsNonChar,-8} ";
+        }
         /// <summary>
         ///     True if represents a system or functional non char key.
         /// </summary>

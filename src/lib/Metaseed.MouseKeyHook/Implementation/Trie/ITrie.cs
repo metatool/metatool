@@ -13,6 +13,7 @@ namespace Metaseed.DataStructures
     {
         IEnumerable<TValue> Get(IList<TKey> query);
         void Add(IList<TKey> query, TValue value);
+        void Add(TKey query, TValue value);
         bool Remove(IList<TKey> query, Predicate<TValue> predicate = null);
         void Clear();
 

@@ -11,7 +11,7 @@ namespace Metaseed.DataStructures
         protected abstract IEnumerable<TrieNodeBase<TKey, TValue>> Children();
 
         protected abstract void RemoveChild(TKey key);
-        protected  internal abstract int ChildrenCount { get; }
+        protected internal abstract int ChildrenCount { get; }
 
         public void Add(IList<TKey> query, int position, TValue value)
         {
@@ -23,10 +23,10 @@ namespace Metaseed.DataStructures
             }
 
             var child = GetOrCreateChild(query[position]);
-            child.Add(query, position+1, value);
+            child.Add(query, position + 1, value);
         }
 
-        protected abstract void AddValue(TValue               value);
+        protected abstract void AddValue(TValue value);
         protected abstract bool RemoveValue(Predicate<TValue> predicate);
 
         protected abstract bool IsRemovable(IList<TKey> query, int position);
@@ -36,15 +36,15 @@ namespace Metaseed.DataStructures
             if (query == null) throw new ArgumentNullException(nameof(query));
 
             TrieNodeBase<TKey, TValue> candidate = null;
-            TrieNodeBase<TKey, TValue> parent    = null;
-            var                        k         = default(TKey);
+            TrieNodeBase<TKey, TValue> parent = null;
+            var key = default(TKey);
             do
             {
                 if (IsRemovable(query, position) && candidate == null)
                 {
                     candidate = GetChildOrNull(query, position);
-                    parent    = this;
-                    k         = query[position];
+                    parent = this;
+                    key = query[position];
                 }
                 else
                     candidate = null;
@@ -52,7 +52,7 @@ namespace Metaseed.DataStructures
 
             if (candidate != null)
             {
-                parent.RemoveChild(k);
+                parent.RemoveChild(key);
             }
 
             return candidate;

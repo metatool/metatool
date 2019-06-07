@@ -24,22 +24,34 @@ namespace Metaseed.MetaKeyboard
         public MainWindow()
         {
             InitializeComponent();
-            new KeysConverter().ConvertToString(Keys.B);
-//            Keyboard.Hotkey("Ctrl+M,A").Hit(e => Console.WriteLine($"Hello from sequence hotkey: {e}"));
-//            Keys.B.Down("metaseed.b.down","b down", e => Console.WriteLine("sss"));
-//            Keys.B.Up("metaseed.b.up","b up", e => Console.WriteLine("sss_up"));
-//            Keys.A.With(Keys.ShiftKey).With(Keys.Control).Down("metaseed.shif+ctrl+a", "don",e =>Console.WriteLine("shifth+ctrl+a"));
-//            Keys.Z.With(Keys.ShiftKey).Then(Keys.C).Down("aa","bbbbb",()=>
-//            {
-//                Console.WriteLine("esc");
-//            });
-ToggleKeys.CapsLock.AlwaysOn();
-            Keys.H.With(Keys.CapsLock).Down("","",e=>
+            //new KeysConverter().ConvertToString(Keys.B);
+            Keyboard.KeyPress +=(o, e) => Console.WriteLine();
+//                        Keyboard.Hotkey("Ctrl+M,A").Hit(e => Console.WriteLine($"Hello from sequence hotkey: {e}"));
+//                        Keys.B.Down("metaseed.b.down","b down", e => Console.WriteLine("sss"));
+//                        Keys.B.Up("metaseed.b.up","b up", e => Console.WriteLine("sss_up"));
+//                        Keys.A.With(Keys.ShiftKey).With(Keys.Control).Down("metaseed.shif+ctrl+a", "don",e =>Console.WriteLine("shifth+ctrl+a"));
+//                        Keys.Z.With(Keys.ShiftKey).Then(Keys.C).Down("aa","bbbbb",()=>
+//                        {
+//                            Console.WriteLine("esc");
+//                        });
+
+
+            ToggleKeys.CapsLock.AlwaysOn();
+            Keys.CapsLock.Hit("","",e=>
             {
-                Keyboard.Send(Keys.Left);
+
+                Keyboard.Send(Keys.Escape);
                 e.Handled = true;
             });
-            Keys.A.With(Keys.Control).Down("","",e=>Console.WriteLine("sssssssssssssssss"));
+
+            Keys.H.With(Keys.CapsLock).Map(Keys.Left);
+            Keys.J.With(Keys.CapsLock).Map(Keys.Down);
+            Keys.K.With(Keys.CapsLock).Map(Keys.Left);
+            Keys.L.With(Keys.CapsLock).Map(Keys.Right);
+
+            Keys.A.With(Keys.Control).Down("", "", e => Console.WriteLine("sssssssssssssssss"));
+
+
             //                        Keys.Z.With(Keys.CapsLock).Down(e =>
             //            {
             //                Console.WriteLine("esc");
