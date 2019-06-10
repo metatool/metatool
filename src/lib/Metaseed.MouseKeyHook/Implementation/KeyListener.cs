@@ -34,7 +34,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (handler == null || e.Handled || e.IsNonChar)
                 return;
             handler(this, e);
-            Console.WriteLine(e.ToString());
+            Console.WriteLine(new String('\t', _indientCounter)+e.ToString());
 
         }
 
@@ -46,9 +46,13 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             handler(this, e);
         }
 
+        private int _indientCounter = 0;
+
         protected override bool Callback(CallbackData data)
         {
             var eDownUp = GetDownUpEventArgs(data);
+
+            Console.WriteLine(new String('\t',_indientCounter++) + "¡ú" + eDownUp.ToString());
 
             InvokeKeyDown(eDownUp);
 
@@ -60,7 +64,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             }
 
             InvokeKeyUp(eDownUp);
-            Console.WriteLine(eDownUp.ToString());            
+            Console.WriteLine(new String('\t', --_indientCounter)+ "¡û" + eDownUp.ToString());
             return !eDownUp.Handled;
         }
 

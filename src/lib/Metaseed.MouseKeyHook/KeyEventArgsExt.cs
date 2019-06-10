@@ -26,7 +26,7 @@ namespace Metaseed.Input
         }
 
         internal KeyEventArgsExt(Keys keyData, int scanCode, int timestamp, bool isKeyDown, bool isKeyUp,
-            bool isExtendedKey)
+            bool isExtendedKey, KeyEventArgsExt lastKeyDownEvent)
             : this(keyData)
         {
             ScanCode = scanCode;
@@ -34,6 +34,8 @@ namespace Metaseed.Input
             IsKeyDown = isKeyDown;
             IsKeyUp = isKeyUp;
             IsExtendedKey = isExtendedKey;
+            LastKeyDownEvent = lastKeyDownEvent;
+            lastKeyDownEvent.LastKeyDownEvent = null;
         }
 
         /// <summary>
@@ -50,6 +52,7 @@ namespace Metaseed.Input
         ///     True if event signals key down..
         /// </summary>
         public bool IsKeyDown { get; }
+        public KeyEventArgsExt LastKeyDownEvent { get; private set; }
 
         /// <summary>
         ///     True if event signals key up.
@@ -68,6 +71,10 @@ namespace Metaseed.Input
             var d = IsKeyUp ? "Up" : "Down";
             return $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}";
         }
+
+        private static KeyEventArgsExt lastKeyDownGloable = new KeyEventArgsExt(Keys.None);
+        private static KeyEventArgsExt lastKeyDownApp = new KeyEventArgsExt(Keys.None);
+
         internal static KeyEventArgsExt FromRawDataApp(CallbackData data)
         {
             var wParam = data.WParam;
@@ -99,7 +106,9 @@ namespace Metaseed.Input
             var isKeyDown = !isKeyReleased;
             var isKeyUp = wasKeyDown && isKeyReleased;
 
-            return new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey);
+            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,lastKeyDownApp);
+            if (isKeyDown) lastKeyDownApp = r;
+            return r;
         }
 
         internal static KeyEventArgsExt FromRawDataGlobal(CallbackData data)
@@ -118,8 +127,10 @@ namespace Metaseed.Input
             const uint maskExtendedKey = 0x1;
             var isExtendedKey = (keyboardHookStruct.Flags & maskExtendedKey) > 0;
 
-            return new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
-                isKeyUp, isExtendedKey);
+            var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
+                isKeyUp, isExtendedKey,lastKeyDownGloable);
+            if (isKeyDown) lastKeyDownGloable = r;
+            return r;
         }
 
         // # It is not possible to distinguish Keys.LControlKey and Keys.RControlKey when they are modifiers

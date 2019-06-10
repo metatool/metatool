@@ -5,6 +5,7 @@
     <TargetFrameworks>netcoreapp3.0;net472</TargetFrameworks>
        <RootNamespace>Metaseed.Input</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

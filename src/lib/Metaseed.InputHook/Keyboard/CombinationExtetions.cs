@@ -10,20 +10,20 @@ namespace Metaseed.Input
 {
     public static class CombinationExtetions
     {
-        public static IDisposable Down(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action)
+        public static IRemovable Down(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action)
         {
             return Keyboard.Add(combination, new KeyAction(actionId,description,action));
         }
         
-        public static IDisposable Up(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action)
+        public static IRemovable Up(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action)
         {
             return Keyboard.Add(new Combination(combination.TriggerKey,combination.Chord,KeyEventType.Up), new KeyAction(actionId,description,action));
         }
-        public static IDisposable Map(this ICombination key, Keys target, Predicate<ICombination> predicate = null)
+        public static IRemovable Map(this ICombination key, Keys target, Predicate<KeyEventArgsExt> predicate = null)
         {
             return Keyboard.Map(key as Combination, new Combination(target), predicate);
         }
-        public static IDisposable Map(this ICombination key, ICombination target, Predicate<ICombination> predicate = null)
+        public static IRemovable Map(this ICombination key, ICombination target, Predicate<KeyEventArgsExt> predicate = null)
         {
             return Keyboard.Map(key as Combination, target, predicate);
         }

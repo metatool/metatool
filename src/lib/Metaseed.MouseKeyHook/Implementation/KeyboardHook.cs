@@ -25,7 +25,7 @@ namespace Metaseed.Input.MouseKeyHook
 
         }
 
-        public class CombinationRemoveToken: IDisposable
+        public class CombinationRemoveToken: IRemovable
         {
             private readonly ITrie<ICombination, KeyAction> _trie;
             private readonly IList<ICombination> _combinations;
@@ -37,19 +37,19 @@ namespace Metaseed.Input.MouseKeyHook
                 _combinations = combinations;
                 _action = action;
             }
-            public void Dispose()
+            public void Remove()
             {
                 var r = _trie.Remove(_combinations, action => action == _action);
                 Console.WriteLine(r);
             }
         }
-        public IDisposable Add(IList<ICombination> combination, KeyAction action)
+        public IRemovable Add(IList<ICombination> combination, KeyAction action)
         {
             _trie.Add(combination, action);
             return new CombinationRemoveToken(_trie, combination, action);
         }
 
-        public IDisposable Add(ICombination combination, KeyAction action)
+        public IRemovable Add(ICombination combination, KeyAction action)
         {
             return Add(new List<ICombination>{combination}, action);
         }
@@ -57,7 +57,6 @@ namespace Metaseed.Input.MouseKeyHook
         public void Run()
         {
             _trieWalker.GoToRoot();
-            Keys lastDownKeys = Keys.None;
 
             void KeyEventProcess(KeyEventType eventType, KeyEventArgsExt args)
             {
@@ -99,16 +98,8 @@ namespace Metaseed.Input.MouseKeyHook
                 if(_trieWalker.ChildrenCount == 0) _trieWalker.GoToRoot();
             }
 
-            EventSource.KeyDown += (sender, args) =>
-            {
-                lastDownKeys = args.KeyCode;
-                KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);
-            };
-            EventSource.KeyUp += (sender, args) =>
-            {
-                KeyEventProcess(KeyEventType.Up, args as KeyEventArgsExt);
-                if (args.KeyCode == lastDownKeys) KeyEventProcess(KeyEventType.Hit,args as KeyEventArgsExt);
-            };
+            EventSource.KeyDown += (sender, args) => KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);
+            EventSource.KeyUp += (sender, args) => KeyEventProcess(KeyEventType.Up, args as KeyEventArgsExt);
 
         }
 

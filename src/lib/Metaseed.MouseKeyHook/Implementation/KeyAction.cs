@@ -16,5 +16,10 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             Action = action;
             Description = description;
         }
+
+        public override string ToString()
+        {
+            return ActionId + Description;
+        }
     }
 }

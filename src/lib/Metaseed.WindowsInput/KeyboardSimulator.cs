@@ -182,6 +182,33 @@ namespace WindowsInput
             return this;
         }
 
+        public IKeyboardSimulator ModifiedKeyDown(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes)
+        {
+            var builder = new InputBuilder();
+            ModifiersDown(builder, modifierKeyCodes);
+            foreach (var key in keyCodes) builder.AddKeyDown(key);
+            SendSimulatedInput(builder.ToArray());
+            return this;
+
+        }
+
+        public IKeyboardSimulator ModifiedKeyDown(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode)
+        {
+           return ModifiedKeyDown(modifierKeyCodes, new List<VirtualKeyCode>() {keyCode});
+        }
+
+        public IKeyboardSimulator ModifiedKeyUp(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode)
+        {
+           return ModifiedKeyUp(modifierKeyCodes, new List<VirtualKeyCode>() {keyCode});
+        }
+        public IKeyboardSimulator ModifiedKeyUp(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes)
+        {
+            var builder = new InputBuilder();
+            foreach (var key in keyCodes) builder.AddKeyUp(key);
+            ModifiersUp(builder, modifierKeyCodes);
+            SendSimulatedInput(builder.ToArray());
+            return this;
+        }
         class ToggleKeyCarer : IDisposable
         {
             private readonly VirtualKeyCode _key;

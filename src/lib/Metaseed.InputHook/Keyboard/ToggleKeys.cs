@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using WindowsInput.Native;
 using Metaseed.Input.MouseKeyHook.Implementation;
 
@@ -22,9 +23,9 @@ namespace Metaseed.Input
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
         private bool handled;
-
-        private IDisposable keyDownActionToken;
-        private IDisposable keyUpActionToken;
+        private bool _valid;
+        private IRemovable keyDownActionToken;
+        private IRemovable keyUpActionToken;
         private ToggleKeys(Keys key)
         {
             _key = key;
@@ -46,15 +47,17 @@ namespace Metaseed.Input
             if (keyDownActionToken == null)
                 keyDownActionToken = _key.Down($"Metaseed.AlwaysOnOff_{_key}_Down", "", e =>
                 {
-
-                    if (!_isAlwaysOn.HasValue) return;
+                    if (!_isAlwaysOn.HasValue ) return;
 
                     if (_confirmAlwaysOnOffSate)
                     {
                         _confirmAlwaysOnOffSate = false;
                         var on = Control.IsKeyLocked(_key);
                         if (on && !_isAlwaysOn.Value || !on && _isAlwaysOn.Value)
+                        {
+                            _valid = true;
                             return;
+                        }
                     }
 
                     handled = KeyboardState.OnToggleKeys.Add(_key);
@@ -63,17 +66,27 @@ namespace Metaseed.Input
             if (keyUpActionToken == null)
                 keyUpActionToken = _key.Up($"Metaseed.AlwaysOnOff_{_key}_Up", "", e =>
                 {
-                    if (!_isAlwaysOn.HasValue) return;
-                    if (handled) KeyboardState.OnToggleKeys.Remove(_key);
+                    if (!_isAlwaysOn.HasValue ) return;
+                    if (_valid)
+                    {
+                        _valid = false;
+                        return;
+                    }
+
+                    if (handled)
+                    {
+                        handled = false;
+                        KeyboardState.OnToggleKeys.Remove(_key);
+                    }
                     e.Handled = true;
                 });
         }
 
         void RemoveHook()
         {
-            keyDownActionToken?.Dispose();
+            keyDownActionToken?.Remove();
             keyDownActionToken = null;
-            keyUpActionToken?.Dispose();
+            keyUpActionToken?.Remove();
             keyUpActionToken = null;
         }
 
@@ -87,7 +100,9 @@ namespace Metaseed.Input
                 case ToggleKeyState.AlwaysOff:
                     _isAlwaysOn = true;
                     _confirmAlwaysOnOffSate = true;
-                    InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)_key);
+                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send,(Action) (() =>
+                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) _key)
+                        ));
                     break;
                 case ToggleKeyState.On:
                     _isAlwaysOn = true;
@@ -107,9 +122,13 @@ namespace Metaseed.Input
                 case ToggleKeyState.On:
                 case ToggleKeyState.AlwaysOn:
                     _confirmAlwaysOnOffSate = true;
-                    _isAlwaysOn = false;
-                    InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)_key);
-                    break;
+                    _isAlwaysOn             = false;
+                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send,(Action) (() =>
+
+                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) _key)
+                        ));
+
+            break;
                 case ToggleKeyState.Off:
                     _isAlwaysOn = false;
                     break;

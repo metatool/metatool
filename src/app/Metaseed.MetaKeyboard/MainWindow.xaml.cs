@@ -24,30 +24,39 @@ namespace Metaseed.MetaKeyboard
         public MainWindow()
         {
             InitializeComponent();
-            //new KeysConverter().ConvertToString(Keys.B);
-            Keyboard.KeyPress +=(o, e) => Console.WriteLine();
-//                        Keyboard.Hotkey("Ctrl+M,A").Hit(e => Console.WriteLine($"Hello from sequence hotkey: {e}"));
-//                        Keys.B.Down("metaseed.b.down","b down", e => Console.WriteLine("sss"));
-//                        Keys.B.Up("metaseed.b.up","b up", e => Console.WriteLine("sss_up"));
-//                        Keys.A.With(Keys.ShiftKey).With(Keys.Control).Down("metaseed.shif+ctrl+a", "don",e =>Console.WriteLine("shifth+ctrl+a"));
-//                        Keys.Z.With(Keys.ShiftKey).Then(Keys.C).Down("aa","bbbbb",()=>
-//                        {
-//                            Console.WriteLine("esc");
-//                        });
+              Keyboard.KeyPress +=(o, e) => {};
 
+            ToggleKeys.NumLock.AlwaysOn();
+            ToggleKeys.CapsLock.AlwaysOff();
+            //            Keys.CapsLock.Hit("","",e=>
+            //            {
+            //                if (e.ScanCode == 0) return;
+            //
+            //                Keyboard.Send(Keys.Escape);
+            //                e.Handled = true;
+            //            });
+            Keys.CapsLock.MapOnHit(Keys.Escape, e => e.ScanCode!=0);
 
-            ToggleKeys.CapsLock.AlwaysOn();
-            Keys.CapsLock.Hit("","",e=>
+            Keys.Oemtilde.With(Keys.CapsLock).Down("toggle caps", "", e =>
             {
-
-                Keyboard.Send(Keys.Escape);
+                var state = ToggleKeys.CapsLock.State;
+                if (state == ToggleKeyState.AlwaysOff) ToggleKeys.CapsLock.AlwaysOn();
+                if (state == ToggleKeyState.AlwaysOn) ToggleKeys.CapsLock.AlwaysOff();
                 e.Handled = true;
             });
 
             Keys.H.With(Keys.CapsLock).Map(Keys.Left);
             Keys.J.With(Keys.CapsLock).Map(Keys.Down);
-            Keys.K.With(Keys.CapsLock).Map(Keys.Left);
+            Keys.K.With(Keys.CapsLock).Map(Keys.Up);
             Keys.L.With(Keys.CapsLock).Map(Keys.Right);
+
+            Keys.H.With(Keys.LMenu).Map(Keys.Left);
+            Keys.J.With(Keys.LMenu).Map(Keys.Down);
+            Keys.K.With(Keys.LMenu).Map(Keys.Up);
+            Keys.L.With(Keys.LMenu).Map(Keys.Right);
+
+
+
 
             Keys.A.With(Keys.Control).Down("", "", e => Console.WriteLine("sssssssssssssssss"));
 

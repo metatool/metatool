@@ -16,7 +16,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         internal Chord(IEnumerable<Keys> additionalKeys)
         {
-            _keys = additionalKeys.Select(k => k.Normalize()).OrderBy(k => k).ToArray();
+            _keys = additionalKeys.OrderBy(k => k).ToArray();
         }
 
         public int Count

@@ -26,7 +26,7 @@ namespace Metaseed.Input.MouseKeyHook
         private Combination(Keys triggerKey, Chord chord, KeyEventType eventType = KeyEventType.Down)
         {
             EventType = eventType;
-            TriggerKey = triggerKey.Normalize();
+            TriggerKey = triggerKey;
             _chord = chord?? new Chord(Enumerable.Empty<Keys>());
             _key = new Key(TriggerKey, EventType);
             
