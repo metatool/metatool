@@ -47,7 +47,21 @@ namespace Metaseed.Input
             if (keyDownActionToken == null)
                 keyDownActionToken = _key.Down($"Metaseed.AlwaysOnOff_{_key}_Down", "", e =>
                 {
-                    if (!_isAlwaysOn.HasValue ) return;
+                    if (!_isAlwaysOn.HasValue) return;
+
+
+                    if (_key == Keys.NumLock)
+                    {
+                        var on = Control.IsKeyLocked(_key);
+                        if (on && !_isAlwaysOn.Value || !on && _isAlwaysOn.Value)
+                        {
+                            _valid = true;
+                            return;
+                        }
+
+
+                        return;
+                    }
 
                     if (_confirmAlwaysOnOffSate)
                     {
@@ -60,13 +74,28 @@ namespace Metaseed.Input
                         }
                     }
 
+
                     handled = KeyboardState.OnToggleKeys.Add(_key);
                     e.Handled = true;
                 });
             if (keyUpActionToken == null)
                 keyUpActionToken = _key.Up($"Metaseed.AlwaysOnOff_{_key}_Up", "", e =>
                 {
-                    if (!_isAlwaysOn.HasValue ) return;
+                    if (!_isAlwaysOn.HasValue) return;
+
+                    if (_key == Keys.NumLock)
+                    {
+                        if (_valid)
+                        {
+                            _valid = false;
+                            return;
+                        }
+
+                        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
+                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)_key)));
+                        return;
+                    }
+
                     if (_valid)
                     {
                         _valid = false;
@@ -100,8 +129,8 @@ namespace Metaseed.Input
                 case ToggleKeyState.AlwaysOff:
                     _isAlwaysOn = true;
                     _confirmAlwaysOnOffSate = true;
-                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send,(Action) (() =>
-                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) _key)
+                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
+                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)_key)
                         ));
                     break;
                 case ToggleKeyState.On:
@@ -122,13 +151,13 @@ namespace Metaseed.Input
                 case ToggleKeyState.On:
                 case ToggleKeyState.AlwaysOn:
                     _confirmAlwaysOnOffSate = true;
-                    _isAlwaysOn             = false;
-                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send,(Action) (() =>
+                    _isAlwaysOn = false;
+                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
 
-                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) _key)
+                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)_key)
                         ));
 
-            break;
+                    break;
                 case ToggleKeyState.Off:
                     _isAlwaysOn = false;
                     break;

@@ -37,6 +37,17 @@ namespace Metaseed.Input
                         handled = true;
                         KeyboardState.OnToggleKeys.Add(source.TriggerKey);
                         e.Handled = true;
+                        if (target.TriggerKey == Keys.LButton)
+                        {
+                            _dispatcher.BeginInvoke(DispatcherPriority.Send,
+                                (Action)(() => InputSimu.Inst.Mouse.LeftButtonDown()));
+                            return;
+                        } else if (target.TriggerKey == Keys.RButton)
+                        {
+                            _dispatcher.BeginInvoke(DispatcherPriority.Send,
+                                (Action) (() => InputSimu.Inst.Mouse.RightButtonDown()));
+                            return;
+                        }
                         _dispatcher.BeginInvoke(DispatcherPriority.Send,
                             (Action)(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(target.Chord.Cast<VirtualKeyCode>(),
                                 (VirtualKeyCode) target.TriggerKey)));
@@ -54,6 +65,17 @@ namespace Metaseed.Input
                         if (predicate == null || predicate(e))
                         {
                             e.Handled = true;
+                            if (target.TriggerKey == Keys.LButton)
+                            {
+                                _dispatcher.BeginInvoke(DispatcherPriority.Send,
+                                    (Action)(() => InputSimu.Inst.Mouse.LeftButtonUp()));
+                                return;
+                            } else if (target.TriggerKey == Keys.RButton)
+                            {
+                                _dispatcher.BeginInvoke(DispatcherPriority.Send,
+                                    (Action) (() => InputSimu.Inst.Mouse.RightButtonUp()));
+                                return;
+                            }
                             _dispatcher.BeginInvoke(DispatcherPriority.Send,
                                 (Action) (() => InputSimu.Inst.Keyboard.ModifiedKeyUp(
                                     target.Chord.Cast<VirtualKeyCode>(),

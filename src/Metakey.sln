@@ -26,6 +26,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Input", "lib\Metas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MouseKeyHook", "lib\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj", "{F00B3040-C762-4B24-B660-6590A32DC874}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32A88819-76DA-4A45-8178-9D61C9AFD0A0}"
+	ProjectSection(SolutionItems) = preProject
+		..\readme.txt = ..\readme.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +115,18 @@ Global
 		{F00B3040-C762-4B24-B660-6590A32DC874}.Release|x64.Build.0 = Release|Any CPU
 		{F00B3040-C762-4B24-B660-6590A32DC874}.Release|x86.ActiveCfg = Release|Any CPU
 		{F00B3040-C762-4B24-B660-6590A32DC874}.Release|x86.Build.0 = Release|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Debug|x64.Build.0 = Debug|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Debug|x86.Build.0 = Debug|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Release|x64.Build.0 = Release|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,6 +138,7 @@ Global
 		{5F6416A8-469F-4926-B036-5C5A5D017EE6} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
 		{112272BB-9A8E-4CFE-94AC-5AEC9446EFF7} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{F00B3040-C762-4B24-B660-6590A32DC874} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
+		{3B1FC2C7-B58C-451C-B7E3-D31C020783EE} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}
