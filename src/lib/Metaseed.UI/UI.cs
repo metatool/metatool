@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Threading;
 using Metaseed.UI.Implementation;
 
 namespace Metaseed.UI
 {
     public class UI
     {
+        static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        public static void Dispatch(Action action)
+        {
+            _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+        }
         public static string CurrentWindowClass
         {
             get
@@ -25,5 +31,6 @@ namespace Metaseed.UI
             var hControl = PInvokes.FindWindowEx(hWnd, IntPtr.Zero, className, text);
             PInvokes.SetFocus(hControl);
         }
+
     }
 }

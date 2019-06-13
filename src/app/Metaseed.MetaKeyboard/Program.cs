@@ -10,6 +10,7 @@ namespace ConsoleApp1
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             Keyboard.KeyPress += (o, e) => { };

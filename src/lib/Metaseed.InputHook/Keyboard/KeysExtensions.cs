@@ -8,18 +8,18 @@ namespace Metaseed.Input
 {
     public static class KeysExtensions
     {
-        public static IRemovable Down(this Keys key, string actionId, string description, Action<KeyEventArgsExt> action)
+        public static IRemovable Down(this Keys key, string actionId, string simpleDescription, Action<KeyEventArgsExt> action)
         {
-            return Keyboard.Add(new Combination(key), new KeyAction(actionId, description, action));
+            return Keyboard.Add(new Combination(key), new KeyAction(actionId, simpleDescription, action));
         }
 
-        public static IRemovable Up(this Keys key, string actionId, string description, Action<KeyEventArgsExt> action)
+        public static IRemovable Up(this Keys key, string actionId, string simpleDescription, Action<KeyEventArgsExt> action)
         {
-            return Keyboard.Add(new Combination(key, KeyEventType.Up), new KeyAction(actionId, description, action));
+            return Keyboard.Add(new Combination(key, KeyEventType.Up), new KeyAction(actionId, simpleDescription, action));
         }
-        //        public static IRemovable Hit(this Keys key, string actionId, string description, Action<KeyEventArgsExt> action)
+        //        public static IRemovable Hit(this Keys key, string actionId, string simpleDescription, Action<KeyEventArgsExt> action)
         //        {
-        //            return Keyboard.Add(new Combination(key, KeyEventType.Hit), new KeyAction(actionId, description, action));
+        //            return Keyboard.Add(new Combination(key, KeyEventType.Hit), new KeyAction(actionId, simpleDescription, action));
         //        }
 
         public static IRemovable Map(this Keys key, Keys target, Predicate<KeyEventArgsExt> predicate = null)

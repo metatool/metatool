@@ -39,18 +39,15 @@ namespace Metaseed.Input
                         e.Handled = true;
                         if (target.TriggerKey == Keys.LButton)
                         {
-                            _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                                (Action)(() => InputSimu.Inst.Mouse.LeftButtonDown()));
+                           Async(() => InputSimu.Inst.Mouse.LeftButtonDown());
                             return;
                         } else if (target.TriggerKey == Keys.RButton)
                         {
-                            _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                                (Action) (() => InputSimu.Inst.Mouse.RightButtonDown()));
+                            Async(() => InputSimu.Inst.Mouse.RightButtonDown());
                             return;
                         }
-                        _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                            (Action)(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(target.Chord.Cast<VirtualKeyCode>(),
-                                (VirtualKeyCode) target.TriggerKey)));
+                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(target.Chord.Cast<VirtualKeyCode>(),
+                                (VirtualKeyCode) target.TriggerKey));
                         return;
                     }
 
@@ -67,19 +64,16 @@ namespace Metaseed.Input
                             e.Handled = true;
                             if (target.TriggerKey == Keys.LButton)
                             {
-                                _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                                    (Action)(() => InputSimu.Inst.Mouse.LeftButtonUp()));
+                                Async(() => InputSimu.Inst.Mouse.LeftButtonUp());
                                 return;
                             } else if (target.TriggerKey == Keys.RButton)
                             {
-                                _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                                    (Action) (() => InputSimu.Inst.Mouse.RightButtonUp()));
+                               Async( () => InputSimu.Inst.Mouse.RightButtonUp());
                                 return;
                             }
-                            _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                                (Action) (() => InputSimu.Inst.Keyboard.ModifiedKeyUp(
+                           Async(() => InputSimu.Inst.Keyboard.ModifiedKeyUp(
                                     target.Chord.Cast<VirtualKeyCode>(),
-                                    (VirtualKeyCode) target.TriggerKey)));
+                                    (VirtualKeyCode) target.TriggerKey));
                         }
 
 
@@ -116,10 +110,9 @@ namespace Metaseed.Input
                         if (lastKeyDown == e.LastKeyDownEvent && (predicate == null || predicate(e)))
                         {
                             e.Handled = true;
-                            _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                                (Action) (() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
+                            Async(()=> InputSimu.Inst.Keyboard.ModifiedKeyStroke(
                                     target.Chord.Cast<VirtualKeyCode>(),
-                                    (VirtualKeyCode) target.TriggerKey)));
+                                    (VirtualKeyCode) target.TriggerKey));
                         }
 
                     }
@@ -145,14 +138,15 @@ namespace Metaseed.Input
             Add(combination, new KeyAction(actionId, description, e => action()));
         }
 
-        private static void Async(Action action)
+        private static void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
         {
-            _dispatcher.BeginInvoke(DispatcherPriority.Send,
-                action);
+            _dispatcher.BeginInvoke(priority, action);
         }
-        public static void Type(Keys key)
+        public static void Type(Keys key, bool IsAsync)
         {
-           Async(()=>           InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key));
+            if (IsAsync)
+                Async(() => InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)key));
+            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)key);
         }
 
         public static void Type(Keys[] keys) => InputSimu.Inst.Keyboard.KeyPress(keys.Cast<VirtualKeyCode>().ToArray());
@@ -165,6 +159,6 @@ namespace Metaseed.Input
         public static void Hook()
         {
             _Hook.Run();
-                    }
+        }
     }
 }

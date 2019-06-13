@@ -10,7 +10,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         public readonly Action<KeyEventArgsExt> Action;
         public readonly string Description;
 
-        public KeyAction(string actionId,string description, Action<KeyEventArgsExt> action)
+        public KeyAction(string actionId,string description, Action<KeyEventArgsExt> action )
         {
             ActionId = actionId;
             Action = action;
