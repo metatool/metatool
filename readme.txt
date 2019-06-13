@@ -21,3 +21,4 @@ https://stackoverflow.com/questions/25370894/how-to-detect-caps-lock-and-make-su
 https://stackoverflow.com/questions/13623245/how-do-i-turn-off-the-caps-lock-key
 
 https://docs.microsoft.com/en-us/windows/desktop/inputdev/about-keyboard-input
+https://github.com/atata-framework/atata

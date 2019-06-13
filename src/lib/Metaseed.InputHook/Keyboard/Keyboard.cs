@@ -145,16 +145,26 @@ namespace Metaseed.Input
             Add(combination, new KeyAction(actionId, description, e => action()));
         }
 
-        public static void Send(Keys key)
+        private static void Async(Action action)
         {
-            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)key);
-
+            _dispatcher.BeginInvoke(DispatcherPriority.Send,
+                action);
+        }
+        public static void Type(Keys key)
+        {
+           Async(()=>           InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key));
         }
 
+        public static void Type(Keys[] keys) => InputSimu.Inst.Keyboard.KeyPress(keys.Cast<VirtualKeyCode>().ToArray());
+
+
+        public static void Type(char character) => InputSimu.Inst.Keyboard.Type(character);
+
+        public static void Type(string text) => InputSimu.Inst.Keyboard.Type(text);
 
         public static void Hook()
         {
             _Hook.Run();
-        }
+                    }
     }
 }

@@ -15,6 +15,7 @@ namespace ConsoleApp1
             Keyboard.KeyPress += (o, e) => { };
 
          var keyboard61= new Keyboard61(); 
+var fun = new FunctionalKeys();
 
 
 
