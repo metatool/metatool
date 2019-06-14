@@ -102,7 +102,7 @@ namespace Metaseed.UI.Implementation
 
         public static string GetClassName(IntPtr hWnd)
         {
-            StringBuilder className = new StringBuilder(512);
+            var className = new StringBuilder(512);
             var r =  PInvokes.GetClassName(hWnd, className, className.Capacity);
             if (r != 0)
             {

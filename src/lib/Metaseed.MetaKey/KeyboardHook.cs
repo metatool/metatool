@@ -145,7 +145,7 @@ namespace Metaseed.MetaKey
 
         public void RegisterHotkey(Keys hotkey, Action<object> handler)
         {
-            uint modifiers = TranslateModifiers(hotkey) | MOD_NOREPEAT;
+            var modifiers = TranslateModifiers(hotkey) | MOD_NOREPEAT;
             Helpers.CheckResult(RegisterHotKey(IntPtr.Zero, currentHotkeyId + 1, modifiers, Lower16BitsMask & (uint)hotkey), "RegisterHotKey " + hotkey);
             currentHotkeyId++;
             handlers.Add(hotkey, handler);
@@ -173,7 +173,7 @@ namespace Metaseed.MetaKey
         {
             Uninstall();
             Application.RemoveMessageFilter(this);
-            for(int index = currentHotkeyId; index > 0; index--)
+            for(var index = currentHotkeyId; index > 0; index--)
             {
                 Helpers.TraceResult(UnregisterHotKey(IntPtr.Zero, index), "UnregisterHotKey");
             }

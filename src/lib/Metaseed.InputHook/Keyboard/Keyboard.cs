@@ -71,9 +71,9 @@ namespace Metaseed.Input
                                Async( () => InputSimu.Inst.Mouse.RightButtonUp());
                                 return;
                             }
-                           Async(() => InputSimu.Inst.Keyboard.ModifiedKeyUp(
+                           InputSimu.Inst.Keyboard.ModifiedKeyUp(
                                     target.Chord.Cast<VirtualKeyCode>(),
-                                    (VirtualKeyCode) target.TriggerKey));
+                                    (VirtualKeyCode) target.TriggerKey);
                         }
 
 
@@ -84,42 +84,82 @@ namespace Metaseed.Input
         }
         internal static IRemovable MapOnHit(Combination source, ICombination target, Predicate<KeyEventArgsExt> predicate = null)
         {
-            var handled = false;
-            KeyEventArgsExt lastKeyDown = null;
+            var handling = false;
+            KeyEventArgsExt keyDownEvent = null;
             return new Removables()
             {
                 source.Down($"MapOnHit_Down_{source}_To_{target}", "", e =>
                 {
                     if (predicate == null || predicate(e))
                     {
-                        handled = true;
+                        handling = true;
+                        keyDownEvent = e;
                         KeyboardState.OnToggleKeys.Add(source.TriggerKey);
                         e.Handled = true;
-                        lastKeyDown = e;
                         return;
                     }
 
-                    handled = false;
+                    handling = false;
                 }),
-                source.Up("MapOnHit_Up_{source}_To_{target}", "", e =>
+                source.Up($"MapOnHit_Up_{source}_To_{target}", "", e =>
                 {
-                    if (handled)
+                    if (!handling) return;
+                    handling  = false;
+                    e.Handled = true;
+                    KeyboardState.OnToggleKeys.Remove(source.TriggerKey);
+                    if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
                     {
-                        handled = false;
-                        KeyboardState.OnToggleKeys.Remove(source.TriggerKey);
-                        if (lastKeyDown == e.LastKeyDownEvent && (predicate == null || predicate(e)))
-                        {
-                            e.Handled = true;
-                            Async(()=> InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                                    target.Chord.Cast<VirtualKeyCode>(),
-                                    (VirtualKeyCode) target.TriggerKey));
-                        }
-
+                        Async(()=> InputSimu.Inst.Keyboard.ModifiedKeyStroke(
+                            target.Chord.Cast<VirtualKeyCode>(),
+                            (VirtualKeyCode) target.TriggerKey));
                     }
                 })
             };
 
         }
+
+        internal static IRemovable Hit(ICombination combination, KeyAction keyAction, Predicate<KeyEventArgsExt> predicate = null, bool markHandled = false)
+        {
+            var handling = false;
+            KeyEventArgsExt keyDownEvent = null;
+            return new Removables()
+            {
+                combination.Down($"Hit_Down_{combination}_{keyAction.ActionId}", "", e =>
+                {
+                    if (predicate == null || predicate(e))
+                    {
+                        handling     = true;
+                        if (markHandled)
+                        {
+                            keyDownEvent = e;
+                            KeyboardState.OnToggleKeys.Add(combination.TriggerKey);
+                            e.Handled = true;
+                        }
+
+                        return;
+                    }
+
+                    handling = false;
+                }),
+                combination.Up($"MapOnHit_Up_{combination}_{keyAction.ActionId}", keyAction.Description, e =>
+                {
+                    if (!handling) return;
+                    handling  = false;
+                    if (markHandled)
+                    {
+                        e.Handled = true;
+                        KeyboardState.OnToggleKeys.Remove(combination.TriggerKey);
+                    }
+
+                    if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
+                    {
+                        Async(()=>keyAction.Action(e));
+                    }
+                })
+            };
+
+        }
+
         public static event KeyPressEventHandler KeyPress
         {
             add => _Hook.EventSource.KeyPress += value;
@@ -151,6 +191,7 @@ namespace Metaseed.Input
 
         public static void Type(Keys[] keys) => InputSimu.Inst.Keyboard.KeyPress(keys.Cast<VirtualKeyCode>().ToArray());
 
+        public static void Type(Keys key) => InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)key);
 
         public static void Type(char character) => InputSimu.Inst.Keyboard.Type(character);
 

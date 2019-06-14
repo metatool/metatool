@@ -38,7 +38,7 @@ namespace Metaseed.Input
         {
             var dt = DateTime.Now;
             dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
-            string et = "Press";
+            var et = "Press";
             return $"{dt:hh:mm:ss.fff}  {KeyChar,-16}{et,-6}Handled:{Handled,-8} IsNoChar:{IsNonChar,-8} ";
         }
         /// <summary>

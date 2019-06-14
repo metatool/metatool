@@ -32,7 +32,7 @@ namespace WindowsInput
         /// </remarks>
         public bool IsKeyDown(VirtualKeyCode keyCode)
         {
-            Int16 result = NativeMethods.GetKeyState((UInt16)keyCode);
+            var result = NativeMethods.GetKeyState((UInt16)keyCode);
             return (result < 0);
         }
 

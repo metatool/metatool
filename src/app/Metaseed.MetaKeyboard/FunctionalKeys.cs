@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -60,7 +61,7 @@ namespace ConsoleApp1
 
                 UI.Dispatch(() =>
                 {
-                    IntPtr handle = UI.CurrentWindowHandle;
+                    var handle = UI.CurrentWindowHandle;
                     var paths = Explorer.GetSelectedFilePath(handle);
                     var r = string.Join(';', paths);
                     Clipboard.SetText(r);
@@ -73,6 +74,30 @@ namespace ConsoleApp1
                Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                e.Handled = true;
            });
+
+            Keys.N.With(Keys.Control).With(Keys.Alt).Hit("Metaseed.NewFile", "&New File", e =>
+            {
+                const string newFileName = "NewFile";
+                var handle = UI.CurrentWindowHandle;
+                var fullPath = Explorer.Path(handle);
+                var fileName = newFileName;
+                int i = 1;
+                while (File.Exists(fullPath+"\\"+fileName))
+                {
+                    fileName = newFileName + i++;
+                }
+                var file =File.Create(fullPath + "\\" + fileName);
+                file.Close();
+                Explorer.Select(handle,new[] { fileName });
+                Keyboard.Type(Keys.F2);
+
+            }, e =>
+            {
+                var c = UI.CurrentWindowClass;
+                if ("CabinetWClass" != c && "#32770" != c) return false;
+                return true;
+            }, true);
+
         }
 
     }
