@@ -94,7 +94,7 @@ namespace ConsoleApp1
             }, e =>
             {
                 var c = UI.CurrentWindowClass;
-                if ("CabinetWClass" != c && "#32770" != c) return false;
+                if ("CabinetWClass" != c) return false;
                 return true;
             }, true);
 

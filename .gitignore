@@ -158,3 +158,6 @@ $RECYCLE.BIN/
 pkg
 */package/**
 /src/packages
+/exe/software/Clipjump_x64/cache
+/exe/software/everything/Everything.db
+/exe/software/everything/Run History.csv

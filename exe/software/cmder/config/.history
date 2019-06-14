@@ -1,0 +1,112 @@
+gitk
+toru
+scriptcs
+gitk
+toru
+scriptcs
+git diff 1238a
+git reset 1238a
+gid diff
+git reset 2a898f
+git reset 1238af
+git config --global core.autocrlf true
+git config --global core.whitespace cr-at-eol
+git diff --ignore-space-at-eol
+git diff
+gitgt dif --ignore-all-spaceq
+gt diff -gnore-all-space
+git cq
+it q
+git commit -am "accumulated work from Mbaga"
+git checkout -b "mbaga"
+git rebase mbaga
+git add src\RCSGwToruServer\RCSGwToruServer.nuspec
+git add src\RCSComplianceTestTool\ComplianceTestTool.Designer.cs
+git add src\RCSComplianceTestTool\ComplianceTestTool.cs
+git rm src\RCSComplianceTestTool\ComplianceTestTool.cs
+git rm src\RCSComplianceTestTool\ComplianceTestTool.Designer.cs
+git rebase --continue
+git commit -am "resolve confilts and rebase the work to Mbaga's work"
+git checkout master~1
+git reset
+git reset --hard 638b4f
+git checkout
+git checkout master
+git reset --hard 6e8b4f
+git pull --rebase
+git add src\RCSComplianceTestTool\RCSComplianceTestTool.cs
+git add src\RCSComplianceTestTool\RCSComplianceTestTool.Designer.cs
+git checkout e30cc27
+git commit -am "merge changes from Mbaga"
+git checkout d2610a2
+git push
+git push origin HEAD:master
+git reset --hard
+git checkout mbaga
+git branch m
+git checkout -b m
+aq
+q
+aq
+q
+git cherry-pick d2610a
+git cherry-pick d2610a2
+git reset --hard
+git checkout d2610a2
+git pull
+git checkout mbaga
+git checkout master
+git push
+gitk
+gitk
+git clone https://slb1-swt.visualstudio.com/Planck/_git/presto-utils
+scriptcs Console.Write(typeof(string).Assembly.ImageRuntimeVersion);
+scriptcs
+git pull
+ls
+cd presto-utils\
+git plog
+git checkout -b dev/feat/muti-tests-selection
+git checkout -b dev/feat/muti-tests-selection
+git revert head
+git plog
+csc
+git plog
+csc
+git branch
+git checkout master
+git pull
+git log --name-status -10 ./rcsdriver
+cd..
+git log --name-status -10 ./src/rcsdriver
+cd src\
+cd RCS
+cd RCSDriver
+git log --name-status -50 ./src/rcsdriver
+git log --name-status -50 
+git log --name-status -50 .
+q
+git log --name-status -10 ./mudpumps.cs
+git log --name-status -100 ./mudpumps.cs
+bit blame ./mudpumps.cs
+git blame ./mudpumps.cs
+git blame ./MudPumps.cs
+git plog
+csc
+gitk
+cd C:\Users\jsong12\Source\_Presto\planck\automation\Source\ControlGateway.GenericOpcUaClient\Interface
+git pull 
+git reset --hard
+git pull
+ls
+ls
+ls
+ls
+ls
+ls
+ls
+git
+ls
+yes
+yes
+ls

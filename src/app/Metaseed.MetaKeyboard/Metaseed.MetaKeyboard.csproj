@@ -6,9 +6,22 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\..\pkg\Metaseeed.MetaKeyboard</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\..\pkg\Metaseed.MetaKeyboard</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="4.0.0" />
     <PackageReference Include="FlaUI.Core" Version="2.0.0-rc1" />
     <PackageReference Include="FlaUI.UIA3" Version="2.0.0-rc1" />
+    <PackageReference Include="Fody" Version="5.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
@@ -16,5 +29,9 @@
     <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /Y  $(OutDir)Metaseed.MetaKeyboard.dll $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.exe $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.runtimeconfig.json $(SolutionDir)..\exe" />
+  </Target>
 
 </Project>
