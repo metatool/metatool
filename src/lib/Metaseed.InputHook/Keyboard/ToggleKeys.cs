@@ -75,9 +75,9 @@ namespace Metaseed.Input
                     }
 
 
-                    handled = KeyboardState.OnToggleKeys.Add(_key);
+                    handled = KeyboardState.HandledDownKeys.Add(_key);
                     e.Handled = true;
-                });
+                },false);
             if (keyUpActionToken == null)
                 keyUpActionToken = _key.Up($"Metaseed.AlwaysOnOff_{_key}_Up", "", e =>
                 {
@@ -105,7 +105,7 @@ namespace Metaseed.Input
                     if (handled)
                     {
                         handled = false;
-                        KeyboardState.OnToggleKeys.Remove(_key);
+                        KeyboardState.HandledDownKeys.Remove(_key);
                     }
                     e.Handled = true;
                 });

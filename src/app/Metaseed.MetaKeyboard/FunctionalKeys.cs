@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using FlaUI.Core.AutomationElements;
-using FlaUI.Core.WindowsAPI;
 using FlaUI.UIA3;
 using Metaseed.Input;
 using Metaseed.UI;
 
-namespace ConsoleApp1
+namespace Metaseed.MetaKeyboard
 {
     public class FunctionalKeys
     {
@@ -22,16 +16,16 @@ namespace ConsoleApp1
         {
             Keys.F.With(Keys.LWin).Down("Metaseed.FocusFileItemsView", "Focus &File Items View", e =>
             {
-                var c = UI.CurrentWindowClass;
+                var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;// Windows Explorer or open/save as dialog
 
                 using (var automation = new UIA3Automation())
                 {
-                    var h = UI.CurrentWindowHandle;
+                    var h = UI.Window.CurrentWindowHandle;
                     var element = automation.FromHandle(h);
                     var listBox = element.FindFirstDescendant(cf => cf.ByClassName("UIItemsView"))?.AsListBox();
                     if (listBox?.SelectedItem != null) listBox.SelectedItem.Focus();
-                    else listBox?.Items?[0].Select();
+                    else listBox?.Items.FirstOrDefault()?.Select();
                 }
 
                 e.Handled = true;
@@ -40,12 +34,12 @@ namespace ConsoleApp1
 
             Keys.N.With(Keys.LWin).Down("Metaseed.FocusNavigAtionTreeView", "Focus &Navigation Tree View", e =>
             {
-                var c = UI.CurrentWindowClass;
+                var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;
 
                 using (var automation = new UIA3Automation())
                 {
-                    var h = UI.CurrentWindowHandle;
+                    var h = UI.Window.CurrentWindowHandle;
                     var element = automation.FromHandle(h);
                     var treeView = element.FindFirstDescendant(cf => cf.ByClassName("SysTreeView32"));
                     treeView?.AsTree().SelectedTreeItem.Focus();
@@ -54,18 +48,15 @@ namespace ConsoleApp1
                 e.Handled = true;
             });
 
-            Keys.OemPipe.With(Keys.CapsLock).Down("Metaseed.CopySelectedFilesPath", "Copy Selected Files Path", e =>
+            Keys.OemPipe.With(Keys.CapsLock).Down("Metaseed.CopySelectedFilesPath", "Copy Selected Files Path", async e =>
             {
-                var c = UI.CurrentWindowClass;
+                var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;
 
-                UI.Dispatch(() =>
-                {
-                    var handle = UI.CurrentWindowHandle;
-                    var paths = Explorer.GetSelectedFilePath(handle);
-                    var r = string.Join(';', paths);
-                    Clipboard.SetText(r);
-                });
+                var handle = UI.Window.CurrentWindowHandle;
+                var paths = await Explorer.GetSelectedPath(handle);
+                var r = string.Join(';', paths);
+                Clipboard.SetText(r);
                 e.Handled = true;
             });
 
@@ -75,29 +66,44 @@ namespace ConsoleApp1
                e.Handled = true;
            });
 
-            Keys.N.With(Keys.Control).With(Keys.Alt).Hit("Metaseed.NewFile", "&New File", e =>
-            {
-                const string newFileName = "NewFile";
-                var handle = UI.CurrentWindowHandle;
-                var fullPath = Explorer.Path(handle);
-                var fileName = newFileName;
-                int i = 1;
-                while (File.Exists(fullPath+"\\"+fileName))
+            Keys.N.With(Keys.Control).With(Keys.Alt).Hit("Metaseed.NewFile", "&New File", async e =>
+             {
+                 const string newFileName = "NewFile";
+                 var handle = UI.Window.CurrentWindowHandle;
+                 var fullPath = await Explorer.Path(handle);
+                 var fileName = newFileName;
+                 int i = 1;
+                 while (File.Exists(fullPath + "\\" + fileName))
+                 {
+                     fileName = newFileName + i++;
+                 }
+                 var file = File.Create(fullPath + "\\" + fileName);
+                 file.Close();
+                 Explorer.Select(handle, new[] { fileName });
+                 Keyboard.Type(Keys.F2);
+
+             }, e =>
+             {
+                 var c = UI.Window.CurrentWindowClass;
+                 if ("CabinetWClass" != c) return false;
+                 return true;
+             });
+
+            Keys.C.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
+                .Down("Metaseed.Close_MetaKeyBoard", "Close", e =>
                 {
-                    fileName = newFileName + i++;
-                }
-                var file =File.Create(fullPath + "\\" + fileName);
-                file.Close();
-                Explorer.Select(handle,new[] { fileName });
-                Keyboard.Type(Keys.F2);
+                    Environment.Exit(0);
+                });
 
-            }, e =>
-            {
-                var c = UI.CurrentWindowClass;
-                if ("CabinetWClass" != c) return false;
-                return true;
-            }, true);
 
+            Keys.X.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
+                .Down("Metaseed.Restart_MetaKeyBoard", "Restart", e =>
+                {
+                    var p = Application.ExecutablePath;
+                    var path = p.Remove(p.Length - 4, 4) + ".exe";
+                    Process.Start(path);
+                    Environment.Exit(0);
+                });
         }
 
     }

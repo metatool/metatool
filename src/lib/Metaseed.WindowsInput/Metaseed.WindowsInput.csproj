@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\pkg\Metaseed.WindowsInput</OutputPath>
-    <DocumentationFile>..\..\pkg\Metaseed.WindowsInput\Metaseed.WindowsInput.xml</DocumentationFile>
+    <OutputPath>..\..\..\pkg\Metaseed.WindowsInput</OutputPath>
+    <DocumentationFile>..\..\..\pkg\Metaseed.WindowsInput\Metaseed.WindowsInput.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>

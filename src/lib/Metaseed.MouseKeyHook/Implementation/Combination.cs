@@ -91,6 +91,15 @@ namespace Metaseed.Input.MouseKeyHook
             return this.Then(new Combination(key));
         }
 
+        public bool IsAnyKey(Keys key)
+        {
+            if (key == TriggerKey) return true;
+            if (Chord.Contains(key)) return true;
+            return false;
+        }
+
+
+
         /// <summary>
         ///     A chainable builder method to simplify chord creation. Used along with <see cref="TriggeredBy" />,
         ///     <see cref="With" />, <see cref="Control" />, <see cref="Shift" />, <see cref="Alt" />.

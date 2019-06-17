@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metaseed.Input;
+using Metaseed.MetaKeyboard;
 
 namespace ConsoleApp1
 {
@@ -18,7 +19,7 @@ namespace ConsoleApp1
          var keyboard61= new Keyboard61(); 
 var fun = new FunctionalKeys();
 
-
+var software = new Utilities();
 
 
             Keys.A.With(Keys.Control).Down("", "", e => Console.WriteLine("sssssssssssssssss"));

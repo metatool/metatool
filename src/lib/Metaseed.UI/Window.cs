@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using Metaseed.UI.Implementation;
 
 namespace Metaseed.UI
 {
-    public class UI
+    public class Window
     {
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
-        public static void Dispatch(Action action)
+        public static void Dispatch(Delegate action)
         {
             _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+        }
+
+        public static async Task<T> Dispatch<T>(Func<T> action)
+        {
+            var o =  _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+            await o;
+            return (T)(o.Result);
         }
         public static string CurrentWindowClass
         {

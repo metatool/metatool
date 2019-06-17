@@ -19,7 +19,7 @@ namespace Metaseed.Input
         {
             return Keyboard.Add(new Combination(combination.TriggerKey, combination.Chord, KeyEventType.Up), new KeyAction(actionId, description, action));
         }
-        public static IRemovable Hit(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> predicate, bool markHandled = false)
+        public static IRemovable Hit(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> predicate, bool markHandled = true)
         {
             var keyAction = new KeyAction(actionId, description, action);
             return Keyboard.Hit(combination, keyAction, predicate, markHandled);
@@ -31,6 +31,15 @@ namespace Metaseed.Input
         public static IRemovable Map(this ICombination key, ICombination target, Predicate<KeyEventArgsExt> predicate = null)
         {
             return Keyboard.Map(key as Combination, target, predicate);
+        }
+        public static IRemovable MapOnHit(this ICombination key, Keys target, Predicate<KeyEventArgsExt> predicate = null)
+        {
+            return Keyboard.MapOnHit(key, new Combination(target), e => predicate == null || predicate(e));
+        }
+
+        public static IRemovable MapOnHit(this ICombination key, ICombination target, Predicate<KeyEventArgsExt> predicate = null)
+        {
+            return Keyboard.MapOnHit(key, target, e => predicate == null || predicate(e));
         }
     }
 }

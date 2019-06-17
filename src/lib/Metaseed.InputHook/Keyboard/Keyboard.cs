@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using WindowsInput.Native;
@@ -35,7 +36,7 @@ namespace Metaseed.Input
                     if (predicate == null || predicate(e))
                     {
                         handled = true;
-                        KeyboardState.OnToggleKeys.Add(source.TriggerKey);
+                        KeyboardState.HandledDownKeys.Add(source.TriggerKey);
                         e.Handled = true;
                         if (target.TriggerKey == Keys.LButton)
                         {
@@ -58,7 +59,7 @@ namespace Metaseed.Input
                     if (handled)
                     {
                         handled = false;
-                        KeyboardState.OnToggleKeys.Remove(source.TriggerKey);
+                        KeyboardState.HandledDownKeys.Remove(source.TriggerKey);
                         if (predicate == null || predicate(e))
                         {
                             e.Handled = true;
@@ -82,10 +83,45 @@ namespace Metaseed.Input
             };
 
         }
-        internal static IRemovable MapOnHit(Combination source, ICombination target, Predicate<KeyEventArgsExt> predicate = null)
+        internal static IRemovable MapOnHit(ICombination source, ICombination target, Predicate<KeyEventArgsExt> predicate = null, bool allUp = true)
         {
             var handling = false;
             KeyEventArgsExt keyDownEvent = null;
+
+            void AsyncCall()
+            {
+                Async(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
+                    target.Chord.Cast<VirtualKeyCode>(),
+                    (VirtualKeyCode)target.TriggerKey));
+            }
+
+            IRemovable AllKeyUp()
+            {
+                void keyUpHandler(Object s, KeyEventArgs e1)
+                {
+                    var e = e1 as KeyEventArgsExt;
+                    Debug.Assert(e != null, nameof(e) + " != null");
+
+                    if (keyDownEvent != e.LastKeyDownEvent ||
+                        !source.IsAnyKey(e.KeyCode)) return;
+
+                    if (handling && e.KeyCode == source.TriggerKey)
+                    {
+                        handling = false;
+                        // e.Handled = true;
+                        KeyboardState.HandledDownKeys.Remove(source.TriggerKey);
+                    }
+
+                    var up = e.KeyboardState.IsUp(source.TriggerKey) && e.KeyboardState.AreAllUp(source.Chord);
+                    //                    Console.WriteLine("" + e + e.KeyboardState);
+                    if (!up) return;
+                    AsyncCall();
+                }
+
+                _Hook.KeyUp += keyUpHandler;
+                return new Removable(() => _Hook.KeyUp -= keyUpHandler);
+            }
+
             return new Removables()
             {
                 source.Down($"MapOnHit_Down_{source}_To_{target}", "", e =>
@@ -94,25 +130,27 @@ namespace Metaseed.Input
                     {
                         handling = true;
                         keyDownEvent = e;
-                        KeyboardState.OnToggleKeys.Add(source.TriggerKey);
+                        KeyboardState.HandledDownKeys.Add(source.TriggerKey);
                         e.Handled = true;
                         return;
                     }
 
                     handling = false;
                 }),
-                source.Up($"MapOnHit_Up_{source}_To_{target}", "", e =>
+                allUp 
+                ? AllKeyUp()
+                :source.Up($"MapOnHit_Up_{source}_To_{target}", "", e =>
                 {
+
                     if (!handling) return;
-                    handling  = false;
+                    handling = false;
                     e.Handled = true;
-                    KeyboardState.OnToggleKeys.Remove(source.TriggerKey);
-                    if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
-                    {
-                        Async(()=> InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                            target.Chord.Cast<VirtualKeyCode>(),
-                            (VirtualKeyCode) target.TriggerKey));
-                    }
+                    KeyboardState.HandledDownKeys.Remove(source.TriggerKey);
+
+                    if (keyDownEvent != e.LastKeyDownEvent) return;
+
+
+                    AsyncCall();
                 })
             };
 
@@ -129,13 +167,11 @@ namespace Metaseed.Input
                     if (predicate == null || predicate(e))
                     {
                         handling     = true;
-                        if (markHandled)
-                        {
-                            keyDownEvent = e;
-                            KeyboardState.OnToggleKeys.Add(combination.TriggerKey);
-                            e.Handled = true;
-                        }
+                        if (!markHandled) return;
 
+                        keyDownEvent = e;
+                        KeyboardState.HandledDownKeys.Add(combination.TriggerKey);
+                        e.Handled = true;
                         return;
                     }
 
@@ -148,7 +184,7 @@ namespace Metaseed.Input
                     if (markHandled)
                     {
                         e.Handled = true;
-                        KeyboardState.OnToggleKeys.Remove(combination.TriggerKey);
+                        KeyboardState.HandledDownKeys.Remove(combination.TriggerKey);
                     }
 
                     if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
@@ -162,8 +198,8 @@ namespace Metaseed.Input
 
         public static event KeyPressEventHandler KeyPress
         {
-            add => _Hook.EventSource.KeyPress += value;
-            remove => _Hook.EventSource.KeyPress -= value;
+            add => _Hook.KeyPress += value;
+            remove => _Hook.KeyPress -= value;
         }
 
         public static void HotKey(this string keys, string actionId, string description, Action action)

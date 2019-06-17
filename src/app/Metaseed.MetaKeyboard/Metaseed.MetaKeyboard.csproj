@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\..\pkg\Metaseed.MetaKeyboard</OutputPath>
+    <OutputPath>..\..\..\pkg\Metaseeed.MetaKeyboard</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,8 +30,14 @@
     <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y  $(OutDir)Metaseed.MetaKeyboard.dll $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.exe $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.runtimeconfig.json $(SolutionDir)..\exe" />
+    <Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\software /J&#xD;&#xA;xcopy /Y  $(OutDir)Metaseed.MetaKeyboard.dll $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.exe $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.runtimeconfig.json $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y  $(OutDir)config.json $(SolutionDir)..\exe" />
   </Target>
 
 </Project>

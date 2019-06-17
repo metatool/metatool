@@ -20,5 +20,7 @@ namespace Metaseed.Input
         ISequence Then(Keys key);
         ISequence Then(ICombination combination);
 
+        bool IsAnyKey(Keys key);
+
     }
 }

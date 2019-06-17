@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Metaseed.DataStructures;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.Implementation.Trie;
+using DispatcherPriority = System.Windows.Threading.DispatcherPriority;
 
 namespace Metaseed.Input.MouseKeyHook
 {
@@ -16,13 +18,32 @@ namespace Metaseed.Input.MouseKeyHook
     {
         private readonly Trie<ICombination, KeyAction> _trie = new Trie<ICombination, KeyAction>();
         private readonly TrieWalker<ICombination, KeyAction> _trieWalker;
-        public readonly IKeyboardMouseEvents EventSource;
+        private readonly IKeyboardMouseEvents _eventSource;
 
         public KeyboardHook()
         {
             _trieWalker = new TrieWalker<ICombination, KeyAction>(_trie);
-            EventSource = Hook.GlobalEvents();
+            _eventSource = Hook.GlobalEvents();
 
+        }
+
+        private readonly List<KeyEventHandler> _keyUpHandlers = new List<KeyEventHandler>();
+        public event KeyEventHandler KeyUp
+        {
+            add => _keyUpHandlers.Add(value);
+            remove => _keyUpHandlers.Remove(value);
+        }
+        private readonly List<KeyPressEventHandler> _keyPressHandlers = new List<KeyPressEventHandler>();
+        public event KeyPressEventHandler KeyPress
+        {
+            add => _keyPressHandlers.Add(value);
+            remove => _keyPressHandlers.Remove(value);
+        }
+        private readonly List<KeyEventHandler> _keyDownHandlers = new List<KeyEventHandler>();
+        public event KeyEventHandler KeyDown
+        {
+            add => _keyDownHandlers.Add(value);
+            remove => _keyDownHandlers.Remove(value);
         }
 
         public class CombinationRemoveToken: IRemovable
@@ -63,7 +84,7 @@ namespace Metaseed.Input.MouseKeyHook
                 // only process key UP and Press event on root
                 if (eventType != KeyEventType.Down && !_trieWalker.IsOnRoot) return;
 
-                var keyboardState = KeyboardState.GetCurrent();
+                var keyboardState = args.KeyboardState;
                 var success = _trieWalker.TryGoToChild((acc, key) =>
                 {
                     if (args.KeyCode != key.TriggerKey || eventType != key.EventType) return acc;
@@ -85,21 +106,32 @@ namespace Metaseed.Input.MouseKeyHook
                 Debug.Assert(actions != null, nameof(actions) + " != null");
 
                 // execute
+#if !DEBUG
                 try
                 {
-                    actions.ForEach(a => a.Action?.Invoke(args));
+#endif
+                actions.ForEach(a =>
+                    {
+                        if(!string.IsNullOrEmpty(a.Description)) Console.WriteLine(a.Description);
+                        a.Action?.Invoke(args);
+                    });
+#if !DEBUG
                 }
                 catch (Exception e)
                 {
                     MessageBox.Show(e.ToString());
                 }
-
+#endif
                 // no children 
                 if(_trieWalker.ChildrenCount == 0) _trieWalker.GoToRoot();
             }
 
-            EventSource.KeyDown += (sender, args) => KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);
-            EventSource.KeyUp += (sender, args) => KeyEventProcess(KeyEventType.Up, args as KeyEventArgsExt);
+            _eventSource.KeyDown += (sender, args) => KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);
+            _eventSource.KeyUp += (sender, args) => KeyEventProcess(KeyEventType.Up, args as KeyEventArgsExt);
+
+            _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
+            _keyUpHandlers.ForEach(h => _eventSource.KeyUp += h);
+
 
         }
 

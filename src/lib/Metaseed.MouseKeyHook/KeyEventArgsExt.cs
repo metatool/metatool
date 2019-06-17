@@ -26,7 +26,7 @@ namespace Metaseed.Input
         }
 
         internal KeyEventArgsExt(Keys keyData, int scanCode, int timestamp, bool isKeyDown, bool isKeyUp,
-            bool isExtendedKey, KeyEventArgsExt lastKeyDownEvent)
+            bool isExtendedKey, KeyEventArgsExt lastKeyDownEvent, KeyboardState keyboardState)
             : this(keyData)
         {
             ScanCode = scanCode;
@@ -36,6 +36,7 @@ namespace Metaseed.Input
             IsExtendedKey = isExtendedKey;
             LastKeyDownEvent = lastKeyDownEvent;
             lastKeyDownEvent.LastKeyDownEvent = null;
+            KeyboardState = keyboardState;
         }
 
         /// <summary>
@@ -63,6 +64,8 @@ namespace Metaseed.Input
         ///     True if event signals, that the key is an extended key
         /// </summary>
         public bool IsExtendedKey { get; }
+
+        public KeyboardState KeyboardState { get; }
 
         public override string ToString()
         {
@@ -106,7 +109,7 @@ namespace Metaseed.Input
             var isKeyDown = !isKeyReleased;
             var isKeyUp = wasKeyDown && isKeyReleased;
 
-            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,lastKeyDownApp);
+            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,lastKeyDownApp, KeyboardState.GetCurrent());
             if (isKeyDown) lastKeyDownApp = r;
             return r;
         }
@@ -128,7 +131,7 @@ namespace Metaseed.Input
             var isExtendedKey = (keyboardHookStruct.Flags & maskExtendedKey) > 0;
 
             var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
-                isKeyUp, isExtendedKey,lastKeyDownGloable);
+                isKeyUp, isExtendedKey,lastKeyDownGloable,KeyboardState.GetCurrent());
             if (isKeyDown) lastKeyDownGloable = r;
             return r;
         }

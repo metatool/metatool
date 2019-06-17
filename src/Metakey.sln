@@ -24,11 +24,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Input", "lib\Metas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MouseKeyHook", "lib\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj", "{F00B3040-C762-4B24-B660-6590A32DC874}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32A88819-76DA-4A45-8178-9D61C9AFD0A0}"
-	ProjectSection(SolutionItems) = preProject
-		..\readme.txt = ..\readme.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.UI", "lib\Metaseed.UI\Metaseed.UI.csproj", "{C27433DC-E694-4632-88E1-630190F8C813}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MetaKeyboard", "app\Metaseed.MetaKeyboard\Metaseed.MetaKeyboard.csproj", "{19F097F9-0E7A-4CF2-BA5A-E8D2612F503C}"

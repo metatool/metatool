@@ -14,7 +14,7 @@ namespace ConsoleApp1
         {
             ToggleKeys.NumLock.AlwaysOn();
             ToggleKeys.CapsLock.AlwaysOff();
-            Keys.CapsLock.MapOnHit(Keys.Escape, e => e.ScanCode != 0);
+            Keys.CapsLock.MapOnHit(Keys.Escape, e => e.ScanCode != 0,false);
 
             Keys.Oemtilde.With(Keys.CapsLock).Down("toggle caps", "", e =>
             {

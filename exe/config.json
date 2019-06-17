@@ -1,0 +1,26 @@
+﻿{
+  "Settings": {
+    "RemoteDesktopEnable": false 
+  }, 
+  "Tools": {
+    // set alt+shift+f as toggle window hotkey, ctrl+alt+shift+f as new window hotkey
+    "Everything": ".\\software\\everything\\Everything.exe",
+    "GifTool": ".\\software\\ScreenToGif.exe",
+
+    "SnippingTool": ".\\software\\snipaste\\Snipaste.exe",
+    "SearchEngine": "https://www.google.com",
+    "SearchEngineSecondary": "https://global.bing.com/?FORM=HPCNEN&setmkt=en-us&setlang=en-us",
+
+    "Code": ".\\software\\Visual Studio Code.lnk",
+    "Editor": "gvim.bat",
+    "Cmd": ".\\software\\cmder\\Cmder.exe",
+    "Ruler": ".\\software\\ruler\\aruler.exe",
+    "VisualStudio": "\\software\\Visual Studio 2019.lnk",
+    "ProcessExplorer": ".\\software\\procexp64.exe",
+    "VirtualMachineManager": ".\\software\\Hyper-V Manager.lnk"
+  },
+  "Registers": {
+    "WorkDir": "M:\\Workspace" 
+  }
+
+}

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook.WinApi;
 
@@ -20,12 +21,22 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
     /// </remarks>
     public class KeyboardState
     {
-        public static ISet<Keys> OnToggleKeys = new SortedSet<Keys>();
+        public static ISet<Keys> HandledDownKeys = new SortedSet<Keys>();
         private readonly byte[] m_KeyboardStateNative;
 
         private KeyboardState(byte[] keyboardStateNative)
         {
             m_KeyboardStateNative = keyboardStateNative;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            foreach (var handledDownKey in HandledDownKeys)
+            {
+                sb.Append(handledDownKey);
+            }
+            return  sb + BitConverter.ToString(m_KeyboardStateNative);
         }
 
         /// <summary>
@@ -52,12 +63,29 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         /// <returns><b>true</b> if key was down, <b>false</b> - if key was up.</returns>
         public bool IsDown(Keys key)
         {
-            if (OnToggleKeys.Contains(key)) return true;
+            if (HandledDownKeys.Contains(key)) return true;
             if ((int)key < 256) return IsDownRaw(key);
             if (key == Keys.Alt) return IsDownRaw(Keys.LMenu) || IsDownRaw(Keys.RMenu);
             if (key == Keys.Shift) return IsDownRaw(Keys.LShiftKey) || IsDownRaw(Keys.RShiftKey);
             if (key == Keys.Control) return IsDownRaw(Keys.LControlKey) || IsDownRaw(Keys.RControlKey);
             return false;
+        }
+
+        public bool IsUp(Keys key)
+        {
+            if (HandledDownKeys.Contains(key)) return false;
+            if ((int)key < 256) return IsUpRaw(key);
+            if (key == Keys.Alt) return IsUpRaw(Keys.LMenu) || IsUpRaw(Keys.RMenu);
+            if (key == Keys.Shift) return IsUpRaw(Keys.LShiftKey) || IsUpRaw(Keys.RShiftKey);
+            if (key == Keys.Control) return IsUpRaw(Keys.LControlKey) || IsUpRaw(Keys.RControlKey);
+            return false;
+        }
+
+        private bool IsUpRaw(Keys key)
+        {
+            var keyState = GetKeyState(key);
+            var isUp = !GetHighBit(keyState);
+            return isUp;
         }
 
         private bool IsDownRaw(Keys key)
@@ -94,6 +122,11 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         public bool AreAllDown(IEnumerable<Keys> keys)
         {
             return keys.All(IsDown);
+        }
+
+        public bool AreAllUp(IEnumerable<Keys> keys)
+        {
+            return keys.All(IsUp);
         }
 
         private byte GetKeyState(Keys key)
