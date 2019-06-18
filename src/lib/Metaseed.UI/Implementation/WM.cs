@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Metaseed.UI.Implementation
 {
+ 
     /// <summary>
     /// Windows Messages
     /// Defined in winuser.h from Windows SDK v6.1

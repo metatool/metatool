@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
+using Metaseed.UI.Implementation;
 
 namespace Metaseed.UI.Implementation
 {
@@ -71,7 +74,46 @@ namespace Metaseed.UI.Implementation
             return hWnd;
         }
 
-    
+        public void FindWindows(IntPtr parentHandle, Regex className, Regex windowText, Regex process, Predicate<IntPtr> foundWindow)
+        {
+            bool EnumChildWindowsCallback(IntPtr handle, IntPtr lParam)
+            {
+                if (className != null)
+                {
+                    var sbClass = new StringBuilder(256);
+                    PInvokes.GetClassName(handle, sbClass, sbClass.Capacity);
+
+                    if (!className.IsMatch(sbClass.ToString()))
+                        return true; // continue the enum
+                }
+
+                if (windowText != null)
+                {
+                    var           txtLength = PInvokes.SendMessage(handle,(int) WM.GETTEXTLENGTH, 0, IntPtr.Zero);
+                    var sbText    = new StringBuilder(txtLength + 1);
+                    PInvokes.SendMessage(handle, (int) WM.GETTEXT, (IntPtr) sbText.Capacity, sbText);
+
+                    if (!windowText.IsMatch(sbText.ToString()))
+                        return true; 
+                }
+
+                if (process != null)
+                {
+                    PInvokes.GetWindowThreadProcessId(handle, out var processID);
+
+                    var p = Process.GetProcessById(processID);
+
+                    if (!process.IsMatch(p.ProcessName))
+                        return true;
+                }
+
+                return foundWindow(handle);
+            }
+            PInvokes.EnumChildWindows(parentHandle, new EnumWindowsProc(EnumChildWindowsCallback), IntPtr.Zero);
+        }
+
+
+
         public static bool BringWindowToTop(string className, string windowName, bool wait)
         {
             var hWnd = FindWindow(className, windowName, wait);

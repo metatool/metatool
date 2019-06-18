@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Windows.Forms;
-using FlaUI.UIA3;
+﻿using Metaseed.Input;
 using Metaseed.UI;
-using Metaseed.Input;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Metaseed.MetaKeyboard
 {
@@ -61,7 +58,7 @@ namespace Metaseed.MetaKeyboard
                     : $"{Config.Inst.Tools.EveryThing} -path {path} -toggle-window");
             });
 
-            var softwareTrigger = Keys.Space.With(Keys.CapsLock);
+            var softwareTrigger = Keys.Z.With(Keys.CapsLock);
             softwareTrigger.Then(Keys.R).Down("Metaseed.ScreenRuler", "Start Screen &Ruler", () =>
              {
                  Utils.Run(Config.Inst.Tools.Ruler);
@@ -76,6 +73,17 @@ namespace Metaseed.MetaKeyboard
              {
                  Utils.Run(Config.Inst.Tools.GifTool);
              });
+
+            softwareTrigger.Then(Keys.N).Down("Metaseed.NodePad", "Start &Notepad ", () =>
+            {
+                var exeName = "Notepad";
+                var notePad = Process.GetProcessesByName(exeName);
+
+                var hWnd = notePad.FirstOrDefault(p => p.MainWindowTitle == "Untitled - Notepad")?.MainWindowHandle;
+                if(hWnd != null) {Window.Show(hWnd.Value); return;}
+                
+                Utils.Run("Notepad");
+            });
 
         }
     }

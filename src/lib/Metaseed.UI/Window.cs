@@ -40,5 +40,11 @@ namespace Metaseed.UI
             PInvokes.SetFocus(hControl);
         }
 
+        public static void Show(IntPtr hWnd)
+        {
+            PInvokes.ShowWindowAsync(hWnd, PInvokes.SW.Show);
+            PInvokes.SetForegroundWindow(hWnd);
+        }
+
     }
 }
