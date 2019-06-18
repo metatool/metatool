@@ -46,13 +46,13 @@ namespace Metaseed.Input.MouseKeyHook
             remove => _keyDownHandlers.Remove(value);
         }
 
-        public class CombinationRemoveToken: IRemovable
+        public class CombinationRemoveToken : IRemovable
         {
             private readonly ITrie<ICombination, KeyAction> _trie;
             private readonly IList<ICombination> _combinations;
             private readonly KeyAction _action;
 
-            public CombinationRemoveToken(ITrie<ICombination,KeyAction> trie,IList<ICombination> combinations, KeyAction action)
+            public CombinationRemoveToken(ITrie<ICombination, KeyAction> trie, IList<ICombination> combinations, KeyAction action)
             {
                 _trie = trie;
                 _combinations = combinations;
@@ -72,7 +72,7 @@ namespace Metaseed.Input.MouseKeyHook
 
         public IRemovable Add(ICombination combination, KeyAction action)
         {
-            return Add(new List<ICombination>{combination}, action);
+            return Add(new List<ICombination> { combination }, action);
         }
 
         public void Run()
@@ -112,7 +112,7 @@ namespace Metaseed.Input.MouseKeyHook
 #endif
                 actions.ForEach(a =>
                     {
-                        if(!string.IsNullOrEmpty(a.Description)) Console.WriteLine(a.Description);
+                        if (!string.IsNullOrEmpty(a.Description)) Console.WriteLine(a.Description);
                         a.Action?.Invoke(args);
                     });
 #if !DEBUG
@@ -123,7 +123,7 @@ namespace Metaseed.Input.MouseKeyHook
                 }
 #endif
                 // no children 
-                if(_trieWalker.ChildrenCount == 0) _trieWalker.GoToRoot();
+                if (_trieWalker.ChildrenCount == 0) _trieWalker.GoToRoot();
             }
 
             _eventSource.KeyDown += (sender, args) => KeyEventProcess(KeyEventType.Down, args as KeyEventArgsExt);

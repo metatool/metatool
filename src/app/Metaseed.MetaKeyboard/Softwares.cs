@@ -58,7 +58,7 @@ namespace Metaseed.MetaKeyboard
                     : $"{Config.Inst.Tools.EveryThing} -path {path} -toggle-window");
             });
 
-            var softwareTrigger = Keys.Z.With(Keys.CapsLock);
+            var softwareTrigger = Keys.Space.With(Keys.CapsLock);
             softwareTrigger.Then(Keys.R).Down("Metaseed.ScreenRuler", "Start Screen &Ruler", () =>
              {
                  Utils.Run(Config.Inst.Tools.Ruler);

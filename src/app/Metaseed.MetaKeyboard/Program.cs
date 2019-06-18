@@ -16,13 +16,10 @@ namespace ConsoleApp1
         {
             Keyboard.KeyPress += (o, e) => { };
 
-         var keyboard61= new Keyboard61(); 
-var fun = new FunctionalKeys();
+            var keyboard61 = new Keyboard61();
+            var fun = new FunctionalKeys();
 
-var software = new Utilities();
-
-
-            Keys.A.With(Keys.Control).Down("", "", e => Console.WriteLine("sssssssssssssssss"));
+            var software = new Utilities();
 
             Keyboard.Hook();
 
