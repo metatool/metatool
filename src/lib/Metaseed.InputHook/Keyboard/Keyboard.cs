@@ -156,7 +156,7 @@ namespace Metaseed.Input
 
         }
 
-        internal static IRemovable Hit(ICombination combination, KeyAction keyAction, Predicate<KeyEventArgsExt> predicate = null, bool markHandled = false)
+        internal static IRemovable Hit(ICombination combination, KeyAction keyAction, Predicate<KeyEventArgsExt> predicate = null, bool markHandled = true)
         {
             var handling = false;
             KeyEventArgsExt keyDownEvent = null;
