@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netcoreapp3.0;net472</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
        <RootNamespace>Metaseed.Input.MouseKeyHook</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
@@ -18,6 +18,10 @@
     <Compile Remove="Input\**" />
     <EmbeddedResource Remove="Input\**" />
     <None Remove="Input\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
 
 </Project>

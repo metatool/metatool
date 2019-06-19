@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Metaseed.Input;
 using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.DataStructures
@@ -26,6 +27,7 @@ namespace Metaseed.DataStructures
         protected internal override int ChildrenCount => _children.Count;
 
 
+        internal string Tip=>string.Join(Environment.NewLine,_children.Select(p=>p.Key + " "+ string.Join(";", p.Value._values.Select(a=>(a.KeyEvent==KeyEvent.Up?"¡ü": "¡ý") + a.Action.Description))));
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {

@@ -15,7 +15,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             CurrentNode = _trie;
         }
 
-        private TrieNode<TKey, TValue> CurrentNode { get; set; }
+        internal TrieNode<TKey, TValue> CurrentNode { get; set; }
         public bool IsOnRoot => CurrentNode == _trie;
 
         public int ChildrenCount => CurrentNode.ChildrenCount;

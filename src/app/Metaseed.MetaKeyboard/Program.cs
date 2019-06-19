@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Metaseed.Input;
 using Metaseed.MetaKeyboard;
 
@@ -10,6 +11,9 @@ namespace ConsoleApp1
         [STAThread]
         static void Main(string[] args)
         {
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             Keyboard.KeyPress += (o, e) => { };
 
             var keyboard61 = new Keyboard61();
@@ -18,7 +22,6 @@ namespace ConsoleApp1
             var software = new Utilities();
 
             Keyboard.Hook();
-
             Application.Run(new ApplicationContext());
         }
     }

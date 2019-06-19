@@ -59,7 +59,20 @@ namespace Metaseed.MetaKeyboard
                     ? $"{Config.Inst.Tools.EveryThing} -path {path} -newwindow"
                     : $"{Config.Inst.Tools.EveryThing} -path {path} -toggle-window");
             });
-
+            Keys.W.With(Keys.CapsLock).Down("Metaseed.WebSearch", "&Web Search", e =>
+            {
+                var altDown = e.KeyboardState.IsDown(Keys.Menu);
+                new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = true,
+                        FileName = altDown
+                            ? Config.Inst.Tools.SearchEngineSecondary
+                            : Config.Inst.Tools.SearchEngine
+                    }
+                }.Start();
+            });
             var softwareTrigger = Keys.Space.With(Keys.CapsLock);
             softwareTrigger.Then(Keys.R).Down("Metaseed.ScreenRuler", "Start Screen &Ruler",
                 e => { Utils.Run(Config.Inst.Tools.Ruler); });
@@ -69,7 +82,7 @@ namespace Metaseed.MetaKeyboard
 
             softwareTrigger.Then(Keys.G).Down("Metaseed.GifRecord", "Start &Gif Record ",
                 e => { Utils.Run(Config.Inst.Tools.GifTool); });
-
+            
             softwareTrigger.Then(Keys.N).Down("Metaseed.NodePad", "Start &Notepad ", e =>
             {
                 var exeName = "Notepad";
@@ -85,20 +98,7 @@ namespace Metaseed.MetaKeyboard
                 Utils.Run("Notepad");
             });
 
-            Keys.W.With(Keys.CapsLock).Down("Metaseed.WebSearch", "&Web Search", e =>
-            {
-                var altDown = e.KeyboardState.IsDown(Keys.Menu);
-                new Process
-                {
-                    StartInfo =
-                    {
-                        UseShellExecute = true,
-                        FileName = altDown
-                            ? Config.Inst.Tools.SearchEngineSecondary
-                            : Config.Inst.Tools.SearchEngine
-                    }
-                }.Start();
-            });
+
         }
     }
 }

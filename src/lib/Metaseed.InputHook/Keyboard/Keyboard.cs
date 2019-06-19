@@ -25,6 +25,11 @@ namespace Metaseed.Input
             return _Hook.Add(combinations, new KeyEventAction(keyEvent, action));
         }
 
+        public static void ShowTip()
+        {
+            _Hook.ShowTip();
+        }
+
         internal static IRemovable Map(Combination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null)
         {

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Metaseed.DataStructures;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.Implementation.Trie;
+using Metaseed.MetaKeyboard;
 
 namespace Metaseed.Input.MouseKeyHook
 {
@@ -19,6 +20,7 @@ namespace Metaseed.Input.MouseKeyHook
         {
             _trieWalker = new TrieWalker<ICombination, KeyEventAction>(_trie);
             _eventSource = Hook.GlobalEvents();
+
         }
 
         private readonly List<KeyEventHandler> _keyUpHandlers = new List<KeyEventHandler>();
@@ -141,6 +143,8 @@ namespace Metaseed.Input.MouseKeyHook
                 if (eventType == KeyEvent.Up)
                 {
                     _trieWalker.GoToChild(child);
+                   
+                    Notify.Show(child.Tip);
                     return;
                 }
             }
@@ -158,6 +162,11 @@ namespace Metaseed.Input.MouseKeyHook
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
             _keyUpHandlers.ForEach(h => _eventSource.KeyUp += h);
+        }
+
+        public void ShowTip()
+        {
+            Notify.Show(_trieWalker.CurrentNode.Tip);
         }
     }
 }

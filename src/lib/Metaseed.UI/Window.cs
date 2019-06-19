@@ -15,7 +15,7 @@ namespace Metaseed.UI
 
         public static async Task<T> Dispatch<T>(Func<T> action)
         {
-            var o =  _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+            var o = _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
             await o;
             return (T)(o.Result);
         }
@@ -42,6 +42,23 @@ namespace Metaseed.UI
         {
             PInvokes.ShowWindowAsync(hWnd, PInvokes.SW.Show);
             PInvokes.SetForegroundWindow(hWnd);
+        }
+
+        public static void ShowConsole()
+        {
+            var handle = PInvokes.GetConsoleWindow();
+            if (handle == IntPtr.Zero)
+            {
+                PInvokes.AllocConsole();
+                return;
+            }
+            PInvokes.ShowWindowAsync(handle, PInvokes.SW.Show);
+        }
+
+        public static void HideConsole()
+        {
+            var handle = PInvokes.GetConsoleWindow();
+            PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
         }
 
     }
