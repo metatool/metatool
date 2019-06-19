@@ -54,7 +54,7 @@ namespace WindowsInput
         /// Gets the <see cref="IKeyboardSimulator"/> instance for simulating Keyboard input.
         /// </summary>
         /// <value>The <see cref="IKeyboardSimulator"/> instance.</value>
-        public IKeyboardSimulator Keyboard { get { return _inputSimulator.Keyboard; } }
+        public IKeyboardSimulator Keyboard => _inputSimulator.Keyboard;
 
         /// <summary>
         /// Sends the list of <see cref="INPUT"/> messages using the <see cref="IInputMessageDispatcher"/> instance.

@@ -28,10 +28,7 @@ namespace Metaseed.Input.MouseKeyHook
         /// <summary>
         ///     Number of elements in the sequnce.
         /// </summary>
-        public int Length
-        {
-            get { return _elements.Length; }
-        }
+        public int Length => _elements.Length;
 
         /// <inheritdoc />
         public IEnumerator<T> GetEnumerator()

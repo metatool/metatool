@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Metaseed.Input
+﻿namespace Metaseed.Input
 {
     public class Mouse
     {

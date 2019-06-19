@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Windows.Documents;
-
-namespace Metaseed.MetaKeyboard
+﻿namespace Metaseed.MetaKeyboard
 {
     public class Utils
     {

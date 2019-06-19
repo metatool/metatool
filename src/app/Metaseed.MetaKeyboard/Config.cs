@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using Newtonsoft.Json;
 
 namespace Metaseed.MetaKeyboard

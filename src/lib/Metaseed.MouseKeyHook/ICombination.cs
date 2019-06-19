@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Metaseed.Input
@@ -10,7 +9,6 @@ namespace Metaseed.Input
         IEnumerable<Keys> Chord { get; }
         int ChordLength { get; }
 
-        KeyEventType EventType { get; }
         ICombination With(Keys chordKey);
         ICombination With(IEnumerable<Keys> keys);
         ICombination Control();

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using Metaseed.UI.Implementation;
 
 namespace Metaseed.UI.Implementation
 {

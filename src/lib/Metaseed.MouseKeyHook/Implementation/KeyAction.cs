@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Metaseed.Input.MouseKeyHook.Implementation
 {
@@ -19,7 +17,40 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         public override string ToString()
         {
-            return ActionId + Description;
+            return $"{ActionId}: {Description}";
+        }
+    }
+
+    public class KeyEventAction
+    {
+        public KeyEvent KeyEvent { get; }
+        public KeyAction Action { get; }
+
+        public KeyEventAction(KeyEvent keyEvent, KeyAction action)
+        {
+            KeyEvent = keyEvent;
+            Action = action;
+        }
+        public override int GetHashCode()
+        {
+            return (int)KeyEvent | Action.GetHashCode();
+        }
+        public override string ToString()
+        {
+            return KeyEvent + ": " + Action.ActionId;
+        }
+
+        protected bool Equals(KeyEventAction other)
+        {
+            return KeyEvent == other.KeyEvent && Action == other.Action;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((KeyEventAction)obj);
         }
     }
 }

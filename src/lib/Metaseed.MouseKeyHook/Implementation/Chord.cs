@@ -19,10 +19,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             _keys = additionalKeys.OrderBy(k => k).ToArray();
         }
 
-        public int Count
-        {
-            get { return _keys.Length; }
-        }
+        public int Count => _keys.Length;
 
         public IEnumerator<Keys> GetEnumerator()
         {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Metaseed.Input;
 
 namespace ConsoleApp1
@@ -14,7 +9,7 @@ namespace ConsoleApp1
         {
             ToggleKeys.NumLock.AlwaysOn();
             ToggleKeys.CapsLock.AlwaysOff();
-            Keys.CapsLock.MapOnHit(Keys.Escape, e => e.ScanCode != 0,false);
+            Keys.CapsLock.MapOnHit(Keys.Escape, e => e.ScanCode !=0,false);
 
             Keys.Oemtilde.With(Keys.CapsLock).Down("toggle caps", "", e =>
             {

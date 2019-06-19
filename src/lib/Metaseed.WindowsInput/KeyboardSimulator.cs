@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using WindowsInput.Native;
 
@@ -55,7 +53,7 @@ namespace WindowsInput
         /// Gets the <see cref="IMouseSimulator"/> instance for simulating Mouse input.
         /// </summary>
         /// <value>The <see cref="IMouseSimulator"/> instance.</value>
-        public IMouseSimulator Mouse { get { return inputSimulator.Mouse; } }
+        public IMouseSimulator Mouse => inputSimulator.Mouse;
 
         private static void ModifiersDown(InputBuilder builder, IEnumerable<VirtualKeyCode> modifierKeyCodes)
         {

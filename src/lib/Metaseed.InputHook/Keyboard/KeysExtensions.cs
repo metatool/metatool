@@ -10,19 +10,19 @@ namespace Metaseed.Input
     {
         public static IRemovable Down(this Keys key, string actionId, string simpleDescription, Action<KeyEventArgsExt> action, bool isAsync=false)
         {
-            return Keyboard.Add(new Combination(key), new KeyAction(actionId, simpleDescription, action));
+            return Keyboard.Add(new Combination(key), KeyEvent.Down, new KeyAction(actionId, simpleDescription, action));
         }
 
         public static IRemovable Up(this Keys key, string actionId, string simpleDescription, Action<KeyEventArgsExt> action)
         {
-            return Keyboard.Add(new Combination(key, KeyEventType.Up), new KeyAction(actionId, simpleDescription, action));
+            return Keyboard.Add(new Combination(key), KeyEvent.Up, new KeyAction(actionId, simpleDescription, action));
         }
         public static IRemovable Hit(this Keys key, string actionId, string description, Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> predicate, bool markHandled = false)
         {
             var keyAction = new KeyAction(actionId, description, action);
             var combination = new Combination(key);
             return Keyboard.Hit(combination, keyAction, predicate, markHandled);
-        }
+        } 
 
         public static IRemovable Map(this Keys key, Keys target, Predicate<KeyEventArgsExt> predicate = null)
         {

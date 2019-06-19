@@ -17,24 +17,21 @@ namespace Metaseed.Input.MouseKeyHook
     public class Combination : ICombination
     {
         private readonly Chord _chord;
-        private Key _key;
-        public Combination(Keys triggerKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,null,  eventType) { }
-        public Combination(Keys triggerKey,Keys chordKey,  KeyEventType eventType = KeyEventType.Down) : this(triggerKey,new Keys[] { chordKey }, eventType) { }
-        public Combination(Keys triggerKey,  IEnumerable<Keys> chordKeys,  KeyEventType eventType = KeyEventType.Down)
-            : this(triggerKey, new Chord(chordKeys?? Enumerable.Empty<Keys>()), eventType){}
+        private Keys _key;
+        public Combination(Keys triggerKey ) : this(triggerKey,null  ) { }
+        public Combination(Keys triggerKey,Keys chordKey ) : this(triggerKey,new Keys[] { chordKey }) { }
+        public Combination(Keys triggerKey,  IEnumerable<Keys> chordKeys)
+            : this(triggerKey, new Chord(chordKeys?? Enumerable.Empty<Keys>())){}
 
-        private Combination(Keys triggerKey, Chord chord, KeyEventType eventType = KeyEventType.Down)
+        private Combination(Keys triggerKey, Chord chord)
         {
-            EventType = eventType;
             TriggerKey = triggerKey;
             _chord = chord?? new Chord(Enumerable.Empty<Keys>());
-            _key = new Key(TriggerKey, EventType);
+            _key = TriggerKey;
             
         }
 
 
-        internal Key Key => _key;
-        public KeyEventType EventType { get; }
         /// <summary>
         ///     Last key which triggers the combination.
         /// </summary>
@@ -43,18 +40,12 @@ namespace Metaseed.Input.MouseKeyHook
         /// <summary>
         ///     Keys which all must be alredy down when trigger key is pressed.
         /// </summary>
-        public IEnumerable<Keys> Chord
-        {
-            get { return _chord; }
-        }
+        public IEnumerable<Keys> Chord => _chord;
 
         /// <summary>
         ///     Number of chord (modifier) keys which must be already down when the trigger key is pressed.
         /// </summary>
-        public int ChordLength
-        {
-            get { return _chord.Count; }
-        }
+        public int ChordLength => _chord.Count;
 
         //        /// <summary>
         //        ///     A chainable builder method to simplify chord creation. Used along with <see cref="TriggeredBy" />,
@@ -130,12 +121,7 @@ namespace Metaseed.Input.MouseKeyHook
         /// <inheritdoc />
         public override string ToString()
         {
-            var eventType = EventType == KeyEventType.Up
-                ? "_up"
-                :EventType == KeyEventType.Press
-                ? "_press"
-                :"";
-            return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1))) + eventType;
+            return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)));
         }
 
         /// <summary>
@@ -171,7 +157,7 @@ namespace Metaseed.Input.MouseKeyHook
         {
             return
                 TriggerKey == other.TriggerKey
-                && Chord.Equals(other.Chord) && EventType == other.EventType;
+                && Chord.Equals(other.Chord);
         }
 
         /// <inheritdoc />
@@ -188,7 +174,7 @@ namespace Metaseed.Input.MouseKeyHook
         public override int GetHashCode()
         {
             if (_hash != 0) return _hash;
-            _hash =  Chord.GetHashCode() ^ (int)TriggerKey ^ ((int) EventType<< 24);
+            _hash =  Chord.GetHashCode() ^ (int)TriggerKey;
             return _hash;
         }
     }

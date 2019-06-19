@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using WindowsInput.Native;
@@ -105,7 +103,6 @@ namespace Metaseed.Input
                     if (handled)
                     {
                         handled = false;
-                        KeyboardState.HandledDownKeys.Remove(_key);
                     }
                     e.Handled = true;
                 });

@@ -3,11 +3,9 @@
 // See license.txt or https://mit-license.org/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Metaseed.Input.MouseKeyHook;
 
 namespace Metaseed.Input.MouseKeyHook
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using WinReg = Microsoft.Win32.Registry;
 

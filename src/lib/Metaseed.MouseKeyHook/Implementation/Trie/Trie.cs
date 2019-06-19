@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.DataStructures
 {
-    public class Trie<TKey,TValue> : TrieNode<TKey,TValue>, ITrie<TKey,TValue>
+    public class Trie<TKey,TValue> : TrieNode<TKey,TValue>, ITrie<TKey,TValue> where TValue: KeyEventAction
     {
         public IEnumerable<TValue> Get(IList<TKey> query)
         {

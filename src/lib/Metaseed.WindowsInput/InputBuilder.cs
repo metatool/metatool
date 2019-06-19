@@ -65,13 +65,7 @@ namespace WindowsInput
         /// Gets the <see cref="INPUT"/> at the specified position.
         /// </summary>
         /// <value>The <see cref="INPUT"/> message at the specified position.</value>
-        public INPUT this[int position]
-        {
-            get
-            {
-                return _inputList[position];
-            }
-        }
+        public INPUT this[int position] => _inputList[position];
 
         /// <summary>
         /// Determines if the <see cref="VirtualKeyCode"/> is an ExtendedKey

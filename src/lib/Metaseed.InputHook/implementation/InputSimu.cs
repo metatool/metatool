@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using WindowsInput;
+﻿using WindowsInput;
 
 namespace Metaseed.Input
 {

@@ -1,20 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Resources;
+using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.DataStructures
 {
-    public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue>
+    public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue> where TValue: KeyEventAction
     {
-        private readonly Dictionary<TKey, TrieNode<TKey, TValue>> _children;
-        private readonly List<TValue>                             _values;
+        protected readonly Dictionary<TKey, TrieNode<TKey, TValue>> _children;
+        private IList<TValue> _values = new KeyActionList<TValue>();
 
         protected TrieNode()
         {
             _children = new Dictionary<TKey, TrieNode<TKey, TValue>>();
-            _values   = new List<TValue>();
         }
+        internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenPairs  => _children;
+
 
         internal void Clear()
         {
@@ -39,7 +40,7 @@ namespace Metaseed.DataStructures
         protected override bool IsRemovable(IList<TKey> query, int position)
         {
             return position < query.Count && _children.Count == 1 && _values.Count == 0 && _children.ContainsKey(query[position]) ||
-                   position == query.Count  && _values.Count == 0 && _children.Count == 0;
+                   position == query.Count && _values.Count == 0 && _children.Count == 0;
         }
 
         protected override TrieNodeBase<TKey, TValue> GetOrCreateChild(TKey key)
@@ -50,10 +51,10 @@ namespace Metaseed.DataStructures
             return result;
         }
 
-        internal TrieNode<TKey, TValue> GetChildOrNull( Func<TKey,TKey,TKey> aggregateFunc, TKey initKey )
+        internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc, TKey initKey)
         {
-            var key = _children.Keys.Aggregate(initKey,aggregateFunc);
-            if (EqualityComparer<TKey>.Default.Equals(key,default(TKey))) return null;
+            var key = _children.Keys.Aggregate(initKey, aggregateFunc);
+            if (EqualityComparer<TKey>.Default.Equals(key, default(TKey))) return null;
             return GetChildOrNull(key);
         }
         internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)
@@ -82,9 +83,9 @@ namespace Metaseed.DataStructures
                 return true;
             }
 
-            var i = _values.FindIndex(predicate);
-            if (i == -1) return false;
-            _values.RemoveAt(i);
+            var i = _values.FirstOrDefault(v => predicate(v));
+            if (!object.Equals(i, default(TValue))) return false;
+            _values.Remove(i);
             return true;
         }
 
