@@ -4,6 +4,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationIcon>metaKeyboard.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
