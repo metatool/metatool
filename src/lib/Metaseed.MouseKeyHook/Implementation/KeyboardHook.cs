@@ -19,22 +19,26 @@ namespace Metaseed.Input.MouseKeyHook
         {
             _trieWalker = new TrieWalker<ICombination, KeyEventAction>(_trie);
             _eventSource = Hook.GlobalEvents();
-
         }
 
         private readonly List<KeyEventHandler> _keyUpHandlers = new List<KeyEventHandler>();
+
         public event KeyEventHandler KeyUp
         {
             add => _keyUpHandlers.Add(value);
             remove => _keyUpHandlers.Remove(value);
         }
+
         private readonly List<KeyPressEventHandler> _keyPressHandlers = new List<KeyPressEventHandler>();
+
         public event KeyPressEventHandler KeyPress
         {
             add => _keyPressHandlers.Add(value);
             remove => _keyPressHandlers.Remove(value);
         }
+
         private readonly List<KeyEventHandler> _keyDownHandlers = new List<KeyEventHandler>();
+
         public event KeyEventHandler KeyDown
         {
             add => _keyDownHandlers.Add(value);
@@ -47,18 +51,21 @@ namespace Metaseed.Input.MouseKeyHook
             private readonly IList<ICombination> _combinations;
             private readonly KeyEventAction _action;
 
-            public CombinationRemoveToken(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> combinations, KeyEventAction action)
+            public CombinationRemoveToken(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> combinations,
+                KeyEventAction action)
             {
                 _trie = trie;
                 _combinations = combinations;
                 _action = action;
             }
+
             public void Remove()
             {
                 var r = _trie.Remove(_combinations, action => action.Equals(_action));
                 Console.WriteLine(r);
             }
         }
+
         public IRemovable Add(IList<ICombination> combination, KeyEventAction action)
         {
             _trie.Add(combination, action);
@@ -67,7 +74,7 @@ namespace Metaseed.Input.MouseKeyHook
 
         public IRemovable Add(ICombination combination, KeyEventAction action)
         {
-            return Add(new List<ICombination> { combination }, action);
+            return Add(new List<ICombination> {combination}, action);
         }
 
         public void Run()
@@ -76,7 +83,6 @@ namespace Metaseed.Input.MouseKeyHook
 
             void KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
             {
-                var keyboardState = args.KeyboardState;
                 var downInChord = false;
 
                 var child = _trieWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
@@ -84,24 +90,25 @@ namespace Metaseed.Input.MouseKeyHook
                     if (eventType == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
 
                     if (args.KeyCode != combination.TriggerKey) return acc;
-                    var mach = combination.Chord.All(keyboardState.IsDown);
+                    var mach = combination.Chord.All(args.KeyboardState.IsDown);
                     if (!mach) return acc;
                     if (acc == null) return combination;
                     return acc.ChordLength >= combination.ChordLength ? acc : combination;
                 });
- 
+
                 // no match
                 if (child == null)
                 {
-                    if (!downInChord && eventType == KeyEvent.Down&&!_trieWalker.IsOnRoot)
+                    if (!downInChord && eventType == KeyEvent.Down && !_trieWalker.IsOnRoot)
                     {
                         _trieWalker.GoToRoot();
                         KeyEventProcess(eventType, args);
                     }
+
                     return; // waiting
                 }
 
-                // on matched child
+                // matched
                 var actionList = child.Values() as KeyActionList<KeyEventAction>;
                 Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
@@ -112,7 +119,8 @@ namespace Metaseed.Input.MouseKeyHook
 #endif
                 foreach (var keyEventAction in actionList[eventType])
                 {
-                    if (!string.IsNullOrEmpty(keyEventAction.Description)) Console.WriteLine(keyEventAction.Description);
+                    if (!string.IsNullOrEmpty(keyEventAction.Description))
+                        Console.WriteLine(keyEventAction.Description);
                     keyEventAction.Action?.Invoke(args);
                 }
 #if !DEBUG
@@ -130,12 +138,13 @@ namespace Metaseed.Input.MouseKeyHook
                     return;
                 }
 
-                if (eventType == KeyEvent.Up) {
+                if (eventType == KeyEvent.Up)
+                {
                     _trieWalker.GoToChild(child);
                     return;
                 }
-
             }
+
             _eventSource.KeyUp += (o, e) =>
             {
                 if (KeyboardState.HandledDownKeys.Contains(e.KeyCode))
@@ -149,10 +158,6 @@ namespace Metaseed.Input.MouseKeyHook
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
             _keyUpHandlers.ForEach(h => _eventSource.KeyUp += h);
-
-
         }
-
-
     }
 }
