@@ -1,4 +1,5 @@
-﻿using Metaseed.Input;
+﻿using System;
+using Metaseed.Input;
 using Metaseed.UI;
 using System.Diagnostics;
 using System.Linq;
@@ -58,6 +59,27 @@ namespace Metaseed.MetaKeyboard
                 Utils.Run(shiftDown
                     ? $"{Config.Inst.Tools.EveryThing} -path {path} -newwindow"
                     : $"{Config.Inst.Tools.EveryThing} -path {path} -toggle-window");
+            });
+            
+            Keys.T.With(Keys.CapsLock).Down("Metaseed.Terminal", "Open &Terminal", async e =>
+            {
+                e.Handled = true;
+                var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
+
+                var c = Window.CurrentWindowClass;
+                if ("CabinetWClass" != c)
+                {
+                    var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                    Utils.Run(shiftDown
+                        ? $"{Config.Inst.Tools.Cmd}  /single /start \"{folderPath}\""
+                        : $"{Config.Inst.Tools.Cmd}  /start \"{folderPath}\"");
+                    return;
+                }
+
+                var path = await Explorer.Path(Window.CurrentWindowHandle);
+                Utils.Run(shiftDown
+                    ? $"{Config.Inst.Tools.Cmd} /start \"{path}\""
+                    : $"{Config.Inst.Tools.Cmd} /single /start \"{path}\"");
             });
             Keys.W.With(Keys.CapsLock).Down("Metaseed.WebSearch", "&Web Search", e =>
             {

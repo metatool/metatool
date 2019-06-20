@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <ApplicationIcon>metaKeyboard.ico</ApplicationIcon>
@@ -27,17 +27,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="metaKeyboard.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="metaKeyboard.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

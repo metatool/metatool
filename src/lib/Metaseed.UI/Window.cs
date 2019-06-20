@@ -28,6 +28,8 @@ namespace Metaseed.UI
             }
         }
 
+
+
         public static IntPtr CurrentWindowHandle => PInvokes.GetForegroundWindow();
 
 
