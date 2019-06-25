@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ni="http://www.metaseed.com/notifyicon"
-                    xmlns:metaKeyboard="clr-namespace:Metaseed.MetaKeyboard">
+                    xmlns:notify="clr-namespace:Metaseed.UI.Notify">
 
     <!-- The taskbar context menu - the first row is a dummy to show off simple data binding -->
     <!--
@@ -9,8 +9,7 @@
         reuse the same context menu (which is a resource) again (which will have its DataContext set to the old TaskbarIcon)
   -->
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
-        <MenuItem Header="Show Window" Command="{Binding ShowWindowCommand}" />
-        <MenuItem Header="Hide Window" Command="{Binding HideWindowCommand}" />
+        <MenuItem x:Name="menu" Header="Show Window" Command="{Binding ShowWindowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
         <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
     </ContextMenu>
@@ -18,14 +17,14 @@
 
     <!-- the application's NotifyIcon - started from App.xaml.cs. Declares its own view model. -->
     <ni:TaskbarIcon x:Key="NotifyIcon"
-                    IconSource="/metaKeyboard.ico"
+                    IconSource="./metaKeyboard.ico"
                     ToolTipText="Double-click for window, right-click for menu"
                     DoubleClickCommand="{Binding ShowWindowCommand}"
                     ContextMenu="{StaticResource SysTrayMenu}">
 
         <!-- self-assign a data context (could also be done programmatically) -->
         <ni:TaskbarIcon.DataContext>
-            <metaKeyboard:NotifyIconViewModel />
+            <notify:NotifyIconViewModel />
         </ni:TaskbarIcon.DataContext>
     </ni:TaskbarIcon>
 

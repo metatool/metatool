@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="Metaseed.UI.Notify.FancyBalloon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:tb="http://www.hardcodet.net/taskbar"
+             xmlns:ni="http://www.metaseed.com/notifyicon"
+             x:Name="me" Height="120"
+             Width="240">
+    <UserControl.Resources>
+        <Storyboard x:Key="FadeIn">
+            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                           Storyboard.TargetName="grid"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                      Value="0" />
+                <SplineDoubleKeyFrame KeyTime="00:00:01"
+                                      Value="0.95" />
+                <SplineDoubleKeyFrame KeyTime="00:00:03"
+                                      Value="0.95" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="FadeBack">
+            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                           Storyboard.TargetName="grid"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                      Value="1" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000"
+                                      Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="FadeOut"
+                    Completed="OnFadeOutCompleted">
+            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
+                                           Storyboard.TargetName="grid"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00"
+                                      Value="1" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000"
+                                      Value="0.2" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="ni:TaskbarIcon.BalloonShowing">
+            <BeginStoryboard Storyboard="{StaticResource FadeIn}"
+                             x:Name="FadeIn_BeginStoryboard" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Mouse.MouseEnter">
+            <StopStoryboard BeginStoryboardName="FadeIn_BeginStoryboard" />
+            <BeginStoryboard x:Name="FadeBack_BeginStoryboard1"
+                             Storyboard="{StaticResource FadeBack}" />
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ni:TaskbarIcon.BalloonClosing">
+            <BeginStoryboard Storyboard="{StaticResource FadeOut}"
+                             x:Name="FadeOut_BeginStoryboard" />
+        </EventTrigger>
+    </UserControl.Triggers>
+    <Grid x:Name="grid"
+          MouseEnter="grid_MouseEnter">
+        <Border HorizontalAlignment="Stretch"
+                Margin="1"
+                BorderThickness="1,1,1,1"
+                BorderBrush="#FF997137">
+            <Border.Effect>
+                <DropShadowEffect Color="#FF747474" />
+            </Border.Effect>
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1"
+                                     StartPoint="0.5,0">
+                    <GradientStop Color="#333333"
+                                  Offset="0" />
+                    <GradientStop Color="#111111"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <TextBlock Name="Text" Padding="4"
+                   VerticalAlignment="Stretch"
+                   Foreground="White"
+                   Text="{Binding Path=BalloonText, ElementName=me, Mode=Default}"
+                   TextWrapping="Wrap" />
+    </Grid>
+</UserControl>

@@ -11,11 +11,11 @@
         
         
         <!-- merge NotifyIcon and related stuff into the application -->
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="NotifyIconResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <!-- <ResourceDictionary> -->
+        <!--     <ResourceDictionary.MergedDictionaries> -->
+        <!--         <ResourceDictionary Source="NotifyIconResources.xaml" /> -->
+        <!--     </ResourceDictionary.MergedDictionaries> -->
+        <!-- </ResourceDictionary> -->
 
     </Application.Resources>
 </Application>

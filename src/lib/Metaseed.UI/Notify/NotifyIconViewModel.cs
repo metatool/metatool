@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Metaseed.MetaKeyboard;
 
-namespace Metaseed.MetaKeyboard
+namespace Metaseed.UI.Notify
 {
     /// <summary>
     /// Provides bindable properties and commands for the NotifyIcon. In this sample, the
@@ -18,29 +20,22 @@ namespace Metaseed.MetaKeyboard
         {
             get
             {
-                return new DelegateCommand
+                return new DelegateCommand<MenuItem>
                 {
-                    CanExecuteFunc = () => Application.Current.MainWindow == null,
-                    CommandAction = () =>
+                    CommandAction = ( m) =>
                     {
-                        Application.Current.MainWindow = new MainWindow();
-                        Application.Current.MainWindow.Show();
+                       
+                        if (Application.Current.MainWindow.IsVisible)
+                        {
+                            m.Header = "Show Window";
+                            Application.Current.MainWindow.Hide();
+                        }
+                        else
+                        {
+                            m.Header = "Hide Window";
+                            Application.Current.MainWindow.Show();
+                        }
                     }
-                };
-            }
-        }
-
-        /// <summary>
-        /// Hides the main window. This command is only enabled if a window is open.
-        /// </summary>
-        public ICommand HideWindowCommand
-        {
-            get
-            {
-                return new DelegateCommand
-                {
-                    CommandAction = () => Application.Current.MainWindow.Close(),
-                    CanExecuteFunc = () => Application.Current.MainWindow != null
                 };
             }
         }
@@ -53,7 +48,7 @@ namespace Metaseed.MetaKeyboard
         {
             get
             {
-                return new DelegateCommand {CommandAction = () => Application.Current.Shutdown()};
+                return new DelegateCommand<object> {CommandAction = o => Application.Current.Shutdown()};
             }
         }
     }
@@ -62,19 +57,19 @@ namespace Metaseed.MetaKeyboard
     /// <summary>
     /// Simplistic delegate command for the demo.
     /// </summary>
-    public class DelegateCommand : ICommand
+    public class DelegateCommand<T> : ICommand where T:class
     {
-        public Action CommandAction { get; set; }
-        public Func<bool> CanExecuteFunc { get; set; }
+        public Action<T> CommandAction { get; set; }
+        public Func<T,bool> CanExecuteFunc { get; set; }
 
         public void Execute(object parameter)
         {
-            CommandAction();
+            CommandAction(parameter as T);
         }
 
         public bool CanExecute(object parameter)
         {
-            return CanExecuteFunc == null  || CanExecuteFunc();
+            return CanExecuteFunc == null  || CanExecuteFunc(parameter as T);
         }
 
         public event EventHandler CanExecuteChanged

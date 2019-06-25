@@ -4,8 +4,8 @@
     <OutputType>Library</OutputType>
     <TargetFrameworks>netcoreapp3.0;</TargetFrameworks>
        <RootNamespace>Metaseed.UI</RootNamespace>
-    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
 
     <ApplicationIcon />
     <StartupObject />
@@ -17,6 +17,12 @@
     <OutputPath>..\..\..\pkg\Metaseed.UI</OutputPath>
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="metaKeyboard.ico" />
+    <None Remove="NotifyIconResources.xaml" />
+    <None Remove="Notify\FancyBalloon.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <COMReference Include="Shell32.dll">
@@ -39,6 +45,22 @@
 
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Composition" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Notify\metaKeyboard.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Notify\FancyBalloon.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="FancyBalloon.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
 

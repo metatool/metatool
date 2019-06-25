@@ -7,6 +7,7 @@ namespace Metaseed.UI
 {
     public class Window
     {
+    
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
         public static void Dispatch(Delegate action)
         {
@@ -45,7 +46,12 @@ namespace Metaseed.UI
             PInvokes.ShowWindowAsync(hWnd, PInvokes.SW.Show);
             PInvokes.SetForegroundWindow(hWnd);
         }
-
+        public static void InitialConsole()
+        {
+            PInvokes.AllocConsole();
+            var handle = PInvokes.GetConsoleWindow();
+            PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
+        }
         public static void ShowConsole()
         {
             var handle = PInvokes.GetConsoleWindow();
