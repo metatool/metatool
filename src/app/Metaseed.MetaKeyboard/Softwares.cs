@@ -60,7 +60,7 @@ namespace Metaseed.MetaKeyboard
                     ? $"{Config.Inst.Tools.EveryThing} -path {path} -newwindow"
                     : $"{Config.Inst.Tools.EveryThing} -path {path} -toggle-window");
             });
-            
+
             Keys.T.With(Keys.CapsLock).Down("Metaseed.Terminal", "Open &Terminal", async e =>
             {
                 e.Handled = true;
@@ -95,18 +95,33 @@ namespace Metaseed.MetaKeyboard
                     }
                 }.Start();
             });
-            var softwareTrigger = Keys.Space.With(Keys.CapsLock);
+
+            var softwareTrigger = Keys.Space.With(Keys.CapsLock).Handled();
+
             softwareTrigger.Then(Keys.R).Down("Metaseed.ScreenRuler", "Start Screen &Ruler",
-                e => { Utils.Run(Config.Inst.Tools.Ruler); });
+                e =>
+                {
+                    e.Handled = true;
+                    Utils.Run(Config.Inst.Tools.Ruler);
+                });
 
             softwareTrigger.Then(Keys.T).Down("Metaseed.TaskExplorer", "Start &Task Explorer ",
-                e => { Utils.Run(Config.Inst.Tools.ProcessExplorer); });
+                e =>
+                {
+                    e.Handled = true;
+                    Utils.Run(Config.Inst.Tools.ProcessExplorer);
+                });
 
             softwareTrigger.Then(Keys.G).Down("Metaseed.GifRecord", "Start &Gif Record ",
-                e => { Utils.Run(Config.Inst.Tools.GifTool); });
-            
+                e =>
+                {
+                    e.Handled = true;
+                    Utils.Run(Config.Inst.Tools.GifTool);
+                });
+
             softwareTrigger.Then(Keys.N).Down("Metaseed.NodePad", "Start &Notepad ", e =>
             {
+                e.Handled = true;
                 var exeName = "Notepad";
                 var notePad = Process.GetProcessesByName(exeName);
 
@@ -119,8 +134,6 @@ namespace Metaseed.MetaKeyboard
 
                 Utils.Run("Notepad");
             });
-
-
         }
     }
 }

@@ -92,6 +92,7 @@ namespace Metaseed.MetaKeyboard
             Keys.C.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
                 .Down("Metaseed.Close_MetaKeyBoard", "Close", e =>
                 {
+                    Notify.ShowMessage("MetaKeyBoard Closing...");
                     Environment.Exit(0);
                 });
 
@@ -99,6 +100,7 @@ namespace Metaseed.MetaKeyboard
             Keys.X.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
                 .Down("Metaseed.Restart_MetaKeyBoard", "Restart", e =>
                 {
+                    Notify.ShowMessage("MetaKeyBoard Restarting...");
                     var p = Application.ExecutablePath;
                     var path = p.Remove(p.Length - 4, 4) + ".exe";
                     Process.Start(path);

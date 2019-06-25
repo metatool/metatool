@@ -41,6 +41,11 @@ namespace Metaseed.Input
             return new Combination(key, chord);
         }
 
+        public static ICombination Handled(this Keys key)
+        {
+            return new Combination(key).Handled();
+        }
+
         public static ICombination With(this Keys triggerKey, IEnumerable<Keys> chordsKeys)
         {
             return new Combination(triggerKey, chordsKeys);

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.Input.MouseKeyHook
@@ -104,5 +105,7 @@ namespace Metaseed.Input.MouseKeyHook
 
             OnCombination(source, wrapMap, buffer.Clear);
         }
+
+ 
     }
 }

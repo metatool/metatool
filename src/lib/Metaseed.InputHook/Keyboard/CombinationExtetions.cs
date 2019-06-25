@@ -38,5 +38,11 @@ namespace Metaseed.Input
         {
             return Keyboard.MapOnHit(key, target, e => predicate == null || predicate(e));
         }
+        public static ICombination Handled(this ICombination combination)
+        {
+            combination.Down("", "", e => e.Handled = true);
+            combination.Up("", "", e => e.Handled = true);
+            return combination;
+        }
     }
 }

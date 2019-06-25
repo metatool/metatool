@@ -109,11 +109,9 @@ namespace Metaseed.Input
                     if (handling && e.KeyCode == source.TriggerKey)
                     {
                         handling = false;
-                        // e.Handled = true;
                     }
 
                     var up = e.KeyboardState.IsUp(source.TriggerKey) && e.KeyboardState.AreAllUp(source.Chord);
-                    //                    Console.WriteLine("" + e + e.KeyboardState);
                     if (!up) return;
                     AsyncCall();
                 }
@@ -146,13 +144,19 @@ namespace Metaseed.Input
                         e.Handled = true;
 
                         if (keyDownEvent != e.LastKeyDownEvent) return;
-
-
                         AsyncCall();
                     })
             };
         }
 
+        /// <summary>
+        /// down up happened successively
+        /// </summary>
+        /// <param name="combination"></param>
+        /// <param name="keyAction"></param>
+        /// <param name="predicate"></param>
+        /// <param name="markHandled"></param>
+        /// <returns></returns>
         internal static IRemovable Hit(ICombination combination, KeyAction keyAction,
             Predicate<KeyEventArgsExt> predicate = null, bool markHandled = true)
         {
@@ -186,7 +190,7 @@ namespace Metaseed.Input
 
                     if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
                     {
-                        Async(() => keyAction.Action(e));
+                        Async(() => keyAction?.Action(e));
                     }
                 })
             };
