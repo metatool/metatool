@@ -144,7 +144,7 @@ namespace Metaseed.Input.MouseKeyHook
                 {
                     _trieWalker.GoToChild(child);
                    
-                    Notify.Show(child.Tip);
+                    if(child.ChildrenCount!=0) Notify.ShowKeysTip(child.Tip);
                     return;
                 }
             }
@@ -166,7 +166,7 @@ namespace Metaseed.Input.MouseKeyHook
 
         public void ShowTip()
         {
-            Notify.Show(_trieWalker.CurrentNode.Tip);
+            Notify.ShowKeysTip(_trieWalker.CurrentNode.Tip);
         }
     }
 }

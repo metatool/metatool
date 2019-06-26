@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Metaseed.NotifyIcon;
@@ -37,21 +39,22 @@ namespace Metaseed.MetaKeyboard
             if (msg == "") return;
             trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
-        public static void Show(string description)
+        public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)
         {
-            if (description == "") return;
-            var b = new FancyBalloon(){BalloonText = description};
-            var formattedText = new FormattedText(
-                description,
-                CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(b.TextBlock.FontFamily, b.TextBlock.FontStyle, b.TextBlock.FontWeight, b.TextBlock.FontStretch),
-                b.TextBlock.FontSize,
-                Brushes.Black,
-                new NumberSubstitution(),
-                1);
-            b.Width = formattedText.Width + 8;
-            b.Height = formattedText.Height + 8;
+            if (tips == null) return;
+            var description = tips.SelectMany(t => t.descriptions.Select(d => new TipItem(){key=t.key, description= d}));
+            var b = new FancyBalloon(){Tips = new ObservableCollection<TipItem>(description)};
+            // var formattedText = new FormattedText(
+            //     description,
+            //     CultureInfo.CurrentCulture,
+            //     FlowDirection.LeftToRight,
+            //     new Typeface(b.TextBlock.FontFamily, b.TextBlock.FontStyle, b.TextBlock.FontWeight, b.TextBlock.FontStretch),
+            //     b.TextBlock.FontSize,
+            //     Brushes.Black,
+            //     new NumberSubstitution(),
+            //     1);
+            // b.Width = formattedText.Width + 8;
+            // b.Height = formattedText.Height + 8;
 
             trayIcon.ShowCustomBalloon(b,PopupAnimation.None,40000);
         }

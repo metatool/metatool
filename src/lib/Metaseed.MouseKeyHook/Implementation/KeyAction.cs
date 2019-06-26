@@ -33,11 +33,11 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         }
         public override int GetHashCode()
         {
-            return (int)KeyEvent | Action.GetHashCode();
+            return (int)KeyEvent | Action?.GetHashCode()??0;
         }
         public override string ToString()
         {
-            return KeyEvent + ": " + Action.ActionId;
+            return KeyEvent + ": " + Action?.ActionId;
         }
 
         protected bool Equals(KeyEventAction other)

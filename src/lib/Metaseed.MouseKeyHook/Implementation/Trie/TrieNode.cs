@@ -27,7 +27,7 @@ namespace Metaseed.DataStructures
         protected internal override int ChildrenCount => _children.Count;
 
 
-        internal string Tip=>string.Join(Environment.NewLine,_children.Where(p=> p.Value._values.Any(ea=> ea.Action.Description !="")).Select(p=>p.Key + "\t"+ string.Join(";", p.Value._values.Select(ea=>(ea.KeyEvent==KeyEvent.Up?"¡ü": "¡ý") + ea.Action.Description))));
+        internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip=>_children.Select(p=>(p.Key.ToString(),p.Value._values.Where(ea=> !string.IsNullOrEmpty(ea.Action.Description)).Select(ea=>(ea.KeyEvent==KeyEvent.Up?"¡ü ": "¡ý ") + ea.Action.Description)));
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {

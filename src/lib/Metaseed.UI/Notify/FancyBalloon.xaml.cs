@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -7,6 +9,11 @@ using Metaseed.NotifyIcon;
 
 namespace Metaseed.UI.Notify
 {
+    public class TipItem
+    {
+        public string key { get; set; }
+        public string description { get; set; }
+    }
     /// <summary>
     /// Interaction logic for FancyBalloon.xaml
     /// </summary>
@@ -19,26 +26,21 @@ namespace Metaseed.UI.Notify
         /// <summary>
         /// Description
         /// </summary>
-        public static readonly DependencyProperty BalloonTextProperty =
-            DependencyProperty.Register("BalloonText",
-                typeof (string),
+        public static readonly DependencyProperty TipsProperty =
+            DependencyProperty.Register("Tips",
+                typeof (ObservableCollection<TipItem>),
                 typeof (FancyBalloon),
-                new FrameworkPropertyMetadata(""));
+                new FrameworkPropertyMetadata(null));
 
         /// <summary>
         /// A property wrapper for the <see cref="BalloonTextProperty"/>
         /// dependency property:<br/>
         /// Description
         /// </summary>
-        public string BalloonText
+        public ObservableCollection<TipItem> Tips
         {
-            get { return (string) GetValue(BalloonTextProperty); }
-            set { SetValue(BalloonTextProperty, value); }
-        }
-
-        public TextBlock TextBlock
-        {
-            get { return Text; }
+            get { return (ObservableCollection<TipItem>) GetValue(TipsProperty); }
+            set { SetValue(TipsProperty, value); }
         }
 
         #endregion
@@ -48,7 +50,6 @@ namespace Metaseed.UI.Notify
             InitializeComponent();
             TaskbarIcon.AddBalloonClosingHandler(this, OnBalloonClosing);
         }
-
 
         /// <summary>
         /// By subscribing to the <see cref="TaskbarIcon.BalloonClosingEvent"/>

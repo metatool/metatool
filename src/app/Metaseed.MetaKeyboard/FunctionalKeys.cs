@@ -106,7 +106,9 @@ namespace Metaseed.MetaKeyboard
                     Process.Start(path);
                     Environment.Exit(0);
                 });
-            Keys.F1.Down("Metaseed.Help", "Show Tips", e => { Keyboard.ShowTip(); });
+            Keys.OemQuestion.With(Keys.CapsLock).Down("Metaseed.Help", "Show Tips", e => { Keyboard.ShowTip();
+                e.Handled = true;
+            });
         }
 
     }

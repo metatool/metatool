@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:tb="http://www.hardcodet.net/taskbar"
              xmlns:ni="http://www.metaseed.com/notifyicon"
-             x:Name="me" Height="120"
-             Width="240">
+             Width="Auto" Height="Auto"
+             x:Name="me">
     <UserControl.Resources>
         <Storyboard x:Key="FadeIn">
             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
@@ -74,10 +74,24 @@
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
-        <TextBlock Name="Text" Padding="4"
-                   VerticalAlignment="Stretch"
-                   Foreground="White"
-                   Text="{Binding Path=BalloonText, ElementName=me, Mode=Default}"
-                   TextWrapping="Wrap" />
+        <ListView ItemsSource="{Binding Path=Tips, ElementName=me}" Background="{x:Null}" BorderBrush="{x:Null}"
+                  Foreground="White">
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding key}" />
+                    <GridViewColumn DisplayMemberBinding="{Binding description}" />
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <!-- <TextBlock Name="Text" Padding="4" -->
+        <!--            VerticalAlignment="Stretch" -->
+        <!--            Text="{Binding Path=BalloonText, ElementName=me, Mode=Default}" -->
+        <!--            TextWrapping="Wrap" /> -->
     </Grid>
 </UserControl>
