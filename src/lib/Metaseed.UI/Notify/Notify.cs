@@ -56,7 +56,7 @@ namespace Metaseed.MetaKeyboard
             // b.Width = formattedText.Width + 8;
             // b.Height = formattedText.Height + 8;
 
-            trayIcon.ShowCustomBalloon(b,PopupAnimation.None,40000);
+            trayIcon.ShowCustomBalloon(b,PopupAnimation.None,8000);
         }
 
     }

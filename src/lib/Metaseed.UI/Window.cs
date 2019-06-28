@@ -7,8 +7,9 @@ namespace Metaseed.UI
 {
     public class Window
     {
-    
+
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
         public static void Dispatch(Delegate action)
         {
             _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
@@ -18,8 +19,9 @@ namespace Metaseed.UI
         {
             var o = _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
             await o;
-            return (T)(o.Result);
+            return (T) (o.Result);
         }
+
         public static string CurrentWindowClass
         {
             get
@@ -46,12 +48,14 @@ namespace Metaseed.UI
             PInvokes.ShowWindowAsync(hWnd, PInvokes.SW.Show);
             PInvokes.SetForegroundWindow(hWnd);
         }
+
         public static void InitialConsole()
         {
             PInvokes.AllocConsole();
             var handle = PInvokes.GetConsoleWindow();
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
         }
+
         public static void ShowConsole()
         {
             var handle = PInvokes.GetConsoleWindow();
@@ -60,6 +64,7 @@ namespace Metaseed.UI
                 PInvokes.AllocConsole();
                 return;
             }
+
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Show);
         }
 
@@ -69,5 +74,13 @@ namespace Metaseed.UI
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
         }
 
+        public static bool IsExplorerOrOpenSaveDialog
+        {
+            get
+            {
+                var c = UI.Window.CurrentWindowClass;
+                return "CabinetWClass" == c || "#32770" == c;
+            }
+        }
     }
 }

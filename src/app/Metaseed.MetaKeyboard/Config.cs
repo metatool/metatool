@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 
 namespace Metaseed.MetaKeyboard
@@ -27,22 +28,37 @@ namespace Metaseed.MetaKeyboard
         public string ProcessExplorer;
         public string VisualMachineManager;
     }
+
     public class Config
     {
-        Config() { }
         private static Config _config;
-        public static Config Inst
+
+        public static Config Current
         {
             get
             {
+                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
                 if (_config != null) return _config;
-                return _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(@".\config.json"));
+                _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(@".\config.json"));
+                var tools = _config.Tools;
+
+                void ToAbsPath(ref string relativePath)
+                {
+                    if (relativePath.StartsWith('.'))
+                    {
+                        relativePath = Path.Combine(baseDir, relativePath);
+                    }
+                }
+
+                ToAbsPath(ref tools.VisualStudio);
+                ToAbsPath(ref tools.Code);
+                return _config;
             }
-
         }
-        public Settings Settings;
-        public Tools Tools;
-        public Registers Registers;
 
+        public Settings  Settings;
+        public Tools     Tools;
+        public Registers Registers;
     }
 }

@@ -2,6 +2,7 @@
 using Metaseed.Input;
 using Metaseed.UI;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -13,18 +14,15 @@ namespace Metaseed.MetaKeyboard
         {
             Keys.C.With(Keys.CapsLock).Hit("Metaseed.OpenCodeEditor", "Open &Code Editor", async e =>
             {
-                var code = Config.Inst.Tools.Code;
-                var info = new ProcessStartInfo(code) {UseShellExecute = true};
+                var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};
 
-                var c = Window.CurrentWindowClass;
-                if ("CabinetWClass" != c)
+                if (!Window.IsExplorerOrOpenSaveDialog)
                 {
                     Process.Start(info);
                     return;
                 }
 
-                var handle = Window.CurrentWindowHandle;
-                var paths = await Explorer.GetSelectedPath(handle);
+                var paths = await Explorer.GetSelectedPath(Window.CurrentWindowHandle);
 
                 if (paths.Length == 0)
                 {
@@ -50,15 +48,15 @@ namespace Metaseed.MetaKeyboard
                 if ("CabinetWClass" != c)
                 {
                     Utils.Run(shiftDown
-                        ? $"{Config.Inst.Tools.EveryThing} -newwindow"
-                        : $"{Config.Inst.Tools.EveryThing} -toggle-window");
+                        ? $"{Config.Current.Tools.EveryThing} -newwindow"
+                        : $"{Config.Current.Tools.EveryThing} -toggle-window");
                     return;
                 }
 
                 var path = await Explorer.Path(Window.CurrentWindowHandle);
                 Utils.Run(shiftDown
-                    ? $"{Config.Inst.Tools.EveryThing} -path {path} -newwindow"
-                    : $"{Config.Inst.Tools.EveryThing} -path {path} -toggle-window");
+                    ? $"{Config.Current.Tools.EveryThing} -path {path} -newwindow"
+                    : $"{Config.Current.Tools.EveryThing} -path {path} -toggle-window");
             });
 
             Keys.T.With(Keys.CapsLock).Down("Metaseed.Terminal", "Open &Terminal", async e =>
@@ -71,15 +69,15 @@ namespace Metaseed.MetaKeyboard
                 {
                     var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                     Utils.Run(shiftDown
-                        ? $"{Config.Inst.Tools.Cmd}  /single /start \"{folderPath}\""
-                        : $"{Config.Inst.Tools.Cmd}  /start \"{folderPath}\"");
+                        ? $"{Config.Current.Tools.Cmd}  /single /start \"{folderPath}\""
+                        : $"{Config.Current.Tools.Cmd}  /start \"{folderPath}\"");
                     return;
                 }
 
                 var path = await Explorer.Path(Window.CurrentWindowHandle);
                 Utils.Run(shiftDown
-                    ? $"{Config.Inst.Tools.Cmd} /start \"{path}\""
-                    : $"{Config.Inst.Tools.Cmd} /single /start \"{path}\"");
+                    ? $"{Config.Current.Tools.Cmd} /start \"{path}\""
+                    : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
             });
             Keys.W.With(Keys.CapsLock).Down("Metaseed.WebSearch", "&Web Search", e =>
             {
@@ -90,8 +88,8 @@ namespace Metaseed.MetaKeyboard
                     {
                         UseShellExecute = true,
                         FileName = altDown
-                            ? Config.Inst.Tools.SearchEngineSecondary
-                            : Config.Inst.Tools.SearchEngine
+                            ? Config.Current.Tools.SearchEngineSecondary
+                            : Config.Current.Tools.SearchEngine
                     }
                 }.Start();
             });
@@ -102,21 +100,21 @@ namespace Metaseed.MetaKeyboard
                 e =>
                 {
                     e.Handled = true;
-                    Utils.Run(Config.Inst.Tools.Ruler);
+                    Utils.Run(Config.Current.Tools.Ruler);
                 });
 
             softwareTrigger.Then(Keys.T).Down("Metaseed.TaskExplorer", "Start &Task Explorer ",
                 e =>
                 {
                     e.Handled = true;
-                    Utils.Run(Config.Inst.Tools.ProcessExplorer);
+                    Utils.Run(Config.Current.Tools.ProcessExplorer);
                 });
 
             softwareTrigger.Then(Keys.G).Down("Metaseed.GifRecord", "Start &Gif Record ",
                 e =>
                 {
                     e.Handled = true;
-                    Utils.Run(Config.Inst.Tools.GifTool);
+                    Utils.Run(Config.Current.Tools.GifTool);
                 });
 
             softwareTrigger.Then(Keys.N).Down("Metaseed.NodePad", "Start &Notepad ", e =>
@@ -133,6 +131,27 @@ namespace Metaseed.MetaKeyboard
                 }
 
                 Utils.Run("Notepad");
+            });
+
+            softwareTrigger.Then(Keys.V).Down("Metaseed.VisualStudio", "Start &VisualStudio ", async e =>
+            {
+                if (!Window.IsExplorerOrOpenSaveDialog) return;
+
+                e.Handled = true;
+
+                var path = await Explorer.Path(Window.CurrentWindowHandle);
+                if (string.IsNullOrEmpty(path))
+                {
+                    Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
+                        {UseShellExecute = true});
+                    return;
+                }
+
+                Directory.CreateDirectory(path).EnumerateFiles("*.sln").Select(f => f.FullName).AsParallel().ForAll(s =>
+                {
+                    Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
+                        {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
+                });
             });
         }
     }

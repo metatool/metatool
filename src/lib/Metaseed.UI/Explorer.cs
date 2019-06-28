@@ -16,7 +16,7 @@ namespace Metaseed.UI
                     var shellWindows = new SHDocVw.ShellWindows();
                     foreach (SHDocVw.InternetExplorer window in shellWindows)
                     {
-                        if (window.HWND != (int)hWnd) continue;
+                        if (window.HWND != (int) hWnd) continue;
 
                         if (!(window.Document is IShellFolderViewDual2 shellWindow)) continue; // not explorer
 
@@ -37,13 +37,13 @@ namespace Metaseed.UI
         public static async Task<string> Path(IntPtr hWnd)
         {
             return await Window.Dispatch<string>(() =>
-           {
-               var shellWindows = new SHDocVw.ShellWindows();
-               foreach (SHDocVw.InternetExplorer window in shellWindows)
-               {
-                   if (window.HWND != (int)hWnd) continue;
+            {
+                var shellWindows = new SHDocVw.ShellWindows();
+                foreach (SHDocVw.InternetExplorer window in shellWindows)
+                {
+                    if (window.HWND != (int) hWnd) continue;
 
-                   if (!(window.Document is IShellFolderViewDual2 shellWindow)) continue;
+                    if (!(window.Document is IShellFolderViewDual2 shellWindow)) continue;
 
                     // Item without an index returns the current object
                     var currentFolder = shellWindow.Folder.Items().Item();
@@ -51,18 +51,18 @@ namespace Metaseed.UI
                     // special folder - use window title
                     // for some reason on "Desktop" gives null
                     if (currentFolder == null || currentFolder.Path.StartsWith("::"))
-                   {
+                    {
                         // Get window title instead
                         return WindowManager.GetText(hWnd);
-                   }
-                   else
-                   {
-                       return currentFolder.Path;
-                   }
-               }
+                    }
+                    else
+                    {
+                        return currentFolder.Path;
+                    }
+                }
 
-               return string.Empty;
-           });
+                return string.Empty;
+            });
         }
 
         public static void Select(IntPtr hWnd, string[] fileNames)
@@ -70,7 +70,7 @@ namespace Metaseed.UI
             var shellWindows = new SHDocVw.ShellWindows();
             foreach (SHDocVw.InternetExplorer window in shellWindows)
             {
-                if (window.HWND != (int)hWnd) continue;
+                if (window.HWND != (int) hWnd) continue;
 
                 if (!(window.Document is IShellFolderViewDual2 shellWindow)) continue;
 
@@ -87,11 +87,9 @@ namespace Metaseed.UI
                 {
                     var file = selected.Item(fileName);
                     shellWindow.SelectItem(file, 1);
-
                 }
-
             }
-
         }
+
     }
 }
