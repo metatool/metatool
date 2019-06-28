@@ -169,12 +169,12 @@ namespace Metaseed.NotifyIcon
         {
             if (imageSource == null) return null;
 
-            Uri uri = new Uri(imageSource.ToString());
-            StreamResourceInfo streamInfo = Application.GetResourceStream(uri);
+            var uri = new Uri(imageSource.ToString());
+            var streamInfo = Application.GetResourceStream(uri);
 
             if (streamInfo == null)
             {
-                string msg = "The supplied image source '{0}' could not be resolved.";
+                var msg = "The supplied image source '{0}' could not be resolved.";
                 msg = String.Format(msg, imageSource);
                 throw new ArgumentException(msg);
             }
@@ -260,7 +260,7 @@ namespace Metaseed.NotifyIcon
         {
             if (command == null) return;
 
-            RoutedCommand rc = command as RoutedCommand;
+            var rc = command as RoutedCommand;
             if (rc != null)
             {
                 //routed commands work on a target

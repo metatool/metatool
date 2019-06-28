@@ -72,7 +72,7 @@ namespace Metaseed.MetaKeyboard
                  var handle = UI.Window.CurrentWindowHandle;
                  var fullPath = await Explorer.Path(handle);
                  var fileName = newFileName;
-                 int i = 1;
+                 var i = 1;
                  while (File.Exists(fullPath + "\\" + fileName))
                  {
                      fileName = newFileName + i++;

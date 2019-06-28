@@ -227,7 +227,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private static void IconSourcePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TaskbarIcon owner = (TaskbarIcon) d;
+            var owner = (TaskbarIcon) d;
             owner.OnIconSourcePropertyChanged(e);
         }
 
@@ -241,7 +241,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private void OnIconSourcePropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            ImageSource newValue = (ImageSource) e.NewValue;
+            var newValue = (ImageSource) e.NewValue;
 
             //resolving the ImageSource at design time is unlikely to work
             if (!Util.IsDesignMode) Icon = newValue.ToIcon();
@@ -287,7 +287,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private static void ToolTipTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TaskbarIcon owner = (TaskbarIcon) d;
+            var owner = (TaskbarIcon) d;
             owner.OnToolTipTextPropertyChanged(e);
         }
 
@@ -304,7 +304,7 @@ namespace Metaseed.NotifyIcon
             //do not touch tooltips if we have a custom tooltip element
             if (TrayToolTip == null)
             {
-                ToolTip currentToolTip = TrayToolTipResolved;
+                var currentToolTip = TrayToolTipResolved;
                 if (currentToolTip == null)
                 {
                     //if we don't have a wrapper tooltip for the tooltip text, create it now
@@ -361,7 +361,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private static void TrayToolTipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TaskbarIcon owner = (TaskbarIcon) d;
+            var owner = (TaskbarIcon) d;
             owner.OnTrayToolTipPropertyChanged(e);
         }
 
@@ -433,7 +433,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private static void TrayPopupPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TaskbarIcon owner = (TaskbarIcon) d;
+            var owner = (TaskbarIcon) d;
             owner.OnTrayPopupPropertyChanged(e);
         }
 
@@ -534,7 +534,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private static void VisibilityPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TaskbarIcon owner = (TaskbarIcon) d;
+            var owner = (TaskbarIcon) d;
             owner.OnVisibilityPropertyChanged(e);
         }
 
@@ -548,7 +548,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private void OnVisibilityPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            Visibility newValue = (Visibility) e.NewValue;
+            var newValue = (Visibility) e.NewValue;
 
             //update
             if (newValue == Visibility.Visible)
@@ -598,7 +598,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private static void DataContextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TaskbarIcon owner = (TaskbarIcon) d;
+            var owner = (TaskbarIcon) d;
             owner.OnDataContextPropertyChanged(e);
         }
 
@@ -612,8 +612,8 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private void OnDataContextPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            object newValue = e.NewValue;
-            object oldValue = e.OldValue;
+            var newValue = e.NewValue;
+            var oldValue = e.OldValue;
 
             //replace custom data context for ToolTips, Popup, and
             //ContextMenu
@@ -636,7 +636,7 @@ namespace Metaseed.NotifyIcon
         /// <param name="e">Provides information about the updated property.</param>
         private static void ContextMenuPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            TaskbarIcon owner = (TaskbarIcon) d;
+            var owner = (TaskbarIcon) d;
             owner.OnContextMenuPropertyChanged(e);
         }
 
@@ -881,7 +881,7 @@ namespace Metaseed.NotifyIcon
         /// </summary>
         protected RoutedEventArgs RaiseTrayLeftMouseDownEvent()
         {
-            RoutedEventArgs args = RaiseTrayLeftMouseDownEvent(this);
+            var args = RaiseTrayLeftMouseDownEvent(this);
             return args;
         }
 
@@ -893,7 +893,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayLeftMouseDownEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -935,7 +935,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayRightMouseDownEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -977,7 +977,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayMiddleMouseDownEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1018,7 +1018,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayLeftMouseUpEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1059,7 +1059,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayRightMouseUpEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1101,7 +1101,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayMiddleMouseUpEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1132,7 +1132,7 @@ namespace Metaseed.NotifyIcon
         /// </summary>
         protected RoutedEventArgs RaiseTrayMouseDoubleClickEvent()
         {
-            RoutedEventArgs args = RaiseTrayMouseDoubleClickEvent(this);
+            var args = RaiseTrayMouseDoubleClickEvent(this);
             DoubleClickCommand.ExecuteIfEnabled(DoubleClickCommandParameter, DoubleClickCommandTarget ?? this);
             return args;
         }
@@ -1145,7 +1145,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayMouseDoubleClickEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1228,7 +1228,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayBalloonTipShownEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1270,7 +1270,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayBalloonTipClosedEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1312,7 +1312,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayBalloonTipClickedEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1354,7 +1354,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayContextMenuOpenEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1392,7 +1392,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = PreviewTrayContextMenuOpenEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1433,7 +1433,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayPopupOpenEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1471,7 +1471,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = PreviewTrayPopupOpenEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1512,7 +1512,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayToolTipOpenEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1550,7 +1550,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = PreviewTrayToolTipOpenEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1591,7 +1591,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = TrayToolTipCloseEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1629,7 +1629,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = PreviewTrayToolTipCloseEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1675,7 +1675,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = PopupOpenedEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1719,7 +1719,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = ToolTipOpenedEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1763,7 +1763,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs();
+            var args = new RoutedEventArgs();
             args.RoutedEvent = ToolTipCloseEvent;
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
@@ -1808,7 +1808,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs(BalloonShowingEvent, source);
+            var args = new RoutedEventArgs(BalloonShowingEvent, source);
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
@@ -1852,7 +1852,7 @@ namespace Metaseed.NotifyIcon
         {
             if (target == null) return null;
 
-            RoutedEventArgs args = new RoutedEventArgs(BalloonClosingEvent, source);
+            var args = new RoutedEventArgs(BalloonClosingEvent, source);
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }

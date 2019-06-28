@@ -37,14 +37,14 @@ namespace Metaseed.NotifyIcon
         /// <param name="handler">Event handler to be added</param>
         internal static void AddHandler(DependencyObject element, RoutedEvent routedEvent, Delegate handler)
         {
-            UIElement uie = element as UIElement;
+            var uie = element as UIElement;
             if (uie != null)
             {
                 uie.AddHandler(routedEvent, handler);
             }
             else
             {
-                ContentElement ce = element as ContentElement;
+                var ce = element as ContentElement;
                 if (ce != null)
                 {
                     ce.AddHandler(routedEvent, handler);
@@ -61,14 +61,14 @@ namespace Metaseed.NotifyIcon
         /// <param name="handler">Event handler to be removed</param>
         internal static void RemoveHandler(DependencyObject element, RoutedEvent routedEvent, Delegate handler)
         {
-            UIElement uie = element as UIElement;
+            var uie = element as UIElement;
             if (uie != null)
             {
                 uie.RemoveHandler(routedEvent, handler);
             }
             else
             {
-                ContentElement ce = element as ContentElement;
+                var ce = element as ContentElement;
                 if (ce != null)
                 {
                     ce.RemoveHandler(routedEvent, handler);

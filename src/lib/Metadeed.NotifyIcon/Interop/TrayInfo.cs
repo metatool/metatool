@@ -19,11 +19,11 @@ namespace Metaseed.NotifyIcon.Interop
         /// <returns>Tray coordinates.</returns>
         public static Point GetTrayLocation()
         {
-            int space = 2;
+            var space = 2;
             var info = new AppBarInfo();
             info.GetSystemTaskBarPosition();
 
-            Rectangle rcWorkArea = info.WorkArea;
+            var rcWorkArea = info.WorkArea;
 
             int x = 0, y = 0;
             if (info.Edge == AppBarInfo.ScreenEdge.Left)
@@ -108,11 +108,11 @@ namespace Metaseed.NotifyIcon.Interop
             m_data = new APPBARDATA();
             m_data.cbSize = (UInt32) Marshal.SizeOf(m_data.GetType());
 
-            IntPtr hWnd = FindWindow(strClassName, strWindowName);
+            var hWnd = FindWindow(strClassName, strWindowName);
 
             if (hWnd != IntPtr.Zero)
             {
-                UInt32 uResult = SHAppBarMessage(ABM_GETTASKBARPOS, ref m_data);
+                var uResult = SHAppBarMessage(ABM_GETTASKBARPOS, ref m_data);
 
                 if (uResult != 1)
                 {

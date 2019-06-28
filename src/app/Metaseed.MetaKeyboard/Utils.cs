@@ -11,7 +11,7 @@
                     CreateNoWindow = true
                 };
 
-            System.Diagnostics.Process proc = new System.Diagnostics.Process {StartInfo = procStartInfo};
+            var proc = new System.Diagnostics.Process {StartInfo = procStartInfo};
             proc.Start();
         }
     }

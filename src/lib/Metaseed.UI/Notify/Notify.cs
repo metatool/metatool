@@ -42,19 +42,8 @@ namespace Metaseed.MetaKeyboard
         public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)
         {
             if (tips == null) return;
-            var description = tips.SelectMany(t => t.descriptions.Select(d => new TipItem(){key=t.key, description= d}));
+            var description = tips.SelectMany(t => t.descriptions.Select(d => new TipItem(){key=t.key, Description= d}));
             var b = new FancyBalloon(){Tips = new ObservableCollection<TipItem>(description)};
-            // var formattedText = new FormattedText(
-            //     description,
-            //     CultureInfo.CurrentCulture,
-            //     FlowDirection.LeftToRight,
-            //     new Typeface(b.TextBlock.FontFamily, b.TextBlock.FontStyle, b.TextBlock.FontWeight, b.TextBlock.FontStretch),
-            //     b.TextBlock.FontSize,
-            //     Brushes.Black,
-            //     new NumberSubstitution(),
-            //     1);
-            // b.Width = formattedText.Width + 8;
-            // b.Height = formattedText.Height + 8;
 
             trayIcon.ShowCustomBalloon(b,PopupAnimation.None,8000);
         }

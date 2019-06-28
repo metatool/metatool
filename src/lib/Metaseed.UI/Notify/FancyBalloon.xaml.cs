@@ -1,19 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using Metaseed.NotifyIcon;
 
 namespace Metaseed.UI.Notify
 {
+    public class Des
+    {
+        public string pre { get; set; }
+        public string bold { get; set; }
+        public string post { get; set; }
+    }
     public class TipItem
     {
         public string key { get; set; }
-        public string description { get; set; }
+
+        Des _Description;
+
+        public Des description
+        {
+            get { return _Description; }
+        }
+
+        public string Description
+        {
+            set
+            {
+                _Description = new Des();
+                if (string.IsNullOrEmpty(value)) return;
+                var b = value.IndexOf('&');
+                if (b == -1) _Description.pre= value;
+                var parts = value.Split('&');
+                _Description.pre = parts[0];
+                if (parts.Length <= 1) return;
+                _Description.bold = parts[1].Substring(0, 1);
+                if (parts[1].Length <= 1) return;
+                _Description.post =parts[1].Substring(1);
+            }
+        }
     }
+
     /// <summary>
     /// Interaction logic for FancyBalloon.xaml
     /// </summary>
@@ -28,8 +60,8 @@ namespace Metaseed.UI.Notify
         /// </summary>
         public static readonly DependencyProperty TipsProperty =
             DependencyProperty.Register("Tips",
-                typeof (ObservableCollection<TipItem>),
-                typeof (FancyBalloon),
+                typeof(ObservableCollection<TipItem>),
+                typeof(FancyBalloon),
                 new FrameworkPropertyMetadata(null));
 
         /// <summary>
@@ -70,7 +102,7 @@ namespace Metaseed.UI.Notify
         private void imgClose_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //the tray icon assigned this attached property to simplify access
-            TaskbarIcon taskbarIcon = TaskbarIcon.GetParentTaskbarIcon(this);
+            var taskbarIcon = TaskbarIcon.GetParentTaskbarIcon(this);
             taskbarIcon.CloseBalloon();
         }
 
@@ -84,7 +116,7 @@ namespace Metaseed.UI.Notify
             if (isClosing) return;
 
             //the tray icon assigned this attached property to simplify access
-            TaskbarIcon taskbarIcon = TaskbarIcon.GetParentTaskbarIcon(this);
+            var taskbarIcon = TaskbarIcon.GetParentTaskbarIcon(this);
             taskbarIcon.ResetBalloonCloseTimer();
         }
 
@@ -96,7 +128,7 @@ namespace Metaseed.UI.Notify
         /// </summary>
         private void OnFadeOutCompleted(object sender, EventArgs e)
         {
-            Popup pp = (Popup) Parent;
+            var pp = (Popup) Parent;
             pp.IsOpen = false;
         }
     }

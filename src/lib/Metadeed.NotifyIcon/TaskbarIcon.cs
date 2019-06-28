@@ -174,7 +174,7 @@ namespace Metaseed.NotifyIcon
         /// is a null reference.</exception>
         public void ShowCustomBalloon(UIElement balloon, PopupAnimation animation, int? timeout)
         {
-            Dispatcher dispatcher = this.GetDispatcher();
+            var dispatcher = this.GetDispatcher();
             if (!dispatcher.CheckAccess())
             {
                 var action = new Action(() => ShowCustomBalloon(balloon, animation, timeout));
@@ -185,7 +185,7 @@ namespace Metaseed.NotifyIcon
             if (balloon == null) throw new ArgumentNullException("balloon");
             if (timeout.HasValue && timeout < 500)
             {
-                string msg = "Invalid timeout of {0} milliseconds. Timeout must be at least 500 ms";
+                var msg = "Invalid timeout of {0} milliseconds. Timeout must be at least 500 ms";
                 msg = String.Format(msg, timeout);
                 throw new ArgumentOutOfRangeException("timeout", msg);
             }
@@ -199,7 +199,7 @@ namespace Metaseed.NotifyIcon
             }
 
             //create an invisible popup that hosts the UIElement
-            Popup popup = new Popup();
+            var popup = new Popup();
             popup.AllowsTransparency = true;
 
             //provide the popup with the taskbar icon's data context
@@ -218,7 +218,7 @@ namespace Metaseed.NotifyIcon
 
             if (parent != null)
             {
-                string msg =
+                var msg =
                     "Cannot display control [{0}] in a new balloon popup - that control already has a parent. You may consider creating new balloons every time you want to show one.";
                 msg = String.Format(msg, balloon);
                 throw new InvalidOperationException(msg);
@@ -234,7 +234,7 @@ namespace Metaseed.NotifyIcon
             popup.StaysOpen = true;
 
             
-            Point position = this.CustomPopupPosition != null ? this.CustomPopupPosition() : this.GetPopupTrayPosition();
+            var position = this.CustomPopupPosition != null ? this.CustomPopupPosition() : this.GetPopupTrayPosition();
             popup.HorizontalOffset = position.X - 1;
             popup.VerticalOffset = position.Y - 1;
 
@@ -288,7 +288,7 @@ namespace Metaseed.NotifyIcon
         {
             if (IsDisposed) return;
 
-            Dispatcher dispatcher = this.GetDispatcher();
+            var dispatcher = this.GetDispatcher();
             if (!dispatcher.CheckAccess())
             {
                 Action action = CloseBalloon;
@@ -302,13 +302,13 @@ namespace Metaseed.NotifyIcon
                 balloonCloseTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
                 //reset old popup, if we still have one
-                Popup popup = CustomBalloon;
+                var popup = CustomBalloon;
                 if (popup != null)
                 {
-                    UIElement element = popup.Child;
+                    var element = popup.Child;
 
                     //announce closing
-                    RoutedEventArgs eventArgs = RaiseBalloonClosingEvent(element, this);
+                    var eventArgs = RaiseBalloonClosingEvent(element, this);
                     if (!eventArgs.Handled)
                     {
                         //if the event was handled, clear the reference to the popup,
@@ -399,7 +399,7 @@ namespace Metaseed.NotifyIcon
 
 
             //get mouse coordinates
-            Point cursorPosition = new Point();
+            var cursorPosition = new Point();
             if (messageSink.Version == NotifyIconVersion.Vista)
             {
                 //physical cursor position is supported for Vista and above
@@ -412,7 +412,7 @@ namespace Metaseed.NotifyIcon
 
             cursorPosition = TrayInfo.GetDeviceCoordinates(cursorPosition);
 
-            bool isLeftClickCommandInvoked = false;
+            var isLeftClickCommandInvoked = false;
 
             //show popup, if requested
             if (me.IsMatch(PopupActivation))
@@ -535,7 +535,7 @@ namespace Metaseed.NotifyIcon
         private void CreateCustomToolTip()
         {
             //check if the item itself is a tooltip
-            ToolTip tt = TrayToolTip as ToolTip;
+            var tt = TrayToolTip as ToolTip;
 
             if (tt == null && TrayToolTip != null)
             {
@@ -621,7 +621,7 @@ namespace Metaseed.NotifyIcon
         private void CreatePopup()
         {
             //check if the item itself is a popup
-            Popup popup = TrayPopup as Popup;
+            var popup = TrayPopup as Popup;
 
             if (popup == null && TrayPopup != null)
             {
@@ -682,11 +682,11 @@ namespace Metaseed.NotifyIcon
                 //open popup
                 TrayPopupResolved.IsOpen = true;
 
-                IntPtr handle = IntPtr.Zero;
+                var handle = IntPtr.Zero;
                 if (TrayPopupResolved.Child != null)
                 {
                     //try to get a handle on the popup itself (via its child)
-                    HwndSource source = (HwndSource) PresentationSource.FromVisual(TrayPopupResolved.Child);
+                    var source = (HwndSource) PresentationSource.FromVisual(TrayPopupResolved.Child);
                     if (source != null) handle = source.Handle;
                 }
 
@@ -733,10 +733,10 @@ namespace Metaseed.NotifyIcon
                 ContextMenu.VerticalOffset = cursorPosition.Y;
                 ContextMenu.IsOpen = true;
 
-                IntPtr handle = IntPtr.Zero;
+                var handle = IntPtr.Zero;
 
                 //try to get a handle on the context itself
-                HwndSource source = (HwndSource) PresentationSource.FromVisual(ContextMenu);
+                var source = (HwndSource) PresentationSource.FromVisual(ContextMenu);
                 if (source != null)
                 {
                     handle = source.Handle;
@@ -866,7 +866,7 @@ namespace Metaseed.NotifyIcon
             if (IsDisposed) return;
 
             //run action
-            Action action = singleClickTimerAction;
+            var action = singleClickTimerAction;
             if (action != null)
             {
                 //cleanup action
@@ -887,7 +887,7 @@ namespace Metaseed.NotifyIcon
         private void SetVersion()
         {
             iconData.VersionOrTimeout = (uint) NotifyIconVersion.Vista;
-            bool status = WinApi.Shell_NotifyIcon(NotifyCommand.SetVersion, ref iconData);
+            var status = WinApi.Shell_NotifyIcon(NotifyCommand.SetVersion, ref iconData);
 
             if (!status)
             {
