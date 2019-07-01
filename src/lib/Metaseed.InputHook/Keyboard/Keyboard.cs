@@ -15,14 +15,14 @@ namespace Metaseed.Input
         static readonly KeyboardHook _Hook = new KeyboardHook();
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
-        internal static IRemovable Add(ICombination combination, KeyEvent keyEvent, KeyAction action)
+        internal static IRemovable Add(ICombination combination, KeyEvent keyEvent, KeyAction action, KeyStateMachine stateMachine = null)
         {
-            return _Hook.Add(combination, new KeyEventAction(keyEvent, action));
+            return Add(new List<ICombination>(){combination}, keyEvent, action, stateMachine);
         }
 
-        internal static IRemovable Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyAction action)
+        internal static IRemovable Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyAction action, KeyStateMachine stateMachine = null)
         {
-            return _Hook.Add(combinations, new KeyEventAction(keyEvent, action));
+            return _Hook.Add(combinations, new KeyEventAction(keyEvent, action), stateMachine);
         }
 
         public static void ShowTip()

@@ -12,15 +12,21 @@ namespace Metaseed.Input.MouseKeyHook
 {
     public class KeyboardHook
     {
-        private readonly Trie<ICombination, KeyEventAction> _trie = new Trie<ICombination, KeyEventAction>();
-        private readonly TrieWalker<ICombination, KeyEventAction> _trieWalker;
-        private readonly IKeyboardMouseEvents _eventSource;
+        private readonly        IKeyboardMouseEvents _eventSource;
+        private static readonly KeyStateMachine      DefaultStateMachine = new KeyStateMachine();
+        KeyStateMachine _currentMachine;
+
+        private readonly List<KeyStateMachine> _stateMachines = new List<KeyStateMachine>()
+            {DefaultStateMachine};
 
         public KeyboardHook()
         {
-            _trieWalker = new TrieWalker<ICombination, KeyEventAction>(_trie);
             _eventSource = Hook.GlobalEvents();
+        }
 
+        public IRemovable Add(IList<ICombination> combinations, KeyEventAction action, KeyStateMachine keyStateMachine = null)
+        {
+            return (keyStateMachine ?? DefaultStateMachine).Add(combinations, action);
         }
 
         private readonly List<KeyEventHandler> _keyUpHandlers = new List<KeyEventHandler>();
@@ -47,105 +53,49 @@ namespace Metaseed.Input.MouseKeyHook
             remove => _keyDownHandlers.Remove(value);
         }
 
-        public class CombinationRemoveToken : IRemovable
+        public void ShowTip()
         {
-            private readonly ITrie<ICombination, KeyEventAction> _trie;
-            private readonly IList<ICombination> _combinations;
-            private readonly KeyEventAction _action;
-
-            public CombinationRemoveToken(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> combinations,
-                KeyEventAction action)
-            {
-                _trie = trie;
-                _combinations = combinations;
-                _action = action;
-            }
-
-            public void Remove()
-            {
-                var r = _trie.Remove(_combinations, action => action.Equals(_action));
-                Console.WriteLine(r);
-            }
+            if(_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
+            var tips = _stateMachines.SelectMany(m => m.Tips);
+            Notify.ShowKeysTip(tips);
         }
 
-        public IRemovable Add(IList<ICombination> combination, KeyEventAction action)
-        {
-            _trie.Add(combination, action);
-            return new CombinationRemoveToken(_trie, combination, action);
-        }
-
-        public IRemovable Add(ICombination combination, KeyEventAction action)
-        {
-            return Add(new List<ICombination> {combination}, action);
-        }
 
         public void Run()
         {
-            _trieWalker.GoToRoot();
+            _stateMachines.ForEach(m => m.Reset());
+
 
             void KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
             {
-                var downInChord = false;
-
-                var child = _trieWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
+                // continue process this event on current machine
+                if (_currentMachine != null)
                 {
-                    if (eventType == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
-
-                    if (args.KeyCode != combination.TriggerKey) return acc;
-                    var mach = combination.Chord.All(args.KeyboardState.IsDown);
-                    if (!mach) return acc;
-                    if (acc == null) return combination;
-                    return acc.ChordLength >= combination.ChordLength ? acc : combination;
-                });
-
-                // no match
-                if (child == null)
-                {
-                    if (!downInChord && eventType == KeyEvent.Down && !_trieWalker.IsOnRoot)
+                    var result = _currentMachine.KeyEventProcess(eventType, args);
+                    if (result == KeyProcessState.Continue) return;
+                    else if (result == KeyProcessState.Done)
                     {
-                        _trieWalker.GoToRoot();
-                        KeyEventProcess(eventType, args);
+                        _currentMachine = null;
+                        return; // try to find current machine on next event 
                     }
-
-                    return; // waiting
+                    // yield: try to process this event with other machine.
+                    _currentMachine = null;
                 }
 
-                // matched
-                var actionList = child.Values() as KeyActionList<KeyEventAction>;
-                Debug.Assert(actionList != null, nameof(actionList) + " != null");
-
-                // execute
-#if !DEBUG
-                try
+                // find current machine
+                foreach (var keyStateMachine in _stateMachines)
                 {
-#endif
-                foreach (var keyEventAction in actionList[eventType])
-                {
-                    if (!string.IsNullOrEmpty(keyEventAction.Description))
-                        Console.WriteLine(keyEventAction.Description);
-                    keyEventAction.Action?.Invoke(args);
-                }
-#if !DEBUG
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.ToString());
-                }
-#endif
-
-                // no children 
-                if (_trieWalker.ChildrenCount == 0 && eventType == KeyEvent.Up)
-                {
-                    _trieWalker.GoToRoot();
-                    return;
-                }
-
-                if (eventType == KeyEvent.Up)
-                {
-                    _trieWalker.GoToChild(child);
-                   
-                    if(child.ChildrenCount!=0) Notify.ShowKeysTip(child.Tip);
-                    return;
+                    var result = keyStateMachine.KeyEventProcess(eventType, args);
+                    if (result == KeyProcessState.Continue)
+                    {
+                        _currentMachine = keyStateMachine;
+                        break;
+                    }
+                    else if (result == KeyProcessState.Done)
+                    {
+                        break; // this event is well handled
+                    }
+                    // yield: continue finding
                 }
             }
 
@@ -162,11 +112,6 @@ namespace Metaseed.Input.MouseKeyHook
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
             _keyUpHandlers.ForEach(h => _eventSource.KeyUp += h);
-        }
-
-        public void ShowTip()
-        {
-            Notify.ShowKeysTip(_trieWalker.CurrentNode.Tip);
         }
     }
 }
