@@ -15,26 +15,29 @@ namespace Metaseed.Input
     {
         // well processed
         Done,
+
         // continue handling
         Continue,
+
         // can't handle
         Yield
     }
+
     public class KeyStateMachine
     {
-        private readonly Trie<ICombination, KeyEventAction> _trie = new Trie<ICombination, KeyEventAction>();
+        private readonly Trie<ICombination, KeyEventAction>       _trie = new Trie<ICombination, KeyEventAction>();
         private readonly TrieWalker<ICombination, KeyEventAction> _stateWalker;
 
         public KeyStateMachine()
         {
-            
             _stateWalker = new TrieWalker<ICombination, KeyEventAction>(_trie);
         }
+
         public class CombinationRemoveToken : IRemovable
         {
             private readonly ITrie<ICombination, KeyEventAction> _trie;
-            private readonly IList<ICombination> _combinations;
-            private readonly KeyEventAction _action;
+            private readonly IList<ICombination>                 _combinations;
+            private readonly KeyEventAction                      _action;
 
             public CombinationRemoveToken(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> combinations,
                 KeyEventAction action)
@@ -57,7 +60,7 @@ namespace Metaseed.Input
         }
 
         public IEnumerable<(string key, IEnumerable<string> descriptions)> Tips
-=>            _stateWalker.CurrentNode.Tip;
+            => _stateWalker.CurrentNode.Tip;
 
         public IRemovable Add(IList<ICombination> combinations, KeyEventAction action)
         {
@@ -68,14 +71,14 @@ namespace Metaseed.Input
         public IRemovable Add(ICombination combination, KeyEventAction action)
         {
             return Add(new List<ICombination> {combination}, action);
-           
         }
+
         public KeyProcessState KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
         {
             // to handle A+B+C(B is down in Chord)
             var downInChord = false;
 
-            var child = _stateWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
+            var cadidateChild = _stateWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
             {
                 if (eventType == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
 
@@ -87,7 +90,7 @@ namespace Metaseed.Input
             });
 
             // no match
-            if (child == null)
+            if (cadidateChild == null)
             {
                 if (!downInChord && eventType == KeyEvent.Down)
                 {
@@ -99,7 +102,7 @@ namespace Metaseed.Input
             }
 
             // matched
-            var actionList = child.Values() as KeyActionList<KeyEventAction>;
+            var actionList = cadidateChild.Values() as KeyActionList<KeyEventAction>;
             Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
             // execute
@@ -121,23 +124,19 @@ namespace Metaseed.Input
                 }
 #endif
 
-            // no children 
-            if (_stateWalker.ChildrenCount == 0 && eventType == KeyEvent.Up)
-            {
-                Reset();
-                return KeyProcessState.Done;
-            }
-
-            // only navigate on up event to handle both the down actions and the up actions for this combination
             if (eventType == KeyEvent.Up)
             {
-                _stateWalker.GoToChild(child);
+                // only navigate on up event to handle both the down actions and the up actions
+                _stateWalker.GoToChild(cadidateChild);
 
-                if (child.ChildrenCount != 0)
+                if (cadidateChild.ChildrenCount == 0)
                 {
-                    Notify.ShowKeysTip(child.Tip);
-                    return KeyProcessState.Continue;
+                    Reset();
+                    return KeyProcessState.Done;
                 }
+
+                Notify.ShowKeysTip(cadidateChild.Tip);
+                return KeyProcessState.Continue;
             }
 
             return KeyProcessState.Yield;

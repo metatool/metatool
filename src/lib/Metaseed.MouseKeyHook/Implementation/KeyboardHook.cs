@@ -107,8 +107,10 @@ namespace Metaseed.Input.MouseKeyHook
                     e.Handled = true;
                 }
             };
-            _eventSource.KeyDown += (sender, args) => KeyEventProcess(KeyEvent.Down, args as KeyEventArgsExt);
-            _eventSource.KeyUp += (sender, args) => KeyEventProcess(KeyEvent.Up, args as KeyEventArgsExt);
+            _eventSource.KeyDown += (sender, args) => 
+                KeyEventProcess(KeyEvent.Down, args as KeyEventArgsExt);
+            _eventSource.KeyUp += (sender, args) => 
+                KeyEventProcess(KeyEvent.Up, args as KeyEventArgsExt);
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
             _keyUpHandlers.ForEach(h => _eventSource.KeyUp += h);

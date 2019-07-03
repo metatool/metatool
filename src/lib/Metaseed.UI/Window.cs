@@ -53,7 +53,9 @@ namespace Metaseed.UI
         {
             PInvokes.AllocConsole();
             var handle = PInvokes.GetConsoleWindow();
+#if !DEBUG
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
+#endif
         }
 
         public static void ShowConsole()

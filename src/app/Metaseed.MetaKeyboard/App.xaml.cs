@@ -37,6 +37,7 @@ namespace Metaseed.MetaKeyboard
             var fun = new FunctionalKeys();
 
             var software = new Utilities();
+            var c = new ClipboardManager();
 
             Keyboard.Hook();
         }

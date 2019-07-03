@@ -161,3 +161,6 @@ pkg
 /exe/software/Clipjump_x64/cache
 /exe/software/everything/Everything.db
 /exe/software/everything/Run History.csv
+/src/app/Metaseed.Clipboard/packages
+/src/app/Metaseed.Clipboard/passwords.txt
+/src/app/Metaseed.Clipboard/Windows Store/ClipboardApp/win32

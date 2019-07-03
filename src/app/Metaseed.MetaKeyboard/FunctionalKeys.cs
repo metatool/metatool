@@ -56,7 +56,7 @@ namespace Metaseed.MetaKeyboard
                 var handle = UI.Window.CurrentWindowHandle;
                 var paths = await Explorer.GetSelectedPath(handle);
                 var r = string.Join(';', paths);
-                Clipboard.SetText(r);
+                System.Windows.Clipboard.SetText(r);
                 e.Handled = true;
             });
 

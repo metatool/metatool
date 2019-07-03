@@ -12,15 +12,17 @@ namespace Metaseed.Input
 {
     public static class Keyboard
     {
-        static readonly KeyboardHook _Hook = new KeyboardHook();
-        static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        static readonly KeyboardHook _Hook       = new KeyboardHook();
+        static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 
-        internal static IRemovable Add(ICombination combination, KeyEvent keyEvent, KeyAction action, KeyStateMachine stateMachine = null)
+        internal static IRemovable Add(ICombination combination, KeyEvent keyEvent, KeyAction action,
+            KeyStateMachine stateMachine = null)
         {
-            return Add(new List<ICombination>(){combination}, keyEvent, action, stateMachine);
+            return Add(new List<ICombination>() {combination}, keyEvent, action, stateMachine);
         }
 
-        internal static IRemovable Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyAction action, KeyStateMachine stateMachine = null)
+        internal static IRemovable Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyAction action,
+            KeyStateMachine stateMachine = null)
         {
             return _Hook.Add(combinations, new KeyEventAction(keyEvent, action), stateMachine);
         }
@@ -28,6 +30,13 @@ namespace Metaseed.Input
         public static void ShowTip()
         {
             _Hook.ShowTip();
+        }
+
+        public static void Hit(Keys key, IEnumerable<Keys> modifierKeys = null)
+        {
+            if (modifierKeys == null) InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
+            InputSimu.Inst.Keyboard.ModifiedKeyStroke(modifierKeys.Cast<VirtualKeyCode>(),
+                (VirtualKeyCode) key);
         }
 
         internal static IRemovable Map(Combination source, ICombination target,
@@ -78,7 +87,8 @@ namespace Metaseed.Input
                         return;
                     }
 
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp( target.Chord.Cast<VirtualKeyCode>(), (VirtualKeyCode) target.TriggerKey);
+                    InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
+                        (VirtualKeyCode) target.TriggerKey);
                 })
             };
         }
@@ -236,7 +246,6 @@ namespace Metaseed.Input
 
         public static void Hook()
         {
-           
             _Hook.Run();
         }
     }
