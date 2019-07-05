@@ -10,9 +10,10 @@ namespace Metaseed.DataStructures
     {
         protected readonly Dictionary<TKey, TrieNode<TKey, TValue>> _children;
         private IList<TValue> _values = new KeyActionList<TValue>();
-
-        protected TrieNode()
+        public TKey Key;
+        protected TrieNode(TKey key=default(TKey))
         {
+            Key = key;
             _children = new Dictionary<TKey, TrieNode<TKey, TValue>>();
         }
         internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenPairs  => _children;
@@ -48,7 +49,7 @@ namespace Metaseed.DataStructures
         protected override TrieNodeBase<TKey, TValue> GetOrCreateChild(TKey key)
         {
             if (_children.TryGetValue(key, out var result)) return result;
-            result = new TrieNode<TKey, TValue>();
+            result = new TrieNode<TKey, TValue>(key);
             _children.Add(key, result);
             return result;
         }

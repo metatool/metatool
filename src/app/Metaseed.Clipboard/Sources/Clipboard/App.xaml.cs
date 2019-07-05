@@ -21,6 +21,7 @@ using Clipboard.Strings;
 using Newtonsoft.Json;
 using Microsoft.Win32;
 using Clipboard.Core.Desktop.Interop;
+using Metaseed.MetaKeyboard;
 
 namespace Clipboard
 {
@@ -29,6 +30,7 @@ namespace Clipboard
     /// </summary>
     public partial class App : Application
     {
+
         #region Handled Methods
 
         /// <summary>
@@ -77,6 +79,7 @@ namespace Clipboard
                 Settings.Default.Save();
                 Settings.Default.Reload();
             }
+
 
             Logger.Instance.Information($"Application v.{CoreHelper.GetApplicationVersion()} started.");
         }

@@ -19,7 +19,10 @@ namespace Metaseed.Input
         // continue handling
         Continue,
 
-        // can't handle
+        // reprocess 
+        Reset,
+
+        // try to process this event with other machine.
         Yield
     }
 
@@ -92,13 +95,37 @@ namespace Metaseed.Input
             // no match
             if (cadidateChild == null)
             {
-                if (eventType == KeyEvent.Down && downInChord)
+                if (eventType == KeyEvent.Down)
                 {
-                    return KeyProcessState.Continue; // waiting for trigger key
+                    if (downInChord)
+                        return KeyProcessState.Continue; // waiting for trigger key
+                    Reset();
+                    return KeyProcessState.Reset;
                 }
+                else // up
+                {
+                    if (_stateWalker.ChildrenCount == 0)
+                    {
+                        if (_stateWalker.IsOnRoot)
+                        {
+                            return KeyProcessState.Yield;
+                        }
 
-                Reset();
-                return KeyProcessState.Yield;
+                        return KeyProcessState.Reset; // to process combination chord up
+                    }
+                    else
+                    {
+                        if (!_stateWalker.IsOnRoot && // on root currentnode.key = null
+                            _stateWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
+                        {
+                            return KeyProcessState.Continue; // combination chord keys up
+                        }
+                        else
+                        {
+                            return KeyProcessState.Reset;
+                        }
+                    }
+                }
             }
 
             // matched
@@ -136,7 +163,6 @@ namespace Metaseed.Input
                 }
 
                 Notify.ShowKeysTip(cadidateChild.Tip);
-                return KeyProcessState.Continue;
             }
 
             return KeyProcessState.Continue;

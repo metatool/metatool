@@ -6,7 +6,9 @@ using Clipboard.ComponentModel.Messages;
 using Clipboard.Core.Desktop.ComponentModel;
 using Clipboard.Shared.Core;
 using Clipboard.ViewModels;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Metaseed.MetaKeyboard;
 using MenuItem = System.Windows.Controls.MenuItem;
 
 namespace Clipboard.Views
@@ -16,6 +18,8 @@ namespace Clipboard.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ClipboardManager _clipboardManager;
+
         #region Constructors
 
         /// <summary>
@@ -34,6 +38,8 @@ namespace Clipboard.Views
 
             Hide();
             CoreHelper.MinimizeFootprint();
+            _clipboardManager = new ClipboardManager();
+
         }
 
         #endregion

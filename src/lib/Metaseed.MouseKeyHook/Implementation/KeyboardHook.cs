@@ -14,7 +14,7 @@ namespace Metaseed.Input.MouseKeyHook
     {
         private readonly        IKeyboardMouseEvents _eventSource;
         private static readonly KeyStateMachine      DefaultStateMachine = new KeyStateMachine();
-        KeyStateMachine _currentMachine;
+        KeyStateMachine                              _currentMachine;
 
         private readonly List<KeyStateMachine> _stateMachines = new List<KeyStateMachine>()
             {DefaultStateMachine};
@@ -24,7 +24,8 @@ namespace Metaseed.Input.MouseKeyHook
             _eventSource = Hook.GlobalEvents();
         }
 
-        public IRemovable Add(IList<ICombination> combinations, KeyEventAction action, KeyStateMachine keyStateMachine = null)
+        public IRemovable Add(IList<ICombination> combinations, KeyEventAction action,
+            KeyStateMachine keyStateMachine = null)
         {
             return (keyStateMachine ?? DefaultStateMachine).Add(combinations, action);
         }
@@ -55,7 +56,7 @@ namespace Metaseed.Input.MouseKeyHook
 
         public void ShowTip()
         {
-            if(_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
+            if (_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
             var tips = _stateMachines.SelectMany(m => m.Tips);
             Notify.ShowKeysTip(tips);
         }
@@ -78,13 +79,18 @@ namespace Metaseed.Input.MouseKeyHook
                         _currentMachine = null;
                         return; // try to find current machine on next event 
                     }
+
+                    else if (result == KeyProcessState.Reset)
+                        _currentMachine = null;
+
                     // yield: try to process this event with other machine.
-                    _currentMachine = null;
                 }
 
                 // find current machine
                 foreach (var keyStateMachine in _stateMachines)
                 {
+                    if(keyStateMachine == _currentMachine) continue; // yield
+
                     var result = keyStateMachine.KeyEventProcess(eventType, args);
                     if (result == KeyProcessState.Continue)
                     {
@@ -95,7 +101,8 @@ namespace Metaseed.Input.MouseKeyHook
                     {
                         break; // this event is well handled
                     }
-                    // yield: continue finding
+
+                    // yield or reset: continue finding
                 }
             }
 
@@ -107,9 +114,9 @@ namespace Metaseed.Input.MouseKeyHook
                     e.Handled = true;
                 }
             };
-            _eventSource.KeyDown += (sender, args) => 
+            _eventSource.KeyDown += (sender, args) =>
                 KeyEventProcess(KeyEvent.Down, args as KeyEventArgsExt);
-            _eventSource.KeyUp += (sender, args) => 
+            _eventSource.KeyUp += (sender, args) =>
                 KeyEventProcess(KeyEvent.Up, args as KeyEventArgsExt);
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);

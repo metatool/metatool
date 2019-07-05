@@ -30,6 +30,7 @@ namespace Clipboard.Core.Desktop.Models
 
         #region Properties
 
+        public string RegisterName { get; internal set; }
         /// <summary>
         /// Gets or sets the linked <see cref="Thumbnail"/>
         /// </summary>

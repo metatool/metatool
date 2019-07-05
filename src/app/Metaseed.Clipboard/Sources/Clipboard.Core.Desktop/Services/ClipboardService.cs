@@ -20,15 +20,15 @@ namespace Clipboard.Core.Desktop.Services
     /// <summary>
     /// Provides a service that can listen to the clipboard, read an write it.
     /// </summary>
-    internal sealed class ClipboardService : IService, IPausable
+    internal sealed partial class ClipboardService : IService, IPausable
     {
         #region Fields
 
-        private bool _isPaused = true;
-        private bool _ignoreClipboardChange;
-        private ClipboardHook _clipboardHook;
+        private bool                     _isPaused = true;
+        private bool                     _ignoreClipboardChange;
+        private ClipboardHook            _clipboardHook;
         private List<IgnoredApplication> _ignoredApplications;
-        private IServiceSettingProvider _settingProvider;
+        private IServiceSettingProvider  _settingProvider;
 
         #endregion
 
@@ -53,11 +53,12 @@ namespace Clipboard.Core.Desktop.Services
             Pause();
 
             var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(10));
-            delayer.Action += (o, args) =>
+            delayer.Action += async (o, args) =>
             {
                 try
                 {
-                    Logger.Instance.Information($"A data has been copied. The {nameof(ClipboardService)} tries to retrieve the data.");
+                    Logger.Instance.Information(
+                        $"A data has been copied. The {nameof(ClipboardService)} tries to retrieve the data.");
 
                     Requires.NotNull(e, nameof(e));
                     DispatcherHelper.ThrowIfNotStaThread();
@@ -68,10 +69,12 @@ namespace Clipboard.Core.Desktop.Services
                     var dataService = ServiceLocator.GetService<DataService>();
                     var foregroundWindow = ServiceLocator.GetService<WindowsService>().GetForegroundWindow();
 
-                    if (_ignoredApplications.Any(app => app.ApplicationIdentifier == foregroundWindow.ApplicationIdentifier))
+                    if (_ignoredApplications.Any(app =>
+                        app.ApplicationIdentifier == foregroundWindow.ApplicationIdentifier))
                     {
                         dataIgnored = true;
-                        Logger.Instance.Information($"The {nameof(ClipboardService)} ignored the data because it comes from an ignored application.");
+                        Logger.Instance.Information(
+                            $"The {nameof(ClipboardService)} ignored the data because it comes from an ignored application.");
                     }
                     else
                     {
@@ -83,7 +86,8 @@ namespace Clipboard.Core.Desktop.Services
                             if (isCreditCard && dataService.KeepOrIgnoreCreditCard(text))
                             {
                                 dataIgnored = true;
-                                Logger.Instance.Information($"The {nameof(ClipboardService)} ignored the data because it is a credit card number.");
+                                Logger.Instance.Information(
+                                    $"The {nameof(ClipboardService)} ignored the data because it is a credit card number.");
                             }
                         }
                     }
@@ -96,7 +100,8 @@ namespace Clipboard.Core.Desktop.Services
 
                         if (identifiers.Count == 0)
                         {
-                            Logger.Instance.Information($"The {nameof(ClipboardService)} ignored the data because it does not detected any compatible data format in the clipboard.");
+                            Logger.Instance.Information(
+                                $"The {nameof(ClipboardService)} ignored the data because it does not detected any compatible data format in the clipboard.");
                         }
                         else
                         {
@@ -109,7 +114,8 @@ namespace Clipboard.Core.Desktop.Services
                                     {
                                         try
                                         {
-                                            WriteClipboardDataToFile(clipboardReader, identifiers[i], dataService.ClipboardDataPath);
+                                            WriteClipboardDataToFile(clipboardReader, identifiers[i],
+                                                dataService.ClipboardDataPath);
                                         }
                                         catch
                                         {
@@ -122,13 +128,17 @@ namespace Clipboard.Core.Desktop.Services
 
                             using (Logger.Instance.Stopwatch("Adding a new data entry to the data service."))
                             {
-                                dataService.AddDataEntry(e, identifiers, foregroundWindow, isCreditCard);
+                                var data = await dataService.AddDataEntry(e, identifiers, foregroundWindow,
+                                    isCreditCard);
+                                this.AddTo(data);
                             }
-
-                            Logger.Instance.Information($"The {nameof(ClipboardService)} successfully retrieved the data from the clipboard.");
                         }
+
+                        Logger.Instance.Information(
+                            $"The {nameof(ClipboardService)} successfully retrieved the data from the clipboard.");
                     }
                 }
+
                 catch (Exception exception)
                 {
                     Logger.Instance.Error(exception);
@@ -152,6 +162,7 @@ namespace Clipboard.Core.Desktop.Services
                     }
                 }
             };
+
             delayer.ResetAndTick();
         }
 
@@ -164,7 +175,6 @@ namespace Clipboard.Core.Desktop.Services
         {
             _settingProvider = settingProvider;
             _ignoredApplications = _settingProvider.GetSetting<List<IgnoredApplication>>("IgnoredApplications");
-
             if (CoreHelper.IsUnitTesting())
             {
                 _clipboardHook = new ClipboardHook(new Window());
@@ -175,9 +185,7 @@ namespace Clipboard.Core.Desktop.Services
             }
 
             _clipboardHook.ClipboardChanged += ClipboardHook_ClipboardChanged;
-
             Resume();
-
             Logger.Instance.Information($"{GetType().Name} initialized.");
         }
 
@@ -199,9 +207,7 @@ namespace Clipboard.Core.Desktop.Services
         public void Reset()
         {
             Pause();
-
             _ignoredApplications = _settingProvider.GetSetting<List<IgnoredApplication>>("IgnoredApplications");
-
             if (!CoreHelper.IsUnitTesting())
             {
                 Resume();
@@ -215,6 +221,7 @@ namespace Clipboard.Core.Desktop.Services
             {
                 _clipboardHook.Resume();
             }
+
             _isPaused = false;
         }
 
@@ -225,10 +232,8 @@ namespace Clipboard.Core.Desktop.Services
         internal void SetClipboard(IEnumerable<DataIdentifier> identifiers)
         {
             Requires.NotNull(identifiers, nameof(identifiers));
-
             Pause();
             var dataService = ServiceLocator.GetService<DataService>();
-
             using (var clipboardWriter = new ClipboardWriter())
             {
                 foreach (var dataIdentifier in identifiers)
@@ -246,17 +251,14 @@ namespace Clipboard.Core.Desktop.Services
         internal void Paste()
         {
             Pause();
-
             var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
             delayer.Action += (sender, args) =>
             {
-                SendKeys.SendWait("^v"); // Ctrl + V
+                // SendKeys.SendWait("^v"); // Ctrl + V
+                Metaseed.Input.Keyboard.Hit(Keys.V, new List<Keys> { Keys.RControlKey });
 
                 delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
-                delayer.Action += (sender2, args2) =>
-                {
-                    Resume();
-                };
+                delayer.Action += (sender2, args2) => { Resume(); };
                 delayer.ResetAndTick();
             };
             delayer.ResetAndTick();
@@ -268,28 +270,29 @@ namespace Clipboard.Core.Desktop.Services
         /// <param name="clipboardReader">The <see cref="ClipboardReader"/> used to read the data.</param>
         /// <param name="identifier">The data identifier.</param>
         /// <param name="clipboardDataPath">The full path to the clipboard data folder.</param>
-        private void WriteClipboardDataToFile(ClipboardReader clipboardReader, DataIdentifier identifier, string clipboardDataPath)
+        private void WriteClipboardDataToFile(ClipboardReader clipboardReader, DataIdentifier identifier, string
+            clipboardDataPath)
         {
             Requires.NotNull(clipboardReader, nameof(clipboardReader));
             Requires.NotNull(identifier, nameof(identifier));
             Requires.NotNullOrWhiteSpace(clipboardDataPath, nameof(clipboardDataPath));
-
             var dataFilePath = Path.Combine(clipboardDataPath, $"{identifier.Identifier}.dat");
-
             if (File.Exists(dataFilePath))
             {
                 Logger.Instance.Fatal(new FileLoadException($"The file {dataFilePath} already exists."));
             }
 
-            var dataPassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(identifier.Identifier.ToString())));
+            var dataPassword =
+                SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(
+                    identifier.Identifier.ToString(
+                    ))));
             Requires.NotNull(dataPassword, nameof(dataPassword));
-
             clipboardReader.BeginRead(identifier.FormatName);
             Requires.IsTrue(clipboardReader.IsReadable);
             Requires.IsTrue(clipboardReader.CanReadNextBlock());
-
             using (var fileStream = File.OpenWrite(dataFilePath))
-            using (var aesStream = new AesStream(fileStream, dataPassword, SecurityHelper.GetSaltKeys(dataPassword).GetBytes(16)))
+            using (var aesStream = new AesStream(fileStream, dataPassword,
+                SecurityHelper.GetSaltKeys(dataPassword).GetBytes(16)))
             {
                 aesStream.AutoDisposeBaseStream = false;
                 while (clipboardReader.CanReadNextBlock())
@@ -297,6 +300,7 @@ namespace Clipboard.Core.Desktop.Services
                     var buffer = clipboardReader.ReadNextBlock();
                     aesStream.Write(buffer, 0, buffer.Length);
                 }
+
                 aesStream.Position = 0;
             }
 
@@ -309,25 +313,26 @@ namespace Clipboard.Core.Desktop.Services
         /// <param name="clipboardWriter">The <see cref="ClipboardWriter"/> used to write the data.</param>
         /// <param name="identifier">The data identifier.</param>
         /// <param name="clipboardDataPath">The full path to the clipboard data folder.</param>
-        private void ReadFileToClipboardData(ClipboardWriter clipboardWriter, DataIdentifier identifier, string clipboardDataPath)
+        private void ReadFileToClipboardData(ClipboardWriter clipboardWriter, DataIdentifier identifier, string
+            clipboardDataPath)
         {
             Requires.NotNull(clipboardWriter, nameof(clipboardWriter));
             Requires.NotNull(identifier, nameof(identifier));
             Requires.NotNullOrWhiteSpace(clipboardDataPath, nameof(clipboardDataPath));
-
             var dataFilePath = Path.Combine(clipboardDataPath, $"{identifier.Identifier}.dat");
-
             if (!File.Exists(dataFilePath))
             {
                 return;
             }
 
-            var dataPassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(identifier.Identifier.ToString())));
+            var dataPassword =
+                SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(
+                    identifier.Identifier.ToString(
+                    ))));
             Requires.NotNull(dataPassword, nameof(dataPassword));
-
             var fileStream = File.OpenRead(dataFilePath);
-            var aesStream = new AesStream(fileStream, dataPassword, SecurityHelper.GetSaltKeys(dataPassword).GetBytes(16));
-
+            var aesStream = new AesStream(fileStream, dataPassword,
+                SecurityHelper.GetSaltKeys(dataPassword).GetBytes(16));
             clipboardWriter.AddData(identifier.FormatName, aesStream, fileStream);
         }
 

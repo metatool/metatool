@@ -236,7 +236,7 @@ namespace Clipboard.Core.Desktop.Services
         /// <param name="identifiers">The list of identifiers for each data format.</param>
         /// <param name="foregroundWindow">The foreground window.</param>
         /// <param name="isCreditCard">Determines whether the data is a credit card number.</param>
-        internal async void AddDataEntry(ClipboardHookEventArgs e, List<DataIdentifier> identifiers, Window foregroundWindow, bool isCreditCard)
+        internal async Task<DataEntry> AddDataEntry(ClipboardHookEventArgs e, List<DataIdentifier> identifiers, Window foregroundWindow, bool isCreditCard)
         {
             Requires.NotNull(e, nameof(e));
             Requires.NotNull(identifiers, nameof(identifiers));
@@ -284,6 +284,7 @@ namespace Clipboard.Core.Desktop.Services
             }
 
             await PurgeCacheAsync();
+            return entry;
         }
 
         /// <summary>

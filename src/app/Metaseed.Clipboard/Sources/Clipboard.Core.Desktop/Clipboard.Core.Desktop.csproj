@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Clipboard.Core.Desktop</RootNamespace>
     <AssemblyName>Clipboard.Core.Desktop</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetPlatformVersion>10.0</TargetPlatformVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -162,6 +162,7 @@
     <Compile Include="Models\DataIdentifier.cs" />
     <Compile Include="Models\IgnoredApplication.cs" />
     <Compile Include="Models\Link.cs" />
+    <Compile Include="Models\Register.cs" />
     <Compile Include="Models\ScreenInfo.cs" />
     <Compile Include="Models\SearchQuery.cs" />
     <Compile Include="Models\SoftwareNewItem.cs" />
@@ -171,6 +172,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComponentModel\SecurityHelper.cs" />
     <Compile Include="ComponentModel\SystemInfoHelper.cs" />
+    <Compile Include="Services\ClipboardSerive_partial.cs" />
     <Compile Include="Services\ClipboardService.cs" />
     <Compile Include="Services\CloudStorageService.cs" />
     <Compile Include="Services\DataService.cs" />
@@ -179,6 +181,10 @@
     <Compile Include="Workers\DataMigrationWorker.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj">
+      <Project>{087c67f4-7d4a-4ee0-9f6f-2925356a1b9f}</Project>
+      <Name>Metaseed.Input</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clipboard.Shared\Clipboard.Shared.csproj">
       <Project>{62617a24-2636-4644-b301-c6907aa29531}</Project>
       <Name>Clipboard.Shared</Name>
