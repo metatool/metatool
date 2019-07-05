@@ -92,13 +92,13 @@ namespace Metaseed.Input
             // no match
             if (cadidateChild == null)
             {
-                if (!downInChord && eventType == KeyEvent.Down)
+                if (eventType == KeyEvent.Down && downInChord)
                 {
-                    Reset();
-                    return KeyProcessState.Yield;
+                    return KeyProcessState.Continue; // waiting for trigger key
                 }
 
-                return KeyProcessState.Continue; // waiting for trigger key
+                Reset();
+                return KeyProcessState.Yield;
             }
 
             // matched
@@ -139,7 +139,7 @@ namespace Metaseed.Input
                 return KeyProcessState.Continue;
             }
 
-            return KeyProcessState.Yield;
+            return KeyProcessState.Continue;
         }
     }
 }
