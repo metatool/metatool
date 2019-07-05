@@ -487,6 +487,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj">
+      <Project>{087c67f4-7d4a-4ee0-9f6f-2925356a1b9f}</Project>
+      <Name>Metaseed.Input</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clipboard.Core.Desktop\Clipboard.Core.Desktop.csproj">
       <Project>{a09cc9c5-9fb6-40b5-8168-1afbc09e7207}</Project>
       <Name>Clipboard.Core.Desktop</Name>
