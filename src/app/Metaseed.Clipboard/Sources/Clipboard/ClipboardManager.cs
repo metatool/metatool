@@ -31,7 +31,6 @@ namespace Metaseed.MetaKeyboard
             set
             {
                 __state = value;
-                Console.WriteLine($"-----{__state}");
             }
         }
 
