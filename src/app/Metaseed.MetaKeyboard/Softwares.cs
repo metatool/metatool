@@ -12,7 +12,7 @@ namespace Metaseed.MetaKeyboard
     {
         public Utilities()
         {
-            Keys.C.With(Keys.CapsLock).Hit("Metaseed.OpenCodeEditor", "Open &Code Editor", async e =>
+            Keys.C.With(Keys.CapsLock).Hit( async e =>
             {
                 var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};
 
@@ -35,11 +35,11 @@ namespace Metaseed.MetaKeyboard
                     info.Arguments = path;
                     Process.Start(info);
                 }
-            }, null, true);
+            }, null, "Metaseed.OpenCodeEditor", "Open &Code Editor", true);
 
             Keys.D.With(Keys.CapsLock).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
 
-            Keys.F.With(Keys.CapsLock).Down("Metaseed.Find", "&Find With Everything", async e =>
+            Keys.F.With(Keys.CapsLock).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -57,9 +57,9 @@ namespace Metaseed.MetaKeyboard
                 Utils.Run(shiftDown
                     ? $"{Config.Current.Tools.EveryThing} -path {path} -newwindow"
                     : $"{Config.Current.Tools.EveryThing} -path {path} -toggle-window");
-            });
+            }, "Metaseed.Find", "&Find With Everything");
 
-            Keys.T.With(Keys.CapsLock).Down("Metaseed.Terminal", "Open &Terminal", async e =>
+            Keys.T.With(Keys.CapsLock).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -78,8 +78,8 @@ namespace Metaseed.MetaKeyboard
                 Utils.Run(shiftDown
                     ? $"{Config.Current.Tools.Cmd} /start \"{path}\""
                     : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
-            });
-            Keys.W.With(Keys.CapsLock).Down("Metaseed.WebSearch", "&Web Search", e =>
+            }, "Metaseed.Terminal", "Open &Terminal");
+            Keys.W.With(Keys.CapsLock).Down(e =>
             {
                 var altDown = e.KeyboardState.IsDown(Keys.Menu);
                 new Process
@@ -92,32 +92,32 @@ namespace Metaseed.MetaKeyboard
                             : Config.Current.Tools.SearchEngine
                     }
                 }.Start();
-            });
+            }, "Metaseed.WebSearch", "&Web Search");
 
             var softwareTrigger = Keys.Space.With(Keys.CapsLock).Handled();
 
-            softwareTrigger.Then(Keys.R).Down("Metaseed.ScreenRuler", "Start Screen &Ruler",
+            softwareTrigger.Then(Keys.R).Down(
                 e =>
                 {
                     e.Handled = true;
                     Utils.Run(Config.Current.Tools.Ruler);
-                });
+                }, "Metaseed.ScreenRuler", "Start Screen &Ruler");
 
-            softwareTrigger.Then(Keys.T).Down("Metaseed.TaskExplorer", "Start &Task Explorer ",
+            softwareTrigger.Then(Keys.T).Down(
                 e =>
                 {
                     e.Handled = true;
                     Utils.Run(Config.Current.Tools.ProcessExplorer);
-                });
+                }, "Metaseed.TaskExplorer", "Start &Task Explorer ");
 
-            softwareTrigger.Then(Keys.G).Down("Metaseed.GifRecord", "Start &Gif Record ",
+            softwareTrigger.Then(Keys.G).Down(
                 e =>
                 {
                     e.Handled = true;
                     Utils.Run(Config.Current.Tools.GifTool);
-                });
+                }, "Metaseed.GifRecord", "Start &Gif Record ");
 
-            softwareTrigger.Then(Keys.N).Down("Metaseed.NodePad", "Start &Notepad ", e =>
+            softwareTrigger.Then(Keys.N).Down(e =>
             {
                 e.Handled = true;
                 var exeName = "Notepad";
@@ -131,9 +131,9 @@ namespace Metaseed.MetaKeyboard
                 }
 
                 Utils.Run("Notepad");
-            });
+            }, "Metaseed.NodePad", "Start &Notepad ");
 
-            softwareTrigger.Then(Keys.V).Down("Metaseed.VisualStudio", "Start &VisualStudio ", async e =>
+            softwareTrigger.Then(Keys.V).Down(async e =>
             {
                 if (!Window.IsExplorerOrOpenSaveDialog) return;
 
@@ -152,7 +152,7 @@ namespace Metaseed.MetaKeyboard
                     Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
                         {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
                 });
-            });
+            }, "Metaseed.VisualStudio", "Start &VisualStudio ");
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Clipboard.Core.Desktop.Models
 {
     internal class Register
     {
+
         private        string         _name;
         private static Dictionary<string,Register> _registers = new Dictionary<string, Register>();
 
@@ -31,11 +32,15 @@ namespace Clipboard.Core.Desktop.Models
             return CreateRegister(name);
         }
 
+        public bool? IsAppend;
+
         private ObservableCollection<DataEntry> Content { get; set; } = new AsyncObservableCollection<DataEntry>();
 
-        public void Add(DataEntry data)
+        public void Set(DataEntry data)
         {
+            if(!IsAppend.GetValueOrDefault()) Content.Clear();
             Content.Add(data);
+
         }
 
         public ObservableCollection<DataEntry> GetContent()

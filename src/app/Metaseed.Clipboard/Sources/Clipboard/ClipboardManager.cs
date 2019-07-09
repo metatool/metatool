@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using Clipboard.Core.Desktop.Models;
@@ -22,77 +23,113 @@ namespace Metaseed.MetaKeyboard
             CtrlUpPasting
         }
 
-        private State            _state = State.None;
+        private State __state = State.None;
+
+        private State _state
+        {
+            get { return __state; }
+            set
+            {
+                __state = value;
+                Console.WriteLine($"-----{__state}");
+            }
+        }
+
         private Register         _currentRegister;
         private ClipboardService _clipboard;
 
         public ClipboardManager()
         {
-            var copy = Keys.C.With(Keys.ControlKey);
-
-            copy.Down("", "", e =>
-            {
-                if (_state == State.CtrlUpCopying)
-                {
-                    _state = State.None;
-                    return;
-                }
-                _state = State.C;
-                e.Handled = true;
-            });
-
-            var paste = Keys.V.With(Keys.ControlKey);
-            paste.Down("", "", e =>
-            {
-                if (_state == State.CtrlUpPasting)
-                {
-                    _state = State.None;
-                    return;
-                }
-
-                _state = State.V;
-                e.Handled = true;
-            });
-
             var registerKeys = new List<Keys>()
             {
                 Keys.A, Keys.S, Keys.D, Keys.F, Keys.G
             };
 
-            copy.Then(Keys.ControlKey).Up("", "", ContolUp);
+            var CState = Keys.C.With(Keys.ControlKey);
+
+            CState.Down(e =>
+            {
+                if (_state == State.CtrlUpCopying)
+                {
+                    _state = State.None;
+                    _currentRegister = null;
+                    e.GoToState = new List<ICombination>();
+                    return;
+                }
+
+                e.Handled = true;
+                _state = State.C;
+            });
 
             registerKeys.ForEach(key =>
             {
-                copy.Then(key.With(Keys.ControlKey)).Down("", "", e =>
+                var register = CState.Then(key.With(Keys.LControlKey));
+                register.Down(e =>
                 {
-                    _currentRegister = Register.GetRegister(key.ToString());
                     e.Handled = true;
-                });
 
-                paste.Then(key.With(Keys.ControlKey)).Down("", "", e =>
-                {
                     _currentRegister = Register.GetRegister(key.ToString());
-                    e.Handled = true;
+
+                    if (!_currentRegister.IsAppend.HasValue) _currentRegister.IsAppend = false;
+                    else if (!_currentRegister.IsAppend.GetValueOrDefault()) _currentRegister.IsAppend = true;
+
+                    Console.WriteLine($"appending:{_currentRegister.IsAppend}");
+                });
+                register.Up(e => { e.GoToState = new List<ICombination>() {CState}; });
+            });
+
+            CState.Then(Keys.LControlKey).Up(e =>
+            {
+                // _state == State.None if triggered from real paste action.
+                if (_state == State.None) return;
+                _state = State.CtrlUpCopying;
+                e.BeginInvoke(() =>
+                {
+                    Console.WriteLine($"copy to {_currentRegister}");
+                    _clipboard.CopyTo(_currentRegister);
                 });
             });
 
 
-            void ControlUp(KeyEventArgsExt e)
+            var VState = Keys.V.With(Keys.ControlKey);
+            VState.Down(e =>
             {
-                if (_state == State.C)
+                if (_state == State.CtrlUpPasting)
                 {
-                    _state = State.CtrlUpCopying;
-                    _clipboard.CopyTo(_currentRegister);
-                }
-                else if (_state == State.V)
-                {
-                    _state = State.CtrlUpPasting;
-                    _clipboard.PasteFrom(_currentRegister);
+                    _currentRegister = null;
+                    _state = State.None;
+                    e.GoToState = new List<ICombination>();
+                    return;
                 }
 
-                _currentRegister = null;
-            }
-            Keys.LControlKey.Up("", "", ControlUp);
+                e.Handled = true;
+                _state = State.V;
+            });
+
+
+            registerKeys.ForEach(key =>
+            {
+                var register = VState.Then(key.With(Keys.LControlKey));
+                register.Down(e =>
+                {
+                    e.Handled = true;
+                    _currentRegister = Register.GetRegister(key.ToString());
+                });
+                register.Up(e => { e.GoToState = new List<ICombination>() {VState}; });
+            });
+
+            VState.Then(Keys.LControlKey).Up(e =>
+            {
+                // _state == State.None if triggered from real paste action.
+                if (_state == State.None) return;
+                _state = State.CtrlUpPasting;
+                e.BeginInvoke(() =>
+                {
+                    Console.WriteLine($"paste to {_currentRegister}");
+                    _clipboard.PasteFrom(_currentRegister);
+                });
+            });
+
             _clipboard = ServiceLocator.GetService<ClipboardService>();
 
             Keyboard.Hook();

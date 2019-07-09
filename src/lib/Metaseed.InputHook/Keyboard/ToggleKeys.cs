@@ -43,7 +43,7 @@ namespace Metaseed.Input
         void InstallHook()
         {
             if (keyDownActionToken == null)
-                keyDownActionToken = _key.Down($"Metaseed.AlwaysOnOff_{_key}_Down", "", e =>
+                keyDownActionToken = _key.Down(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
@@ -75,9 +75,9 @@ namespace Metaseed.Input
 
                     handled = KeyboardState.HandledDownKeys.Add(_key);
                     e.Handled = true;
-                },false);
+                }, $"Metaseed.AlwaysOnOff_{_key}_Down", "", false);
             if (keyUpActionToken == null)
-                keyUpActionToken = _key.Up($"Metaseed.AlwaysOnOff_{_key}_Up", "", e =>
+                keyUpActionToken = _key.Up(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
@@ -105,7 +105,7 @@ namespace Metaseed.Input
                         handled = false;
                     }
                     e.Handled = true;
-                });
+                }, $"Metaseed.AlwaysOnOff_{_key}_Up", "");
         }
 
         void RemoveHook()

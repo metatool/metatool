@@ -62,11 +62,15 @@ namespace Metaseed.DataStructures
         }
         internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)
         {
-
-            if (key == null) throw new ArgumentNullException(nameof(key));
-            return _children.TryGetValue(key, out var childNode)
+            return TryGetChild(key, out var childNode)
                     ? childNode
                     : null;
+        }
+
+        internal bool TryGetChild(TKey key, out TrieNode<TKey, TValue> child)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            return _children.TryGetValue(key, out child);
         }
         protected override TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position)
         {
@@ -95,6 +99,11 @@ namespace Metaseed.DataStructures
         protected override void RemoveChild(TKey key)
         {
             _children.Remove(key);
+        }
+
+        public override string ToString()
+        {
+            return Key?.ToString()??"Root";
         }
     }
 }

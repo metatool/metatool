@@ -32,8 +32,13 @@ namespace Metaseed.Input
             _Hook.ShowTip();
         }
 
-        public static void Hit(Keys key, IEnumerable<Keys> modifierKeys = null)
+        public static void Hit(Keys key, IEnumerable<Keys> modifierKeys = null, bool isAsync = false)
         {
+            if (isAsync)
+            {
+                Async(()=> Hit(key,modifierKeys,false));
+                return;
+            }
             if (modifierKeys == null) InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
             InputSimu.Inst.Keyboard.ModifiedKeyStroke(modifierKeys.Cast<VirtualKeyCode>(),
                 (VirtualKeyCode) key);
@@ -45,7 +50,7 @@ namespace Metaseed.Input
             var handled = false;
             return new Removables()
             {
-                source.Down($"Map_Down_{source}_To_{target}", "", e =>
+                source.Down(e =>
                 {
                     if (predicate == null || predicate(e))
                     {
@@ -69,8 +74,8 @@ namespace Metaseed.Input
                     }
 
                     handled = false;
-                }),
-                source.Up("Map_Up_{source}_To_{target}", "", e =>
+                }, $"Map_Down_{source}_To_{target}", ""),
+                source.Up(e =>
                 {
                     if (!handled) return;
                     handled = false;
@@ -89,7 +94,7 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) target.TriggerKey);
-                })
+                },"Map_Up_{source}_To_{target}", "")
             };
         }
 
@@ -132,7 +137,7 @@ namespace Metaseed.Input
 
             return new Removables()
             {
-                source.Down($"MapOnHit_Down_{source}_To_{target}", "", e =>
+                source.Down(e =>
                 {
                     if (predicate == null || predicate(e))
                     {
@@ -144,10 +149,10 @@ namespace Metaseed.Input
                     }
 
                     handling = false;
-                }),
+                }, $"MapOnHit_Down_{source}_To_{target}", ""),
                 allUp
                     ? AllKeyUp()
-                    : source.Up($"MapOnHit_Up_{source}_To_{target}", "", e =>
+                    : source.Up( e =>
                     {
                         if (!handling) return;
                         handling = false;
@@ -155,7 +160,7 @@ namespace Metaseed.Input
 
                         if (keyDownEvent != e.LastKeyDownEvent) return;
                         AsyncCall();
-                    })
+                    },$"MapOnHit_Up_{source}_To_{target}", "")
             };
         }
 
@@ -174,7 +179,7 @@ namespace Metaseed.Input
             KeyEventArgsExt keyDownEvent = null;
             return new Removables()
             {
-                combination.Down($"Hit_Down_{combination}_{keyAction.ActionId}", "", e =>
+                combination.Down( e =>
                 {
                     if (predicate == null || predicate(e))
                     {
@@ -188,8 +193,8 @@ namespace Metaseed.Input
                     }
 
                     handling = false;
-                }),
-                combination.Up($"MapOnHit_Up_{combination}_{keyAction.ActionId}", keyAction.Description, e =>
+                },$"Hit_Down_{combination}_{keyAction.ActionId}"),
+                combination.Up( e =>
                 {
                     if (!handling) return;
                     handling = false;
@@ -202,7 +207,7 @@ namespace Metaseed.Input
                     {
                         Async(() => keyAction?.Action(e));
                     }
-                })
+                },$"MapOnHit_Up_{combination}_{keyAction.ActionId}", keyAction.Description)
             };
         }
 

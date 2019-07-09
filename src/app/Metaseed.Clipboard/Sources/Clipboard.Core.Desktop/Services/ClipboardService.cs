@@ -248,20 +248,32 @@ namespace Clipboard.Core.Desktop.Services
         /// <summary>
         /// Perform a Ctrl + V to paste the current data in the clipboard.
         /// </summary>
-        internal void Paste()
+        internal void Paste(bool delay = true)
         {
-            Pause();
-            var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
-            delayer.Action += (sender, args) =>
+            void action()
             {
-                // SendKeys.SendWait("^v"); // Ctrl + V
-                Metaseed.Input.Keyboard.Hit(Keys.V, new List<Keys> { Keys.RControlKey });
+                SendKeys.SendWait("^v"); // Ctrl + V
+            }
+            if (delay)
+            {
+                Pause();
+                var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
+                delayer.Action += (sender, args) =>
+                {
+                   action();
 
-                delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
-                delayer.Action += (sender2, args2) => { Resume(); };
+                    delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
+                    delayer.Action += (sender2, args2) => { Resume(); };
+                    delayer.ResetAndTick();
+                };
                 delayer.ResetAndTick();
-            };
-            delayer.ResetAndTick();
+            }
+            else
+            {
+                Pause();
+                action();
+                Resume();
+            }
         }
 
         /// <summary>

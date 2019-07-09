@@ -7,16 +7,16 @@ namespace Metaseed.Input
 {
     public static class CombinationExtetions
     {
-        public static IRemovable Down(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action)
+        public static IRemovable Down(this ICombination combination, Action<KeyEventArgsExt> action, string actionId = "", string description="")
         {
             return Keyboard.Add(combination,KeyEvent.Down, new KeyAction(actionId, description, action));
         }
 
-        public static IRemovable Up(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action)
+        public static IRemovable Up(this ICombination combination, Action<KeyEventArgsExt> action, string actionId ="", string description ="")
         {
             return Keyboard.Add(combination, KeyEvent.Up, new KeyAction(actionId, description, action));
         }
-        public static IRemovable Hit(this ICombination combination, string actionId, string description, Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> predicate, bool markHandled = true)
+        public static IRemovable Hit(this ICombination combination,  Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> predicate, string actionId, string description, bool markHandled = true)
         {
             var keyAction = new KeyAction(actionId, description, action);
             return Keyboard.Hit(combination, keyAction, predicate, markHandled);
@@ -40,8 +40,8 @@ namespace Metaseed.Input
         }
         public static ICombination Handled(this ICombination combination)
         {
-            combination.Down("", "", e => e.Handled = true);
-            combination.Up("", "", e => e.Handled = true);
+            combination.Down( e => e.Handled = true);
+            combination.Up( e => e.Handled = true);
             return combination;
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Metaseed.DataStructures;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.Implementation.Trie;
@@ -111,6 +112,7 @@ namespace Metaseed.Input
                             return KeyProcessState.Yield;
                         }
 
+                        Reset();
                         return KeyProcessState.Reset; // to process combination chord up
                     }
                     else
@@ -118,10 +120,11 @@ namespace Metaseed.Input
                         if (!_stateWalker.IsOnRoot && // on root currentnode.key = null
                             _stateWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
                         {
-                            return KeyProcessState.Continue; // combination chord keys up
+                            return KeyProcessState.Continue; // combination chord keys up, to process child
                         }
                         else
                         {
+                            Reset();
                             return KeyProcessState.Reset;
                         }
                     }
@@ -150,7 +153,15 @@ namespace Metaseed.Input
                     MessageBox.Show(e.ToString());
                 }
 #endif
+            if (args.GoToState != null) // goto state by requiring
+            {
+                if (!_stateWalker.TryGoToState(args.GoToState, out var state))
+                {
+                    Console.WriteLine($"Couldn't go to state {state}");
+                }
 
+                return KeyProcessState.Continue;
+            }
             if (eventType == KeyEvent.Up)
             {
                 // only navigate on up event to handle both the down actions and the up actions

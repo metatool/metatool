@@ -23,10 +23,15 @@ namespace Clipboard.Core.Desktop.Services
         internal void PasteFrom(Register register)
         {
             var dataService = ServiceLocator.GetService<DataService>();
-            register?.GetContent().ToList().ForEach(data =>
+            if (register == null)
+            {
+                this.Paste(false);
+                return;
+            }
+            register.GetContent().ToList().ForEach(data =>
             {
                 dataService.CopyData(data);
-                this.Paste();
+                this.Paste(false);
             });
         }
 
@@ -34,7 +39,8 @@ namespace Clipboard.Core.Desktop.Services
         {
             if (_register != null)
             {
-                _register.Add(data);
+                _register.Set(data);
+                _register.IsAppend = null;
                 _register = null;
             }
         }

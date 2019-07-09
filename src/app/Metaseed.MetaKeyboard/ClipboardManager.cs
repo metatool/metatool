@@ -28,73 +28,73 @@ namespace Metaseed.MetaKeyboard
         {
             var copy = Keys.C.With(Keys.ControlKey);
 
-            copy.Down("", "", e =>
+            copy.Down(e =>
             {
                 if (_state == State.CtrlUpCopying) return;
                 _state = State.C;
                 e.Handled = true;
-            });
+            }, "", "");
 
             var paste = Keys.V.With(Keys.ControlKey);
-            paste.Down("", "", e =>
+            paste.Down(e =>
             {
                 if (_state == State.CtrlUpPasting) return;
                 _state = State.V;
                 e.Handled = true;
-            });
+            }, "", "");
 
-            copy.Then(Keys.A.With(Keys.ControlKey)).Down("", "", e =>
+            copy.Then(Keys.A.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.A;
                 e.Handled = true;
-            });
-            copy.Then(Keys.S.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            copy.Then(Keys.S.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.S;
                 e.Handled = true;
-            });
-            copy.Then(Keys.D.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            copy.Then(Keys.D.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.D;
                 e.Handled = true;
-            });
-            copy.Then(Keys.F.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            copy.Then(Keys.F.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.F;
                 e.Handled = true;
-            });
-            copy.Then(Keys.G.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            copy.Then(Keys.G.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.G;
                 e.Handled = true;
-            });
-            paste.Then(Keys.A.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            paste.Then(Keys.A.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.A;
                 e.Handled = true;
-            });
-            paste.Then(Keys.S.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            paste.Then(Keys.S.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.S;
                 e.Handled = true;
-            });
-            paste.Then(Keys.D.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            paste.Then(Keys.D.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.D;
                 e.Handled = true;
-            });
-            paste.Then(Keys.F.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            paste.Then(Keys.F.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.F;
                 e.Handled = true;
-            });
-            paste.Then(Keys.G.With(Keys.ControlKey)).Down("", "", e =>
+            }, "", "");
+            paste.Then(Keys.G.With(Keys.ControlKey)).Down(e =>
             {
                 _currentRegister = _clipboard.G;
                 e.Handled = true;
-            });
+            }, "", "");
 
-            Keys.LControlKey.Up("", "", e =>
+            Keys.LControlKey.Up(e =>
             {
                 if (_state == State.C)
                 {
@@ -108,7 +108,7 @@ namespace Metaseed.MetaKeyboard
                 }
                 _state = State.None;
                 _currentRegister = null;
-            });
+            }, "", "");
 
 
         }

@@ -14,7 +14,7 @@ namespace Metaseed.MetaKeyboard
     {
         public FunctionalKeys()
         {
-            Keys.F.With(Keys.LWin).Down("Metaseed.FocusFileItemsView", "Focus &File Items View", e =>
+            Keys.F.With(Keys.LWin).Down(e =>
             {
                 var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;// Windows Explorer or open/save as dialog
@@ -29,10 +29,10 @@ namespace Metaseed.MetaKeyboard
                 }
 
                 e.Handled = true;
-            });
+            }, "Metaseed.FocusFileItemsView", "Focus &File Items View");
 
 
-            Keys.N.With(Keys.LWin).Down("Metaseed.FocusNavigAtionTreeView", "Focus &Navigation Tree View", e =>
+            Keys.N.With(Keys.LWin).Down(e =>
             {
                 var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;
@@ -46,9 +46,9 @@ namespace Metaseed.MetaKeyboard
                 }
 
                 e.Handled = true;
-            });
+            }, "Metaseed.FocusNavigAtionTreeView", "Focus &Navigation Tree View");
 
-            Keys.OemPipe.With(Keys.CapsLock).Down("Metaseed.CopySelectedFilesPath", "Copy Selected Files Path", async e =>
+            Keys.OemPipe.With(Keys.CapsLock).Down(async e =>
             {
                 var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;
@@ -58,15 +58,16 @@ namespace Metaseed.MetaKeyboard
                 var r = string.Join(';', paths);
                 System.Windows.Clipboard.SetText(r);
                 e.Handled = true;
-            });
+            }, "Metaseed.CopySelectedFilesPath", "Copy Selected Files Path");
 
-            Keys.D.With(Keys.LWin).Down("Metaseed.ShowDesktopFolder", "Show &Desktop Folder", e =>
-           {
-               Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-               e.Handled = true;
-           });
+            Keys.D.With(Keys.LWin).Down(e =>
+                {
+                    Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                    e.Handled = true;
+                }
+                , "Metaseed.ShowDesktopFolder", "Show &Desktop Folder");
 
-            Keys.N.With(Keys.Control).With(Keys.Alt).Hit("Metaseed.NewFile", "&New File", async e =>
+            Keys.N.With(Keys.Control).With(Keys.Alt).Hit(async e =>
              {
                  const string newFileName = "NewFile";
                  var handle = UI.Window.CurrentWindowHandle;
@@ -87,28 +88,30 @@ namespace Metaseed.MetaKeyboard
                  var c = UI.Window.CurrentWindowClass;
                  if ("CabinetWClass" != c) return false;
                  return true;
-             });
+             },"Metaseed.NewFile", "&New File");
 
             Keys.C.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
-                .Down("Metaseed.Close_MetaKeyBoard", "Close", e =>
+                .Down(e =>
                 {
                     Notify.ShowMessage("MetaKeyBoard Closing...");
                     Environment.Exit(0);
-                });
+                }, "Metaseed.Close_MetaKeyBoard", "Close");
 
 
             Keys.X.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
-                .Down("Metaseed.Restart_MetaKeyBoard", "Restart", e =>
+                .Down(e =>
                 {
                     Notify.ShowMessage("MetaKeyBoard Restarting...");
                     var p = Application.ExecutablePath;
                     var path = p.Remove(p.Length - 4, 4) + ".exe";
                     Process.Start(path);
                     Environment.Exit(0);
-                });
-            Keys.OemQuestion.With(Keys.CapsLock).Down("Metaseed.Help", "Show Tips", e => { Keyboard.ShowTip();
+                }, "Metaseed.Restart_MetaKeyBoard", "Restart");
+            Keys.OemQuestion.With(Keys.CapsLock).Down(e =>
+            {
+                Keyboard.ShowTip();
                 e.Handled = true;
-            });
+            }, "Metaseed.Help", "Show Tips");
         }
 
     }

@@ -8,12 +8,12 @@ namespace Metaseed.Input
 {
     public static class KeysExtensions
     {
-        public static IRemovable Down(this Keys key, string actionId, string simpleDescription, Action<KeyEventArgsExt> action, bool isAsync=false)
+        public static IRemovable Down(this Keys key, Action<KeyEventArgsExt> action, string actionId, string simpleDescription, bool isAsync=false)
         {
             return Keyboard.Add(new Combination(key), KeyEvent.Down, new KeyAction(actionId, simpleDescription, action));
         }
 
-        public static IRemovable Up(this Keys key, string actionId, string simpleDescription, Action<KeyEventArgsExt> action)
+        public static IRemovable Up(this Keys key,  Action<KeyEventArgsExt> action, string actionId, string simpleDescription)
         {
             return Keyboard.Add(new Combination(key), KeyEvent.Up, new KeyAction(actionId, simpleDescription, action));
         }

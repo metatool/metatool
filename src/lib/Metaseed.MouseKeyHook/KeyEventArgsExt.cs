@@ -3,8 +3,10 @@
 // See license.txt or https://mit-license.org/
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.WinApi;
 
@@ -37,6 +39,13 @@ namespace Metaseed.Input
             LastKeyDownEvent = lastKeyDownEvent;
             lastKeyDownEvent.LastKeyDownEvent = null;
             KeyboardState = keyboardState;
+        }
+        static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
+        public IList<ICombination> GoToState;
+        public void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send)
+        {
+            _dispatcher.BeginInvoke(priority, action);
         }
 
         /// <summary>

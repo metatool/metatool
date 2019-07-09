@@ -5,7 +5,7 @@ using Metaseed.DataStructures;
 
 namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
 {
-    public class TrieWalker<TKey,TValue> where TKey:ICombination where TValue: KeyEventAction
+    public class TrieWalker<TKey, TValue> where TKey : ICombination where TValue : KeyEventAction
     {
         private readonly Trie<TKey, TValue> _trie;
 
@@ -15,10 +15,22 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             CurrentNode = _trie;
         }
 
-        internal TrieNode<TKey, TValue> CurrentNode { get; set; }
-        public bool IsOnRoot => CurrentNode == _trie;
+        private TrieNode<TKey, TValue> _CurrentNode;
+        internal TrieNode<TKey, TValue> CurrentNode
+        {
+            get => _CurrentNode;
+            set
+            {
+                
+                _CurrentNode = value;
+                Console.WriteLine($"On state ${_CurrentNode}");
 
-        public int ChildrenCount => CurrentNode.ChildrenCount;
+            }
+        }
+
+        public   bool                   IsOnRoot    => CurrentNode == _trie;
+
+        public int                 ChildrenCount => CurrentNode.ChildrenCount;
         public IEnumerable<TValue> CurrentValues => CurrentNode.Values();
 
         public bool TryGoToChild(TKey key)
@@ -28,6 +40,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             CurrentNode = node;
             return true;
         }
+
         public bool TryGoToChild(Func<TKey, TKey, TKey> aggregateFunc, TKey initialKey = default(TKey))
         {
             var node = CurrentNode.GetChildOrNull(aggregateFunc, initialKey);
@@ -35,13 +48,17 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             CurrentNode = node;
             return true;
         }
-        internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc, TKey initialKey = default(TKey))
+
+        internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc,
+            TKey initialKey = default(TKey))
         {
             return CurrentNode.GetChildOrNull(aggregateFunc, initialKey);
-
         }
 
-        internal KeyValuePair<TKey, TrieNode<TKey, TValue>> GetChildOrNull(Func<KeyValuePair<TKey, TrieNode<TKey, TValue>>, KeyValuePair<TKey,TrieNode<TKey, TValue>>, KeyValuePair<TKey, TrieNode<TKey, TValue>>> aggregateFunc, KeyValuePair<TKey, TrieNode<TKey, TValue>> initKey=default(KeyValuePair<TKey,TrieNode<TKey,TValue>>))
+        internal KeyValuePair<TKey, TrieNode<TKey, TValue>> GetChildOrNull(
+            Func<KeyValuePair<TKey, TrieNode<TKey, TValue>>, KeyValuePair<TKey, TrieNode<TKey, TValue>>,
+                KeyValuePair<TKey, TrieNode<TKey, TValue>>> aggregateFunc,
+            KeyValuePair<TKey, TrieNode<TKey, TValue>> initKey = default(KeyValuePair<TKey, TrieNode<TKey, TValue>>))
         {
             return CurrentNode.ChildrenPairs.Aggregate(initKey, aggregateFunc);
         }
@@ -54,6 +71,24 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
         public void GoToRoot()
         {
             CurrentNode = _trie;
+        }
+
+        public bool TryGoToState(IList<TKey> state, out TrieNode<TKey, TValue> node)
+        {
+            node = _trie;
+            foreach (var combination in state)
+            {
+                if (node.TryGetChild(combination, out var child))
+                {
+                    node = child;
+                    continue;
+                }
+
+                return false;
+            }
+
+            CurrentNode = node;
+            return true;
         }
     }
 }
