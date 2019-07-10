@@ -64,9 +64,9 @@ namespace Clipboard.Views
         private void NotifyIcon_OnMouseClick(object sender, MouseButtonEventArgs e)
         {
             var viewModel = (MainWindowViewModel)DataContext;
-            if (e.ChangedButton == MouseButton.Left && viewModel.PasteCommand.CanExecute(null))
+            if (e.ChangedButton == MouseButton.Left && viewModel.DisplayBarCommand.CanExecute(null))
             {
-                viewModel.PasteCommand.Execute(null);
+                viewModel.DisplayBarCommand.Execute(null);
             }
         }
 

@@ -166,7 +166,7 @@ namespace Clipboard.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            PasteCommand = new RelayCommand(ExecutePasteCommand, CanExecutePasteCommand);
+            DisplayBarCommand = new RelayCommand(ExecutePasteCommand, CanExecutePasteCommand);
             SynchronizeCommand = new RelayCommand(ExecuteSynchronizeCommand);
             SettingsCommand = new RelayCommand<SettingsViewMode>(ExecuteSettingsCommand);
             ExitCommand = new RelayCommand(ExecuteExitCommand);
@@ -179,7 +179,7 @@ namespace Clipboard.ViewModels
         /// <summary>
         /// Gets or sets a <see cref="RelayCommand"/> executed when we click on the Paste button
         /// </summary>
-        public RelayCommand PasteCommand { get; private set; }
+        public RelayCommand DisplayBarCommand { get; private set; }
 
         private bool CanExecutePasteCommand()
         {
@@ -347,7 +347,7 @@ namespace Clipboard.ViewModels
                         var activeScreen = Screen.FromPoint(new System.Drawing.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y));
                         var screen = SystemInfoHelper.GetAllScreenInfos().Single(s => s.DeviceName == activeScreen.DeviceName);
 
-                        if (e.Coords.Y <= screen.Bounds.Top + 5 && PasteCommand.CanExecute(null))
+                        if (e.Coords.Y <= screen.Bounds.Top + 5 && DisplayBarCommand.CanExecute(null))
                         {
                             e.Handled = true;
                             Logger.Instance.Information($"Mouse gesture detected at the top of the screen.");
@@ -362,7 +362,7 @@ namespace Clipboard.ViewModels
                         var activeScreen = Screen.FromPoint(new System.Drawing.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y));
                         var screen = SystemInfoHelper.GetAllScreenInfos().Single(s => s.DeviceName == activeScreen.DeviceName);
 
-                        if (e.Coords.Y >= screen.Bounds.Bottom + screen.Bounds.Top - 5 && PasteCommand.CanExecute(null))
+                        if (e.Coords.Y >= screen.Bounds.Bottom + screen.Bounds.Top - 5 && DisplayBarCommand.CanExecute(null))
                         {
                             e.Handled = true;
                             Logger.Instance.Information($"Mouse gesture detected at the bottom of the screen.");
@@ -378,7 +378,7 @@ namespace Clipboard.ViewModels
 
         private void MouseAndKeyboardHookService_HotKeyDetected(object sender, HotKeyEventArgs e)
         {
-            if (PasteCommand.CanExecute(null))
+            if (DisplayBarCommand.CanExecute(null))
             {
                 Logger.Instance.Information($"The keyboard shortcut has hit.");
                 e.Handled = true;
@@ -438,9 +438,9 @@ namespace Clipboard.ViewModels
 
         private void DelayedPasteCommand(object sender, DelayerActionEventArgs<object> e)
         {
-            if (PasteCommand.CanExecute(null))
+            if (DisplayBarCommand.CanExecute(null))
             {
-                PasteCommand.Execute(null);
+                DisplayBarCommand.Execute(null);
             }
         }
 

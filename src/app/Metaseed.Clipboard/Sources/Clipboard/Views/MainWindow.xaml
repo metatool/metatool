@@ -32,7 +32,7 @@
             MouseClick="NotifyIcon_OnMouseClick">
             <controls:NotifyIcon.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="{Binding Language.MainWindow.Menu_Paste_Text}" ToolTip="{Binding Language.MainWindow.Menu_Paste_Tooltip}" FlowDirection="{Binding Language.FlowDirection}" Command="{Binding PasteCommand}">
+                    <MenuItem Header="{Binding Language.MainWindow.Menu_Paste_Text}" ToolTip="{Binding Language.MainWindow.Menu_Paste_Tooltip}" FlowDirection="{Binding Language.FlowDirection}" Command="{Binding DisplayBarCommand}">
                         <MenuItem.Icon>
                             <ContentControl Template="{StaticResource IconPaste}"/>
                         </MenuItem.Icon>

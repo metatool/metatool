@@ -20,17 +20,42 @@ namespace Clipboard.Core.Desktop.Services
             Metaseed.Input.Keyboard.Hit(Keys.C, new List<Keys> {Keys.RControlKey});
         }
 
+        DataService dataService;
+
+        DataService DataService
+        {
+            get =>
+                dataService = dataService ?? ServiceLocator.GetService<DataService>();
+        }
+
+        internal void PasteFrom(int relevantToCurrentIndex)
+        {
+            var index = DataService.CurrentIndex + relevantToCurrentIndex;
+            if (DataService.DataEntries.Count < index)
+            {
+                Console.WriteLine("no data in DataEntries");
+                return;
+            }
+
+            DataService.CurrentIndex = index;
+
+            var data = DataService.DataEntries[index];
+
+            DataService.CopyData(data);
+            this.Paste(false);
+        }
+
         internal void PasteFrom(Register register)
         {
-            var dataService = ServiceLocator.GetService<DataService>();
             if (register == null)
             {
                 this.Paste(false);
                 return;
             }
+
             register.GetContent().ToList().ForEach(data =>
             {
-                dataService.CopyData(data);
+                DataService.CopyData(data);
                 this.Paste(false);
             });
         }

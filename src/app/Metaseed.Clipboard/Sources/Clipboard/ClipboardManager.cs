@@ -124,11 +124,46 @@ namespace Metaseed.MetaKeyboard
                 _state = State.CtrlUpPasting;
                 e.BeginInvoke(() =>
                 {
-                    Console.WriteLine($"paste to {_currentRegister}");
+                    Console.WriteLine($"paste from {_currentRegister}");
                     _clipboard.PasteFrom(_currentRegister);
                 });
             });
 
+            VState.Then(Keys.V.With(Keys.ControlKey)).Down(e =>
+            {
+                e.Handled = true;
+                _state = State.CtrlUpPasting;
+
+                e.BeginInvoke(() =>
+                {
+                    Console.WriteLine($"paste from last");
+
+                    _clipboard.PasteFrom(1);
+                });
+            });
+            VState.Then(Keys.C.With(Keys.ControlKey)).Down(e =>
+            {
+                e.Handled = true;
+
+                e.BeginInvoke(() =>
+                {
+                    Console.WriteLine($"paste from previous");
+
+                    _clipboard.PasteFrom(-1);
+                });
+            });
+
+            VState.Then(Keys.B.With(Keys.ControlKey)).Down(e =>
+            {
+                e.Handled = true;
+
+                e.BeginInvoke(() =>
+                {
+                    Console.WriteLine($"paste from previous");
+
+                    _clipboard.PasteFrom(-1);
+                });
+            });
             _clipboard = ServiceLocator.GetService<ClipboardService>();
 
             Keyboard.Hook();

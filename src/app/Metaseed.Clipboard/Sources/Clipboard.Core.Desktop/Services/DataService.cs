@@ -9,6 +9,7 @@ using Clipboard.Shared.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -16,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using Window = Clipboard.Core.Desktop.Models.Window;
 
@@ -54,6 +56,8 @@ namespace Clipboard.Core.Desktop.Services
         /// </summary>
         internal AsyncObservableCollection<DataEntry> DataEntries { get; private set; }
 
+        internal int CurrentIndex { get; set; } = 0;
+
         /// <summary>
         /// Gets cache that describes that status of all data entries.
         /// </summary>
@@ -90,8 +94,8 @@ namespace Clipboard.Core.Desktop.Services
             var appDataFolder = CoreHelper.GetAppDataFolder();
 
             Requires.NotNullOrWhiteSpace(appDataFolder, nameof(appDataFolder));
-
             DataEntries = new AsyncObservableCollection<DataEntry>();
+
             Cache = new List<DataEntryCache>();
 
             ClipboardDataPath = Path.Combine(appDataFolder, Consts.ClipboardDataFolderName);
@@ -459,6 +463,16 @@ namespace Clipboard.Core.Desktop.Services
             return false;
         }
 
+        private ClipboardService _clipboardService;
+
+        ClipboardService ClipboardService
+        {
+            get
+            {
+                return _clipboardService = _clipboardService ??ServiceLocator.GetService<ClipboardService>();
+            }
+        }
+
         /// <summary>
         /// Set the data from the specified data entry to the clipboard.
         /// </summary>
@@ -467,9 +481,7 @@ namespace Clipboard.Core.Desktop.Services
         {
             Requires.NotNull(dataEntry, nameof(dataEntry));
             DispatcherHelper.ThrowIfNotStaThread();
-
-            var clipboardService = ServiceLocator.GetService<ClipboardService>();
-            clipboardService.SetClipboard(dataEntry.DataIdentifiers);
+            ClipboardService.SetClipboard(dataEntry.DataIdentifiers);
         }
 
         /// <summary>

@@ -61,6 +61,8 @@ namespace Clipboard.ViewModels
         /// </summary>
         public bool IsScreenReaderRunning => SystemInfoHelper.IsScreenReaderRunning();
 
+        public ICollectionView DataEntriesView { get; set; }
+
         /// <summary>
         /// Gets or sets the list of <see cref="DataEntry"/> from the clipboard.
         /// </summary>
@@ -70,7 +72,9 @@ namespace Clipboard.ViewModels
             set
             {
                 _dataEntries = value;
+                DataEntriesView = CollectionViewSource.GetDefaultView(_dataEntries);
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(DataEntriesView));
             }
         }
 
