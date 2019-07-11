@@ -199,7 +199,7 @@ namespace Clipboard.Core.Desktop.Tests.Service
             DispatcherUtil.DoEvents();
 
             dataService.DataEntries.First().IsFavorite = true;
-            await dataService.ReorganizeAsync(true);
+            await dataService.SaveDataEntryFileAsync();
 
             Assert.AreEqual(1, dataService.Cache.Count);
             Assert.AreEqual(1, dataService.DataEntries.Count);
@@ -244,7 +244,7 @@ namespace Clipboard.Core.Desktop.Tests.Service
             DispatcherUtil.DoEvents();
 
             dataService.DataEntries.First().IsFavorite = true;
-            await dataService.ReorganizeAsync(true);
+            await dataService.SaveDataEntryFileAsync();
 
             Assert.AreEqual(1, dataService.Cache.Count);
             Assert.AreEqual(1, dataService.DataEntries.Count);

@@ -66,7 +66,7 @@ namespace Clipboard.ViewModels
         /// <summary>
         /// Gets or sets the list of <see cref="DataEntry"/> from the clipboard.
         /// </summary>
-        public AsyncObservableCollection<DataEntry> DataEntries
+        internal AsyncObservableCollection<DataEntry> DataEntries
         {
             get => _dataEntries;
             set
@@ -308,7 +308,7 @@ namespace Clipboard.ViewModels
 
         private async void ExecuteToggleItemOptionCommand()
         {
-            await _dataService.ReorganizeAsync(true);
+            await _dataService.SaveDataEntryFileAsync();
         }
 
         #endregion

@@ -195,45 +195,6 @@ namespace Clipboard.Core.Desktop.Services
         }
 
         /// <summary>
-        /// Sort the data. The favorites will be placed on top of the list.
-        /// </summary>
-        /// <param name="saveDataEntryFile">Defines whether the data entry file must be saved</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        internal async Task ReorganizeAsync(bool saveDataEntryFile)
-        {
-        var indexOfFirstNonFavorite = DataEntries.IndexOf(DataEntries.FirstOrDefault(dataEntry => !dataEntry.IsFavorite));
-        
-        // if (indexOfFirstNonFavorite > -1)
-        // {
-        //     for (var i = indexOfFirstNonFavorite; i < DataEntries.Count; i++)
-        //     {
-        //         var item = DataEntries[i];
-        //         if (!item.IsFavorite)
-        //         {
-        //             continue;
-        //         }
-        //
-        //         DataEntries.RemoveAt(i);
-        //         DataEntries.Insert(0, item);
-        //
-        //         var cacheItem = Cache.SingleOrDefault(dataEntryCache => dataEntryCache.Identifier == item.Identifier);
-        //         if (cacheItem != null)
-        //         {
-        //             Cache.Remove(cacheItem);
-        //             Cache.Insert(0, cacheItem);
-        //         }
-        //     }
-        // }
-
-            Logger.Instance.Information($"The data entries have been automatically reorganized.");
-
-            if (saveDataEntryFile)
-            {
-                await SaveDataEntryFileAsync();
-            }
-        }
-
-        /// <summary>
         /// Add the specific clipboard data to the data entries.
         /// </summary>
         /// <param name="e">The clipboard data from the hook.</param>
@@ -937,7 +898,7 @@ namespace Clipboard.Core.Desktop.Services
         /// Save the data entry to the hard drive.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private Task SaveDataEntryFileAsync()
+        internal Task SaveDataEntryFileAsync()
         {
             EnsureDataFolderExists();
 
@@ -981,8 +942,6 @@ namespace Clipboard.Core.Desktop.Services
             var dataToRemove = new List<DataEntry>();
             var maxDataToKeep = _settingProvider.GetSetting<int>("MaxDataToKeep");
             var expireLimit = TimeSpan.FromDays(_settingProvider.GetSetting<int>("DateExpireLimit"));
-
-            await ReorganizeAsync(false);
 
             if (DataEntries.Count > maxDataToKeep)
             {

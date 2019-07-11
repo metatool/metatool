@@ -29,8 +29,8 @@ namespace Clipboard.Views
 
         private Storyboard _openingStoryboard;
         private Storyboard _closingStoryboard;
-        private bool _isDisplayed;
-        private Action _actionOnHidding;
+        private bool       _isDisplayed;
+        private Action     _actionOnHidding;
 
         #endregion
 
@@ -43,7 +43,8 @@ namespace Clipboard.Views
         {
             InitializeComponent();
 
-            var activeScreen = Screen.FromPoint(new System.Drawing.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y));
+            var activeScreen = Screen.FromPoint(new System.Drawing.Point(System.Windows.Forms.Cursor.Position.X,
+                System.Windows.Forms.Cursor.Position.Y));
             var screen = SystemInfoHelper.GetAllScreenInfos().Single(s => s.DeviceName == activeScreen.DeviceName);
             InitializePosition(screen);
 
@@ -71,23 +72,15 @@ namespace Clipboard.Views
             _closingStoryboard.Remove();
             _openingStoryboard.Remove();
 
-            var dataContext = (PasteBarWindowViewModel)DataContext;
-            if (dataContext.DataEntries.Any(item => item.IsMoreInfoDisplayed))
-            {
-                foreach (var dataContextDataEntry in dataContext.DataEntries.Where(item => item.IsMoreInfoDisplayed))
-                {
-                    dataContextDataEntry.IsMoreInfoDisplayed = false;
-                }
-                DataListBox.Items.Refresh();
-            }
+            var dataContext = (PasteBarWindowViewModel) DataContext;
+            dataContext.DataEntries.Where(et => et.IsMoreInfoDisplayed).ToList().ForEach(et =>
+                et.IsMoreInfoDisplayed = false
+            );
 
             if (DataListBox.Items.Count > 0)
             {
                 DataListBox.ScrollIntoView(DataListBox.Items[0]);
             }
-
-            DataListBox.SelectedItem = null;
-            DataListBox.SelectedIndex = 0;
         }
 
         private void PasteBarWindow_OnClosing(object sender, CancelEventArgs e)
@@ -97,13 +90,13 @@ namespace Clipboard.Views
 
         private void ContextMenu_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var dataContext = (PasteBarWindowViewModel)DataContext;
+            var dataContext = (PasteBarWindowViewModel) DataContext;
             dataContext.ContextMenuOpenedCommand.Execute(null);
         }
 
         private void ScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            var scrollViewer = (ScrollViewer)sender;
+            var scrollViewer = (ScrollViewer) sender;
             scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - e.Delta);
         }
 
@@ -122,18 +115,20 @@ namespace Clipboard.Views
                 throw new Exception("Paste bar already displayed.");
             }
 
-            var dataContext = (PasteBarWindowViewModel)DataContext;
+            var dataContext = (PasteBarWindowViewModel) DataContext;
             var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(50));
             _isDisplayed = true;
             _actionOnHidding = actionOnHidding;
 
-            var activeScreen = Screen.FromPoint(new System.Drawing.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y));
+            var activeScreen = Screen.FromPoint(new System.Drawing.Point(System.Windows.Forms.Cursor.Position.X,
+                System.Windows.Forms.Cursor.Position.Y));
             var screen = SystemInfoHelper.GetAllScreenInfos().Single(s => s.DeviceName == activeScreen.DeviceName);
 
             InitializePosition(screen);
             InitializeStoryboards(screen);
 
-            Messenger.Default.Register<ComponentModel.Messages.Message>(this, MessageIdentifiers.HidePasteBarWindow, HidePasteBarWindow);
+            Messenger.Default.Register<ComponentModel.Messages.Message>(this, MessageIdentifiers.HidePasteBarWindow,
+                HidePasteBarWindow);
 
             Show();
             Activate();
@@ -157,7 +152,8 @@ namespace Clipboard.Views
         private void HidePasteBarWindow(ComponentModel.Messages.Message message)
         {
             Logger.Instance.Information("Paste bar is hiding.");
-            Messenger.Default.Unregister<ComponentModel.Messages.Message>(this, MessageIdentifiers.HidePasteBarWindow, HidePasteBarWindow);
+            Messenger.Default.Unregister<ComponentModel.Messages.Message>(this, MessageIdentifiers.HidePasteBarWindow,
+                HidePasteBarWindow);
             _closingStoryboard.Begin();
         }
 
@@ -220,7 +216,7 @@ namespace Clipboard.Views
             openDoubleAnimation.From = openFrom;
             openDoubleAnimation.To = openTo;
             openDoubleAnimation.Duration = TimeSpan.FromMilliseconds(100);
-            openDoubleAnimation.EasingFunction = new CircleEase { EasingMode = EasingMode.EaseOut };
+            openDoubleAnimation.EasingFunction = new CircleEase {EasingMode = EasingMode.EaseOut};
             _openingStoryboard = new Storyboard();
             _openingStoryboard.RepeatBehavior = new RepeatBehavior(1);
             Storyboard.SetTargetProperty(openDoubleAnimation, new PropertyPath(TopProperty));
@@ -231,7 +227,7 @@ namespace Clipboard.Views
             closeDoubleAnimation.From = closeFrom;
             closeDoubleAnimation.To = closeTo;
             closeDoubleAnimation.Duration = TimeSpan.FromMilliseconds(100);
-            closeDoubleAnimation.EasingFunction = new CircleEase { EasingMode = EasingMode.EaseIn };
+            closeDoubleAnimation.EasingFunction = new CircleEase {EasingMode = EasingMode.EaseIn};
             _closingStoryboard = new Storyboard();
             _closingStoryboard.RepeatBehavior = new RepeatBehavior(1);
             Storyboard.SetTargetProperty(closeDoubleAnimation, new PropertyPath(TopProperty));
