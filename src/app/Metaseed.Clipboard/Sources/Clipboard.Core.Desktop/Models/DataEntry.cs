@@ -129,16 +129,6 @@ namespace Clipboard.Core.Desktop.Models
 
         #endregion
 
-        #region Methods
-
-        [field: NonSerialized]
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
+       
     }
 }

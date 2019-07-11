@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Clipboard.ViewModels
         #region Fields
 
         private readonly DataService _dataService;
-        private readonly ICollectionView _collectionView;
+        private ListCollectionView _collectionView;
 
         private MouseAndKeyboardHookService _mouseAndKeyboardHookService;
         private AsyncObservableCollection<DataEntry> _dataEntries;
@@ -61,29 +62,36 @@ namespace Clipboard.ViewModels
         /// </summary>
         public bool IsScreenReaderRunning => SystemInfoHelper.IsScreenReaderRunning();
 
-        public ICollectionView DataEntriesView { get; set; }
 
         /// <summary>
         /// Gets or sets the list of <see cref="DataEntry"/> from the clipboard.
         /// </summary>
         public AsyncObservableCollection<DataEntry> DataEntries
         {
-            get { return _dataEntries; }
+            get => _dataEntries;
             set
             {
                 _dataEntries = value;
-                DataEntriesView = CollectionViewSource.GetDefaultView(_dataEntries);
+                _collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(_dataEntries);
+                _collectionView.Filter = Filter;
+                _collectionView.IsLiveSorting = true;
+                _collectionView.IsLiveFiltering = true;
+                _collectionView.LiveSortingProperties.Add("IsFavorite");
+                _collectionView.SortDescriptions.Add(new SortDescription("IsFavorite", ListSortDirection.Descending));
                 RaisePropertyChanged();
-                RaisePropertyChanged(nameof(DataEntriesView));
             }
         }
+        /// <summary>
+        /// Gets the collection view
+        /// </summary>
+        public ListCollectionView CollectionView => _collectionView;
 
         /// <summary>
         /// Gets or sets query in the search text box
         /// </summary>
         public string SearchQueryString
         {
-            get { return _searchQueryString; }
+            get => _searchQueryString;
             set
             {
                 _searchQueryString = value;
@@ -110,11 +118,6 @@ namespace Clipboard.ViewModels
         internal bool IgnoreSearch { get; set; }
 
         /// <summary>
-        /// Gets the collection view
-        /// </summary>
-        public ICollectionView CollectionView => _collectionView;
-
-        /// <summary>
         /// Gets a value that defines whether any data from the clipboard is present or not.
         /// </summary>
         public bool NoPresentData => DataEntries.Count == 0;
@@ -135,19 +138,18 @@ namespace Clipboard.ViewModels
         {
             InitializeCommands();
 
-            DataEntries = new AsyncObservableCollection<DataEntry>();
             if (IsInDesignMode)
             {
-                DataEntries.Add(new DataEntry
+                DataEntries = new AsyncObservableCollection<DataEntry>
                 {
-                    CanSynchronize = true,
-                    Date = DateTime.Now,
-                    IsFavorite = false,
-                    Thumbnail = new Thumbnail
+                    new DataEntry
                     {
-                        Type = ThumbnailDataType.Files
+                        CanSynchronize = true,
+                        Date = DateTime.Now,
+                        IsFavorite = false,
+                        Thumbnail = new Thumbnail {Type = ThumbnailDataType.Files}
                     }
-                });
+                };
             }
             else
             {
@@ -155,10 +157,13 @@ namespace Clipboard.ViewModels
                 DataEntries = _dataService.DataEntries;
             }
 
-            _collectionView = CollectionViewSource.GetDefaultView(DataEntries);
-            _collectionView.Filter = Filter;
-
             DataEntries.CollectionChanged += DataEntries_CollectionChanged;
+        }
+        private void DataEntries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(NoPresentData));
+            RaisePropertyChanged(nameof(NoSearchResult));
+
         }
 
         #endregion
@@ -539,11 +544,6 @@ namespace Clipboard.ViewModels
             delayer.ResetAndTick();
         }
 
-        private void DataEntries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged(nameof(NoPresentData));
-            RaisePropertyChanged(nameof(NoSearchResult));
-        }
 
         #endregion
 

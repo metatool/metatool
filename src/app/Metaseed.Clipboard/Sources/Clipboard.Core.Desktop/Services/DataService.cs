@@ -201,29 +201,29 @@ namespace Clipboard.Core.Desktop.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         internal async Task ReorganizeAsync(bool saveDataEntryFile)
         {
-            var indexOfFirstNonFavorite = DataEntries.IndexOf(DataEntries.FirstOrDefault(dataEntry => !dataEntry.IsFavorite));
-
-            if (indexOfFirstNonFavorite > -1)
-            {
-                for (var i = indexOfFirstNonFavorite; i < DataEntries.Count; i++)
-                {
-                    var item = DataEntries[i];
-                    if (!item.IsFavorite)
-                    {
-                        continue;
-                    }
-
-                    DataEntries.RemoveAt(i);
-                    DataEntries.Insert(0, item);
-
-                    var cacheItem = Cache.SingleOrDefault(dataEntryCache => dataEntryCache.Identifier == item.Identifier);
-                    if (cacheItem != null)
-                    {
-                        Cache.Remove(cacheItem);
-                        Cache.Insert(0, cacheItem);
-                    }
-                }
-            }
+        var indexOfFirstNonFavorite = DataEntries.IndexOf(DataEntries.FirstOrDefault(dataEntry => !dataEntry.IsFavorite));
+        
+        // if (indexOfFirstNonFavorite > -1)
+        // {
+        //     for (var i = indexOfFirstNonFavorite; i < DataEntries.Count; i++)
+        //     {
+        //         var item = DataEntries[i];
+        //         if (!item.IsFavorite)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         DataEntries.RemoveAt(i);
+        //         DataEntries.Insert(0, item);
+        //
+        //         var cacheItem = Cache.SingleOrDefault(dataEntryCache => dataEntryCache.Identifier == item.Identifier);
+        //         if (cacheItem != null)
+        //         {
+        //             Cache.Remove(cacheItem);
+        //             Cache.Insert(0, cacheItem);
+        //         }
+        //     }
+        // }
 
             Logger.Instance.Information($"The data entries have been automatically reorganized.");
 

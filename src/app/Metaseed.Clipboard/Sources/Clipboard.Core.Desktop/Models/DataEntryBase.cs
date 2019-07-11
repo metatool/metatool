@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
 namespace Clipboard.Core.Desktop.Models
@@ -8,8 +10,10 @@ namespace Clipboard.Core.Desktop.Models
     /// Represents the basic information of a data entry locally or on a cloud server.
     /// </summary>
     [Serializable]
-    internal class DataEntryBase
+    internal class DataEntryBase: INotifyPropertyChanged
     {
+        private bool _isFavorite;
+
         /// <summary>
         /// Gets or sets the data entry identifier
         /// </summary>
@@ -32,6 +36,28 @@ namespace Clipboard.Core.Desktop.Models
         /// Gets or sets a value that defines whether this data is a favorite or not.
         /// </summary>
         [JsonProperty]
-        public bool IsFavorite { get; set; }
+        public bool IsFavorite
+        {
+            get => _isFavorite;
+            set
+            {
+                if(value == _isFavorite) return;
+                _isFavorite = value;
+                OnPropertyChanged(nameof(IsFavorite));
+            }
+        }
+
+        #region Methods
+
+        [field: NonSerialized]
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
     }
 }
+
