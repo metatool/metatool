@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
+using Clipboard.ComponentModel.Messages;
 using Clipboard.Core.Desktop.Models;
 using Clipboard.Core.Desktop.Services;
 using Clipboard.Shared.Services;
+using GalaSoft.MvvmLight.Messaging;
 using Metaseed.Input;
+using Clipboard.ComponentModel.Messages;
+using Message = Clipboard.ComponentModel.Messages.Message;
 
-namespace Metaseed.MetaKeyboard
+namespace Clipboard
 {
     public class ClipboardManager
     {
@@ -159,9 +163,7 @@ namespace Metaseed.MetaKeyboard
 
                 e.BeginInvoke(() =>
                 {
-                    Console.WriteLine($"paste from previous");
-
-                    _clipboard.PasteFrom(-1);
+                    Messenger.Default.Send(new Message(), MessageIdentifiers.ShowPasteBarWindow);
                 });
             });
             _clipboard = ServiceLocator.GetService<ClipboardService>();

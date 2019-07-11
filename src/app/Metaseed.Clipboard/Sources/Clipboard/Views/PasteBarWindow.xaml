@@ -173,6 +173,7 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="1*"/>
                                             <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" CanContentScroll="False" PanningMode="HorizontalFirst" PreviewMouseWheel="ScrollViewer_OnPreviewMouseWheel">
                                             <StackPanel Orientation="Horizontal">
@@ -195,7 +196,8 @@
                                                 </Popup>
                                             </StackPanel>
                                         </ScrollViewer>
-                                        <Button x:Name="MoreInfoButton" Grid.Column="1" ToolTip="{Binding DataContext.Language.PasteBarWindow.More, ElementName=blurredWindow}" Content="&#xE10C;" Style="{StaticResource PasteBarListBoxButton}">
+                                        <Button x:Name="RegisterButton" Grid.Column="1"  Content="{Binding RegisterLocation}" FontFamily="Segoe UI"  Style="{StaticResource PasteBarListBoxButton}"/>
+                                        <Button x:Name="MoreInfoButton" Grid.Column="2" ToolTip="{Binding DataContext.Language.PasteBarWindow.More, ElementName=blurredWindow}" Content="&#xE10C;" Style="{StaticResource PasteBarListBoxButton}">
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="Click">
                                                     <ui:SetPropertyAction PropertyName="IsMoreInfoDisplayed" TargetObject="{Binding}" PropertyValue="True"/>

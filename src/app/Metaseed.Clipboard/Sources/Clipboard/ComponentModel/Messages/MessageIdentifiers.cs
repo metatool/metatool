@@ -63,6 +63,12 @@ namespace Clipboard.ComponentModel.Messages
 			private static MessageIdentifier _pastedata;
 			internal static MessageIdentifier PasteData { get { if (_pastedata == null) _pastedata = new MessageIdentifier(typeof(PasteBarWindowViewModel), typeof(MainWindowViewModel), "ADataMustBePaste"); return _pastedata; } }
 
+			/// <summary>
+			/// Gets the ShowPasteBarWindow identifier
+			/// </summary>
+			private static MessageIdentifier _showpastebarwindow;
+			internal static MessageIdentifier ShowPasteBarWindow { get { if (_showpastebarwindow == null) _showpastebarwindow = new MessageIdentifier(typeof(ClipboardManager), typeof(MainWindowViewModel), "ShowDataEntries"); return _showpastebarwindow; } }
+
 		#endregion
 	}
 }

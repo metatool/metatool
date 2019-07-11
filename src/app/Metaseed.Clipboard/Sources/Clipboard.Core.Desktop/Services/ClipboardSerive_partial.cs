@@ -62,12 +62,10 @@ namespace Clipboard.Core.Desktop.Services
 
         private void AddTo(DataEntry data)
         {
-            if (_register != null)
-            {
-                _register.Set(data);
-                _register.IsAppend = null;
-                _register = null;
-            }
+            if (_register == null) return;
+            _register.Set(data);
+            _register.IsAppend = null;
+            _register = null;
         }
     }
 }

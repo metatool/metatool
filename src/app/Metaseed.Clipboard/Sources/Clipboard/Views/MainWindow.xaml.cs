@@ -8,7 +8,6 @@ using Clipboard.Shared.Core;
 using Clipboard.ViewModels;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using Metaseed.MetaKeyboard;
 using MenuItem = System.Windows.Controls.MenuItem;
 
 namespace Clipboard.Views

@@ -21,7 +21,6 @@ using Clipboard.Strings;
 using Newtonsoft.Json;
 using Microsoft.Win32;
 using Clipboard.Core.Desktop.Interop;
-using Metaseed.MetaKeyboard;
 
 namespace Clipboard
 {

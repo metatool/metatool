@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
@@ -17,20 +18,30 @@ namespace Clipboard.Core.Desktop.Models
 
         internal string _icon;
 
-        [NonSerialized]
-        private BitmapImage _iconBitmap = null;
+        [NonSerialized] private BitmapImage _iconBitmap = null;
 
-        [NonSerialized]
-        private DispatcherTimer _timer;
+        [NonSerialized] private DispatcherTimer _timer;
 
-        [NonSerialized]
-        private bool _isMoreInfoDisplayed;
+        [NonSerialized] private bool _isMoreInfoDisplayed;
+
+        private string _registerLocation = "";
 
         #endregion
 
         #region Properties
 
-        public string RegisterName { get; internal set; }
+        public string RegisterLocation
+        {
+            get => _registerLocation;
+            set
+            {
+                if (_registerLocation == value) return;
+                _registerLocation = value;
+
+                OnPropertyChanged(nameof(RegisterLocation));
+            }
+        }
+
         /// <summary>
         /// Gets or sets the linked <see cref="Thumbnail"/>
         /// </summary>
@@ -48,7 +59,7 @@ namespace Clipboard.Core.Desktop.Models
                     return null;
                 }
 
-                return (BitmapImage)DataHelper.ByteArrayToBitmapSource(DataHelper.ByteArrayFromBase64(_icon));
+                return (BitmapImage) DataHelper.ByteArrayToBitmapSource(DataHelper.ByteArrayFromBase64(_icon));
             }
             set
             {
@@ -128,7 +139,5 @@ namespace Clipboard.Core.Desktop.Models
         }
 
         #endregion
-
-       
     }
 }

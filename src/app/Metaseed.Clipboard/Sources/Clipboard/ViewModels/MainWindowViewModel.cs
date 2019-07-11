@@ -126,6 +126,7 @@ namespace Clipboard.ViewModels
             ServiceLocator.GetService<WindowsService>();
             ServiceLocator.GetService<ClipboardService>();
 
+
             dataService.CreditCardNumberDetected += DataService_CreditCardNumberDetected;
             dataService.CreditCardNumberSaved += DataService_CreditCardNumberSaved;
             cloudStorageService.SynchronizationStarted += CloudStorageService_SynchronizationStarted;
@@ -145,6 +146,7 @@ namespace Clipboard.ViewModels
             mouseAndKeyboardHookService.DelayedResume(TimeSpan.FromSeconds(1));
 
             Messenger.Default.Register<Message>(this, MessageIdentifiers.PasteData, PasteData);
+            Messenger.Default.Register<Message>(this, MessageIdentifiers.ShowPasteBarWindow, DisplayBarCommand.Execute);
 
             SetNormalNotifyIcon();
             ShowNotifyIcon();
@@ -166,7 +168,7 @@ namespace Clipboard.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            DisplayBarCommand = new RelayCommand(ExecutePasteCommand, CanExecutePasteCommand);
+            DisplayBarCommand = new RelayCommand(ExecuteDisplayBarCommand, CanExecuteDisplayBarCommand);
             SynchronizeCommand = new RelayCommand(ExecuteSynchronizeCommand);
             SettingsCommand = new RelayCommand<SettingsViewMode>(ExecuteSettingsCommand);
             ExitCommand = new RelayCommand(ExecuteExitCommand);
@@ -181,13 +183,15 @@ namespace Clipboard.ViewModels
         /// </summary>
         public RelayCommand DisplayBarCommand { get; private set; }
 
-        private bool CanExecutePasteCommand()
+        private bool CanExecuteDisplayBarCommand()
         {
             return !_pasteBarDisplayed;
         }
 
-        private void ExecutePasteCommand()
+        private void ExecuteDisplayBarCommand()
         {
+            if(_pasteBarDisplayed) return;
+            
             _pasteBarDisplayed = true;
             Logger.Instance.Information("Paste menu from icon in the task bar clicked (or mouse gesture or keyboard shortcut detected). The paste bar will be displayed.");
             HideNotifyIcon();

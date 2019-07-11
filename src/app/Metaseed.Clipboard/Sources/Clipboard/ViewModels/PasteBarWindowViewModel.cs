@@ -39,8 +39,6 @@ namespace Clipboard.ViewModels
         #region Fields
 
         private readonly DataService _dataService;
-        private ListCollectionView _collectionView;
-
         private MouseAndKeyboardHookService _mouseAndKeyboardHookService;
         private AsyncObservableCollection<DataEntry> _dataEntries;
         private SearchQuery _searchQuery;
@@ -72,19 +70,19 @@ namespace Clipboard.ViewModels
             set
             {
                 _dataEntries = value;
-                _collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(_dataEntries);
-                _collectionView.Filter = Filter;
-                _collectionView.IsLiveSorting = true;
-                _collectionView.IsLiveFiltering = true;
-                _collectionView.LiveSortingProperties.Add("IsFavorite");
-                _collectionView.SortDescriptions.Add(new SortDescription("IsFavorite", ListSortDirection.Descending));
+                CollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(_dataEntries);
+                CollectionView.Filter = Filter;
+                CollectionView.IsLiveSorting = true;
+                CollectionView.IsLiveFiltering = true;
+                CollectionView.LiveSortingProperties.Add("IsFavorite");
+                CollectionView.SortDescriptions.Add(new SortDescription("IsFavorite", ListSortDirection.Descending));
                 RaisePropertyChanged();
             }
         }
         /// <summary>
         /// Gets the collection view
         /// </summary>
-        public ListCollectionView CollectionView => _collectionView;
+        public ListCollectionView CollectionView { get; private set; }
 
         /// <summary>
         /// Gets or sets query in the search text box
@@ -104,7 +102,7 @@ namespace Clipboard.ViewModels
         /// </summary>
         public SearchType SearchType
         {
-            get { return _searchType; }
+            get => _searchType;
             set
             {
                 _searchType = value;
@@ -308,6 +306,8 @@ namespace Clipboard.ViewModels
 
         private async void ExecuteToggleItemOptionCommand()
         {
+            CollectionView.Refresh();
+
             await _dataService.SaveDataEntryFileAsync();
         }
 
@@ -594,7 +594,7 @@ namespace Clipboard.ViewModels
                 }
             }
             _searchQuery = new SearchQuery(SearchQueryString, SearchType);
-            _collectionView.Refresh();
+            CollectionView.Refresh();
 
             if (!isHookingPaused)
             {

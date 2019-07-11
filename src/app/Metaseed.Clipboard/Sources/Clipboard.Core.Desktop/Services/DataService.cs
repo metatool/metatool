@@ -868,6 +868,18 @@ namespace Clipboard.Core.Desktop.Services
             foreach (var dataEntry in entries)
             {
                 DataEntries.Add(dataEntry);
+                var a = dataEntry.RegisterLocation.Split('.');
+                if (a.Length > 0)
+                {
+                    var r = Register.GetRegister(a[0]);
+                    if (a.Length == 2)
+                    {
+                        var index = int.Parse(a[1]);
+                        r.IsAppend = true;
+                        r.Set(dataEntry, index);
+                        r.IsAppend = null;
+                    }
+                }
             }
         }
 
