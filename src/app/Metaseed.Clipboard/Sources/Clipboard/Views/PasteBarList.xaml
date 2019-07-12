@@ -23,10 +23,6 @@
             <converters:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" TrueValue="0,-40,-20,0"
                                                     FalseValue="0,-8,0,0" />
             <converters:DateTimeToTimeSpanStringConverter x:Key="DateTimeToTimeSpanStringConverter" />
-            <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
-            <converters:ThumbnailToValueConverter x:Key="ThumbnailToValueConverter" />
-            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" IsInverted="True" />
-            <converters:FilePathToIconConverter x:Key="FilePathToIconConverter" />
             <converters:DataEntryToDescriptiveTextConverter x:Key="DataEntryToDescriptiveTextConverter" />
             <converters:BooleanToInvertedBooleanConverter x:Key="BooleanToInvertedBooleanConverter"/>
         </ListBox.Resources>

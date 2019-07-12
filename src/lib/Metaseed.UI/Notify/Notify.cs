@@ -97,8 +97,9 @@ namespace Metaseed.MetaKeyboard
             if (tips == null) return;
             var description =
                 tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {key = t.key, Description = d}));
-            var b = new FancyBalloon() {Tips = new ObservableCollection<TipItem>(description)};
-
+            var t = new ObservableCollection<TipItem>(description);
+            if (t.Count == 0) return;
+            var b = new FancyBalloon() {Tips = t};
             ShowMessage(b, 8000);
         }
 

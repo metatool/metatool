@@ -142,7 +142,6 @@ namespace Clipboard
                 {
                     Console.WriteLine($"paste from last");
 
-                    _clipboard.PasteFrom(1);
                 });
             });
             VState.Then(Keys.C.With(Keys.ControlKey)).Down(e =>

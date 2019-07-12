@@ -508,6 +508,10 @@
       <Project>{7a1c313b-c9cc-4eee-b2e8-62315512c414}</Project>
       <Name>Metaseed.MouseKeyHook</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\lib\Metaseed.UI\Metaseed.UI.csproj">
+      <Project>{930b8aba-11fb-4e43-910a-66f760096f0a}</Project>
+      <Name>Metaseed.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clipboard.Core.Desktop\Clipboard.Core.Desktop.csproj">
       <Project>{a09cc9c5-9fb6-40b5-8168-1afbc09e7207}</Project>
       <Name>Clipboard.Core.Desktop</Name>
