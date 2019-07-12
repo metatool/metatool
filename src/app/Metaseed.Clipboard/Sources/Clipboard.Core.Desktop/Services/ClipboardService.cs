@@ -63,10 +63,10 @@ namespace Clipboard.Core.Desktop.Services
                     Requires.NotNull(e, nameof(e));
                     DispatcherHelper.ThrowIfNotStaThread();
 
-                    var dataIgnored = false;
+                    var dataIgnored  = false;
                     var isCreditCard = false;
 
-                    var dataService = ServiceLocator.GetService<DataService>();
+                    var dataService      = ServiceLocator.GetService<DataService>();
                     var foregroundWindow = ServiceLocator.GetService<WindowsService>().GetForegroundWindow();
 
                     if (_ignoredApplications.Any(app =>
@@ -173,7 +173,7 @@ namespace Clipboard.Core.Desktop.Services
         /// <inheritdoc/>
         public void Initialize(IServiceSettingProvider settingProvider)
         {
-            _settingProvider = settingProvider;
+            _settingProvider     = settingProvider;
             _ignoredApplications = _settingProvider.GetSetting<List<IgnoredApplication>>("IgnoredApplications");
             if (CoreHelper.IsUnitTesting())
             {
@@ -254,15 +254,16 @@ namespace Clipboard.Core.Desktop.Services
             {
                 SendKeys.SendWait("^v"); // Ctrl + V
             }
+
             if (delay)
             {
                 Pause();
                 var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
                 delayer.Action += (sender, args) =>
                 {
-                   action();
+                    action();
 
-                    delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
+                    delayer        =  new Delayer<object>(TimeSpan.FromMilliseconds(100));
                     delayer.Action += (sender2, args2) => { Resume(); };
                     delayer.ResetAndTick();
                 };

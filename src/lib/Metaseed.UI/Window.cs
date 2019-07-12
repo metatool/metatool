@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using Metaseed.UI.Implementation;
 
@@ -47,6 +48,12 @@ namespace Metaseed.UI
         {
             PInvokes.ShowWindowAsync(hWnd, PInvokes.SW.Show);
             PInvokes.SetForegroundWindow(hWnd);
+        }
+
+        public static Rect GetCurrentWindowRect()
+        {
+            PInvokes.GetWindowRect(CurrentWindowHandle, out var rect);
+            return new Rect(new Point(){X = rect.Left, Y = rect.Top}, new Size(){Width = rect.Right-rect.Left, Height = rect.Bottom -rect.Top});
         }
 
         public static void InitialConsole()

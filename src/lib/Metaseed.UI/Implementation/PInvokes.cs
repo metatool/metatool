@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 
 namespace Metaseed.UI.Implementation
 {
@@ -240,8 +242,17 @@ public static extern bool AllocConsole();
             SMTO_NOTIMEOUTIFNOTHUNG = 0x8,
             SMTO_ERRORONEXIT        = 0x20
         }
-
-
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;   // x position of upper-left corner  
+            public int Top;    // y position of upper-left corner  
+            public int Right;  // x position of lower-right corner  
+            public int Bottom; // y position of lower-right corner  
+        }
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessageTimeout(
             IntPtr windowHandle,
