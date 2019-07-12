@@ -20,7 +20,9 @@ namespace Metaseed.MetaKeyboard
 {
     public enum NotifyPosition
     {
-        Default, ActiveScreen, ActiveWindowCenter
+        Default,
+        ActiveScreen,
+        ActiveWindowCenter
     }
 
     public class Notify
@@ -51,14 +53,9 @@ namespace Metaseed.MetaKeyboard
             trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
 
-        public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips, NotifyPosition position = NotifyPosition.ActiveScreen)
+        public static void ShowMessage(UIElement control, int timeout,
+            NotifyPosition                     position = NotifyPosition.ActiveScreen)
         {
-            if (tips == null) return;
-            var description =
-                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {key = t.key, Description = d}));
-            var b = new FancyBalloon() {Tips = new ObservableCollection<TipItem>(description)};
-
-
             TaskbarIcon.GetCustomPopupPosition func = trayIcon.GetPopupTrayPosition;
             switch (position)
             {
@@ -87,8 +84,22 @@ namespace Metaseed.MetaKeyboard
                         };
                     };
                     break;
-            };
-            trayIcon.ShowCustomBalloon(b, PopupAnimation.None, 8000);
+            }
+
+            ;
+            trayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout);
+        }
+
+        public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
+            NotifyPosition position =
+                NotifyPosition.ActiveScreen)
+        {
+            if (tips == null) return;
+            var description =
+                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {key = t.key, Description = d}));
+            var b = new FancyBalloon() {Tips = new ObservableCollection<TipItem>(description)};
+
+            ShowMessage(b, 8000);
         }
 
         public static void ShowKeysTip1(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)
