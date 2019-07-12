@@ -10,7 +10,6 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
         xmlns:converters="clr-namespace:Clipboard.ComponentModel.UI.Converters"
-        xmlns:ui="clr-namespace:Clipboard.ComponentModel.UI"
         mc:Ignorable="d"
         d:DesignWidth="1024"
         d:DesignHeight="256"

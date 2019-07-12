@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Clipboard.Views"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:controls="clr-namespace:Clipboard.ComponentModel.UI.Controls"
-             xmlns:PresentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+             xmlns:presentationOptions="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
              xmlns:ui="clr-namespace:Clipboard.ComponentModel.UI"
              xmlns:converters="clr-namespace:Clipboard.ComponentModel.UI.Converters"
              mc:Ignorable="d"
@@ -83,7 +83,7 @@
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <DataTemplate.Resources>
-                    <Storyboard x:Key="ShowMoreInfoStoryboard" PresentationOptions:Freeze="True">
+                    <Storyboard x:Key="ShowMoreInfoStoryboard" presentationOptions:Freeze="True">
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
                                                        Storyboard.TargetName="MoreInformationGrid" Duration="0:0:0.0">
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.0">
@@ -103,7 +103,7 @@
                             </EasingDoubleKeyFrame>
                         </DoubleAnimationUsingKeyFrames>
                     </Storyboard>
-                    <Storyboard x:Key="HideMoreInfoStoryboard" PresentationOptions:Freeze="True">
+                    <Storyboard x:Key="HideMoreInfoStoryboard" presentationOptions:Freeze="True">
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)"
                                                        Storyboard.TargetName="MoreInformationGrid" Duration="0:0:0.2">
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.2">
@@ -244,101 +244,7 @@
                             </DockPanel>
                         </Grid>
                     </Border>
-                    <Border Grid.Row="1" Background="{StaticResource PasteBarItemBackground}">
-                        <Grid x:Name="ThumbnailGrid" HorizontalAlignment="Stretch">
-                            <Grid
-                                Visibility="{Binding Thumbnail.Type, ConverterParameter=String, Converter={StaticResource EnumToVisibilityConverter}, Mode=OneTime}">
-                                <TextBlock
-                                    Text="{Binding Thumbnail, ConverterParameter=String, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}"
-                                    Foreground="{StaticResource ForegroundBrush}" Margin="10,5,10,0"
-                                    TextAlignment="Left" FontSize="20" TextWrapping="Wrap" />
-                                <Border Height="40" VerticalAlignment="Bottom"
-                                        Background="{StaticResource PasteBarItemLinearGradentBorderBackground}" />
-                            </Grid>
-                            <Grid
-                                Visibility="{Binding Thumbnail.Type, ConverterParameter=Color, Converter={StaticResource EnumToVisibilityConverter}, Mode=OneTime}">
-                                <Canvas>
-                                    <Canvas.CacheMode>
-                                        <BitmapCache EnableClearType="True" RenderAtScale="1.0"
-                                                     PresentationOptions:Freeze="True" />
-                                    </Canvas.CacheMode>
-                                    <Rectangle Width="{Binding ActualWidth, Mode=OneWay, ElementName=ThumbnailGrid}"
-                                               Height="{Binding ActualHeight, Mode=OneWay, ElementName=ThumbnailGrid}"
-                                               Fill="{StaticResource PasteBarItemTiledImageBackground}" />
-                                </Canvas>
-                                <DockPanel
-                                    Background="{Binding Thumbnail, ConverterParameter=SolidColorBrush, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}" />
-                                <TextBlock
-                                    Text="{Binding Thumbnail, ConverterParameter=ColorString, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}"
-                                    Foreground="{Binding Thumbnail, ConverterParameter=ForegroundSolidColorBrush, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}"
-                                    TextAlignment="Center" VerticalAlignment="Center" FontSize="20" TextWrapping="Wrap" />
-                            </Grid>
-                            <Grid
-                                Visibility="{Binding Thumbnail.Type, ConverterParameter=Link, Converter={StaticResource EnumToVisibilityConverter}, Mode=OneTime}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="1*" />
-                                </Grid.RowDefinitions>
-                                <TextBlock x:Name="HyperLinkText" Grid.Row="0"
-                                           Visibility="{Binding Text, ElementName=HyperLinkText, Converter={StaticResource NullToVisibilityConverter}}"
-                                           Margin="10,5,10,5" TextAlignment="Left" FontSize="20" TextWrapping="Wrap"
-                                           Text="{Binding Thumbnail, ConverterParameter=LinkTitle, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}"
-                                           Foreground="{StaticResource ForegroundBrush}" />
-                                <TextBlock x:Name="HyperLinkText2" Grid.Row="1"
-                                           Text="{Binding Thumbnail, ConverterParameter=LinkUri, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}"
-                                           Margin="10,5,10,5" TextAlignment="Left" FontSize="20" TextWrapping="Wrap" />
-                                <Border Grid.Row="0" Grid.RowSpan="2" Height="40" VerticalAlignment="Bottom"
-                                        Background="{StaticResource PasteBarItemLinearGradentBorderBackground}" />
-                            </Grid>
-                            <Grid
-                                Visibility="{Binding Thumbnail.Type, ConverterParameter=Files, Converter={StaticResource EnumToVisibilityConverter}, Mode=OneTime}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="1*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Border Padding="20">
-                                    <Viewbox Stretch="Uniform">
-                                        <Canvas Height="96" Width="96">
-                                            <Image
-                                                Source="{Binding Thumbnail, ConverterParameter=1, Converter={StaticResource FilePathToIconConverter}, Mode=OneTime}"
-                                                Height="64" Width="64" Margin="32,0,0,0" />
-                                            <Image
-                                                Source="{Binding Thumbnail, ConverterParameter=0, Converter={StaticResource FilePathToIconConverter}, Mode=OneTime}"
-                                                Height="64" Width="64" Margin="16,16,0,0" />
-                                            <Image
-                                                Source="{Binding Thumbnail, ConverterParameter=2, Converter={StaticResource FilePathToIconConverter}, Mode=OneTime}"
-                                                Height="64" Width="64" Margin="0,32,0,0" />
-                                        </Canvas>
-                                    </Viewbox>
-                                </Border>
-                                <ListBox Grid.Row="1"
-                                         ItemsSource="{Binding Thumbnail, ConverterParameter=Files, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}"
-                                         Style="{StaticResource PasteBarItemFilesListBox}" Margin="0,10,0,5"
-                                         Focusable="False" />
-                            </Grid>
-                            <Grid
-                                Visibility="{Binding Thumbnail.Type, ConverterParameter=Bitmap, Converter={StaticResource EnumToVisibilityConverter}, Mode=OneTime}">
-                                <Canvas>
-                                    <Canvas.CacheMode>
-                                        <BitmapCache EnableClearType="True" RenderAtScale="1.0"
-                                                     PresentationOptions:Freeze="True" />
-                                    </Canvas.CacheMode>
-                                    <Rectangle Width="{Binding ActualWidth, Mode=OneWay, ElementName=ThumbnailGrid}"
-                                               Height="{Binding ActualHeight, Mode=OneWay, ElementName=ThumbnailGrid}"
-                                               Fill="{StaticResource PasteBarItemTiledImageBackground}" />
-                                </Canvas>
-                                <Image
-                                    Source="{Binding Thumbnail, ConverterParameter=Bitmap, Converter={StaticResource ThumbnailToValueConverter}, Mode=OneTime}" />
-                            </Grid>
-                            <DockPanel
-                                Visibility="{Binding Thumbnail.Type, ConverterParameter=Unknown, Converter={StaticResource EnumToVisibilityConverter}, Mode=OneTime}">
-                                <TextBlock
-                                    Text="{Binding DataContext.Language.PasteBarWindow.NoThumbnail, ElementName=blurredWindow}"
-                                    Foreground="{StaticResource ForegroundBrush}" TextAlignment="Center"
-                                    VerticalAlignment="Center" FontSize="20" TextWrapping="Wrap" />
-                            </DockPanel>
-                        </Grid>
-                    </Border>
+<local:PasteBarItem Grid.Row="1"></local:PasteBarItem>
                 </Grid>
                 <DataTemplate.Triggers>
                     <EventTrigger RoutedEvent="Button.Click" SourceName="MoreInfoButton">
