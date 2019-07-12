@@ -77,10 +77,10 @@ namespace Clipboard.Views
                 et.IsMoreInfoDisplayed = false
             );
 
-            if (DataListBox.Items.Count > 0)
-            {
-                DataListBox.ScrollIntoView(DataListBox.Items[0]);
-            }
+            // if (DataListBox.Items.Count > 0)
+            // {
+            //     DataListBox.ScrollIntoView(DataListBox.Items[0]);
+            // }
         }
 
         private void PasteBarWindow_OnClosing(object sender, CancelEventArgs e)
@@ -88,17 +88,9 @@ namespace Clipboard.Views
             Logger.Instance.Information("Paste bar closing.");
         }
 
-        private void ContextMenu_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            var dataContext = (PasteBarWindowViewModel) DataContext;
-            dataContext.ContextMenuOpenedCommand.Execute(null);
-        }
+   
 
-        private void ScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            var scrollViewer = (ScrollViewer) sender;
-            scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - e.Delta);
-        }
+
 
         #endregion
 
