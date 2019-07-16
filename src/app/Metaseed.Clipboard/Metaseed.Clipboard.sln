@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.UI", "..\..\lib\Me
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.NotifyIcon", "..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj", "{AB671EA5-EC01-4AEE-80B3-BFC40E23377F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Core", "..\..\lib\Metaseed.Core\Metaseed.Core.csproj", "{4BBF0099-C478-4C6A-AEEF-2C494EADD945}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,22 @@ Global
 		{AB671EA5-EC01-4AEE-80B3-BFC40E23377F}.Release|x64.Build.0 = Release|Any CPU
 		{AB671EA5-EC01-4AEE-80B3-BFC40E23377F}.Release|x86.ActiveCfg = Release|Any CPU
 		{AB671EA5-EC01-4AEE-80B3-BFC40E23377F}.Release|x86.Build.0 = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|ARM.Build.0 = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|x64.Build.0 = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Debug|x86.Build.0 = Debug|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|ARM.Build.0 = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|x64.ActiveCfg = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|x64.Build.0 = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|x86.ActiveCfg = Release|Any CPU
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -174,6 +192,7 @@ Global
 		{087C67F4-7D4A-4EE0-9F6F-2925356A1B9F} = {41E2E6CE-1229-456F-9FF5-40CF211D1FB9}
 		{930B8ABA-11FB-4E43-910A-66F760096F0A} = {41E2E6CE-1229-456F-9FF5-40CF211D1FB9}
 		{AB671EA5-EC01-4AEE-80B3-BFC40E23377F} = {41E2E6CE-1229-456F-9FF5-40CF211D1FB9}
+		{4BBF0099-C478-4C6A-AEEF-2C494EADD945} = {41E2E6CE-1229-456F-9FF5-40CF211D1FB9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0D138CA2-E9A9-4F9B-8ADE-E6D620B8478C}

@@ -108,7 +108,6 @@ namespace Clipboard.Views
             }
 
             var dataContext = (PasteBarWindowViewModel) DataContext;
-            var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(50));
             _isDisplayed = true;
             _actionOnHidding = actionOnHidding;
 
@@ -126,11 +125,11 @@ namespace Clipboard.Views
             Activate();
             Focus();
             var firstFocus = VisualHelper.FindVisualChildren<System.Windows.Controls.ListBox>(this).FirstOrDefault();
-            firstFocus.Focus();
+            firstFocus?.Focus();
             Keyboard.Focus(firstFocus);
 
             Logger.Instance.Information("Paste bar displayed.");
-
+            var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(50));
             delayer.Action += (o, args) => _openingStoryboard.Begin();
             delayer.ResetAndTick();
 

@@ -230,6 +230,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="ViewModels\PasteBarWindowViewModel.cs" />
+    <Compile Include="ViewModels\PasteTipsViewModel.cs" />
     <Compile Include="ViewModels\SettingsPanels\SettingsAboutUserControlViewModel.cs" />
     <Compile Include="ViewModels\SettingsPanels\SettingsDataUserControlViewModel.cs" />
     <Compile Include="ViewModels\SettingsPanels\SettingsGeneralUserControlViewModel.cs" />
@@ -243,6 +244,9 @@
     </Compile>
     <Compile Include="Views\PasteBarItem.xaml.cs">
       <DependentUpon>PasteBarItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PasteTips.xaml.cs">
+      <DependentUpon>PasteTips.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PasteBarList.xaml.cs">
       <DependentUpon>PasteBarList.xaml</DependentUpon>
@@ -350,6 +354,10 @@
     <Page Include="Views\PasteBarItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PasteTips.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PasteBarList.xaml">
       <SubType>Designer</SubType>
@@ -500,6 +508,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\lib\Metaseed.Core\Metaseed.Core.csproj">
+      <Project>{4bbf0099-c478-4c6a-aeef-2c494eadd945}</Project>
+      <Name>Metaseed.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj">
       <Project>{087c67f4-7d4a-4ee0-9f6f-2925356a1b9f}</Project>
       <Name>Metaseed.Input</Name>

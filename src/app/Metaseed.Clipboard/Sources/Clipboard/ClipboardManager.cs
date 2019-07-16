@@ -10,6 +10,8 @@ using Clipboard.Shared.Services;
 using GalaSoft.MvvmLight.Messaging;
 using Metaseed.Input;
 using Clipboard.ComponentModel.Messages;
+using Clipboard.Views;
+using Metaseed.MetaKeyboard;
 using Message = Clipboard.ComponentModel.Messages.Message;
 
 namespace Clipboard
@@ -39,8 +41,9 @@ namespace Clipboard
         }
 
         private Register         _currentRegister;
-        private ClipboardService _clipboard;
+        private readonly ClipboardService _clipboard;
 
+        private readonly PasteTips _pasteTips = new PasteTips();
         public ClipboardManager()
         {
             var registerKeys = new List<Keys>()
@@ -105,6 +108,8 @@ namespace Clipboard
                     return;
                 }
 
+                _pasteTips.ViewModel.DataEntries = _clipboard.DataService.DataEntries;
+                Notify.ShowMessage(_pasteTips,8000, NotifyPosition.ActiveWindowCenter);
                 e.Handled = true;
                 _state = State.V;
             });

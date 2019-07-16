@@ -35,7 +35,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.NotifyIcon", "lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj", "{6AF01947-3342-462E-85B3-611036495360}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.Clipboard", "lib\Metaseed.Clipboard\Metaseed.Clipboard.csproj", "{417EA08E-34CC-41C0-A535-42C885C5B0E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Clipboard", "lib\Metaseed.Clipboard\Metaseed.Clipboard.csproj", "{417EA08E-34CC-41C0-A535-42C885C5B0E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Core", "lib\Metaseed.Core\Metaseed.Core.csproj", "{6F0C44CE-998B-40C4-9399-85014FD61AEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -155,6 +157,18 @@ Global
 		{417EA08E-34CC-41C0-A535-42C885C5B0E7}.Release|x64.Build.0 = Release|Any CPU
 		{417EA08E-34CC-41C0-A535-42C885C5B0E7}.Release|x86.ActiveCfg = Release|Any CPU
 		{417EA08E-34CC-41C0-A535-42C885C5B0E7}.Release|x86.Build.0 = Release|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Debug|x64.Build.0 = Debug|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Debug|x86.Build.0 = Debug|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Release|x64.ActiveCfg = Release|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Release|x64.Build.0 = Release|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Release|x86.ActiveCfg = Release|Any CPU
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -169,6 +183,7 @@ Global
 		{19F097F9-0E7A-4CF2-BA5A-E8D2612F503C} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
 		{6AF01947-3342-462E-85B3-611036495360} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{417EA08E-34CC-41C0-A535-42C885C5B0E7} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
+		{6F0C44CE-998B-40C4-9399-85014FD61AEA} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}

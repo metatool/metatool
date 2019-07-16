@@ -172,7 +172,7 @@ namespace Metaseed.NotifyIcon
         /// </param>
         /// <exception cref="ArgumentNullException">If <paramref name="balloon"/>
         /// is a null reference.</exception>
-        public void ShowCustomBalloon(UIElement balloon, PopupAnimation animation, int? timeout)
+        public void ShowCustomBalloon(UIElement balloon, PopupAnimation animation, int? timeout = null)
         {
             var dispatcher = this.GetDispatcher();
             if (!dispatcher.CheckAccess())
@@ -234,7 +234,7 @@ namespace Metaseed.NotifyIcon
             popup.StaysOpen = true;
 
             
-            var position = this.CustomPopupPosition != null ? this.CustomPopupPosition() : this.GetPopupTrayPosition();
+            var position = CustomPopupPosition?.Invoke() ?? this.GetPopupTrayPosition();
             popup.HorizontalOffset = position.X - 1;
             popup.VerticalOffset = position.Y - 1;
 

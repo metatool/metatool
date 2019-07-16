@@ -53,13 +53,13 @@ namespace Metaseed.MetaKeyboard
             trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
 
-        public static void ShowMessage(UIElement control, int timeout,
+        public static void ShowMessage(UIElement control, int? timeout,
             NotifyPosition                     position = NotifyPosition.ActiveScreen)
         {
-            TaskbarIcon.GetCustomPopupPosition func = trayIcon.GetPopupTrayPosition;
+            TaskbarIcon.GetCustomPopupPosition func = null; 
             switch (position)
             {
-                case NotifyPosition.Default:
+                case NotifyPosition.ActiveWindowCenter:
                     func = () =>
                     {
                         var rect = UI.Window.GetCurrentWindowRect();
@@ -84,9 +84,13 @@ namespace Metaseed.MetaKeyboard
                         };
                     };
                     break;
+                case NotifyPosition.Default:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(position), position, null);
             }
 
-            ;
+            trayIcon.CustomPopupPosition = func;
             trayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout);
         }
 

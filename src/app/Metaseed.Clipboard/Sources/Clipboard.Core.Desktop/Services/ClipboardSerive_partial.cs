@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,7 +8,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Clipboard.Core.Desktop.Models;
 using Clipboard.Shared.Services;
-
 namespace Clipboard.Core.Desktop.Services
 {
     internal partial class ClipboardService
@@ -22,7 +22,7 @@ namespace Clipboard.Core.Desktop.Services
 
         DataService dataService;
 
-        DataService DataService
+        internal DataService DataService
         {
             get =>
                 dataService = dataService ?? ServiceLocator.GetService<DataService>();
@@ -42,21 +42,22 @@ namespace Clipboard.Core.Desktop.Services
             var data = DataService.DataEntries[index];
 
             DataService.CopyData(data);
-            this.Paste(false);
+            this.Paste(50);
         }
+
 
         internal void PasteFrom(Register register)
         {
             if (register == null)
             {
-                this.Paste(false);
+                this.Paste(50);
                 return;
             }
 
             register.GetContent().ToList().ForEach(data =>
             {
                 DataService.CopyData(data);
-                this.Paste(false);
+                this.Paste(50);
             });
         }
 
@@ -67,5 +68,6 @@ namespace Clipboard.Core.Desktop.Services
             _register.IsAppend = null;
             _register = null;
         }
+
     }
 }

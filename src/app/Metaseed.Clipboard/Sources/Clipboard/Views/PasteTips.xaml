@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="Clipboard.Views.PasteTips"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Clipboard.Views"
+             xmlns:converters="clr-namespace:Clipboard.ComponentModel.UI.Converters"
+             xmlns:viewModels="clr-namespace:Clipboard.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="250" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <viewModels:PasteTipsViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" IsInverted="True" />
+    </UserControl.Resources>
+    <ListBox ItemsSource="{Binding DataEntries, IsAsync=True, Mode=OneWay}"
+             Style="{StaticResource PasteTipsListBox}"
+             Visibility="{Binding NoPresentData, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+        <ListBox.Resources>
+            <converters:DataEntryToDescriptiveTextConverter x:Key="DataEntryToDescriptiveTextConverter" />
+        </ListBox.Resources>
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="ListBoxItem" BasedOn="{StaticResource PastBarListBoxItemStyle}">
+                <Setter Property="AutomationProperties.Name"
+                        Value="{Binding Converter={StaticResource DataEntryToDescriptiveTextConverter}}" />
+                <!-- <Setter Property="AutomationProperties.HelpText" -->
+                <!--         Value="{Binding DataContext.Language.PasteBarWindow.DataHelpText, ElementName=blurredWindow}" /> -->
+            </Style>
+        </ListBox.ItemContainerStyle>
+        <ListBox.Template>
+            <ControlTemplate TargetType="ListBox">
+                <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled"
+                              CanContentScroll="False" PanningMode="HorizontalFirst" IsDeferredScrollingEnabled="True"
+                              >
+                    <ItemsPresenter Margin="20,0,0,0" />
+                </ScrollViewer>
+            </ControlTemplate>
+        </ListBox.Template>
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Grid x:Name="MainItemGrid"
+                      Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
+                      ClipToBounds="True">
+                    <local:PasteBarItem/>
+                </Grid>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
+</UserControl>
