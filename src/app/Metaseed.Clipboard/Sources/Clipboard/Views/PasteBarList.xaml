@@ -145,7 +145,7 @@
                                                    Width="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToIntegerConverter}, Mode=OneTime}"
                                                    Height="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToIntegerConverter}}"
                                                    RenderOptions.BitmapScalingMode="Fant" HorizontalAlignment="Right"
-                                                   Margin="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToThicknessConverter}}" />
+                                                   Margin="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToThicknessConverter}}" Stretch="UniformToFill" />
                                         </Border>
                                         <controls:PasteBarToggleButton
                                             IsChecked="{Binding IsFavorite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

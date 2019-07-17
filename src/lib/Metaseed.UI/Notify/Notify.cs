@@ -53,7 +53,7 @@ namespace Metaseed.MetaKeyboard
             trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
 
-        public static void ShowMessage(UIElement control, int? timeout,
+        public static void ShowMessage(System.Windows.FrameworkElement control, int? timeout,
             NotifyPosition                     position = NotifyPosition.ActiveScreen)
         {
             TaskbarIcon.GetCustomPopupPosition func = null; 
@@ -64,7 +64,7 @@ namespace Metaseed.MetaKeyboard
                     {
                         var rect = UI.Window.GetCurrentWindowRect();
                         return new NotifyIcon.Interop.Point()
-                            {X = (int) (rect.X + rect.Width / 2), Y = (int) (rect.Y + rect.Height / 2)};
+                            {X = (int) (rect.X + rect.Width / 2 - control.ActualWidth/2), Y = (int) (rect.Y + rect.Height / 2-control.ActualHeight/2)};
                     };
                     break;
                 case NotifyPosition.ActiveScreen:

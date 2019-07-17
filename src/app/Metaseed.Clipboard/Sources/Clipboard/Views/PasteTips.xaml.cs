@@ -28,7 +28,12 @@ namespace Clipboard.Views
             InitializeComponent();
 
         }
+        private void ScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var scrollViewer = (ScrollViewer)sender;
+            scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - e.Delta);
+        }
 
-        public PasteTipsViewModel ViewModel => (PasteTipsViewModel) DataContext;
+        internal PasteTipsViewModel ViewModel => (PasteTipsViewModel) DataContext;
     }
 }

@@ -10,6 +10,7 @@ using Clipboard.Shared.Services;
 using GalaSoft.MvvmLight.Messaging;
 using Metaseed.Input;
 using Clipboard.ComponentModel.Messages;
+using Clipboard.ViewModels;
 using Clipboard.Views;
 using Metaseed.MetaKeyboard;
 using Message = Clipboard.ComponentModel.Messages.Message;
@@ -42,8 +43,20 @@ namespace Clipboard
 
         private Register         _currentRegister;
         private readonly ClipboardService _clipboard;
+        private PasteTips __pasteTips;
+        private PasteTips _pasteTips
+        {
+            get
+            {
+                if (__pasteTips != null) return __pasteTips;
+                __pasteTips = new PasteTips();
+                    var ViewModel = new PasteTipsViewModel();
+                    ViewModel.CollectionView = _clipboard.DataService.DataEntries;
+                    _pasteTips.DataContext = ViewModel;
+                    return __pasteTips;
+            }
+        }
 
-        private readonly PasteTips _pasteTips = new PasteTips();
         public ClipboardManager()
         {
             var registerKeys = new List<Keys>()
@@ -62,6 +75,7 @@ namespace Clipboard
                     e.GoToState = new List<ICombination>();
                     return;
                 }
+                Notify.ShowMessage(new System.Windows.Controls.Button(){Content = "asssssssss"}, null, NotifyPosition.ActiveWindowCenter);
 
                 e.Handled = true;
                 _state = State.C;
@@ -108,8 +122,7 @@ namespace Clipboard
                     return;
                 }
 
-                _pasteTips.ViewModel.DataEntries = _clipboard.DataService.DataEntries;
-                Notify.ShowMessage(_pasteTips,8000, NotifyPosition.ActiveWindowCenter);
+                Notify.ShowMessage(_pasteTips,null, NotifyPosition.ActiveWindowCenter);
                 e.Handled = true;
                 _state = State.V;
             });

@@ -884,7 +884,7 @@
         <Setter Property="IsTabStop" Value="True" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="TabIndex" Value="0" />
-        <Setter Property="Margin" Value="0,0,20,0" />
+        <Setter Property="Margin" Value="0,0,8,0" />
         <Setter Property="Tag" Value="{DynamicResource {x:Static SystemParameters.HighContrastKey}}" />
         <Setter Property="Template">
             <Setter.Value>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -7,21 +8,24 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using Clipboard.Core.Desktop.ComponentModel;
 using Clipboard.Core.Desktop.Models;
+using Clipboard.Strings;
 using GalaSoft.MvvmLight;
 
 namespace Clipboard.ViewModels
 {
-    public class PasteTipsViewModel: ViewModelBase
+    internal class PasteTipsViewModel: ViewModelBase
     {
-        private AsyncObservableCollection<DataEntry> _dataEntries;
-        internal AsyncObservableCollection<DataEntry> DataEntries
+        private ObservableCollection<DataEntry> _collectionView;
+        public ObservableCollection<DataEntry> CollectionView
         {
-            get => _dataEntries;
+            get => _collectionView;
             set
             {
-                _dataEntries                   = value;
-                RaisePropertyChanged(nameof(DataEntries));
+                _collectionView                   = value;
+                RaisePropertyChanged(nameof(CollectionView));
             }
         }
+
+        public LanguageManager Language => LanguageManager.GetInstance();
     }
 }
