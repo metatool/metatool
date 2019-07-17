@@ -35,5 +35,25 @@ namespace Clipboard.Views
         }
 
         internal PasteTipsViewModel ViewModel => (PasteTipsViewModel) DataContext;
+
+        internal void Next()
+        {
+            var view     = ViewModel.CollectionView;
+            var position = view.CurrentPosition;
+            if(position >= view.Count-1) return;
+            var r        = view.MoveCurrentToPosition(position + 1);
+            if (r) DataListBox.ScrollIntoView(view.CurrentItem);
+        }
+
+        internal void Previous()
+        {
+            var view = ViewModel.CollectionView;
+            var position =view.CurrentPosition;
+            if(position <= 0) return;
+            var r = view.MoveCurrentToPosition(position - 1);
+            if(r) DataListBox.ScrollIntoView(view.CurrentItem);
+        }
+
+        internal int CurrentItemIndex => ViewModel.CollectionView.CurrentPosition;
     }
 }

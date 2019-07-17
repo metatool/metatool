@@ -16,6 +16,7 @@
     </UserControl.Resources>
     <ListBox x:Name="DataListBox" ItemsSource="{Binding CollectionView, IsAsync=True, Mode=OneWay}"
              Style="{StaticResource PasteBarListBox}"
+             IsSynchronizedWithCurrentItem="True"
              Visibility="{Binding NoPresentData, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
         <ListBox.Resources>
             <converters:BooleanToIntegerConverter x:Key="BooleanToIntegerConverter" TrueValue="128" FalseValue="64" />

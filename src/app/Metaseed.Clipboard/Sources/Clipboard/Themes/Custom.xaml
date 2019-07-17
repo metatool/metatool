@@ -897,7 +897,7 @@
                     <ControlTemplate.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsFocused}"
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}"
                                            Value="True" />
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"
                                            Value="True" />
@@ -908,7 +908,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsFocused}"
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsSelected}"
                                            Value="True" />
                                 <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"
                                            Value="False" />

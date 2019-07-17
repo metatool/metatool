@@ -28,16 +28,13 @@ namespace Clipboard.Core.Desktop.Services
                 dataService = dataService ?? ServiceLocator.GetService<DataService>();
         }
 
-        internal void PasteFrom(int relevantToCurrentIndex)
+        internal void PasteFrom(int index)
         {
-            var index = DataService.CurrentIndex + relevantToCurrentIndex;
             if (DataService.DataEntries.Count < index)
             {
                 Console.WriteLine("no data in DataEntries");
                 return;
             }
-
-            DataService.CurrentIndex = index;
 
             var data = DataService.DataEntries[index];
 

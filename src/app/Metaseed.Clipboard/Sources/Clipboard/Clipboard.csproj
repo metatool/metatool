@@ -508,6 +508,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj">
+      <Project>{AB671EA5-EC01-4AEE-80B3-BFC40E23377F}</Project>
+      <Name>Metaseed.NotifyIcon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\lib\Metaseed.Core\Metaseed.Core.csproj">
       <Project>{4bbf0099-c478-4c6a-aeef-2c494eadd945}</Project>
       <Name>Metaseed.Core</Name>

@@ -34,7 +34,7 @@
         </Style>
     </UserControl.Resources>
     <Border Style="{StaticResource BackgroundBorderStyle}">
-        <ListBox ItemsSource="{Binding CollectionView, IsAsync=True, Mode=OneWay}"
+        <ListBox x:Name="DataListBox"  ItemsSource="{Binding CollectionView, IsAsync=True, Mode=OneWay}" IsSynchronizedWithCurrentItem="True"
                  Style="{StaticResource PasteTipsListBox}">
             <!-- Visibility="{Binding NoPresentData, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" -->
             <ListBox.Resources>

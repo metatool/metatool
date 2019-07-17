@@ -37,6 +37,27 @@ using Point = Metaseed.NotifyIcon.Interop.Point;
 
 namespace Metaseed.NotifyIcon
 {
+    public class CloseToken
+    {
+        internal Popup Popup;
+
+        public CloseToken(Popup popup = null)
+        {
+            Popup = popup;
+        }
+
+
+        public void Close()
+        {
+            Popup.IsOpen = false;
+
+            //remove the reference of the popup to the balloon in case we want to reuse
+            //the balloon (then added to a new popup)
+            Popup.Child = null;
+
+        }
+    }
+
     /// <summary>
     /// A WPF proxy to for a taskbar icon (NotifyIcon) that sits in the system's
     /// taskbar notification area ("system tray").
@@ -103,8 +124,8 @@ namespace Metaseed.NotifyIcon
         {
             get
             {
-                var popup = TrayPopupResolved;
-                var menu = ContextMenu;
+                var popup   = TrayPopupResolved;
+                var menu    = ContextMenu;
                 var balloon = CustomBalloon;
 
                 return popup != null && popup.IsOpen ||
@@ -137,13 +158,13 @@ namespace Metaseed.NotifyIcon
             CreateTaskbarIcon();
 
             //register event listeners
-            messageSink.MouseEventReceived += OnMouseEvent;
-            messageSink.TaskbarCreated += OnTaskbarCreated;
+            messageSink.MouseEventReceived        += OnMouseEvent;
+            messageSink.TaskbarCreated            += OnTaskbarCreated;
             messageSink.ChangeToolTipStateRequest += OnToolTipChange;
-            messageSink.BalloonToolTipChanged += OnBalloonToolTipChanged;
+            messageSink.BalloonToolTipChanged     += OnBalloonToolTipChanged;
 
             //init single click / balloon timers
-            singleClickTimer = new Timer(DoSingleClickAction);
+            singleClickTimer  = new Timer(DoSingleClickAction);
             balloonCloseTimer = new Timer(CloseBalloonCallback);
 
             //register listener in order to get notified when the application closes
@@ -153,14 +174,15 @@ namespace Metaseed.NotifyIcon
         #endregion
 
         #region Custom Balloons
+
         public delegate Point GetCustomPopupPosition();
 
         public GetCustomPopupPosition CustomPopupPosition;
 
         public Point GetPopupTrayPosition()
         {
-          return TrayInfo.GetTrayLocation();
-        }                                              
+            return TrayInfo.GetTrayLocation();
+        }
 
         /// <summary>
         /// Shows a custom control as a tooltip in the tray location.
@@ -172,14 +194,13 @@ namespace Metaseed.NotifyIcon
         /// </param>
         /// <exception cref="ArgumentNullException">If <paramref name="balloon"/>
         /// is a null reference.</exception>
-        public void ShowCustomBalloon(UIElement balloon, PopupAnimation animation, int? timeout = null)
+        public CloseToken ShowCustomBalloon(UIElement balloon, PopupAnimation animation, int? timeout = null, bool onlyCloseByToken = false)
         {
             var dispatcher = this.GetDispatcher();
             if (!dispatcher.CheckAccess())
             {
-                var action = new Action(() => ShowCustomBalloon(balloon, animation, timeout));
-                dispatcher.Invoke(DispatcherPriority.Normal, action);
-                return;
+                var action = new Func<CloseToken>(() => ShowCustomBalloon(balloon, animation, timeout));
+                return dispatcher.Invoke(DispatcherPriority.Normal, action) as CloseToken;
             }
 
             if (balloon == null) throw new ArgumentNullException("balloon");
@@ -193,10 +214,11 @@ namespace Metaseed.NotifyIcon
             EnsureNotDisposed();
 
             //make sure we don't have an open balloon
-            lock (this)
-            {
-                CloseBalloon();
-            }
+            if (!onlyCloseByToken)
+                lock (this)
+                {
+                    CloseBalloon();
+                }
 
             //create an invisible popup that hosts the UIElement
             var popup = new Popup();
@@ -213,7 +235,7 @@ namespace Metaseed.NotifyIcon
             //control didn't remove the balloon from its parent popup when
             //if was closed the last time - just make sure it doesn't have
             //a parent that is a popup
-            var parent = LogicalTreeHelper.GetParent(balloon) as Popup;
+            var parent                       = LogicalTreeHelper.GetParent(balloon) as Popup;
             if (parent != null) parent.Child = null;
 
             if (parent != null)
@@ -233,16 +255,17 @@ namespace Metaseed.NotifyIcon
             popup.Placement = PlacementMode.AbsolutePoint;
             popup.StaysOpen = true;
 
-            
+
             var position = CustomPopupPosition?.Invoke() ?? this.GetPopupTrayPosition();
             popup.HorizontalOffset = position.X - 1;
-            popup.VerticalOffset = position.Y - 1;
+            popup.VerticalOffset   = position.Y - 1;
 
             //store reference
-            lock (this)
-            {
-                SetCustomBalloon(popup);
-            }
+            if (!onlyCloseByToken)
+                lock (this)
+                {
+                    SetCustomBalloon(popup);
+                }
 
             //assign this instance as an attached property
             SetParentTaskbarIcon(balloon, this);
@@ -253,11 +276,13 @@ namespace Metaseed.NotifyIcon
             //display item
             popup.IsOpen = true;
 
-            if (timeout.HasValue)
+            if (timeout.HasValue && !onlyCloseByToken)
             {
                 //register timer to close the popup
                 balloonCloseTimer.Change(timeout.Value, Timeout.Infinite);
             }
+
+            return new CloseToken(popup);
         }
 
 
@@ -540,7 +565,7 @@ namespace Metaseed.NotifyIcon
             if (tt == null && TrayToolTip != null)
             {
                 //create an invisible wrapper tooltip that hosts the UIElement
-                tt = new ToolTip();
+                tt           = new ToolTip();
                 tt.Placement = PlacementMode.Mouse;
 
                 //do *not* set the placement target, as it causes the popup to become hidden if the
@@ -549,18 +574,18 @@ namespace Metaseed.NotifyIcon
                 //tt.PlacementTarget = this;
 
                 //make sure the tooltip is invisible
-                tt.HasDropShadow = false;
+                tt.HasDropShadow   = false;
                 tt.BorderThickness = new Thickness(0);
-                tt.Background = System.Windows.Media.Brushes.Transparent;
+                tt.Background      = System.Windows.Media.Brushes.Transparent;
 
                 //setting the 
                 tt.StaysOpen = true;
-                tt.Content = TrayToolTip;
+                tt.Content   = TrayToolTip;
             }
             else if (tt == null && !String.IsNullOrEmpty(ToolTipText))
             {
                 //create a simple tooltip for the ToolTipText string
-                tt = new ToolTip();
+                tt         = new ToolTip();
                 tt.Content = ToolTipText;
             }
 
@@ -626,7 +651,7 @@ namespace Metaseed.NotifyIcon
             if (popup == null && TrayPopup != null)
             {
                 //create an invisible popup that hosts the UIElement
-                popup = new Popup();
+                popup                    = new Popup();
                 popup.AllowsTransparency = true;
 
                 //don't animate by default - devs can use attached
@@ -675,9 +700,9 @@ namespace Metaseed.NotifyIcon
             if (TrayPopup != null)
             {
                 //use absolute position, but place the popup centered above the icon
-                TrayPopupResolved.Placement = PlacementMode.AbsolutePoint;
+                TrayPopupResolved.Placement        = PlacementMode.AbsolutePoint;
                 TrayPopupResolved.HorizontalOffset = cursorPosition.X;
-                TrayPopupResolved.VerticalOffset = cursorPosition.Y;
+                TrayPopupResolved.VerticalOffset   = cursorPosition.Y;
 
                 //open popup
                 TrayPopupResolved.IsOpen = true;
@@ -686,7 +711,7 @@ namespace Metaseed.NotifyIcon
                 if (TrayPopupResolved.Child != null)
                 {
                     //try to get a handle on the popup itself (via its child)
-                    var source = (HwndSource) PresentationSource.FromVisual(TrayPopupResolved.Child);
+                    var source                 = (HwndSource) PresentationSource.FromVisual(TrayPopupResolved.Child);
                     if (source != null) handle = source.Handle;
                 }
 
@@ -728,10 +753,10 @@ namespace Metaseed.NotifyIcon
                 //use absolute positioning. We need to set the coordinates, or a delayed opening
                 //(e.g. when left-clicked) opens the context menu at the wrong place if the mouse
                 //is moved!
-                ContextMenu.Placement = PlacementMode.AbsolutePoint;
+                ContextMenu.Placement        = PlacementMode.AbsolutePoint;
                 ContextMenu.HorizontalOffset = cursorPosition.X;
-                ContextMenu.VerticalOffset = cursorPosition.Y;
-                ContextMenu.IsOpen = true;
+                ContextMenu.VerticalOffset   = cursorPosition.Y;
+                ContextMenu.IsOpen           = true;
 
                 var handle = IntPtr.Zero;
 
@@ -831,10 +856,10 @@ namespace Metaseed.NotifyIcon
         {
             EnsureNotDisposed();
 
-            iconData.BalloonText = message ?? String.Empty;
+            iconData.BalloonText  = message ?? String.Empty;
             iconData.BalloonTitle = title ?? String.Empty;
 
-            iconData.BalloonFlags = flags;
+            iconData.BalloonFlags            = flags;
             iconData.CustomBalloonIconHandle = balloonIconHandle;
             Util.WriteIconData(ref iconData, NotifyCommand.Modify, IconDataMembers.Info | IconDataMembers.Icon);
         }
@@ -892,13 +917,13 @@ namespace Metaseed.NotifyIcon
             if (!status)
             {
                 iconData.VersionOrTimeout = (uint) NotifyIconVersion.Win2000;
-                status = Util.WriteIconData(ref iconData, NotifyCommand.SetVersion);
+                status                    = Util.WriteIconData(ref iconData, NotifyCommand.SetVersion);
             }
 
             if (!status)
             {
                 iconData.VersionOrTimeout = (uint) NotifyIconVersion.Win95;
-                status = Util.WriteIconData(ref iconData, NotifyCommand.SetVersion);
+                status                    = Util.WriteIconData(ref iconData, NotifyCommand.SetVersion);
             }
 
             if (!status)
@@ -974,7 +999,6 @@ namespace Metaseed.NotifyIcon
         }
 
         #endregion
-
 
 
         #region Dispose / Exit

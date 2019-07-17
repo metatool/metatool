@@ -35,7 +35,7 @@ namespace Clipboard.Core.Desktop.Models
 
         private ObservableCollection<DataEntry> Content { get; set; } = new AsyncObservableCollection<DataEntry>();
 
-        internal IList<DataEntry> GetContent()
+        internal ObservableCollection<DataEntry> GetContent()
         {
             return Content;
         }

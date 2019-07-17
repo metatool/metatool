@@ -56,8 +56,6 @@ namespace Clipboard.Core.Desktop.Services
         /// </summary>
         internal AsyncObservableCollection<DataEntry> DataEntries { get; private set; }
 
-        internal int CurrentIndex { get; set; } = 0;
-
         /// <summary>
         /// Gets cache that describes that status of all data entries.
         /// </summary>

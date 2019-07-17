@@ -13,15 +13,19 @@ using GalaSoft.MvvmLight;
 
 namespace Clipboard.ViewModels
 {
-    internal class PasteTipsViewModel: ViewModelBase
+    internal class PasteTipsViewModel : ViewModelBase
     {
-        private ObservableCollection<DataEntry> _collectionView;
-        public ObservableCollection<DataEntry> CollectionView
+        public  ListCollectionView              CollectionView { get; private set; }
+        private ObservableCollection<DataEntry> _dataEntries;
+
+        public ObservableCollection<DataEntry> DataEntries
         {
-            get => _collectionView;
+            get => _dataEntries;
             set
             {
-                _collectionView                   = value;
+                _dataEntries = value;
+                CollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(_dataEntries);
+                if(_dataEntries.Count>0) CollectionView.MoveCurrentToPosition(0);
                 RaisePropertyChanged(nameof(CollectionView));
             }
         }

@@ -37,8 +37,8 @@ namespace Metaseed.MetaKeyboard
             trayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
         }
 
-        public static void AddContextMenuItem(string header,           Action<MenuItem> excute,
-            Func<MenuItem, bool>                     canExcute = null, bool             isCheckable = false)
+        public static void AddContextMenuItem(string header, Action<MenuItem> excute,
+            Func<MenuItem, bool> canExcute = null, bool isCheckable = false)
         {
             var item = new MenuItem() {Header = header, IsCheckable = isCheckable};
             item.Command = new DelegateCommand<MenuItem>()
@@ -53,10 +53,10 @@ namespace Metaseed.MetaKeyboard
             trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
 
-        public static void ShowMessage(System.Windows.FrameworkElement control, int? timeout,
-            NotifyPosition                     position = NotifyPosition.ActiveScreen)
+        public static CloseToken ShowMessage(System.Windows.FrameworkElement control, int? timeout,
+            NotifyPosition position = NotifyPosition.ActiveScreen, bool onlyCloseByToken = false)
         {
-            TaskbarIcon.GetCustomPopupPosition func = null; 
+            TaskbarIcon.GetCustomPopupPosition func = null;
             switch (position)
             {
                 case NotifyPosition.ActiveWindowCenter:
@@ -64,7 +64,10 @@ namespace Metaseed.MetaKeyboard
                     {
                         var rect = UI.Window.GetCurrentWindowRect();
                         return new NotifyIcon.Interop.Point()
-                            {X = (int) (rect.X + rect.Width / 2 - control.ActualWidth/2), Y = (int) (rect.Y + rect.Height / 2-control.ActualHeight/2)};
+                        {
+                            X = (int) (rect.X + rect.Width  / 2 - control.ActualWidth  / 2),
+                            Y = (int) (rect.Y + rect.Height / 2 - control.ActualHeight / 2)
+                        };
                     };
                     break;
                 case NotifyPosition.ActiveScreen:
@@ -91,8 +94,9 @@ namespace Metaseed.MetaKeyboard
             }
 
             trayIcon.CustomPopupPosition = func;
-            trayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout);
+            return trayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
         }
+
 
         public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
             NotifyPosition position =
@@ -134,7 +138,7 @@ namespace Metaseed.MetaKeyboard
             window.Loaded += (o, e) =>
             {
                 popup.HorizontalOffset = bounds.X + bounds.Width - 1;
-                popup.VerticalOffset   = bounds.Y + bounds.Height;
+                popup.VerticalOffset   = bounds.Y                + bounds.Height;
                 popup.IsOpen           = true;
                 var timer = new DispatcherTimer() {Interval = TimeSpan.FromSeconds(20)};
                 timer.Tick += (o1, e1) =>
@@ -154,7 +158,7 @@ namespace Metaseed.MetaKeyboard
             double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
             double windowWidth  = window.Width;
             double windowHeight = window.Height;
-            window.Left = (screenWidth / 2) - (windowWidth / 2);
+            window.Left = (screenWidth  / 2) - (windowWidth  / 2);
             window.Top  = (screenHeight / 2) - (windowHeight / 2);
         }
     }
