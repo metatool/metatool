@@ -125,27 +125,17 @@ namespace Clipboard
             });
 
 
-            var isPasteAll = false;
-            Channel lastChannel = null;
             registerKeys.ForEach(key =>
             {
                 var register = VState.Then(key.With(Keys.LControlKey));
                 register.Down(e =>
                 {
-                    e.Handled                        =  true;
-                    _currentChannel                  =  Channel.GetRegister(key.ToString());
-                    _pasteTips.ViewModel.DataEntries =  _currentChannel.GetContent();
-                    if (_currentChannel == lastChannel)
-                        isPasteAll ^= true;
-                    else
-                        isPasteAll = false;
-                    _pasteTips.ViewModel.IsPasteAll = isPasteAll;
-                    lastChannel = _currentChannel;
+                    e.Handled                        = true;
+                    _currentChannel                  = Channel.GetRegister(key.ToString());
+                    _pasteTips.ViewModel.DataEntries = _currentChannel.GetContent();
+                    _pasteTips.ViewModel.ChangeIsPasteAllState(_currentChannel);
                 });
-                register.Up(e =>
-                {
-                    e.GoToState = new List<ICombination>() {VState};
-                });
+                register.Up(e => { e.GoToState = new List<ICombination>() {VState}; });
             });
 
             VState.Then(Keys.LControlKey).Up(e =>
@@ -168,9 +158,8 @@ namespace Clipboard
                     _pasteTipsCloseToken?.Close();
                     _pasteTipsCloseToken = null;
                 });
-                isPasteAll  = false;
-                lastChannel = null;
-
+                _pasteTips.ViewModel.ResetIsPasteAll();
+                _pasteTips.ViewModel.Channel = null;
             });
 
             var next = VState.Then(Keys.V.With(Keys.ControlKey));

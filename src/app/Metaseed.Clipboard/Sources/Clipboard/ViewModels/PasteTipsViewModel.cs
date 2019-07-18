@@ -17,32 +17,55 @@ namespace Clipboard.ViewModels
     {
         public  ListCollectionView              CollectionView { get; private set; }
         private ObservableCollection<DataEntry> _dataEntries;
-        private bool _isPasteAll;
+        private bool                            _isPasteAll;
 
         public ObservableCollection<DataEntry> DataEntries
         {
             get => _dataEntries;
             set
             {
-                _dataEntries = value;
-                CollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(_dataEntries);
-                if(_dataEntries.Count>0) CollectionView.MoveCurrentToPosition(0);
+                _dataEntries   = value;
+                CollectionView = (ListCollectionView) CollectionViewSource.GetDefaultView(_dataEntries);
+                if (_dataEntries.Count > 0) CollectionView.MoveCurrentToPosition(0);
                 RaisePropertyChanged(nameof(CollectionView));
             }
         }
+        internal Channel Channel = null;
 
         public bool IsPasteAll
         {
             get => _isPasteAll;
-            set
-            {
-                if(_isPasteAll == value) return;
-                _isPasteAll = value;
-                this.CollectionView.MoveCurrentTo(null);
-                RaisePropertyChanged(nameof(IsPasteAll));
-            }
         }
 
+        internal void ChangeIsPasteAllState(Channel channel)
+        {
+            var lastChannel = Channel;
+            Channel = channel;
+            if (channel == lastChannel)
+                ToggleChannelIsPasteAll();
+            else
+                ResetIsPasteAll();
+        }
+        internal void ToggleChannelIsPasteAll()
+        {
+            _isPasteAll ^= true;
+            if (_isPasteAll)
+                this.CollectionView.MoveCurrentTo(null);
+            else
+            {
+                this.CollectionView.MoveCurrentToLast();
+            }
+
+            RaisePropertyChanged(nameof(IsPasteAll));
+        }
+
+        internal void ResetIsPasteAll()
+        {
+            if (!_isPasteAll) return;
+            _isPasteAll = false;
+            RaisePropertyChanged(nameof(IsPasteAll));
+
+        }
         public LanguageManager Language => LanguageManager.GetInstance();
     }
 }

@@ -10,7 +10,7 @@ namespace Clipboard.Core.Desktop.Models
 {
     internal class Channel
     {
-        internal       string                       Name;
+        internal       string                      Name;
         private static Dictionary<string, Channel> _channels = new Dictionary<string, Channel>();
 
         private Channel(string name)
@@ -27,13 +27,13 @@ namespace Clipboard.Core.Desktop.Models
 
         public static void ClearAll()
         {
-            _channels.Values.ToList().ForEach(c=>c.Clear());
+            _channels.Values.ToList().ForEach(c => c.Clear());
             _channels.Clear();
         }
 
         public static void Remove(DataEntry entry)
         {
-            if(entry.RegisterLocation == "") return;
+            if (entry.RegisterLocation == "") return;
             _channels[entry.RegisterLocation].RemoveItem(entry);
         }
 
@@ -49,53 +49,30 @@ namespace Clipboard.Core.Desktop.Models
         {
             return Content;
         }
-        readonly Dictionary<int, DataEntry> _buffer = new Dictionary<int, DataEntry>();
 
-        public void Set(DataEntry data, int index = -1)
+
+        public void Set(DataEntry data, bool isAppend = false)
         {
-            if (Content.Contains(data)|| _buffer.ContainsValue(data)) return;
+            if (Content.Contains(data) ) return;
 
-            if (index < Content.Count && index != -1)
+            if (isAppend)
             {
-                Console.WriteLine("Warning: duplicate entry found! This entry would not be added.");
-                data.RegisterLocation = "";
-                return;
-            }
-            var i = index == -1 ? 0 : index;
-
-            if (i > Content.Count)
-            {
-                _buffer.Add(i, data);
+                Content.Add(data);
             }
             else
             {
-               
-                Content.Insert(i, data);
-                
-                foreach (var key in _buffer.Keys)
-                {
-                    if (key == Content.Count)
-                    {
-                        Content.Insert(key, _buffer[key]);
-                        _buffer.Remove(key);
-                    }
-                    else if (i < Content.Count)
-                    {
-                        Console.WriteLine("Warning: duplicate entry found! This entry would not be added.");
-                        _buffer[key].RegisterLocation = "";
-                        return;
-                    }
-                }
+                data.ChannelName       = Name;
+                data.SequenceInChannel = Content.Count;
+                Content.Insert(0, data);
             }
-
-            data.RegisterLocation = Name + "." + i;
         }
 
         private void Clear()
         {
             foreach (var dataEntry in Content)
             {
-                dataEntry.RegisterLocation = "";
+                dataEntry.ChannelName = null;
+                dataEntry.SequenceInChannel = -1;
             }
 
             Content.Clear();
@@ -104,7 +81,6 @@ namespace Clipboard.Core.Desktop.Models
         private void RemoveItem(DataEntry entry)
         {
             Content.Remove(entry);
-
         }
     }
 }

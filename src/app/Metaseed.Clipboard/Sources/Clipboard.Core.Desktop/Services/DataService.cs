@@ -30,16 +30,22 @@ namespace Clipboard.Core.Desktop.Services
     {
         #region Fields
 
-        private readonly Regex _creditCardRegex = new Regex(@"^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$", RegexOptions.Compiled);
-        private readonly Regex _hasNumber = new Regex(@"[0-9]+", RegexOptions.Compiled);
-        private readonly Regex _hasUpperChar = new Regex(@"[A-Z]+", RegexOptions.Compiled);
-        private readonly Regex _hexColorRegex = new Regex(@"^(#)?([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", RegexOptions.Compiled);
+        private readonly Regex _creditCardRegex =
+            new Regex(
+                @"^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$",
+                RegexOptions.Compiled);
 
-        private bool _lastCopiedDataWasCreditCard;
-        private string _dataEntryFilePath;
-        private string _cacheFilePath;
-        private SecureString _dataEntryFilePassword;
-        private SecureString _detectedCreditCard;
+        private readonly Regex _hasNumber    = new Regex(@"[0-9]+", RegexOptions.Compiled);
+        private readonly Regex _hasUpperChar = new Regex(@"[A-Z]+", RegexOptions.Compiled);
+
+        private readonly Regex _hexColorRegex =
+            new Regex(@"^(#)?([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", RegexOptions.Compiled);
+
+        private bool                    _lastCopiedDataWasCreditCard;
+        private string                  _dataEntryFilePath;
+        private string                  _cacheFilePath;
+        private SecureString            _dataEntryFilePassword;
+        private SecureString            _detectedCreditCard;
         private IServiceSettingProvider _settingProvider;
 
         #endregion
@@ -96,19 +102,18 @@ namespace Clipboard.Core.Desktop.Services
 
             Cache = new List<DataEntryCache>();
 
-            ClipboardDataPath = Path.Combine(appDataFolder, Consts.ClipboardDataFolderName);
+            ClipboardDataPath  = Path.Combine(appDataFolder, Consts.ClipboardDataFolderName);
             _dataEntryFilePath = Path.Combine(ClipboardDataPath, Consts.DataEntryFileName);
-            _cacheFilePath = Path.Combine(ClipboardDataPath, Consts.CacheFileName);
+            _cacheFilePath     = Path.Combine(ClipboardDataPath, Consts.CacheFileName);
 
-            _dataEntryFilePassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(_settingProvider.GetSetting<string>("DropBoxAppKey") + _settingProvider.GetSetting<string>("OneDriveClientId"))));
+            _dataEntryFilePassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(
+                SecurityHelper.ToSecureString(_settingProvider.GetSetting<string>("DropBoxAppKey") +
+                                              _settingProvider.GetSetting<string>("OneDriveClientId"))));
 
             if (settingProvider.GetSetting<bool>("DataMigrationRequired"))
             {
                 var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(10));
-                delayer.Action += async (sender1, eventArgs) =>
-                {
-                    await Task.Run(() => MigrateDataEntryFileAsync());
-                };
+                delayer.Action += async (sender1, eventArgs) => { await Task.Run(() => MigrateDataEntryFileAsync()); };
                 delayer.ResetAndTick();
             }
             else
@@ -123,7 +128,7 @@ namespace Clipboard.Core.Desktop.Services
         public void Reset()
         {
             _lastCopiedDataWasCreditCard = false;
-            _detectedCreditCard = null;
+            _detectedCreditCard          = null;
         }
 
         /// <summary>
@@ -164,9 +169,9 @@ namespace Clipboard.Core.Desktop.Services
             {
                 if (_settingProvider.GetSetting<bool>("AvoidCreditCard"))
                 {
-                    ignored = true;
+                    ignored                      = true;
                     _lastCopiedDataWasCreditCard = true;
-                    _detectedCreditCard = SecurityHelper.ToSecureString(text);
+                    _detectedCreditCard          = SecurityHelper.ToSecureString(text);
                 }
 
                 CreditCardNumberDetected?.Invoke(this, new EventArgs());
@@ -186,7 +191,7 @@ namespace Clipboard.Core.Desktop.Services
 
             foreach (var format in GetFormatsToKeep(formats))
             {
-                identifiers.Add(new DataIdentifier { Identifier = GenerateNewGuid(), FormatName = format });
+                identifiers.Add(new DataIdentifier {Identifier = GenerateNewGuid(), FormatName = format});
             }
 
             return identifiers;
@@ -199,7 +204,8 @@ namespace Clipboard.Core.Desktop.Services
         /// <param name="identifiers">The list of identifiers for each data format.</param>
         /// <param name="foregroundWindow">The foreground window.</param>
         /// <param name="isCreditCard">Determines whether the data is a credit card number.</param>
-        internal async Task<DataEntry> AddDataEntry(ClipboardHookEventArgs e, List<DataIdentifier> identifiers, Window foregroundWindow, bool isCreditCard)
+        internal async Task<DataEntry> AddDataEntry(ClipboardHookEventArgs e, List<DataIdentifier> identifiers,
+            Window foregroundWindow, bool isCreditCard)
         {
             Requires.NotNull(e, nameof(e));
             Requires.NotNull(identifiers, nameof(identifiers));
@@ -214,21 +220,21 @@ namespace Clipboard.Core.Desktop.Services
 
             var entry = new DataEntry
             {
-                Identifier = GenerateNewGuid(),
-                Icon = foregroundWindow.Icon,
-                Thumbnail = GenerateThumbnail(e.DataObject, isCreditCard),
-                Date = new DateTime(e.Time),
-                IsCut = e.IsCut,
-                IsFavorite = false,
-                CanSynchronize = shouldSynchronize,
+                Identifier            = GenerateNewGuid(),
+                Icon                  = foregroundWindow.Icon,
+                Thumbnail             = GenerateThumbnail(e.DataObject, isCreditCard),
+                Date                  = new DateTime(e.Time),
+                IsCut                 = e.IsCut,
+                IsFavorite            = false,
+                CanSynchronize        = shouldSynchronize,
                 IconIsFromWindowStore = foregroundWindow.IsWindowsStoreApp,
-                DataIdentifiers = identifiers
+                DataIdentifiers       = identifiers
             };
 
             var cache = new DataEntryCache
             {
                 Identifier = entry.Identifier,
-                Status = DataEntryStatus.Added
+                Status     = DataEntryStatus.Added
             };
 
             DataEntries.Insert(0, entry);
@@ -243,6 +249,7 @@ namespace Clipboard.Core.Desktop.Services
                 {
                     value.Title = SystemInfoHelper.GetWebPageTitle(value.Uri);
                 }
+
                 entry.Thumbnail.Value = DataHelper.ToBase64<Link>(value);
             }
 
@@ -257,7 +264,8 @@ namespace Clipboard.Core.Desktop.Services
         /// <param name="identifiers">The list of <see cref="DataIdentifier"/> that represents the data</param>
         /// <param name="saveDataEntryFile">Defines wether the data entry file must be saved</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        internal async Task RemoveDataAsync(Guid identifier, List<DataIdentifier> identifiers, bool saveDataEntryFile = true)
+        internal async Task RemoveDataAsync(Guid identifier, List<DataIdentifier> identifiers,
+            bool saveDataEntryFile = true)
         {
             Requires.NotNull(identifier, nameof(identifier));
             Requires.NotNull(identifiers, nameof(identifiers));
@@ -348,20 +356,25 @@ namespace Clipboard.Core.Desktop.Services
 
             var dataObject = new DataObject();
 
-            if (dataEntry.Thumbnail.Type == ThumbnailDataType.String || dataEntry.Thumbnail.Type == ThumbnailDataType.Color)
+            if (dataEntry.Thumbnail.Type == ThumbnailDataType.String ||
+                dataEntry.Thumbnail.Type == ThumbnailDataType.Color)
             {
-                var identifier = dataEntry.DataIdentifiers.FirstOrDefault(id => id.FormatName == DataFormats.UnicodeText);
+                var identifier =
+                    dataEntry.DataIdentifiers.FirstOrDefault(id => id.FormatName == DataFormats.UnicodeText);
                 if (identifier != null)
                 {
                     var dataFilePath = Path.Combine(ClipboardDataPath, $"{identifier.Identifier}.dat");
                     if (File.Exists(dataFilePath))
                     {
                         Logger.Instance.Information("Loading the unicode text data from the entry.");
-                        var dataPassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(identifier.Identifier.ToString())));
+                        var dataPassword = SecurityHelper.ToSecureString(
+                            SecurityHelper.EncryptString(
+                                SecurityHelper.ToSecureString(identifier.Identifier.ToString())));
                         Requires.NotNull(dataPassword, nameof(dataPassword));
 
                         using (var fileStream = File.OpenRead(dataFilePath))
-                        using (var aesStream = new AesStream(fileStream, dataPassword, SecurityHelper.GetSaltKeys(dataPassword).GetBytes(16)))
+                        using (var aesStream = new AesStream(fileStream, dataPassword,
+                            SecurityHelper.GetSaltKeys(dataPassword).GetBytes(16)))
                         {
                             aesStream.AutoDisposeBaseStream = false;
                             var buffer = new byte[aesStream.Length];
@@ -391,10 +404,12 @@ namespace Clipboard.Core.Desktop.Services
                     return MatchText(dataObject, searchQuery.Query);
 
                 case SearchType.Text:
-                    if (dataEntry.Thumbnail.Type == ThumbnailDataType.String || dataEntry.Thumbnail.Type == ThumbnailDataType.Color)
+                    if (dataEntry.Thumbnail.Type == ThumbnailDataType.String ||
+                        dataEntry.Thumbnail.Type == ThumbnailDataType.Color)
                     {
                         return MatchText(dataObject, searchQuery.Query);
                     }
+
                     break;
 
                 case SearchType.Link:
@@ -402,6 +417,7 @@ namespace Clipboard.Core.Desktop.Services
                     {
                         return MatchLink(DataHelper.FromBase64<Link>(dataEntry.Thumbnail.Value), searchQuery.Query);
                     }
+
                     break;
 
                 case SearchType.File:
@@ -409,6 +425,7 @@ namespace Clipboard.Core.Desktop.Services
                     {
                         return MatchFiles(dataEntry.Thumbnail.GetFilesPath(), searchQuery.QueryRegex);
                     }
+
                     break;
 
                 case SearchType.Image:
@@ -416,6 +433,7 @@ namespace Clipboard.Core.Desktop.Services
                     {
                         return string.IsNullOrEmpty(searchQuery.Query);
                     }
+
                     break;
 
                 default:
@@ -429,10 +447,7 @@ namespace Clipboard.Core.Desktop.Services
 
         ClipboardService ClipboardService
         {
-            get
-            {
-                return _clipboardService = _clipboardService ??ServiceLocator.GetService<ClipboardService>();
-            }
+            get { return _clipboardService = _clipboardService ?? ServiceLocator.GetService<ClipboardService>(); }
         }
 
         /// <summary>
@@ -451,7 +466,8 @@ namespace Clipboard.Core.Desktop.Services
         /// </summary>
         /// <param name="cloudDataEntryFromServer">The list of <see cref="CloudDataEntry"/> that comes from the cloud.</param>
         /// <returns>A list of <see cref="CloudDataEntry"/> that corresponds to the new cache to send to the cloud.</returns>
-        internal List<CloudDataEntry> DifferenceLocalAndCloudDataEntries(IReadOnlyCollection<CloudDataEntry> cloudDataEntryFromServer)
+        internal List<CloudDataEntry> DifferenceLocalAndCloudDataEntries(
+            IReadOnlyCollection<CloudDataEntry> cloudDataEntryFromServer)
         {
             Requires.NotNull(cloudDataEntryFromServer, nameof(cloudDataEntryFromServer));
             Logger.Instance.Information("Make the difference between the local cache and the cache from the Cloud.");
@@ -476,6 +492,7 @@ namespace Clipboard.Core.Desktop.Services
                             // And that the data exists on the server too, so we keep it locally.
                             addToResult = true;
                         }
+
                         // Otherwise, we don't keep it because it has probably bee removed byt another device from the server.
                         break;
 
@@ -491,17 +508,18 @@ namespace Clipboard.Core.Desktop.Services
                 {
                     var dataEntry = DataEntries.FirstOrDefault(item => item.Identifier == cacheEntry.Identifier);
 
-                    if (dataEntry != null && dataEntry.CanSynchronize && dataEntry.Thumbnail.Type != ThumbnailDataType.Files)
+                    if (dataEntry                != null && dataEntry.CanSynchronize &&
+                        dataEntry.Thumbnail.Type != ThumbnailDataType.Files)
                     {
                         var dataToAdd = new CloudDataEntry
                         {
-                            Identifier = dataEntry.Identifier,
-                            DataIdentifiers = dataEntry.DataIdentifiers,
-                            Date = dataEntry.Date,
-                            IsFavorite = dataEntry.IsFavorite,
-                            ThumbnailValue = dataEntry.Thumbnail.Value,
+                            Identifier        = dataEntry.Identifier,
+                            DataIdentifiers   = dataEntry.DataIdentifiers,
+                            Date              = dataEntry.Date,
+                            IsFavorite        = dataEntry.IsFavorite,
+                            ThumbnailValue    = dataEntry.Thumbnail.Value,
                             ThumbnailDataType = dataEntry.Thumbnail.Type,
-                            Icon = dataEntry._icon
+                            Icon              = dataEntry._icon
                         };
 
                         result.Add(dataToAdd);
@@ -528,10 +546,11 @@ namespace Clipboard.Core.Desktop.Services
         /// <param name="onlyRemoveLocalDataNotPresentOnServer">Defines wether if this method must only remove the local data that are not present on the server</param>
         /// <param name="localFrozenCache">A "frozen copy/clone" of the cache. This value must not match the <see cref="Cache"/> property if we do a Equals.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        internal async Task MakeCacheSynchronized(List<CloudDataEntry> cloudDataEntries, bool onlyRemoveLocalDataNotPresentOnServer, List<DataEntryCache> localFrozenCache)
+        internal async Task MakeCacheSynchronized(List<CloudDataEntry> cloudDataEntries,
+            bool onlyRemoveLocalDataNotPresentOnServer, List<DataEntryCache> localFrozenCache)
         {
             var mouseAndKeyboardHookService = ServiceLocator.GetService<MouseAndKeyboardHookService>();
-            var paused = mouseAndKeyboardHookService.IsPaused;
+            var paused                      = mouseAndKeyboardHookService.IsPaused;
             if (!paused)
             {
                 mouseAndKeyboardHookService.Pause();
@@ -540,7 +559,9 @@ namespace Clipboard.Core.Desktop.Services
             if (onlyRemoveLocalDataNotPresentOnServer)
             {
                 var save = false;
-                foreach (var cacheEntry in localFrozenCache.AsParallel().Where(cacheEntry => cacheEntry.Status == DataEntryStatus.DidNotChanged && cloudDataEntries.All(cloudDataEntry => cloudDataEntry.Identifier != cacheEntry.Identifier)))
+                foreach (var cacheEntry in localFrozenCache.AsParallel().Where(cacheEntry =>
+                    cacheEntry.Status == DataEntryStatus.DidNotChanged && cloudDataEntries.All(cloudDataEntry =>
+                        cloudDataEntry.Identifier != cacheEntry.Identifier)))
                 {
                     save = true;
                     var dataEntry = DataEntries.FirstOrDefault(data => data.Identifier == cacheEntry.Identifier);
@@ -559,13 +580,15 @@ namespace Clipboard.Core.Desktop.Services
                 {
                     mouseAndKeyboardHookService.DelayedResume(TimeSpan.FromSeconds(1));
                 }
+
                 return;
             }
 
             Requires.NotNull(localFrozenCache, nameof(localFrozenCache));
             Requires.IsFalse(Cache.Equals(localFrozenCache));
 
-            foreach (var frozenDataEntryCache in localFrozenCache.Where(dataEntryCache => dataEntryCache.Status == DataEntryStatus.Added || dataEntryCache.Status == DataEntryStatus.Deleted))
+            foreach (var frozenDataEntryCache in localFrozenCache.Where(dataEntryCache =>
+                dataEntryCache.Status == DataEntryStatus.Added || dataEntryCache.Status == DataEntryStatus.Deleted))
             {
                 var dataEntryCache = Cache.SingleOrDefault(item => item.Identifier == frozenDataEntryCache.Identifier);
                 if (dataEntryCache == null)
@@ -583,32 +606,37 @@ namespace Clipboard.Core.Desktop.Services
                 }
             }
 
-            foreach (var cloudDataEntry in cloudDataEntries.AsParallel().Where(cloudDataEntry => Cache.All(dataEntryCache => cloudDataEntry.Identifier != dataEntryCache.Identifier)))
+            foreach (var cloudDataEntry in cloudDataEntries.AsParallel().Where(cloudDataEntry =>
+                Cache.All(dataEntryCache => cloudDataEntry.Identifier != dataEntryCache.Identifier)))
             {
                 var entry = new DataEntry
                 {
                     Identifier = cloudDataEntry.Identifier,
-                    Thumbnail = new Thumbnail { Type = cloudDataEntry.ThumbnailDataType, Value = cloudDataEntry.ThumbnailValue },
-                    Date = cloudDataEntry.Date,
-                    IsCut = false,
-                    IsFavorite = cloudDataEntry.IsFavorite,
-                    CanSynchronize = true,
+                    Thumbnail = new Thumbnail
+                        {Type = cloudDataEntry.ThumbnailDataType, Value = cloudDataEntry.ThumbnailValue},
+                    Date                  = cloudDataEntry.Date,
+                    IsCut                 = false,
+                    IsFavorite            = cloudDataEntry.IsFavorite,
+                    CanSynchronize        = true,
                     IconIsFromWindowStore = false,
-                    DataIdentifiers = cloudDataEntry.DataIdentifiers
+                    DataIdentifiers       = cloudDataEntry.DataIdentifiers
                 };
 
                 if (!string.IsNullOrWhiteSpace(cloudDataEntry.Icon))
                 {
-                    entry.Icon = (BitmapImage)DataHelper.ByteArrayToBitmapSource(DataHelper.ByteArrayFromBase64(cloudDataEntry.Icon));
+                    entry.Icon =
+                        (BitmapImage) DataHelper.ByteArrayToBitmapSource(
+                            DataHelper.ByteArrayFromBase64(cloudDataEntry.Icon));
                 }
 
                 var cache = new DataEntryCache
                 {
                     Identifier = entry.Identifier,
-                    Status = DataEntryStatus.DidNotChanged
+                    Status     = DataEntryStatus.DidNotChanged
                 };
 
-                var indexOfFirstNonFavorite = DataEntries.IndexOf(DataEntries.FirstOrDefault(dataEntry => !dataEntry.IsFavorite));
+                var indexOfFirstNonFavorite =
+                    DataEntries.IndexOf(DataEntries.FirstOrDefault(dataEntry => !dataEntry.IsFavorite));
                 if (entry.IsFavorite)
                 {
                     if (indexOfFirstNonFavorite > -1)
@@ -617,7 +645,8 @@ namespace Clipboard.Core.Desktop.Services
                         favoritesItem.Add(entry);
                         favoritesItem = favoritesItem.OrderByDescending(dataEntry => dataEntry.Date).ToList();
 
-                        var index = favoritesItem.IndexOf(favoritesItem.Single(dataEntry => dataEntry.Identifier == entry.Identifier));
+                        var index = favoritesItem.IndexOf(favoritesItem.Single(dataEntry =>
+                            dataEntry.Identifier == entry.Identifier));
                         DataEntries.Insert(index, entry);
                         Cache.Insert(index, cache);
                     }
@@ -635,7 +664,9 @@ namespace Clipboard.Core.Desktop.Services
                         nonFavoritesItems.Add(entry);
                         nonFavoritesItems = nonFavoritesItems.OrderByDescending(dataEntry => dataEntry.Date).ToList();
 
-                        var index = indexOfFirstNonFavorite + nonFavoritesItems.IndexOf(nonFavoritesItems.Single(dataEntry => dataEntry.Identifier == entry.Identifier));
+                        var index = indexOfFirstNonFavorite +
+                                    nonFavoritesItems.IndexOf(nonFavoritesItems.Single(dataEntry =>
+                                        dataEntry.Identifier == entry.Identifier));
                         DataEntries.Insert(index, entry);
                         Cache.Insert(index, cache);
                     }
@@ -667,17 +698,17 @@ namespace Clipboard.Core.Desktop.Services
         internal void CopyData(Stream fromStream, Stream toStream)
         {
             var readLength = 0;
-            var dataSize = (int)fromStream.Length;
+            var dataSize   = (int) fromStream.Length;
             while (readLength < dataSize)
             {
                 var bufferSize = Consts.ClipboardDataBufferSize;
-                var buffer = new byte[bufferSize];
+                var buffer     = new byte[bufferSize];
 
                 // resize the buffer if we are at the end of the data and that it remains less than the default buffer size to read.
                 if (dataSize - readLength < bufferSize)
                 {
                     bufferSize = dataSize - readLength;
-                    buffer = new byte[bufferSize];
+                    buffer     = new byte[bufferSize];
                 }
 
                 fromStream.Read(buffer, 0, bufferSize);
@@ -711,7 +742,8 @@ namespace Clipboard.Core.Desktop.Services
                 catch (Exception ex)
                 {
                     // The assembly as been rebuilt. The file is not readable from a build to another.
-                    Logger.Instance.Warning($"The data entry file failed to be loaded : {ex.Message}. The assembly as may be been rebuilt. The file is not readable from a build to another.");
+                    Logger.Instance.Warning(
+                        $"The data entry file failed to be loaded : {ex.Message}. The assembly as may be been rebuilt. The file is not readable from a build to another.");
                     ClearCache();
                 }
             }
@@ -726,7 +758,8 @@ namespace Clipboard.Core.Desktop.Services
                 catch (Exception ex)
                 {
                     // The assembly as been rebuilt. The file is not readable from a build to another.
-                    Logger.Instance.Warning($"The data entry cache file failed to be loaded : {ex.Message}. The assembly as may be been rebuilt. The file is not readable from a build to another.");
+                    Logger.Instance.Warning(
+                        $"The data entry cache file failed to be loaded : {ex.Message}. The assembly as may be been rebuilt. The file is not readable from a build to another.");
                     ClearCache();
                 }
             }
@@ -755,11 +788,15 @@ namespace Clipboard.Core.Desktop.Services
                 ClearCache();
             }
 
-            var failed = false;
-            var oldVersion = SecurityHelper.ToSecureString(_settingProvider.GetSetting<string>("CurrentVersion"));
-            var dropBoxAppKey = _settingProvider.GetSetting<string>("DropBoxAppKey");
+            var failed           = false;
+            var oldVersion       = SecurityHelper.ToSecureString(_settingProvider.GetSetting<string>("CurrentVersion"));
+            var dropBoxAppKey    = _settingProvider.GetSetting<string>("DropBoxAppKey");
             var oneDriveClientId = _settingProvider.GetSetting<string>("OneDriveClientId");
-            var oldDataEntryFilePassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.DecryptString(dropBoxAppKey), oldVersion) + SecurityHelper.EncryptString(SecurityHelper.DecryptString(oneDriveClientId), oldVersion)), oldVersion));
+            var oldDataEntryFilePassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(
+                SecurityHelper.ToSecureString(
+                    SecurityHelper.EncryptString(SecurityHelper.DecryptString(dropBoxAppKey), oldVersion) +
+                    SecurityHelper.EncryptString(SecurityHelper.DecryptString(oneDriveClientId), oldVersion)),
+                oldVersion));
             DataMigrationProgress?.Invoke(this, new DataMigrationProgressEventArgs(5, false, false));
 
             if (File.Exists(_dataEntryFilePath))
@@ -800,17 +837,21 @@ namespace Clipboard.Core.Desktop.Services
             {
                 try
                 {
-                    var dataIdentifiers = DataEntries.SelectMany(dataEntry => dataEntry.DataIdentifiers);
+                    var dataIdentifiers      = DataEntries.SelectMany(dataEntry => dataEntry.DataIdentifiers);
                     var dataIdentifiersCount = dataIdentifiers.Count();
-                    var i = 0.0;
+                    var i                    = 0.0;
 
                     foreach (var dataIdentifier in dataIdentifiers)
                     {
-                        var fileName = $"{dataIdentifier.Identifier}.dat";
-                        var dataFilePath = Path.Combine(ClipboardDataPath, fileName);
+                        var fileName              = $"{dataIdentifier.Identifier}.dat";
+                        var dataFilePath          = Path.Combine(ClipboardDataPath, fileName);
                         var temporaryDataFilePath = Path.Combine(ClipboardDataPath, $"{fileName}.temp");
-                        var oldDataPassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(dataIdentifier.Identifier.ToString()), oldVersion));
-                        var newDataPassword = SecurityHelper.ToSecureString(SecurityHelper.EncryptString(SecurityHelper.ToSecureString(dataIdentifier.Identifier.ToString())));
+                        var oldDataPassword = SecurityHelper.ToSecureString(
+                            SecurityHelper.EncryptString(
+                                SecurityHelper.ToSecureString(dataIdentifier.Identifier.ToString()), oldVersion));
+                        var newDataPassword = SecurityHelper.ToSecureString(
+                            SecurityHelper.EncryptString(
+                                SecurityHelper.ToSecureString(dataIdentifier.Identifier.ToString())));
 
                         if (!File.Exists(dataFilePath))
                         {
@@ -818,9 +859,12 @@ namespace Clipboard.Core.Desktop.Services
                         }
 
                         using (var fileStream = File.OpenRead(dataFilePath))
-                        using (var temporaryFileStream = File.Open(temporaryDataFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                        using (var aesStream = new AesStream(fileStream, oldDataPassword, SecurityHelper.GetSaltKeys(oldDataPassword).GetBytes(16)))
-                        using (var cloudAesStream = new AesStream(temporaryFileStream, newDataPassword, SecurityHelper.GetSaltKeys(newDataPassword).GetBytes(16)))
+                        using (var temporaryFileStream = File.Open(temporaryDataFilePath, FileMode.OpenOrCreate,
+                            FileAccess.ReadWrite))
+                        using (var aesStream = new AesStream(fileStream, oldDataPassword,
+                            SecurityHelper.GetSaltKeys(oldDataPassword).GetBytes(16)))
+                        using (var cloudAesStream = new AesStream(temporaryFileStream, newDataPassword,
+                            SecurityHelper.GetSaltKeys(newDataPassword).GetBytes(16)))
                         {
                             CopyData(aesStream, cloudAesStream);
                         }
@@ -829,7 +873,9 @@ namespace Clipboard.Core.Desktop.Services
                         File.Move(temporaryDataFilePath, dataFilePath);
 
                         i++;
-                        DataMigrationProgress?.Invoke(this, new DataMigrationProgressEventArgs((int)((i / dataIdentifiersCount) * 80) + 15, false, false));
+                        DataMigrationProgress?.Invoke(this,
+                            new DataMigrationProgressEventArgs((int) ((i / dataIdentifiersCount) * 80) + 15, false,
+                                false));
                     }
                 }
                 catch (Exception ex)
@@ -858,7 +904,8 @@ namespace Clipboard.Core.Desktop.Services
             AsyncObservableCollection<DataEntry> entries;
 
             using (var fileStream = File.OpenRead(_dataEntryFilePath))
-            using (var aesStream = new AesStream(fileStream, password, SecurityHelper.GetSaltKeys(password).GetBytes(16)))
+            using (var aesStream =
+                new AesStream(fileStream, password, SecurityHelper.GetSaltKeys(password).GetBytes(16)))
             {
                 aesStream.AutoDisposeBaseStream = false;
                 var data = new byte[aesStream.Length];
@@ -869,15 +916,11 @@ namespace Clipboard.Core.Desktop.Services
             foreach (var dataEntry in entries)
             {
                 DataEntries.Add(dataEntry);
-                var a = dataEntry.RegisterLocation.Split('.');
-                if (a.Length > 0)
+
+                if (dataEntry.ChannelName != "")
                 {
-                    var r = Channel.GetRegister(a[0]);
-                    if (a.Length == 2)
-                    {
-                        var index = int.Parse(a[1]);
-                        r.Set(dataEntry, index);
-                    }
+                    var r = Channel.GetRegister(dataEntry.ChannelName);
+                    r.Set(dataEntry, true);
                 }
             }
         }
@@ -891,7 +934,8 @@ namespace Clipboard.Core.Desktop.Services
             List<DataEntryCache> entries;
 
             using (var fileStream = File.OpenRead(_cacheFilePath))
-            using (var aesStream = new AesStream(fileStream, password, SecurityHelper.GetSaltKeys(password).GetBytes(16)))
+            using (var aesStream =
+                new AesStream(fileStream, password, SecurityHelper.GetSaltKeys(password).GetBytes(16)))
             {
                 aesStream.AutoDisposeBaseStream = false;
                 var data = new byte[aesStream.Length];
@@ -935,7 +979,8 @@ namespace Clipboard.Core.Desktop.Services
             }
 
             using (var fileStream = File.OpenWrite(filePath))
-            using (var aesStream = new AesStream(fileStream, _dataEntryFilePassword, SecurityHelper.GetSaltKeys(_dataEntryFilePassword).GetBytes(16)))
+            using (var aesStream = new AesStream(fileStream, _dataEntryFilePassword,
+                SecurityHelper.GetSaltKeys(_dataEntryFilePassword).GetBytes(16)))
             {
                 aesStream.AutoDisposeBaseStream = false;
                 var data = DataHelper.ToByteArray(dataToSave);
@@ -950,16 +995,17 @@ namespace Clipboard.Core.Desktop.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task PurgeCacheAsync()
         {
-            var dataToRemove = new List<DataEntry>();
+            var dataToRemove  = new List<DataEntry>();
             var maxDataToKeep = _settingProvider.GetSetting<int>("MaxDataToKeep");
-            var expireLimit = TimeSpan.FromDays(_settingProvider.GetSetting<int>("DateExpireLimit"));
+            var expireLimit   = TimeSpan.FromDays(_settingProvider.GetSetting<int>("DateExpireLimit"));
 
             if (DataEntries.Count > maxDataToKeep)
             {
                 dataToRemove = DataEntries.Skip(maxDataToKeep).Where(dataEntry => !dataEntry.IsFavorite).ToList();
             }
 
-            dataToRemove = dataToRemove.Union(DataEntries.AsParallel().Where(dataEntry => DateTime.Now - dataEntry.Date > expireLimit && !dataEntry.IsFavorite)).ToList();
+            dataToRemove = dataToRemove.Union(DataEntries.AsParallel().Where(dataEntry =>
+                DateTime.Now - dataEntry.Date > expireLimit && !dataEntry.IsFavorite)).ToList();
 
             foreach (var data in dataToRemove)
             {
@@ -996,18 +1042,20 @@ namespace Clipboard.Core.Desktop.Services
         private Thumbnail GenerateThumbnail(DataObject dataObject, bool isCreditCard)
         {
             var value = string.Empty;
-            var type = ThumbnailDataType.Unknown;
+            var type  = ThumbnailDataType.Unknown;
 
             if (dataObject.ContainsImage() && dataObject.GetDataPresent(DataFormats.Dib, false))
             {
                 try
                 {
-                    value = DataHelper.ToBase64(DataHelper.BitmapSourceToByteArray(DataHelper.DeviceIndependentBitmapToBitmapSource(dataObject.GetData(DataFormats.Dib, false) as MemoryStream, 256)));
+                    value = DataHelper.ToBase64(DataHelper.BitmapSourceToByteArray(
+                        DataHelper.DeviceIndependentBitmapToBitmapSource(
+                            dataObject.GetData(DataFormats.Dib, false) as MemoryStream, 256)));
                     type = ThumbnailDataType.Bitmap;
                 }
                 catch (Exception ex)
                 {
-                    type = ThumbnailDataType.String;
+                    type  = ThumbnailDataType.String;
                     value = DataHelper.ToBase64(string.Format("Unable to generate a thumbnail : {0}", ex.Message));
                     Logger.Instance.Warning(string.Format("Unable to generate a thumbnail : {0}", ex.Message));
                 }
@@ -1017,7 +1065,7 @@ namespace Clipboard.Core.Desktop.Services
                 var filesSource = dataObject.GetFileDropList().Cast<string>().ToList();
 
                 value = DataHelper.ToBase64(filesSource);
-                type = ThumbnailDataType.Files;
+                type  = ThumbnailDataType.Files;
             }
             else if (dataObject.ContainsText())
             {
@@ -1034,7 +1082,8 @@ namespace Clipboard.Core.Desktop.Services
 
                     if (text.Length == 16)
                     {
-                        text = text.Substring(0, 4) + '-' + new string(Consts.PasswordMask, 4) + '-' + new string(Consts.PasswordMask, 4) + '-' + text.Substring(12);
+                        text = text.Substring(0, 4)               + '-' + new string(Consts.PasswordMask, 4) + '-' +
+                               new string(Consts.PasswordMask, 4) + '-' + text.Substring(12);
                     }
                     else
                     {
@@ -1043,32 +1092,34 @@ namespace Clipboard.Core.Desktop.Services
                 }
                 else if (IsHexColor(text))
                 {
-                    type = ThumbnailDataType.Color;
+                    type  = ThumbnailDataType.Color;
                     value = DataHelper.ToBase64(text);
                 }
                 else if (text.Length > 253)
                 {
-                    text = text.Substring(0, Math.Min(text.Length, 250));
+                    text =  text.Substring(0, Math.Min(text.Length, 250));
                     text += "...";
                 }
 
                 if (type == ThumbnailDataType.Unknown)
                 {
-                    var isUri = Uri.TryCreate(text, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps || uriResult.Scheme == Uri.UriSchemeFtp || uriResult.Scheme == Uri.UriSchemeMailto);
+                    var isUri = Uri.TryCreate(text, UriKind.Absolute, out Uri uriResult) &&
+                                (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps ||
+                                 uriResult.Scheme == Uri.UriSchemeFtp  || uriResult.Scheme == Uri.UriSchemeMailto);
                     if (isUri)
                     {
-                        type = ThumbnailDataType.Link;
-                        value = DataHelper.ToBase64(new Link { Uri = text });
+                        type  = ThumbnailDataType.Link;
+                        value = DataHelper.ToBase64(new Link {Uri = text});
                     }
                     else
                     {
-                        type = ThumbnailDataType.String;
+                        type  = ThumbnailDataType.String;
                         value = DataHelper.ToBase64(text);
                     }
                 }
             }
 
-            return new Thumbnail { Type = type, Value = value };
+            return new Thumbnail {Type = type, Value = value};
         }
 
         /// <summary>
@@ -1095,7 +1146,7 @@ namespace Clipboard.Core.Desktop.Services
             {
                 var result = detectedDataTypes.OrderByDescending(item => item.Value.Count()).First();
 
-                if (_settingProvider.GetSetting<ArrayList>("KeepDataTypes").Contains((int)result.Key))
+                if (_settingProvider.GetSetting<ArrayList>("KeepDataTypes").Contains((int) result.Key))
                 {
                     return result.Value;
                 }
@@ -1114,7 +1165,7 @@ namespace Clipboard.Core.Desktop.Services
         {
             if (dataObject.ContainsText())
             {
-                var text = dataObject.GetText();
+                var text         = dataObject.GetText();
                 var toLowerQuery = query.ToLower();
 
                 if (toLowerQuery == query)
@@ -1182,15 +1233,61 @@ namespace Clipboard.Core.Desktop.Services
         {
             var result = new Dictionary<SupportedDataType, string[]>
             {
-                { SupportedDataType.AdobePhotoshop, new[] { DataFormats.Dib, "Photoshop Paste in Place", "Photoshop Clip Source", "Object Descriptor" } },
-                { SupportedDataType.MicrosoftOutlook, new[] { "RenPrivateSourceFolder", "RenPrivateMessages", "RenPrivateAppointment", "FileGroupDescriptor", "FileGroupDescriptorW", "Object Descriptor", "Text", DataFormats.UnicodeText, "Csv" } },
-                { SupportedDataType.MicrosoftPowerPoint, new[] { "Preferred DropEffect", "InShellDragLoop", "Object Descriptor", "PowerPoint 12.0 Internal Theme", "PowerPoint 12.0 Internal Color Scheme", "PowerPoint 12.0 Internal Shapes", "PowerPoint 12.0 Internal Slides", "PowerPoint 14.0 Slides Package", "ActiveClipBoard", "Art::GVML", "PNG", "JFIF", "GIF", "Bitmap", "HTML Format", "Rich Text Format", DataFormats.UnicodeText } },
-                { SupportedDataType.MicrosoftExcel, new[] { "Biff12", "Biff8", "Biff5", "SymbolicLink", "DataInterchangeFormat", "XML Spreadsheet", "HTML Format", DataFormats.UnicodeText, "Text", "Csv", "Hyperlink", "Rich Text Format", "Object Descriptor" } },
-                { SupportedDataType.MicrosoftWord, new[] { "Object Descriptor", "Rich Text Format", "HTML Format", "Text", DataFormats.UnicodeText, "Link Source Descriptor", "ObjectLink" } },
-                { SupportedDataType.Image, new[] { DataFormats.Dib } },
-                { SupportedDataType.Files, new[] { "Shell IDList Array", "DataObjectAttributes", "DataObjectAttributesRequiringElevation", "Preferred DropEffect", "AsyncFlag", DataFormats.FileDrop, "FileName", "FileNameW", "FileGroupDescriptorW" } },
-                { SupportedDataType.Text, new[] { "Text", DataFormats.UnicodeText, "HTML Format", "Rich Text Format", "Locale", "OEMText" } },
-                { SupportedDataType.Unknown, new[] { string.Empty } }
+                {
+                    SupportedDataType.AdobePhotoshop,
+                    new[] {DataFormats.Dib, "Photoshop Paste in Place", "Photoshop Clip Source", "Object Descriptor"}
+                },
+                {
+                    SupportedDataType.MicrosoftOutlook,
+                    new[]
+                    {
+                        "RenPrivateSourceFolder", "RenPrivateMessages", "RenPrivateAppointment", "FileGroupDescriptor",
+                        "FileGroupDescriptorW", "Object Descriptor", "Text", DataFormats.UnicodeText, "Csv"
+                    }
+                },
+                {
+                    SupportedDataType.MicrosoftPowerPoint,
+                    new[]
+                    {
+                        "Preferred DropEffect", "InShellDragLoop", "Object Descriptor",
+                        "PowerPoint 12.0 Internal Theme", "PowerPoint 12.0 Internal Color Scheme",
+                        "PowerPoint 12.0 Internal Shapes", "PowerPoint 12.0 Internal Slides",
+                        "PowerPoint 14.0 Slides Package", "ActiveClipBoard", "Art::GVML", "PNG", "JFIF", "GIF",
+                        "Bitmap", "HTML Format", "Rich Text Format", DataFormats.UnicodeText
+                    }
+                },
+                {
+                    SupportedDataType.MicrosoftExcel,
+                    new[]
+                    {
+                        "Biff12", "Biff8", "Biff5", "SymbolicLink", "DataInterchangeFormat", "XML Spreadsheet",
+                        "HTML Format", DataFormats.UnicodeText, "Text", "Csv", "Hyperlink", "Rich Text Format",
+                        "Object Descriptor"
+                    }
+                },
+                {
+                    SupportedDataType.MicrosoftWord,
+                    new[]
+                    {
+                        "Object Descriptor", "Rich Text Format", "HTML Format", "Text", DataFormats.UnicodeText,
+                        "Link Source Descriptor", "ObjectLink"
+                    }
+                },
+                {SupportedDataType.Image, new[] {DataFormats.Dib}},
+                {
+                    SupportedDataType.Files,
+                    new[]
+                    {
+                        "Shell IDList Array", "DataObjectAttributes", "DataObjectAttributesRequiringElevation",
+                        "Preferred DropEffect", "AsyncFlag", DataFormats.FileDrop, "FileName", "FileNameW",
+                        "FileGroupDescriptorW"
+                    }
+                },
+                {
+                    SupportedDataType.Text,
+                    new[] {"Text", DataFormats.UnicodeText, "HTML Format", "Rich Text Format", "Locale", "OEMText"}
+                },
+                {SupportedDataType.Unknown, new[] {string.Empty}}
             };
             return result;
         }
@@ -1202,14 +1299,16 @@ namespace Clipboard.Core.Desktop.Services
         private Guid GenerateNewGuid()
         {
             Guid guid;
-            var guidString = string.Empty;
+            var  guidString = string.Empty;
 
             do
             {
-                guid = Guid.NewGuid();
+                guid       = Guid.NewGuid();
                 guidString = guid.ToString();
-            } while (DataEntries.Any(entry => entry.Identifier.ToString().Equals(guidString, StringComparison.OrdinalIgnoreCase) ||
-                                               entry.DataIdentifiers.Any(dataIdentifier => dataIdentifier.Identifier.ToString().Equals(guidString, StringComparison.OrdinalIgnoreCase))));
+            } while (DataEntries.Any(entry =>
+                entry.Identifier.ToString().Equals(guidString, StringComparison.OrdinalIgnoreCase) ||
+                entry.DataIdentifiers.Any(dataIdentifier =>
+                    dataIdentifier.Identifier.ToString().Equals(guidString, StringComparison.OrdinalIgnoreCase))));
 
             return guid;
         }

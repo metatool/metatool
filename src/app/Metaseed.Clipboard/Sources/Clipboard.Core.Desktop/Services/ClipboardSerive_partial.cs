@@ -39,7 +39,7 @@ namespace Clipboard.Core.Desktop.Services
             var data = DataService.DataEntries[index];
 
             DataService.CopyData(data);
-            this.Paste(50);
+            this.Paste();
         }
 
 
@@ -47,20 +47,21 @@ namespace Clipboard.Core.Desktop.Services
         {
             if (channel == null)
             {
-                this.Paste(50);
+                this.Paste();
                 return;
             }
 
             if (index != -1)
             {
                 DataService.CopyData(channel.GetContent()[index]);
-                this.Paste(50);
+                this.Paste();
+                return;
             }
 
             channel.GetContent().ToList().ForEach(data =>
             {
                 DataService.CopyData(data);
-                this.Paste(50);
+                this.Paste();
             });
         }
 

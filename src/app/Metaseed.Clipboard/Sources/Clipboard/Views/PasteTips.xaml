@@ -77,10 +77,10 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition
-                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.IsPasteAll}"
+                                    Binding="{Binding RelativeSource={RelativeSource Self}, Path=DataContext.IsPasteAll}"
                                     Value="True" />
                                 <Condition
-                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                                    Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"
                                     Value="True" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="FirstBorder" Property="BorderBrush"
@@ -90,10 +90,10 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition
-                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.IsPasteAll}"
+                                    Binding="{Binding RelativeSource={RelativeSource Self}, Path=DataContext.IsPasteAll}"
                                     Value="True" />
                                 <Condition
-                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                                    Binding="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"
                                     Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="FirstBorder" Property="BorderBrush"

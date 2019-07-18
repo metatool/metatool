@@ -251,13 +251,13 @@ namespace Clipboard.Core.Desktop.Services
         internal void Paste(int delay = 100)
         {
             Pause();
-            var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(100));
+            var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(delay));
             delayer.Action += (sender, args) =>
             {
                 SendKeys.SendWait("^v"); // Ctrl + V
 
 
-                delayer        =  new Delayer<object>(TimeSpan.FromMilliseconds(100));
+                delayer        =  new Delayer<object>(TimeSpan.FromMilliseconds(delay));
                 delayer.Action += (sender2, args2) => { Resume(); };
                 delayer.ResetAndTick();
             };

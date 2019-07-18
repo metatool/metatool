@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Clipboard.Core.Desktop.Models;
 using Clipboard.Shared.Logs;
 using Clipboard.ViewModels;
 
@@ -26,6 +27,7 @@ namespace Clipboard.Views
         public PasteTips()
         {
             InitializeComponent();
+            this.Loaded+=(o,e) =>
             ViewModel.CollectionView.MoveCurrentToFirst();
         }
         private void ScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -33,24 +35,23 @@ namespace Clipboard.Views
             var scrollViewer = (ScrollViewer)sender;
             scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - e.Delta);
         }
-
         internal PasteTipsViewModel ViewModel => (PasteTipsViewModel) DataContext;
 
         internal void Next()
         {
             var view     = ViewModel.CollectionView;
-            // var position = view.CurrentPosition;
-            // if(position >= view.Count-1) return;
-            var r        = view.MoveCurrentToNext();
+            var position = view.CurrentPosition;
+            if(position >= view.Count-1) return;
+            var r        = view.MoveCurrentToPosition(position +1);
             if (r) DataListBox.ScrollIntoView(view.CurrentItem);
         }
 
         internal void Previous()
         {
             var view = ViewModel.CollectionView;
-            // var position =view.CurrentPosition;
-            // if(position <= 0) return;
-            var r = view.MoveCurrentToPrevious();
+            var position =view.CurrentPosition;
+            if(position <= 0) return;
+            var r = view.MoveCurrentToPosition(position -1);
             if(r) DataListBox.ScrollIntoView(view.CurrentItem);
         }
 

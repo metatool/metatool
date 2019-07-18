@@ -24,23 +24,14 @@ namespace Clipboard.Core.Desktop.Models
 
         [NonSerialized] private bool _isMoreInfoDisplayed;
 
-        private string _registerLocation = "";
-
         #endregion
 
         #region Properties
 
-        public string RegisterLocation
-        {
-            get => _registerLocation;
-            set
-            {
-                if (_registerLocation == value) return;
-                _registerLocation = value;
+        public string RegisterLocation => ChannelName == null ? "" : ChannelName + "." + SequenceInChannel;
 
-                OnPropertyChanged(nameof(RegisterLocation));
-            }
-        }
+        public string ChannelName       { get; set; }
+        public int SequenceInChannel { get; set; } = -1;
 
         /// <summary>
         /// Gets or sets the linked <see cref="Thumbnail"/>
@@ -68,7 +59,7 @@ namespace Clipboard.Core.Desktop.Models
                     return;
                 }
 
-                _icon = DataHelper.ToBase64(DataHelper.BitmapSourceToByteArray(value));
+                _icon       = DataHelper.ToBase64(DataHelper.BitmapSourceToByteArray(value));
                 _iconBitmap = value;
             }
         }
@@ -123,9 +114,9 @@ namespace Clipboard.Core.Desktop.Models
         /// </summary>
         public DataEntry()
         {
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMinutes(1);
-            _timer.Tick += Timer_Tick;
+            _timer          =  new DispatcherTimer();
+            _timer.Interval =  TimeSpan.FromMinutes(1);
+            _timer.Tick     += Timer_Tick;
             _timer.Start();
         }
 
