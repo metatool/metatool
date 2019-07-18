@@ -263,7 +263,9 @@ namespace Clipboard.Core.Desktop.Services
             Requires.NotNull(identifiers, nameof(identifiers));
 
             Logger.Instance.Information($"The data {identifier} will be removed.");
-            DataEntries.Remove(DataEntries.Single(entry => entry.Identifier == identifier));
+            var dataEntry = DataEntries.Single(entry => entry.Identifier == identifier);
+            if (dataEntry.RegisterLocation != "") Channel.Remove(dataEntry);
+            DataEntries.Remove(dataEntry);
 
             if (ServiceLocator.GetService<CloudStorageService>().IsLinkedToAService)
             {
@@ -305,6 +307,7 @@ namespace Clipboard.Core.Desktop.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         internal async Task RemoveAllDataAsync()
         {
+            Channel.ClearAll();
             DataEntries.Clear();
 
             foreach (var dataEntryCache in Cache)
@@ -869,13 +872,11 @@ namespace Clipboard.Core.Desktop.Services
                 var a = dataEntry.RegisterLocation.Split('.');
                 if (a.Length > 0)
                 {
-                    var r = Register.GetRegister(a[0]);
+                    var r = Channel.GetRegister(a[0]);
                     if (a.Length == 2)
                     {
                         var index = int.Parse(a[1]);
-                        r.IsAppend = true;
                         r.Set(dataEntry, index);
-                        r.IsAppend = null;
                     }
                 }
             }

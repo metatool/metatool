@@ -16,22 +16,22 @@ namespace Clipboard.Properties
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("9jNhvK7oUYHHmgKb4p6Os0vSBBRcPseQ")]
+        [global::System.Configuration.DefaultSettingValueAttribute("opUXMCqoQdRCEIYNdYsS3fj29wN2MIA0")]
         public string DropBoxAppKey => ((string)(this["DropBoxAppKey"]));
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("qr2lQeLZeOz+Dh2mM/JCoM+X7/fRTohzt2rVhDOqSYZrShtE80O67A==")]
+        [global::System.Configuration.DefaultSettingValueAttribute("32D+CTlYo6+sPpq3E4upDF53j7T4ymGejVyhC2Bj42WgkCt9R6Behw==")]
         public string DropBoxRedirectUri => ((string)(this["DropBoxRedirectUri"]));
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("j+9wzgWzSESH9YaNcORs0ZgXrn8OqdLNDD3CKFqdvW8VEJsoVyCjXb2afr6G6N9HSkfwHkxPFBBGrmAQwZFC8DEYoe6jUO85bcB7Q5zVICc=")]
+        [global::System.Configuration.DefaultSettingValueAttribute("w0XDIGeFGW5JMrGXvPRC/Qq4W0BTzxs3ksQ4V2nCMfpxHLxvLSwQC1TCE17WU1YIzs2+P9fSc+iRVhs9m4lkoFLXHGVH1FAAM+74yRMLJhU=")]
         public string OneDriveClientId => ((string)(this["OneDriveClientId"]));
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("qr2lQeLZeOz+Dh2mM/JCoKoq1om/t8GVve7MXpZxVwfOf46trX7N9Cx9GVDnInBq/ANZyFerNdTXu32O2Nddp+YYDP4veVga99stSmG4SOZefv+bWw6tzf8+J8OPwecO")]
+        [global::System.Configuration.DefaultSettingValueAttribute("32D+CTlYo6+sPpq3E4upDJQbuzfyixuWCgTWKZb3ZK1MJOzOTbzLUaLRfiayc5xAXqeoVjsn6WaV6OlCdBQAtn0QFbvpEoKowkBKm0t33QIRVDUSrS0mikfqh4w21bOX")]
         public string OneDriveRedirectUri => ((string)(this["OneDriveRedirectUri"]));
     }
 }

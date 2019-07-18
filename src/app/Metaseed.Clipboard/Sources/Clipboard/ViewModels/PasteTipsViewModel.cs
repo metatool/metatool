@@ -17,6 +17,7 @@ namespace Clipboard.ViewModels
     {
         public  ListCollectionView              CollectionView { get; private set; }
         private ObservableCollection<DataEntry> _dataEntries;
+        private bool _isPasteAll;
 
         public ObservableCollection<DataEntry> DataEntries
         {
@@ -27,6 +28,18 @@ namespace Clipboard.ViewModels
                 CollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(_dataEntries);
                 if(_dataEntries.Count>0) CollectionView.MoveCurrentToPosition(0);
                 RaisePropertyChanged(nameof(CollectionView));
+            }
+        }
+
+        public bool IsPasteAll
+        {
+            get => _isPasteAll;
+            set
+            {
+                if(_isPasteAll == value) return;
+                _isPasteAll = value;
+                this.CollectionView.MoveCurrentTo(null);
+                RaisePropertyChanged(nameof(IsPasteAll));
             }
         }
 

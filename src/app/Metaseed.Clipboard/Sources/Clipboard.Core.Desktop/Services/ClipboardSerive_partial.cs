@@ -12,11 +12,11 @@ namespace Clipboard.Core.Desktop.Services
 {
     internal partial class ClipboardService
     {
-        private Register _register;
+        private Channel _channel;
 
-        internal void CopyTo(Register register)
+        internal void CopyTo(Channel channel)
         {
-            _register = register;
+            _channel = channel;
             Metaseed.Input.Keyboard.Hit(Keys.C, new List<Keys> {Keys.RControlKey});
         }
 
@@ -43,15 +43,21 @@ namespace Clipboard.Core.Desktop.Services
         }
 
 
-        internal void PasteFrom(Register register)
+        internal void PasteFrom(Channel channel, int index)
         {
-            if (register == null)
+            if (channel == null)
             {
                 this.Paste(50);
                 return;
             }
 
-            register.GetContent().ToList().ForEach(data =>
+            if (index != -1)
+            {
+                DataService.CopyData(channel.GetContent()[index]);
+                this.Paste(50);
+            }
+
+            channel.GetContent().ToList().ForEach(data =>
             {
                 DataService.CopyData(data);
                 this.Paste(50);
@@ -60,10 +66,9 @@ namespace Clipboard.Core.Desktop.Services
 
         private void AddTo(DataEntry data)
         {
-            if (_register == null) return;
-            _register.Set(data);
-            _register.IsAppend = null;
-            _register = null;
+            if (_channel == null) return;
+            _channel.Set(data);
+            _channel = null;
         }
 
     }

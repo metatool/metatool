@@ -34,10 +34,12 @@
         </Style>
     </UserControl.Resources>
     <Border Style="{StaticResource BackgroundBorderStyle}">
-        <ListBox x:Name="DataListBox"  ItemsSource="{Binding CollectionView, IsAsync=True, Mode=OneWay}" IsSynchronizedWithCurrentItem="True"
+        <ListBox x:Name="DataListBox" ItemsSource="{Binding CollectionView, IsAsync=True, Mode=OneWay}"
+                 IsSynchronizedWithCurrentItem="True"
                  Style="{StaticResource PasteTipsListBox}">
             <!-- Visibility="{Binding NoPresentData, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" -->
             <ListBox.Resources>
+                <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
                 <converters:DataEntryToDescriptiveTextConverter x:Key="DataEntryToDescriptiveTextConverter" />
                 <converters:BooleanToIntegerConverter x:Key="BooleanToIntegerConverter" TrueValue="128" FalseValue="64" />
                 <converters:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" TrueValue="0,-40,-20,0"
@@ -53,12 +55,52 @@
             </ListBox.ItemContainerStyle>
             <ListBox.Template>
                 <ControlTemplate TargetType="ListBox">
-                    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled"
-                                  CanContentScroll="False" PanningMode="HorizontalFirst"
-                                  IsDeferredScrollingEnabled="True"
-                                  PreviewMouseWheel="ScrollViewer_OnPreviewMouseWheel">
-                        <ItemsPresenter Margin="8,0,0,0" />
-                    </ScrollViewer>
+                    <Border x:Name="FirstBorder" BorderThickness="3">
+                        <Border x:Name="SecondBorder" Margin="-1" BorderThickness="1">
+                            <Grid FlowDirection="{Binding Language.FlowDirection}">
+
+                                <ScrollViewer HorizontalScrollBarVisibility="Visible"
+                                              VerticalScrollBarVisibility="Disabled"
+                                              CanContentScroll="False" PanningMode="HorizontalFirst"
+                                              IsDeferredScrollingEnabled="True"
+                                              PreviewMouseWheel="ScrollViewer_OnPreviewMouseWheel">
+                                    <ItemsPresenter Margin="8,0,0,0" />
+                                </ScrollViewer>
+                                <TextBlock Text="←Paste All From Right To Left←" Opacity="0.7"
+                                           Foreground="{StaticResource ForegroundBrush}" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Visibility="{Binding IsPasteAll, Converter={StaticResource BooleanToVisibilityConverter}}" FontSize="16" />
+                            </Grid>
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition
+                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.IsPasteAll}"
+                                    Value="True" />
+                                <Condition
+                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                                    Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="FirstBorder" Property="BorderBrush"
+                                    Value="{StaticResource PasteBarItemIsHighContrastIsHighlightedBorder}" />
+                            <Setter TargetName="SecondBorder" Property="BorderBrush" Value="Transparent" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition
+                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.IsPasteAll}"
+                                    Value="True" />
+                                <Condition
+                                    Binding="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
+                                    Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="FirstBorder" Property="BorderBrush"
+                                    Value="{StaticResource VisualFocusBrush}" />
+                            <Setter TargetName="SecondBorder" Property="BorderBrush" Value="Transparent" />
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </ListBox.Template>
             <ListBox.ItemTemplate>
@@ -67,12 +109,14 @@
                           Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                           ClipToBounds="True">
                         <local:PasteBarItem />
-                        <Border  MaxWidth="96" MaxHeight="96"  ClipToBounds="True" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                        <Border MaxWidth="96" MaxHeight="96" ClipToBounds="True" VerticalAlignment="Bottom"
+                                HorizontalAlignment="Right">
                             <Image Source="{Binding DisplayedIcon, Mode=OneTime}" Opacity="0.4"
                                    Width="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToIntegerConverter}, Mode=OneTime}"
                                    Height="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToIntegerConverter}}"
                                    RenderOptions.BitmapScalingMode="Fant" HorizontalAlignment="Right"
-                                   Margin="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToThicknessConverter}}" Stretch="UniformToFill" />
+                                   Margin="{Binding IconIsFromWindowStore, Converter={StaticResource BooleanToThicknessConverter}}"
+                                   Stretch="UniformToFill" />
                         </Border>
                     </Grid>
                 </DataTemplate>

@@ -162,7 +162,7 @@
     <Compile Include="Models\DataIdentifier.cs" />
     <Compile Include="Models\IgnoredApplication.cs" />
     <Compile Include="Models\Link.cs" />
-    <Compile Include="Models\Register.cs" />
+    <Compile Include="Models\Channel.cs" />
     <Compile Include="Models\ScreenInfo.cs" />
     <Compile Include="Models\SearchQuery.cs" />
     <Compile Include="Models\SoftwareNewItem.cs" />

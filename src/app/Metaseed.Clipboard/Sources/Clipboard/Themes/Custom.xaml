@@ -926,6 +926,7 @@
         <Setter Property="TabIndex" Value="0" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Tag" Value="{DynamicResource {x:Static SystemParameters.HighContrastKey}}" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>

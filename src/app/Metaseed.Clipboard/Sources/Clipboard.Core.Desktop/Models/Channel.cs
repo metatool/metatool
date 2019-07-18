@@ -8,32 +8,42 @@ using Clipboard.Core.Desktop.ComponentModel;
 
 namespace Clipboard.Core.Desktop.Models
 {
-    internal class Register
+    internal class Channel
     {
         internal       string                       Name;
-        private static Dictionary<string, Register> _registers = new Dictionary<string, Register>();
+        private static Dictionary<string, Channel> _channels = new Dictionary<string, Channel>();
 
-        private Register(string name)
+        private Channel(string name)
         {
             Name = name;
         }
 
-        private static Register CreateRegister(string name)
+        private static Channel CreateRegister(string name)
         {
-            var r = new Register(name);
-            _registers.Add(name, r);
+            var r = new Channel(name);
+            _channels.Add(name, r);
             return r;
         }
 
-        public static Register GetRegister(string name)
+        public static void ClearAll()
         {
-            if (_registers.TryGetValue(name, out var r)) return r;
+            _channels.Values.ToList().ForEach(c=>c.Clear());
+            _channels.Clear();
+        }
+
+        public static void Remove(DataEntry entry)
+        {
+            if(entry.RegisterLocation == "") return;
+            _channels[entry.RegisterLocation].RemoveItem(entry);
+        }
+
+        public static Channel GetRegister(string name)
+        {
+            if (_channels.TryGetValue(name, out var r)) return r;
             return CreateRegister(name);
         }
 
-        internal bool? IsAppend;
-
-        private ObservableCollection<DataEntry> Content { get; set; } = new AsyncObservableCollection<DataEntry>();
+        private ObservableCollection<DataEntry> Content { get; set; } = new ObservableCollection<DataEntry>();
 
         internal ObservableCollection<DataEntry> GetContent()
         {
@@ -45,22 +55,13 @@ namespace Clipboard.Core.Desktop.Models
         {
             if (Content.Contains(data)|| _buffer.ContainsValue(data)) return;
 
-            if (!IsAppend.GetValueOrDefault())
-            {
-                foreach (var dataEntry in Content)
-                {
-                    dataEntry.RegisterLocation = "";
-                }
-
-                Content.Clear();
-            }
-            var i = index == -1 ? Content.Count : index;
-            if (i < Content.Count)
+            if (index < Content.Count && index != -1)
             {
                 Console.WriteLine("Warning: duplicate entry found! This entry would not be added.");
                 data.RegisterLocation = "";
                 return;
             }
+            var i = index == -1 ? 0 : index;
 
             if (i > Content.Count)
             {
@@ -88,6 +89,22 @@ namespace Clipboard.Core.Desktop.Models
             }
 
             data.RegisterLocation = Name + "." + i;
+        }
+
+        private void Clear()
+        {
+            foreach (var dataEntry in Content)
+            {
+                dataEntry.RegisterLocation = "";
+            }
+
+            Content.Clear();
+        }
+
+        private void RemoveItem(DataEntry entry)
+        {
+            Content.Remove(entry);
+
         }
     }
 }

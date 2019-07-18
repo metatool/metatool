@@ -467,6 +467,7 @@ namespace Clipboard.ViewModels
             Logger.Instance.Information("Delete all command activated.");
             popup.IsOpen = false;
             await _dataService.RemoveAllDataAsync();
+            
             RaisePropertyChanged(nameof(NoPresentData));
         }
 

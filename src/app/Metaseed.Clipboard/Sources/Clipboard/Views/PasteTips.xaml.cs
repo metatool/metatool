@@ -26,7 +26,7 @@ namespace Clipboard.Views
         public PasteTips()
         {
             InitializeComponent();
-
+            ViewModel.CollectionView.MoveCurrentToFirst();
         }
         private void ScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -39,18 +39,18 @@ namespace Clipboard.Views
         internal void Next()
         {
             var view     = ViewModel.CollectionView;
-            var position = view.CurrentPosition;
-            if(position >= view.Count-1) return;
-            var r        = view.MoveCurrentToPosition(position + 1);
+            // var position = view.CurrentPosition;
+            // if(position >= view.Count-1) return;
+            var r        = view.MoveCurrentToNext();
             if (r) DataListBox.ScrollIntoView(view.CurrentItem);
         }
 
         internal void Previous()
         {
             var view = ViewModel.CollectionView;
-            var position =view.CurrentPosition;
-            if(position <= 0) return;
-            var r = view.MoveCurrentToPosition(position - 1);
+            // var position =view.CurrentPosition;
+            // if(position <= 0) return;
+            var r = view.MoveCurrentToPrevious();
             if(r) DataListBox.ScrollIntoView(view.CurrentItem);
         }
 

@@ -39,7 +39,7 @@ namespace Clipboard
             set { __state = value; }
         }
 
-        private          Register         _currentRegister;
+        private          Channel          _currentChannel;
         private readonly ClipboardService _clipboard;
         private          PasteTips        __pasteTips;
 
@@ -71,9 +71,9 @@ namespace Clipboard
             {
                 if (_state == State.CtrlUpCopying)
                 {
-                    _state           = State.None;
-                    _currentRegister = null;
-                    e.GoToState      = new List<ICombination>();
+                    _state          = State.None;
+                    _currentChannel = null;
+                    e.GoToState     = new List<ICombination>();
                     return;
                 }
 
@@ -88,12 +88,7 @@ namespace Clipboard
                 {
                     e.Handled = true;
 
-                    _currentRegister = Register.GetRegister(key.ToString());
-
-                    if (!_currentRegister.IsAppend.HasValue) _currentRegister.IsAppend                 = false;
-                    else if (!_currentRegister.IsAppend.GetValueOrDefault()) _currentRegister.IsAppend = true;
-
-                    Console.WriteLine($"appending:{_currentRegister.IsAppend}");
+                    _currentChannel = Channel.GetRegister(key.ToString());
                 });
                 register.Up(e => { e.GoToState = new List<ICombination>() {CState}; });
             });
@@ -105,8 +100,8 @@ namespace Clipboard
                 _state = State.CtrlUpCopying;
                 e.BeginInvoke(() =>
                 {
-                    Console.WriteLine($"copy to {_currentRegister}");
-                    _clipboard.CopyTo(_currentRegister);
+                    Console.WriteLine($"copy to {_currentChannel}");
+                    _clipboard.CopyTo(_currentChannel);
                 });
             });
 
@@ -116,29 +111,41 @@ namespace Clipboard
             {
                 if (_state == State.CtrlUpPasting)
                 {
-                    _currentRegister = null;
-                    _state           = State.None;
-                    e.GoToState      = new List<ICombination>();
+                    _currentChannel = null;
+                    _state          = State.None;
+                    e.GoToState     = new List<ICombination>();
                     return;
                 }
+
                 _pasteTips.ViewModel.DataEntries = _clipboard.DataService.DataEntries;
-                _pasteTipsCloseToken = Notify.ShowMessage(_pasteTips, null, NotifyPosition.ActiveWindowCenter,true);
+                _pasteTipsCloseToken =
+                    Notify.ShowMessage(_pasteTips, null, NotifyPosition.ActiveWindowCenter, true);
                 e.Handled = true;
                 _state    = State.V;
             });
 
 
+            var isPasteAll = false;
+            Channel lastChannel = null;
             registerKeys.ForEach(key =>
             {
                 var register = VState.Then(key.With(Keys.LControlKey));
                 register.Down(e =>
                 {
-                    e.Handled        = true;
-                    _currentRegister = Register.GetRegister(key.ToString());
-                    _pasteTips.ViewModel.DataEntries = _currentRegister.GetContent();
-
+                    e.Handled                        =  true;
+                    _currentChannel                  =  Channel.GetRegister(key.ToString());
+                    _pasteTips.ViewModel.DataEntries =  _currentChannel.GetContent();
+                    if (_currentChannel == lastChannel)
+                        isPasteAll ^= true;
+                    else
+                        isPasteAll = false;
+                    _pasteTips.ViewModel.IsPasteAll = isPasteAll;
+                    lastChannel = _currentChannel;
                 });
-                register.Up(e => { e.GoToState = new List<ICombination>() {VState}; });
+                register.Up(e =>
+                {
+                    e.GoToState = new List<ICombination>() {VState};
+                });
             });
 
             VState.Then(Keys.LControlKey).Up(e =>
@@ -148,19 +155,22 @@ namespace Clipboard
                 _state = State.CtrlUpPasting;
                 e.BeginInvoke(() =>
                 {
-                    Console.WriteLine($"paste from {_currentRegister}");
-                    if (_currentRegister == null)
+                    Console.WriteLine($"paste from {_currentChannel}");
+                    if (_currentChannel == null)
                     {
                         _clipboard.PasteFrom(_pasteTips.CurrentItemIndex);
                     }
                     else
                     {
-                        _clipboard.PasteFrom(_currentRegister);
+                        _clipboard.PasteFrom(_currentChannel, _pasteTips.CurrentItemIndex);
                     }
 
                     _pasteTipsCloseToken?.Close();
                     _pasteTipsCloseToken = null;
                 });
+                isPasteAll  = false;
+                lastChannel = null;
+
             });
 
             var next = VState.Then(Keys.V.With(Keys.ControlKey));
