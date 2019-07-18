@@ -46,14 +46,19 @@ namespace Clipboard.ViewModels
             else
                 ResetIsPasteAll();
         }
+
+        private int _lastIndex = -1;
         internal void ToggleChannelIsPasteAll()
         {
             _isPasteAll ^= true;
             if (_isPasteAll)
+            {
+                _lastIndex = this.CollectionView.CurrentPosition;
                 this.CollectionView.MoveCurrentTo(null);
+            }
             else
             {
-                this.CollectionView.MoveCurrentToLast();
+                this.CollectionView.MoveCurrentToPosition(_lastIndex);
             }
 
             RaisePropertyChanged(nameof(IsPasteAll));
@@ -63,6 +68,7 @@ namespace Clipboard.ViewModels
         {
             if (!_isPasteAll) return;
             _isPasteAll = false;
+            _lastIndex = -1;
             RaisePropertyChanged(nameof(IsPasteAll));
 
         }

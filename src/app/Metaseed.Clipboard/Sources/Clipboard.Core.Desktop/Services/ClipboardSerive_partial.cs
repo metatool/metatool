@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -61,7 +62,9 @@ namespace Clipboard.Core.Desktop.Services
             channel.GetContent().ToList().ForEach(data =>
             {
                 DataService.CopyData(data);
+                Thread.Sleep(100);
                 this.Paste();
+                Thread.Sleep(100);
             });
         }
 
