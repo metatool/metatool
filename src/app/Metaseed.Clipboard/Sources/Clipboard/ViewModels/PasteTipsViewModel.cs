@@ -65,8 +65,12 @@ namespace Clipboard.ViewModels
         internal void ResetIsPasteAll()
         { 
             _isPasteAll           = false;
-            _channel?.CurrentIndex = -1;
-            _channel              = null;
+            if (_channel != null)
+            {
+                _channel.CurrentIndex = -1;
+                _channel              = null;
+            }
+
             RaisePropertyChanged(nameof(IsPasteAll));
         }
 
