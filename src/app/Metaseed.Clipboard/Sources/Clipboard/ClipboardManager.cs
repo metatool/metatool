@@ -22,63 +22,51 @@ namespace Clipboard
     {
         private KeyStateMachine _stateMachine = new KeyStateMachine();
 
-        enum State
-        {
-            None,
-            C,
-            V,
-            CtrlUpCopying,
-            CtrlUpPasting
-        }
-
-        private State __state = State.None;
-
-        private State _state
-        {
-            get { return __state; }
-            set { __state = value; }
-        }
-
         private          Channel          _currentChannel;
         private readonly ClipboardService _clipboard;
-        private          PasteTips        __pasteTips;
+        private          PasteTips        _pasteTips;
+        private          CopyTips         _copyTips;
 
-        private PasteTips _pasteTips
+        private PasteTips PasteTips
         {
             get
             {
-                if (__pasteTips != null) return __pasteTips;
-                __pasteTips = new PasteTips();
-                var ViewModel = new PasteTipsViewModel();
-                ViewModel.DataEntries  = _clipboard.DataService.DataEntries;
-                _pasteTips.DataContext = ViewModel;
-                return __pasteTips;
+                if (_pasteTips != null) return _pasteTips;
+                _pasteTips = new PasteTips();
+                return _pasteTips;
             }
         }
 
         private CloseToken _pasteTipsCloseToken;
 
+        private CopyTips CopyTips
+        {
+            get
+            {
+                if (_copyTips != null) return _copyTips;
+                _copyTips = new CopyTips();
+                return _copyTips;
+            }
+        }
+
+        private CloseToken _copyTipsCloseToken;
+
         public ClipboardManager()
         {
             var registerKeys = new List<Keys>()
             {
-                Keys.A, Keys.S, Keys.D, Keys.F, Keys.G
+                Keys.A, Keys.S, Keys.D, Keys.F, Keys.G, Keys.Z
             };
 
             var CState = Keys.C.With(Keys.ControlKey);
 
             CState.Down(e =>
             {
-                if (_state == State.CtrlUpCopying)
-                {
-                    _state          = State.None;
-                    _currentChannel = null;
-                    e.GoToState     = new List<ICombination>();
-                    return;
-                }
-
                 e.Handled = true;
-                _state    = State.C;
+
+                CopyTips.ViewModel.SetData(_clipboard.DataService.DataEntries);
+                _copyTipsCloseToken =
+                    Notify.ShowMessage(CopyTips, null, NotifyPosition.ActiveWindowCenter, true);
             });
 
             registerKeys.ForEach(key =>
@@ -87,21 +75,49 @@ namespace Clipboard
                 register.Down(e =>
                 {
                     e.Handled = true;
-
-                    _currentChannel = Channel.GetRegister(key.ToString());
+                    _currentChannel = Channel.GetChannel(key.ToString());
+                    CopyTips.ViewModel.SetChannelData(_currentChannel);
                 });
-                register.Up(e => { e.GoToState = new List<ICombination>() {CState}; });
+                register.Up(e => { e.GoToState = CState; });
             });
+            var nextC = CState.Then(Keys.V.With(Keys.ControlKey));
+            nextC.Down(e =>
+            {
+                e.Handled = true;
+
+                e.BeginInvoke(() =>
+                {
+                    CopyTips.Next();
+                });
+            });
+            nextC.Up(e => { e.GoToState = CState; });
+
+            var lastC = CState.Then(Keys.C.With(Keys.ControlKey));
+            lastC.Down(e =>
+            {
+                e.Handled = true;
+
+                e.BeginInvoke(() =>
+                {
+                    CopyTips.Previous();
+                });
+            });
+            lastC.Up(e => { e.GoToState = CState; });
+
 
             CState.Then(Keys.LControlKey).Up(e =>
             {
-                // _state == State.None if triggered from real paste action.
-                if (_state == State.None) return;
-                _state = State.CtrlUpCopying;
+                _copyTipsCloseToken?.Close();
+                _copyTipsCloseToken = null;
+                CState.Disabled     = true;
+                CopyTips.ViewModel.ResetIsReplaceAll();
+
                 e.BeginInvoke(() =>
                 {
                     Console.WriteLine($"copy to {_currentChannel}");
                     _clipboard.CopyTo(_currentChannel);
+                    _currentChannel = null;
+                    CState.Disabled = false;
                 });
             });
 
@@ -109,72 +125,61 @@ namespace Clipboard
             var VState = Keys.V.With(Keys.ControlKey);
             VState.Down(e =>
             {
-                if (_state == State.CtrlUpPasting)
-                {
-                    _currentChannel = null;
-                    _state          = State.None;
-                    e.GoToState     = new List<ICombination>();
-                    return;
-                }
-
-                _pasteTips.ViewModel.DataEntries = _clipboard.DataService.DataEntries;
+                PasteTips.ViewModel.SetData(_clipboard.DataService.DataEntries);
                 _pasteTipsCloseToken =
-                    Notify.ShowMessage(_pasteTips, null, NotifyPosition.ActiveWindowCenter, true);
+                    Notify.ShowMessage(PasteTips, null, NotifyPosition.ActiveWindowCenter, true);
                 e.Handled = true;
-                _state    = State.V;
             });
-
 
             registerKeys.ForEach(key =>
             {
                 var register = VState.Then(key.With(Keys.LControlKey));
                 register.Down(e =>
                 {
-                    e.Handled                        = true;
-                    _currentChannel                  = Channel.GetRegister(key.ToString());
-                    _pasteTips.ViewModel.DataEntries = _currentChannel.GetContent();
-                    _pasteTips.ViewModel.ChangeIsPasteAllState(_currentChannel);
+                    e.Handled       = true;
+                    _currentChannel = Channel.GetChannel(key.ToString());
+                    PasteTips.ViewModel.SetChannelData(_currentChannel);
                 });
-                register.Up(e => { e.GoToState = new List<ICombination>() {VState}; });
+                register.Up(e => { e.GoToState = VState; });
             });
 
             VState.Then(Keys.LControlKey).Up(e =>
             {
-                // _state == State.None if triggered from real paste action.
-                if (_state == State.None) return;
-                _state = State.CtrlUpPasting;
-                e.BeginInvoke(() =>
+                _pasteTipsCloseToken?.Close();
+                _pasteTipsCloseToken = null;
+                VState.Disabled      = true;
+                PasteTips.ViewModel.ResetIsPasteAll();
+
+                e.BeginInvoke(async () =>
                 {
-                    Console.WriteLine($"paste from {_currentChannel}");
+                    Console.WriteLine($"------------paste from {_currentChannel}");
                     if (_currentChannel == null)
                     {
-                        _clipboard.PasteFrom(_pasteTips.CurrentItemIndex);
+                        await _clipboard.PasteFrom(PasteTips.CurrentItemIndex);
                     }
                     else
                     {
-                        _clipboard.PasteFrom(_currentChannel, _pasteTips.CurrentItemIndex);
+                        var channel = _currentChannel;
+                        _currentChannel = null;
+                        await _clipboard.PasteFrom(channel, PasteTips.CurrentItemIndex);
                     }
 
-                    _pasteTipsCloseToken?.Close();
-                    _pasteTipsCloseToken = null;
+                    VState.Disabled = false;
                 });
-                _pasteTips.ViewModel.ResetIsPasteAll();
-                _pasteTips.ViewModel.Channel = null;
             });
 
             var next = VState.Then(Keys.V.With(Keys.ControlKey));
             next.Down(e =>
             {
                 e.Handled = true;
-                _state    = State.CtrlUpPasting;
 
                 e.BeginInvoke(() =>
                 {
                     Console.WriteLine($"paste from next");
-                    _pasteTips.Next();
+                    PasteTips.Next();
                 });
             });
-            next.Up(e => { e.GoToState = new List<ICombination>() {VState}; });
+            next.Up(e => { e.GoToState = VState; });
 
             var last = VState.Then(Keys.C.With(Keys.ControlKey));
             last.Down(e =>
@@ -184,11 +189,10 @@ namespace Clipboard
                 e.BeginInvoke(() =>
                 {
                     Console.WriteLine($"paste from previous");
-                    _pasteTips.Previous();
-                    //_clipboard.PasteFrom(-1);
+                    PasteTips.Previous();
                 });
             });
-            last.Up(e => { e.GoToState = new List<ICombination>() {VState}; });
+            last.Up(e => { e.GoToState = VState; });
 
 
             VState.Then(Keys.B.With(Keys.ControlKey)).Down(e =>

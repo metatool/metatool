@@ -12,6 +12,7 @@ namespace Metaseed.Input
 {
     public static class Keyboard
     {
+        public static IKeyState Root = null;
         static readonly KeyboardHook _Hook       = new KeyboardHook();
         static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 

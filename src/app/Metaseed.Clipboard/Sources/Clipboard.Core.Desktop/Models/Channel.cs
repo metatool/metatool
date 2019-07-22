@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Media.Animation;
 using Clipboard.Core.Desktop.ComponentModel;
 
 namespace Clipboard.Core.Desktop.Models
@@ -11,76 +12,82 @@ namespace Clipboard.Core.Desktop.Models
     internal class Channel
     {
         internal       string                      Name;
-        private static Dictionary<string, Channel> _channels = new Dictionary<string, Channel>();
+        private static readonly Dictionary<string, Channel> Channels = new Dictionary<string, Channel>();
 
         private Channel(string name)
         {
             Name = name;
         }
 
-        private static Channel CreateRegister(string name)
+        private static Channel CreateChannel(string name)
         {
             var r = new Channel(name);
-            _channels.Add(name, r);
+            Channels.Add(name, r);
             return r;
         }
 
         public static void ClearAll()
         {
-            _channels.Values.ToList().ForEach(c => c.Clear());
-            _channels.Clear();
+            Channels.Values.ToList().ForEach(c => c.Clear());
+            Channels.Clear();
         }
 
         public static void Remove(DataEntry entry)
         {
             if (entry.RegisterLocation == "") return;
-            _channels[entry.RegisterLocation].RemoveItem(entry);
+            Channels[entry.RegisterLocation].RemoveItem(entry);
         }
 
-        public static Channel GetRegister(string name)
+        public static Channel GetChannel(string name)
         {
-            if (_channels.TryGetValue(name, out var r)) return r;
-            return CreateRegister(name);
+            if (Channels.TryGetValue(name, out var r)) return r;
+            return CreateChannel(name);
         }
 
-        private ObservableCollection<DataEntry> Content { get; set; } = new ObservableCollection<DataEntry>();
+        private ObservableCollection<DataEntry> _entries { get; set; } = new ObservableCollection<DataEntry>();
 
         internal ObservableCollection<DataEntry> GetContent()
         {
-            return Content;
+            return _entries;
         }
 
+        internal int CurrentIndex =-1;
 
-        public void Set(DataEntry data, bool isAppend = false)
+        public void Set(DataEntry data, int index = -1)
         {
-            if (Content.Contains(data) ) return;
+            if (_entries.Contains(data) ) return;
 
-            if (isAppend)
+            if (index == -1)
             {
-                Content.Add(data);
+                _entries.Add(data);
             }
             else
             {
                 data.ChannelName       = Name;
-                data.SequenceInChannel = Content.Count;
-                Content.Insert(0, data);
+                data.SequenceInChannel = _entries.Count;
+                _entries.Insert(index, data);
             }
         }
 
         private void Clear()
         {
-            foreach (var dataEntry in Content)
+            foreach (var dataEntry in _entries)
             {
                 dataEntry.ChannelName = null;
                 dataEntry.SequenceInChannel = -1;
             }
 
-            Content.Clear();
+            _entries.Clear();
         }
 
         private void RemoveItem(DataEntry entry)
         {
-            Content.Remove(entry);
+            _entries.Remove(entry);
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
         }
     }
 }

@@ -82,11 +82,11 @@ namespace Metaseed.Input
             // to handle A+B+C(B is down in Chord)
             var downInChord = false;
 
-            var cadidateChild = _stateWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
+            var candidateChild = _stateWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
             {
                 if (eventType == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
 
-                if (args.KeyCode != combination.TriggerKey) return acc;
+                if (combination.Disabled || args.KeyCode != combination.TriggerKey) return acc;
                 var mach = combination.Chord.All(args.KeyboardState.IsDown);
                 if (!mach) return acc;
                 if (acc == null) return combination;
@@ -94,7 +94,7 @@ namespace Metaseed.Input
             });
 
             // no match
-            if (cadidateChild == null)
+            if (candidateChild == null)
             {
                 if (eventType == KeyEvent.Down)
                 {
@@ -132,7 +132,7 @@ namespace Metaseed.Input
             }
 
             // matched
-            var actionList = cadidateChild.Values() as KeyActionList<KeyEventAction>;
+            var actionList = candidateChild.Values() as KeyActionList<KeyEventAction>;
             Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
             // execute
@@ -165,15 +165,15 @@ namespace Metaseed.Input
             if (eventType == KeyEvent.Up)
             {
                 // only navigate on up event to handle both the down actions and the up actions
-                _stateWalker.GoToChild(cadidateChild);
+                _stateWalker.GoToChild(candidateChild);
 
-                if (cadidateChild.ChildrenCount == 0)
+                if (candidateChild.ChildrenCount == 0)
                 {
                     Reset();
                     return KeyProcessState.Done;
                 }
 
-                Notify.ShowKeysTip(cadidateChild.Tip);
+                Notify.ShowKeysTip(candidateChild.Tip);
             }
 
             return KeyProcessState.Continue;

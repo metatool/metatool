@@ -3,11 +3,12 @@ using System.Windows.Forms;
 
 namespace Metaseed.Input
 {
-    public interface ICombination 
+    public interface ICombination :IKeyState
     {
         Keys TriggerKey { get; }
         IEnumerable<Keys> Chord { get; }
         int ChordLength { get; }
+        bool Disabled { get; set; }
 
         ICombination With(Keys chordKey);
         ICombination With(IEnumerable<Keys> keys);

@@ -263,7 +263,14 @@ namespace Clipboard.Core.Desktop.Services
             };
             delayer.ResetAndTick();
         }
-
+        internal async Task PasteAsync(int delay = 100)
+        {
+            Pause();
+            await Task.Delay(delay);
+            SendKeys.SendWait("^v"); // Ctrl + V
+            await Task.Delay(delay);
+            Resume();
+        }
         /// <summary>
         /// Read a specified clipboard data, encrypt and save it into a file.
         /// </summary>

@@ -15,6 +15,7 @@ namespace Metaseed.Input.MouseKeyHook
     public class Sequence : SequenceBase<ICombination>, ISequence
     {
         private static char Comma = '£¬';
+
         internal Sequence(params ICombination[] combinations) : base(combinations)
         {
         }
@@ -30,13 +31,23 @@ namespace Metaseed.Input.MouseKeyHook
             return this;
         }
 
+        public bool Disabled
+        {
+            get => this.Last()?.Disabled ?? false;
+            set
+            {
+                if (this.Length > 0)
+                    this.Last().Disabled = value;
+            }
+        }
+
         static string PreProcess(string keys)
         {
-            var query = new StringBuilder(keys).Replace(" ", ""); // remove space
+            var query                                        = new StringBuilder(keys).Replace(" ", ""); // remove space
             if (query[0] == ',' && query[1] == ',') query[0] = Comma;
             query.Replace(",,,", $",{Comma},")
-            .Replace("+,", $"+{Comma}")
-            .Replace(",+", $"{Comma}+");
+                .Replace("+,", $"+{Comma}")
+                .Replace(",+", $"{Comma}+");
             return query.ToString();
         }
         //        /// <summary>
@@ -59,8 +70,8 @@ namespace Metaseed.Input.MouseKeyHook
         public static Sequence FromString(string sequence)
         {
             if (sequence == null) throw new ArgumentNullException(nameof(sequence));
-            var keys = PreProcess(sequence);
-            var par = keys.Split(',');
+            var keys         = PreProcess(sequence);
+            var par          = keys.Split(',');
             var combinations = par.Select(c => Combination.FromString(c.Replace(Comma, ','))).ToArray();
             return new Sequence(combinations);
         }

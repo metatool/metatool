@@ -919,8 +919,8 @@ namespace Clipboard.Core.Desktop.Services
 
                 if (dataEntry.ChannelName != "")
                 {
-                    var r = Channel.GetRegister(dataEntry.ChannelName);
-                    r.Set(dataEntry, true);
+                    var r = Channel.GetChannel(dataEntry.ChannelName);
+                    r.Set(dataEntry);
                 }
             }
         }

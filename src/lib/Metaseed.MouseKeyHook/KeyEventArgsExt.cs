@@ -4,9 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.WinApi;
 
@@ -42,7 +44,7 @@ namespace Metaseed.Input
         }
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
-        public IList<ICombination> GoToState;
+        public IKeyState GoToState;
         public void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send)
         {
             _dispatcher.BeginInvoke(priority, action);

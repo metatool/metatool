@@ -57,6 +57,7 @@ namespace Metaseed.DataStructures
         internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc, TKey initKey)
         {
             var key = _children.Keys.Aggregate(initKey, aggregateFunc);
+
             if (EqualityComparer<TKey>.Default.Equals(key, default(TKey))) return null;
             return GetChildOrNull(key);
         }

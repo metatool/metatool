@@ -56,6 +56,9 @@ namespace Clipboard.ComponentModel.UI.Converters
 
                     case Core.Desktop.Enums.ThumbnailDataType.Unknown:
                         return language.PasteBarWindow.DataUnknow;
+
+                    case Core.Desktop.Enums.ThumbnailDataType.New:
+                        return language.PasteBarWindow.DataUnknow;
                 }
             }
             throw new ArgumentException("DataEntry value needed", nameof(value));

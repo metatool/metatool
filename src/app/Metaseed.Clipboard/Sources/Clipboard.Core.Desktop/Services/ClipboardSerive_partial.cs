@@ -21,15 +21,11 @@ namespace Clipboard.Core.Desktop.Services
             Metaseed.Input.Keyboard.Hit(Keys.C, new List<Keys> {Keys.RControlKey});
         }
 
-        DataService dataService;
+        DataService _dataService;
 
-        internal DataService DataService
-        {
-            get =>
-                dataService = dataService ?? ServiceLocator.GetService<DataService>();
-        }
+        internal DataService DataService => _dataService = _dataService ?? ServiceLocator.GetService<DataService>();
 
-        internal void PasteFrom(int index)
+        internal async Task PasteFrom(int index)
         {
             if (DataService.DataEntries.Count < index)
             {
@@ -40,38 +36,37 @@ namespace Clipboard.Core.Desktop.Services
             var data = DataService.DataEntries[index];
 
             DataService.CopyData(data);
-            this.Paste();
+            await PasteAsync();
         }
 
 
-        internal void PasteFrom(Channel channel, int index)
+        internal async Task PasteFrom(Channel channel, int index)
         {
             if (channel == null)
             {
-                this.Paste();
+                await PasteAsync();
                 return;
             }
 
             if (index != -1)
             {
                 DataService.CopyData(channel.GetContent()[index]);
-                this.Paste();
+                await PasteAsync();
                 return;
             }
 
-            channel.GetContent().ToList().ForEach(data =>
+            foreach (var data in channel.GetContent().Reverse())
             {
                 DataService.CopyData(data);
-                Thread.Sleep(100);
-                this.Paste();
-                Thread.Sleep(100);
-            });
+                await PasteAsync(200);
+            };
         }
 
         private void AddTo(DataEntry data)
         {
             if (_channel == null) return;
-            _channel.Set(data);
+            var i = _channel.CurrentIndex == -1 ? 0 : _channel.CurrentIndex;
+            _channel.Set(data,i);
             _channel = null;
         }
 

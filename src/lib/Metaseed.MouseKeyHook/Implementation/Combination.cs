@@ -3,6 +3,7 @@
 // See license.txt or https://mit-license.org/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -32,6 +33,7 @@ namespace Metaseed.Input.MouseKeyHook
         }
 
 
+        public bool Disabled { get; set; }
         /// <summary>
         ///     Last key which triggers the combination.
         /// </summary>
@@ -124,6 +126,11 @@ namespace Metaseed.Input.MouseKeyHook
             return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)));
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         /// <summary>
         ///     TriggeredBy a chord from any string like this 'Alt+Shift+R'.
         ///     Nothe that the trigger key must be the last one.
@@ -158,6 +165,11 @@ namespace Metaseed.Input.MouseKeyHook
             return
                 TriggerKey == other.TriggerKey
                 && Chord.Equals(other.Chord);
+        }
+
+        public IEnumerator<ICombination> GetEnumerator()
+        {
+            return new List<ICombination>{this}.GetEnumerator();
         }
 
         /// <inheritdoc />

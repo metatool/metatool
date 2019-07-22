@@ -19,59 +19,57 @@ namespace Clipboard.ViewModels
         private ObservableCollection<DataEntry> _dataEntries;
         private bool                            _isPasteAll;
 
-        public ObservableCollection<DataEntry> DataEntries
+        internal void SetData(ObservableCollection<DataEntry> value)
         {
-            get => _dataEntries;
-            set
-            {
-                _dataEntries   = value;
-                CollectionView = (ListCollectionView) CollectionViewSource.GetDefaultView(_dataEntries);
-                if (_dataEntries.Count > 0) CollectionView.MoveCurrentToPosition(0);
-                RaisePropertyChanged(nameof(CollectionView));
-            }
+            if (_dataEntries == value) return;
+            _dataEntries   = value;
+            CollectionView = (ListCollectionView) CollectionViewSource.GetDefaultView(_dataEntries);
+            if (_dataEntries.Count > 0) CollectionView.MoveCurrentToPosition(0);
+            RaisePropertyChanged(nameof(CollectionView));
         }
-        internal Channel Channel = null;
+
+        private Channel _channel = null;
 
         public bool IsPasteAll
         {
             get => _isPasteAll;
         }
 
-        internal void ChangeIsPasteAllState(Channel channel)
+        internal void SetChannelData(Channel channel)
         {
-            var lastChannel = Channel;
-            Channel = channel;
+            SetData(channel.GetContent());
+            var lastChannel = _channel;
+            _channel = channel;
             if (channel == lastChannel)
+            {
                 ToggleChannelIsPasteAll();
-            else
-                ResetIsPasteAll();
+            }
         }
 
-        private int _lastIndex = -1;
-        internal void ToggleChannelIsPasteAll()
+        private void ToggleChannelIsPasteAll()
         {
             _isPasteAll ^= true;
             if (_isPasteAll)
             {
-                _lastIndex = this.CollectionView.CurrentPosition;
+                _channel.CurrentIndex = this.CollectionView.CurrentPosition;
                 this.CollectionView.MoveCurrentTo(null);
             }
             else
             {
-                this.CollectionView.MoveCurrentToPosition(_lastIndex);
+                this.CollectionView.MoveCurrentToPosition(_channel.CurrentIndex);
             }
 
             RaisePropertyChanged(nameof(IsPasteAll));
         }
 
         internal void ResetIsPasteAll()
-        {
-            if (!_isPasteAll) return;
-            _isPasteAll = false;
-            _lastIndex = -1;
+        { 
+            _isPasteAll           = false;
+            _channel?.CurrentIndex = -1;
+            _channel              = null;
             RaisePropertyChanged(nameof(IsPasteAll));
-
         }
+
         public LanguageManager Language => LanguageManager.GetInstance();
     }
 }

@@ -230,6 +230,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="ViewModels\PasteBarWindowViewModel.cs" />
+    <Compile Include="ViewModels\CopyTipsViewModel.cs" />
     <Compile Include="ViewModels\PasteTipsViewModel.cs" />
     <Compile Include="ViewModels\SettingsPanels\SettingsAboutUserControlViewModel.cs" />
     <Compile Include="ViewModels\SettingsPanels\SettingsDataUserControlViewModel.cs" />
@@ -244,6 +245,9 @@
     </Compile>
     <Compile Include="Views\PasteBarItem.xaml.cs">
       <DependentUpon>PasteBarItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CopyTips.xaml.cs">
+      <DependentUpon>CopyTips.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PasteTips.xaml.cs">
       <DependentUpon>PasteTips.xaml</DependentUpon>
@@ -354,6 +358,10 @@
     <Page Include="Views\PasteBarItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CopyTips.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PasteTips.xaml">
       <Generator>MSBuild:Compile</Generator>

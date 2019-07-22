@@ -7,6 +7,7 @@
         Files = 2,
         Bitmap = 3,
         Link = 4,
-        Color = 5
+        Color = 5,
+        New = 6
     }
 }

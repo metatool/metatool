@@ -23,7 +23,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             {
                 
                 _CurrentNode = value;
-                Console.WriteLine($"On state ${_CurrentNode}");
+                Console.WriteLine($"======On state: {_CurrentNode}, Disabled: {_CurrentNode?.Key?.Disabled}==========");
 
             }
         }
@@ -73,12 +73,14 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             CurrentNode = _trie;
         }
 
-        public bool TryGoToState(IList<TKey> state, out TrieNode<TKey, TValue> node)
+        public bool TryGoToState(IKeyState state, out TrieNode<TKey, TValue> node)
         {
             node = _trie;
+
+            if(state != null)
             foreach (var combination in state)
             {
-                if (node.TryGetChild(combination, out var child))
+                if (node.TryGetChild((TKey)combination, out var child))
                 {
                     node = child;
                     continue;
