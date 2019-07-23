@@ -18,7 +18,10 @@ namespace Clipboard.ViewModels
         public  ListCollectionView              CollectionView { get; private set; }
         private ObservableCollection<DataEntry> _dataEntries;
         private bool                            _isPasteAll;
+        private Channel _channel;
 
+        private const string PasteAllTips = "←Paste all from right to left←";
+        private const string PasteCurrent = "Use 'C', 'V' to change selection";
         internal void SetData(ObservableCollection<DataEntry> value)
         {
             if (_dataEntries == value) return;
@@ -28,7 +31,28 @@ namespace Clipboard.ViewModels
             RaisePropertyChanged(nameof(CollectionView));
         }
 
-        private Channel _channel = null;
+        public Channel Channel
+        {
+            get => _channel;
+            set
+            {
+                if (value == _channel) return;
+                _channel = value;
+                RaisePropertyChanged(nameof(Channel));
+            }
+        }
+
+        private string _tips = PasteCurrent;
+        public string Tips
+        {
+            get => _tips;
+            set
+            {
+                if (value == _tips) return;
+                _tips = value;
+                RaisePropertyChanged(nameof(Tips));
+            }
+        }
 
         public bool IsPasteAll
         {
@@ -38,8 +62,8 @@ namespace Clipboard.ViewModels
         internal void SetChannelData(Channel channel)
         {
             SetData(channel.GetContent());
-            var lastChannel = _channel;
-            _channel = channel;
+            var lastChannel = Channel;
+            Channel = channel;
             if (channel == lastChannel)
             {
                 ToggleChannelIsPasteAll();
@@ -51,12 +75,14 @@ namespace Clipboard.ViewModels
             _isPasteAll ^= true;
             if (_isPasteAll)
             {
-                _channel.CurrentIndex = this.CollectionView.CurrentPosition;
+                Tips = PasteAllTips;
+                Channel.CurrentIndex = this.CollectionView.CurrentPosition;
                 this.CollectionView.MoveCurrentTo(null);
             }
             else
             {
-                this.CollectionView.MoveCurrentToPosition(_channel.CurrentIndex);
+                Tips = PasteCurrent;
+                this.CollectionView.MoveCurrentToPosition(Channel.CurrentIndex);
             }
 
             RaisePropertyChanged(nameof(IsPasteAll));
@@ -65,10 +91,10 @@ namespace Clipboard.ViewModels
         internal void ResetIsPasteAll()
         { 
             _isPasteAll           = false;
-            if (_channel != null)
+            if (Channel != null)
             {
-                _channel.CurrentIndex = -1;
-                _channel              = null;
+                Channel.CurrentIndex = -1;
+                Channel              = null;
             }
 
             RaisePropertyChanged(nameof(IsPasteAll));

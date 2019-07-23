@@ -34,7 +34,18 @@
         </Style>
     </UserControl.Resources>
     <Border Style="{StaticResource BackgroundBorderStyle}">
-        <ListBox x:Name="DataListBox" ItemsSource="{Binding CollectionView, IsAsync=True, Mode=OneWay}"
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock FontFamily="Segoe UI" Text="{Binding Channel.Name}" />
+                <TextBlock FontFamily="Segoe UI"> - </TextBlock>
+                <TextBlock FontFamily="Segoe UI" Text="{Binding Tips}" Foreground="{StaticResource ForegroundBrush}" />
+            </StackPanel>
+        <ListBox Grid.Row="1" x:Name="DataListBox" ItemsSource="{Binding CollectionView, IsAsync=True, Mode=OneWay}"
                  IsSynchronizedWithCurrentItem="True"
                  Style="{StaticResource PasteTipsListBox}">
             <!-- Visibility="{Binding NoPresentData, Converter={StaticResource InvertedBooleanToVisibilityConverter}}" -->
@@ -66,10 +77,6 @@
                                               PreviewMouseWheel="ScrollViewer_OnPreviewMouseWheel">
                                     <ItemsPresenter Margin="8,0,0,0" />
                                 </ScrollViewer>
-                                <TextBlock Text="←Paste All From Right To Left←" Opacity="0.7"
-                                           Foreground="{StaticResource ForegroundBrush}" HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Visibility="{Binding IsPasteAll, Converter={StaticResource BooleanToVisibilityConverter}}" FontSize="16" />
                             </Grid>
                         </Border>
                     </Border>
@@ -122,6 +129,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
+            </Grid>
     </Border>
 
 </UserControl>
