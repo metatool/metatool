@@ -33,18 +33,20 @@ namespace Metaseed.Input
             bool isExtendedKey, KeyEventArgsExt lastKeyDownEvent, KeyboardState keyboardState)
             : this(keyData)
         {
-            ScanCode = scanCode;
-            Timestamp = timestamp;
-            IsKeyDown = isKeyDown;
-            IsKeyUp = isKeyUp;
-            IsExtendedKey = isExtendedKey;
-            LastKeyDownEvent = lastKeyDownEvent;
+            ScanCode                          = scanCode;
+            Timestamp                         = timestamp;
+            IsKeyDown                         = isKeyDown;
+            IsKeyUp                           = isKeyUp;
+            IsExtendedKey                     = isExtendedKey;
+            LastKeyDownEvent                  = lastKeyDownEvent;
             lastKeyDownEvent.LastKeyDownEvent = null;
-            KeyboardState = keyboardState;
+            KeyboardState                     = keyboardState;
         }
+
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
         public IKeyState GoToState;
+
         public void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send)
         {
             _dispatcher.BeginInvoke(priority, action);
@@ -64,6 +66,7 @@ namespace Metaseed.Input
         ///     True if event signals key down..
         /// </summary>
         public bool IsKeyDown { get; }
+
         public KeyEventArgsExt LastKeyDownEvent { get; private set; }
 
         /// <summary>
@@ -76,6 +79,17 @@ namespace Metaseed.Input
         /// </summary>
         public bool IsExtendedKey { get; }
 
+        public new bool Handled
+        {
+            get => base.Handled;
+            set
+            {
+                if (IsKeyDown && value) KeyboardState.HandledDownKeys.Add(KeyCode);
+
+                base.Handled = value;
+            }
+        }
+
         public KeyboardState KeyboardState { get; }
 
         public override string ToString()
@@ -83,11 +97,12 @@ namespace Metaseed.Input
             var dt = DateTime.Now;
             dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
             var d = IsKeyUp ? "Up" : "Down";
-            return $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}";
+            return
+                $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}";
         }
 
         private static KeyEventArgsExt lastKeyDownGloable = new KeyEventArgsExt(Keys.None);
-        private static KeyEventArgsExt lastKeyDownApp = new KeyEventArgsExt(Keys.None);
+        private static KeyEventArgsExt lastKeyDownApp     = new KeyEventArgsExt(Keys.None);
 
         internal static KeyEventArgsExt FromRawDataApp(CallbackData data)
         {
@@ -96,9 +111,9 @@ namespace Metaseed.Input
 
             //http://msdn.microsoft.com/en-us/library/ms644984(v=VS.85).aspx
 
-            const uint maskKeydown = 0x40000000; // for bit 30
-            const uint maskKeyup = 0x80000000; // for bit 31
-            const uint maskExtendedKey = 0x1000000; // for bit 24
+            const uint maskKeydown     = 0x40000000; // for bit 30
+            const uint maskKeyup       = 0x80000000; // for bit 31
+            const uint maskExtendedKey = 0x1000000;  // for bit 24
 
             var timestamp = Environment.TickCount;
 
@@ -113,14 +128,15 @@ namespace Metaseed.Input
 
 
             var keyData = AppendModifierStates((Keys) wParam);
-            var scanCode = (int) (((flags & 0x10000) | (flags & 0x20000) | (flags & 0x40000) | (flags & 0x80000) |
+            var scanCode = (int) (((flags & 0x10000)  | (flags & 0x20000)  | (flags & 0x40000)  | (flags & 0x80000) |
                                    (flags & 0x100000) | (flags & 0x200000) | (flags & 0x400000) | (flags & 0x800000)) >>
                                   16);
 
             var isKeyDown = !isKeyReleased;
-            var isKeyUp = wasKeyDown && isKeyReleased;
+            var isKeyUp   = wasKeyDown && isKeyReleased;
 
-            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,lastKeyDownApp, KeyboardState.GetCurrent());
+            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey, lastKeyDownApp,
+                KeyboardState.GetCurrent());
             if (isKeyDown) lastKeyDownApp = r;
             return r;
         }
@@ -134,15 +150,15 @@ namespace Metaseed.Input
 
             var keyData = AppendModifierStates((Keys) keyboardHookStruct.VirtualKeyCode);
 
-            var keyCode = (int) wParam;
+            var keyCode   = (int) wParam;
             var isKeyDown = keyCode == Messages.WM_KEYDOWN || keyCode == Messages.WM_SYSKEYDOWN;
-            var isKeyUp = keyCode == Messages.WM_KEYUP || keyCode == Messages.WM_SYSKEYUP;
+            var isKeyUp   = keyCode == Messages.WM_KEYUP   || keyCode == Messages.WM_SYSKEYUP;
 
             const uint maskExtendedKey = 0x1;
-            var isExtendedKey = (keyboardHookStruct.Flags & maskExtendedKey) > 0;
+            var        isExtendedKey   = (keyboardHookStruct.Flags & maskExtendedKey) > 0;
 
             var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
-                isKeyUp, isExtendedKey,lastKeyDownGloable,KeyboardState.GetCurrent());
+                isKeyUp, isExtendedKey, lastKeyDownGloable, KeyboardState.GetCurrent());
             if (isKeyDown) lastKeyDownGloable = r;
             return r;
         }
@@ -176,9 +192,9 @@ namespace Metaseed.Input
             // # CANNOT determine state due to conversion inside keyboard
             // See http://en.wikipedia.org/wiki/Fn_key#Technical_details #
 
-            return keyData |
+            return keyData                              |
                    (control ? Keys.Control : Keys.None) |
-                   (shift ? Keys.Shift : Keys.None) |
+                   (shift ? Keys.Shift : Keys.None)     |
                    (alt ? Keys.Alt : Keys.None);
         }
     }

@@ -65,8 +65,16 @@ namespace Clipboard.Core.Desktop.Services
         private void AddTo(DataEntry data)
         {
             if (_channel == null) return;
-            var i = _channel.CurrentIndex == -1 ? 0 : _channel.CurrentIndex;
-            _channel.Set(data,i);
+            if (_channel.CurrentIndex == -1)
+            {
+                _channel.Clear();
+                _channel.Set(data);
+            }
+            else
+            {
+                _channel.Set(data, _channel.CurrentIndex);
+            }
+
             _channel = null;
         }
 

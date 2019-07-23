@@ -59,6 +59,5 @@ namespace Clipboard.Views
             if(r) DataListBox.ScrollIntoView(view.CurrentItem);
         }
 
-        internal int CurrentItemIndex => ViewModel.CollectionView.CurrentPosition;
     }
 }

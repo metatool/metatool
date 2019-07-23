@@ -56,7 +56,7 @@ namespace Metaseed.Input
                     if (predicate == null || predicate(e))
                     {
                         handled = true;
-                        KeyboardState.HandledDownKeys.Add(source.TriggerKey);
+                        // KeyboardState.HandledDownKeys.Add(source.TriggerKey);
                         e.Handled = true;
                         if (target.TriggerKey == Keys.LButton)
                         {
@@ -144,7 +144,7 @@ namespace Metaseed.Input
                     {
                         handling = true;
                         keyDownEvent = e;
-                        KeyboardState.HandledDownKeys.Add(source.TriggerKey);
+                        // KeyboardState.HandledDownKeys.Add(source.TriggerKey);
                         e.Handled = true;
                         return;
                     }
@@ -188,7 +188,7 @@ namespace Metaseed.Input
                         if (!markHandled) return;
 
                         keyDownEvent = e;
-                        KeyboardState.HandledDownKeys.Add(combination.TriggerKey);
+                        // KeyboardState.HandledDownKeys.Add(combination.TriggerKey);
                         e.Handled = true;
                         return;
                     }

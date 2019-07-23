@@ -105,15 +105,6 @@ namespace Metaseed.Input.MouseKeyHook
                     // yield or reset: continue finding
                 }
             }
-
-            _eventSource.KeyUp += (o, e) =>
-            {
-                if (KeyboardState.HandledDownKeys.Contains(e.KeyCode))
-                {
-                    KeyboardState.HandledDownKeys.Remove(e.KeyCode);
-                    e.Handled = true;
-                }
-            };
             _eventSource.KeyDown += (sender, args) =>
                 KeyEventProcess(KeyEvent.Down, args as KeyEventArgsExt);
             _eventSource.KeyUp += (sender, args) =>

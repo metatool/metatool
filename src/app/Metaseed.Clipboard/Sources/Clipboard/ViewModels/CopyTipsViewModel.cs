@@ -46,7 +46,8 @@ namespace Clipboard.ViewModels
             if (IsReplaceAll) return;
             var entry = _allDataEntries?[index];
             _allDataEntries?.RemoveAt(index);
-            _allDataEntries?.Insert(index, entry);
+            _allDataEntries?.Insert(index + 1, entry);
+            _channel.CurrentIndex = index + 1;
         }
 
         internal void SwitchWithLast(int index)
@@ -69,19 +70,23 @@ namespace Clipboard.ViewModels
                 SetData(channel.GetContent());
         }
 
+        private int indexBackup = -1;
+
         private void ToggleChannelIsReplaceAll(Channel channel)
         {
             _isReplaceAll ^= true;
 
             if (_isReplaceAll)
             {
-                channel.CurrentIndex = CollectionView.CurrentPosition;
+                channel.CurrentIndex = -1; // replace all
+                indexBackup          = CollectionView.CurrentPosition;
                 CollectionView       = (ListCollectionView) CollectionViewSource.GetDefaultView(_replaceAllDataEntries);
             }
             else
             {
                 CollectionView = (ListCollectionView) CollectionViewSource.GetDefaultView(_allDataEntries);
-                CollectionView.MoveCurrentToPosition(channel.CurrentIndex);
+                CollectionView.MoveCurrentToPosition(indexBackup);
+                channel.CurrentIndex = indexBackup;
             }
 
             RaisePropertyChanged(nameof(CollectionView));
@@ -91,9 +96,14 @@ namespace Clipboard.ViewModels
 
         internal void ResetIsReplaceAll()
         {
-            _isReplaceAll         = false;
-            _channel.CurrentIndex = -1;
-            _channel              = null;
+            _isReplaceAll = false;
+            indexBackup   = -1;
+            if (_channel != null)
+            {
+                _channel.CurrentIndex = -1;
+                _channel              = null;
+            }
+
             RaisePropertyChanged(nameof(IsReplaceAll));
         }
 

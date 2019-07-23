@@ -69,7 +69,7 @@ namespace Clipboard.Core.Desktop.Models
             }
         }
 
-        private void Clear()
+        internal void Clear()
         {
             foreach (var dataEntry in _entries)
             {

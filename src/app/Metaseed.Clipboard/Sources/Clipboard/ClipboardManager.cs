@@ -9,8 +9,6 @@ using Clipboard.Core.Desktop.Services;
 using Clipboard.Shared.Services;
 using GalaSoft.MvvmLight.Messaging;
 using Metaseed.Input;
-using Clipboard.ComponentModel.Messages;
-using Clipboard.ViewModels;
 using Clipboard.Views;
 using Metaseed.MetaKeyboard;
 using Metaseed.NotifyIcon;
@@ -58,29 +56,29 @@ namespace Clipboard
                 Keys.A, Keys.S, Keys.D, Keys.F, Keys.G, Keys.Z
             };
 
-            var CState = Keys.C.With(Keys.ControlKey);
+            var cState = Keys.C.With(Keys.ControlKey);
 
-            CState.Down(e =>
+            cState.Down(e =>
             {
                 e.Handled = true;
 
                 CopyTips.ViewModel.SetData(_clipboard.DataService.DataEntries);
                 _copyTipsCloseToken =
                     Notify.ShowMessage(CopyTips, null, NotifyPosition.ActiveWindowCenter, true);
-            });
+            }, "Metaseed.CopyToHistory", $"&Copy To Clipboard");
 
             registerKeys.ForEach(key =>
             {
-                var register = CState.Then(key.With(Keys.LControlKey));
+                var register = cState.Then(key.With(Keys.LControlKey));
                 register.Down(e =>
                 {
                     e.Handled = true;
                     _currentChannel = Channel.GetChannel(key.ToString());
                     CopyTips.ViewModel.SetChannelData(_currentChannel);
-                });
-                register.Up(e => { e.GoToState = CState; });
+                }, $"Metaseed.CopyTo{key}", $"Copy to channel &{key}");
+                register.Up(e => { e.GoToState = cState; });
             });
-            var nextC = CState.Then(Keys.V.With(Keys.ControlKey));
+            var nextC = cState.Then(Keys.V.With(Keys.ControlKey));
             nextC.Down(e =>
             {
                 e.Handled = true;
@@ -89,10 +87,10 @@ namespace Clipboard
                 {
                     CopyTips.Next();
                 });
-            });
-            nextC.Up(e => { e.GoToState = CState; });
+            }, "Metaseed.CopyToNextPosition", "Copy to next position");
+            nextC.Up(e => { e.GoToState = cState; });
 
-            var lastC = CState.Then(Keys.C.With(Keys.ControlKey));
+            var lastC = cState.Then(Keys.C.With(Keys.ControlKey));
             lastC.Down(e =>
             {
                 e.Handled = true;
@@ -101,58 +99,56 @@ namespace Clipboard
                 {
                     CopyTips.Previous();
                 });
-            });
-            lastC.Up(e => { e.GoToState = CState; });
+            }, "Metaseed.CopyToPreviousPosition", "Copy to previous position");
+            lastC.Up(e => { e.GoToState = cState; });
 
 
-            CState.Then(Keys.LControlKey).Up(e =>
+            cState.Then(Keys.LControlKey).Up(e =>
             {
                 _copyTipsCloseToken?.Close();
                 _copyTipsCloseToken = null;
-                CState.Disabled     = true;
+                cState.Disabled     = true;
                 CopyTips.ViewModel.ResetIsReplaceAll();
 
                 e.BeginInvoke(() =>
                 {
-                    Console.WriteLine($"copy to {_currentChannel}");
                     _clipboard.CopyTo(_currentChannel);
                     _currentChannel = null;
-                    CState.Disabled = false;
+                    cState.Disabled = false;
                 });
-            });
+            }, "Metaseed.CopyTakeEffect", "Do copy action");
 
 
-            var VState = Keys.V.With(Keys.ControlKey);
-            VState.Down(e =>
+            var vState = Keys.V.With(Keys.ControlKey);
+            vState.Down(e =>
             {
                 PasteTips.ViewModel.SetData(_clipboard.DataService.DataEntries);
                 _pasteTipsCloseToken =
                     Notify.ShowMessage(PasteTips, null, NotifyPosition.ActiveWindowCenter, true);
                 e.Handled = true;
-            });
+            },"Metaseed.PasteFromClipboardHistory", "&Paste from clipboard history");
 
             registerKeys.ForEach(key =>
             {
-                var register = VState.Then(key.With(Keys.LControlKey));
+                var register = vState.Then(key.With(Keys.LControlKey));
                 register.Down(e =>
                 {
                     e.Handled       = true;
                     _currentChannel = Channel.GetChannel(key.ToString());
                     PasteTips.ViewModel.SetChannelData(_currentChannel);
-                });
-                register.Up(e => { e.GoToState = VState; });
+                }, $"Metaseed.PasteFromChannel{key}", $"Paste from channel &{key}");
+                register.Up(e => { e.GoToState = vState; });
             });
 
-            VState.Then(Keys.LControlKey).Up(e =>
+            vState.Then(Keys.LControlKey).Up(e =>
             {
                 _pasteTipsCloseToken?.Close();
                 _pasteTipsCloseToken = null;
-                VState.Disabled      = true;
+                vState.Disabled      = true;
                 PasteTips.ViewModel.ResetIsPasteAll();
 
                 e.BeginInvoke(async () =>
                 {
-                    Console.WriteLine($"------------paste from {_currentChannel}");
                     if (_currentChannel == null)
                     {
                         await _clipboard.PasteFrom(PasteTips.CurrentItemIndex);
@@ -164,43 +160,41 @@ namespace Clipboard
                         await _clipboard.PasteFrom(channel, PasteTips.CurrentItemIndex);
                     }
 
-                    VState.Disabled = false;
+                    vState.Disabled = false;
                 });
-            });
+            }, "Metaseed.DoPasteAction", "Do paste action");
 
-            var next = VState.Then(Keys.V.With(Keys.ControlKey));
+            var next = vState.Then(Keys.V.With(Keys.ControlKey));
             next.Down(e =>
             {
                 e.Handled = true;
 
                 e.BeginInvoke(() =>
                 {
-                    Console.WriteLine($"paste from next");
                     PasteTips.Next();
                 });
-            });
-            next.Up(e => { e.GoToState = VState; });
+            }, "Metaseed.PasteFromNextPosition", "Paste from next position");
+            next.Up(e => { e.GoToState = vState; });
 
-            var last = VState.Then(Keys.C.With(Keys.ControlKey));
+            var last = vState.Then(Keys.C.With(Keys.ControlKey));
             last.Down(e =>
             {
                 e.Handled = true;
 
                 e.BeginInvoke(() =>
                 {
-                    Console.WriteLine($"paste from previous");
                     PasteTips.Previous();
                 });
-            });
-            last.Up(e => { e.GoToState = VState; });
+            }, "Metaseed.PasteFromPreviousPosition", "Paste from previous position");
+            last.Up(e => { e.GoToState = vState; });
 
 
-            VState.Then(Keys.B.With(Keys.ControlKey)).Down(e =>
+            vState.Then(Keys.B.With(Keys.ControlKey)).Down(e =>
             {
                 e.Handled = true;
                 _pasteTipsCloseToken?.Close();
                 e.BeginInvoke(() => { Messenger.Default.Send(new Message(), MessageIdentifiers.ShowPasteBarWindow); });
-            });
+            },"Metaseed.ClipboardBrowseAndManagement", "&Browse and manage clipboard");
             _clipboard = ServiceLocator.GetService<ClipboardService>();
 
             Keyboard.Hook();

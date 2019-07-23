@@ -20,7 +20,6 @@ namespace Metaseed.Input
         private readonly Keys _key;
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
-        private bool handled;
         private bool _valid;
         private IRemovable keyDownActionToken;
         private IRemovable keyUpActionToken;
@@ -73,7 +72,7 @@ namespace Metaseed.Input
                     }
 
 
-                    handled = KeyboardState.HandledDownKeys.Add(_key);
+                     // handled = KeyboardState.HandledDownKeys.Add(_key);
                     e.Handled = true;
                 }, $"Metaseed.AlwaysOnOff_{_key}_Down", "", false);
             if (keyUpActionToken == null)
@@ -100,10 +99,6 @@ namespace Metaseed.Input
                         return;
                     }
 
-                    if (handled)
-                    {
-                        handled = false;
-                    }
                     e.Handled = true;
                 }, $"Metaseed.AlwaysOnOff_{_key}_Up", "");
         }

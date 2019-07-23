@@ -108,7 +108,7 @@ namespace Metaseed.MetaKeyboard
             var t = new ObservableCollection<TipItem>(description);
             if (t.Count == 0) return;
             var b = new FancyBalloon() {Tips = t};
-            ShowMessage(b, 8000);
+            ShowMessage(b, 88888);
         }
 
         public static void ShowKeysTip1(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)

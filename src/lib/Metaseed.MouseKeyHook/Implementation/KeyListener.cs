@@ -43,6 +43,10 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             var handler = KeyUp;
             if (handler == null || e.Handled || !e.IsKeyUp)
                 return;
+            if (KeyboardState.HandledDownKeys.Contains(e.KeyCode))
+            {
+                KeyboardState.HandledDownKeys.Remove(e.KeyCode);
+            }
             handler(this, e);
         }
 
@@ -62,7 +66,6 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
                 foreach (var pressEventArg in pressEventArgs)
                     InvokeKeyPress(pressEventArg);
             }
-
             InvokeKeyUp(eDownUp);
             Console.WriteLine(new String('\t', --_indientCounter)+ "¡û" + eDownUp.ToString());
             return !eDownUp.Handled;
