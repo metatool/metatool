@@ -21,10 +21,9 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             get => _CurrentNode;
             set
             {
-                
+                if (_CurrentNode == value) return;
                 _CurrentNode = value;
-                Console.WriteLine($"======On state: {_CurrentNode}, Disabled: {_CurrentNode?.Key?.Disabled}==========");
-
+                Console.WriteLine($"==On state: {_CurrentNode}");
             }
         }
 

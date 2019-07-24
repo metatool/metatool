@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Clipboard.ComponentModel.Messages;
 using Clipboard.Core.Desktop.Models;
@@ -114,6 +115,7 @@ namespace Clipboard
                 {
                     _clipboard.CopyTo(_currentChannel);
                     _currentChannel = null;
+                    Thread.Sleep(10);
                     cState.Disabled = false;
                 });
             }, "Metaseed.CopyTakeEffect", "Do copy action");

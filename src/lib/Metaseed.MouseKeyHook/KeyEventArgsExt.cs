@@ -58,6 +58,11 @@ namespace Metaseed.Input
         public int ScanCode { get; }
 
         /// <summary>
+        /// is it from the keyboard simulator?
+        /// </summary>
+        public bool IsVirtual { get; private set; }
+
+        /// <summary>
         ///     The system tick count of when the event occurred.
         /// </summary>
         public int Timestamp { get; }
@@ -98,7 +103,7 @@ namespace Metaseed.Input
             dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
             var d = IsKeyUp ? "Up" : "Down";
             return
-                $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}";
+                $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} Scan:{ScanCode,-8} IsVirtual: {IsVirtual,-8} Extended:{IsExtendedKey}";
         }
 
         private static KeyEventArgsExt lastKeyDownGloable = new KeyEventArgsExt(Keys.None);
@@ -148,7 +153,8 @@ namespace Metaseed.Input
             var keyboardHookStruct =
                 (KeyboardHookStruct) Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
 
-            var keyData = AppendModifierStates((Keys) keyboardHookStruct.VirtualKeyCode);
+            var keyData   = AppendModifierStates((Keys) keyboardHookStruct.VirtualKeyCode);
+            var isVirtual = (keyboardHookStruct.ExtraInfo & 0x01) == 0x01;
 
             var keyCode   = (int) wParam;
             var isKeyDown = keyCode == Messages.WM_KEYDOWN || keyCode == Messages.WM_SYSKEYDOWN;
@@ -160,6 +166,7 @@ namespace Metaseed.Input
             var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
                 isKeyUp, isExtendedKey, lastKeyDownGloable, KeyboardState.GetCurrent());
             if (isKeyDown) lastKeyDownGloable = r;
+            r.IsVirtual = isVirtual;
             return r;
         }
 

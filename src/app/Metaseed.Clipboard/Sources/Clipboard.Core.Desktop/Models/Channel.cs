@@ -11,7 +11,7 @@ namespace Clipboard.Core.Desktop.Models
 {
     internal class Channel
     {
-        public       string                      Name { get; set; };
+        public       string                      Name { get; set; }
         private static readonly Dictionary<string, Channel> Channels = new Dictionary<string, Channel>();
 
         private Channel(string name)

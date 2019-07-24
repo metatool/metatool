@@ -6,7 +6,7 @@ using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.DataStructures
 {
-    public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue> where TValue: KeyEventAction
+    public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue> where TKey : ICombination where TValue: KeyEventAction
     {
         protected readonly Dictionary<TKey, TrieNode<TKey, TValue>> _children;
         private IList<TValue> _values = new KeyActionList<TValue>();
@@ -104,7 +104,7 @@ namespace Metaseed.DataStructures
 
         public override string ToString()
         {
-            return Key?.ToString()??"Root";
+            return Key!=null?$"{Key} [Disabled:{Key.Disabled,-8}]":"Root";
         }
     }
 }

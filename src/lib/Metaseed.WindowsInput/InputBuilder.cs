@@ -107,6 +107,7 @@ namespace WindowsInput
             }
         }
 
+        const uint EXTRA_INFO_IS_VIRTUAL_KEY = 0x01;
         /// <summary>
         /// Adds a key down to the list of <see cref="INPUT"/> messages.
         /// </summary>
@@ -127,7 +128,7 @@ namespace WindowsInput
                                             Scan = 0,
                                             Flags = IsExtendedKey(keyCode) ? (UInt32) KeyboardFlag.ExtendedKey : 0,
                                             Time = 0,
-                                            ExtraInfo = IntPtr.Zero
+                                            ExtraInfo = (IntPtr) EXTRA_INFO_IS_VIRTUAL_KEY
                                         }
                             }
                     };
@@ -158,7 +159,7 @@ namespace WindowsInput
                                                                   ? KeyboardFlag.KeyUp | KeyboardFlag.ExtendedKey
                                                                   : KeyboardFlag.KeyUp),
                                             Time = 0,
-                                            ExtraInfo = IntPtr.Zero
+                                            ExtraInfo = (IntPtr) EXTRA_INFO_IS_VIRTUAL_KEY
                                         }
                             }
                     };

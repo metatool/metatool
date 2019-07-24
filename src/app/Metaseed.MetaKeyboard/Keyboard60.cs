@@ -9,15 +9,18 @@ namespace ConsoleApp1
         {
             ToggleKeys.NumLock.AlwaysOn();
             ToggleKeys.CapsLock.AlwaysOff();
-            Keys.CapsLock.MapOnHit(Keys.Escape, e => e.ScanCode !=0,false);
+
+            Keys.CapsLock.MapOnHit(Keys.Escape, e => !e.IsVirtual, false);
 
             Keys.Oemtilde.With(Keys.CapsLock).Down(e =>
             {
-                var state = ToggleKeys.CapsLock.State;
-                if (state == ToggleKeyState.AlwaysOff) ToggleKeys.CapsLock.AlwaysOn();
-                if (state == ToggleKeyState.AlwaysOn) ToggleKeys.CapsLock.AlwaysOff();
                 e.Handled = true;
-            }, "toggle caps", "");
+                var state = ToggleKeys.CapsLock.State;
+                if (state == ToggleKeyState.AlwaysOff)
+                    ToggleKeys.CapsLock.AlwaysOn();
+                else if (state == ToggleKeyState.AlwaysOn)
+                    ToggleKeys.CapsLock.AlwaysOff();
+            }, "Metaseed.ToggleCapsLockKey", "Toggle CapsLock");
 
             Keys.H.With(Keys.CapsLock).Map(Keys.Left);
             Keys.J.With(Keys.CapsLock).Map(Keys.Down);
@@ -37,11 +40,10 @@ namespace ConsoleApp1
             Keys.U.With(Keys.LMenu).Map(Keys.PageUp);
             Keys.N.With(Keys.LMenu).Map(Keys.PageDown);
 
-
             Keys.Back.With(Keys.CapsLock).Map(Keys.Delete);
             Keys.P.With(Keys.CapsLock).Map(Keys.PrintScreen);
-            Keys.B.With(Keys.CapsLock).Map(Keys.Pause);
-            Keys.OemSemicolon.With(Keys.CapsLock).Map(Keys.Apps);
+            Keys.B.With(Keys.CapsLock).Map(Keys.Pause); // Break
+            Keys.OemSemicolon.With(Keys.CapsLock).Map(Keys.Apps); // like right click on current selection
             Keys.OemOpenBrackets.With(Keys.CapsLock).Map(Keys.LButton);
             Keys.OemCloseBrackets.With(Keys.CapsLock).Map(Keys.RButton);
 
