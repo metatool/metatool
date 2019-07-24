@@ -103,7 +103,7 @@ namespace Metaseed.Input
             dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
             var d = IsKeyUp ? "Up" : "Down";
             return
-                $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} Scan:{ScanCode,-8} IsVirtual: {IsVirtual,-8} Extended:{IsExtendedKey}";
+                $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}";
         }
 
         private static KeyEventArgsExt lastKeyDownGloable = new KeyEventArgsExt(Keys.None);
