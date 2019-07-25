@@ -6,6 +6,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook.Implementation;
 
@@ -15,25 +17,32 @@ namespace Metaseed.Input.MouseKeyHook
     ///     Used to represent a key combination as frequently used in application as shortcuts.
     ///     e.g. Alt+Shift+R. This combination is triggered when 'R' is pressed after 'Alt' and 'Shift' are already down.
     /// </summary>
-    public class Combination : ICombination
+    public partial class Combination : ICombination
     {
         private readonly Chord _chord;
-        private Keys _key;
-        public Combination(Keys triggerKey ) : this(triggerKey,null  ) { }
-        public Combination(Keys triggerKey,Keys chordKey ) : this(triggerKey,new Keys[] { chordKey }) { }
-        public Combination(Keys triggerKey,  IEnumerable<Keys> chordKeys)
-            : this(triggerKey, new Chord(chordKeys?? Enumerable.Empty<Keys>())){}
+        private          Keys  _key;
+
+        public Combination(Keys triggerKey) : this(triggerKey, null)
+        {
+        }
+
+        public Combination(Keys triggerKey, Keys chordKey) : this(triggerKey, new Keys[] {chordKey})
+        {
+        }
+
+        public Combination(Keys triggerKey, IEnumerable<Keys> chordKeys)
+            : this(triggerKey, new Chord(chordKeys ?? Enumerable.Empty<Keys>()))
+        {
+        }
 
         private Combination(Keys triggerKey, Chord chord)
         {
             TriggerKey = triggerKey;
-            _chord = chord?? new Chord(Enumerable.Empty<Keys>());
-            _key = TriggerKey;
-            
+            _chord     = chord ?? new Chord(Enumerable.Empty<Keys>());
+            _key       = TriggerKey;
         }
 
 
-        public bool Disabled { get; set; }
         /// <summary>
         ///     Last key which triggers the combination.
         /// </summary>
@@ -92,7 +101,6 @@ namespace Metaseed.Input.MouseKeyHook
         }
 
 
-
         /// <summary>
         ///     A chainable builder method to simplify chord creation. Used along with <see cref="TriggeredBy" />,
         ///     <see cref="With" />, <see cref="Control" />, <see cref="Shift" />, <see cref="Alt" />.
@@ -147,14 +155,13 @@ namespace Metaseed.Input.MouseKeyHook
                     }
                     catch (Exception e)
                     {
-
                         MessageBox.Show(
                             $@"Could not Parse the keys;{Environment.NewLine}{e.Message} please use the below string (i.e. Control+Z):{Environment.NewLine} {string.Join(", ", Enum.GetNames(typeof(Keys)))}");
                         throw e;
                     }
                 })
                 .Cast<Keys>();
-            var stack = new Stack<Keys>(parts);
+            var stack      = new Stack<Keys>(parts);
             var triggerKey = stack.Pop();
             return new Combination(triggerKey, stack);
         }
@@ -169,7 +176,7 @@ namespace Metaseed.Input.MouseKeyHook
 
         public IEnumerator<ICombination> GetEnumerator()
         {
-            return new List<ICombination>{this}.GetEnumerator();
+            return new List<ICombination> {this}.GetEnumerator();
         }
 
         /// <inheritdoc />
@@ -178,15 +185,16 @@ namespace Metaseed.Input.MouseKeyHook
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Combination)obj);
+            return Equals((Combination) obj);
         }
 
         private int _hash = 0;
+
         /// <inheritdoc />
         public override int GetHashCode()
         {
             if (_hash != 0) return _hash;
-            _hash =  Chord.GetHashCode() ^ (int)TriggerKey;
+            _hash = Chord.GetHashCode() ^ (int) TriggerKey;
             return _hash;
         }
     }

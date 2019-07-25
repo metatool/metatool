@@ -97,7 +97,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
     <TransformOnBuild>True</TransformOnBuild>
-    <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
+    <TransformOutOfDateOnly>True</TransformOutOfDateOnly>
   </PropertyGroup>
   <ItemGroup>
     <T4ReferencePath Include="$(VSInstallDir)Common7\IDE\PublicAssemblies">
@@ -583,7 +583,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>rmdir "$(SolutionDir)Windows Store\ClipboardApp\win32" /s /q
+    <PostBuildEvent>if $(ConfigurationName) == Debug (
+rmdir "$(SolutionDir)Windows Store\ClipboardApp\win32" /s /q
 mkdir "$(SolutionDir)Windows Store\ClipboardApp\win32"
 
 xcopy "$(ProjectDir)bin\$(ConfigurationName)" "$(SolutionDir)Windows Store\ClipboardApp\win32" /e /h /i /r /y /c
@@ -592,7 +593,8 @@ cd "$(SolutionDir)Windows Store\ClipboardApp\win32"
 del /q *.xml
 del /q *.winmd
 del /q *.lastcodeanalysissucceeded
-del /q Clipboard.Core.Desktop.dll.config</PostBuildEvent>
+del /q Clipboard.Core.Desktop.dll.config
+)</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\packages\Fody.5.1.1\build\Fody.targets" Condition="Exists('..\..\packages\Fody.5.1.1\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

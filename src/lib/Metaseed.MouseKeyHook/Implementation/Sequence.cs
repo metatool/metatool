@@ -41,6 +41,8 @@ namespace Metaseed.Input.MouseKeyHook
             }
         }
 
+        public object Context { get; set; }
+
         static string PreProcess(string keys)
         {
             var query                                        = new StringBuilder(keys).Replace(" ", ""); // remove space

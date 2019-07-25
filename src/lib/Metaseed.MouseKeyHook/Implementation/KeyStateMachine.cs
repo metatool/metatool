@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Metaseed.DataStructures;
+using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.Implementation.Trie;
 using Metaseed.MetaKeyboard;
@@ -140,6 +141,7 @@ namespace Metaseed.Input
                 try
                 {
 #endif
+            (candidateChild.Key as Combination)?.OnEvent(args);
             foreach (var keyEventAction in actionList[eventType])
             {
                 if (!string.IsNullOrEmpty(keyEventAction.Description))
@@ -170,6 +172,7 @@ namespace Metaseed.Input
                 if (candidateChild.ChildrenCount == 0)
                 {
                     Reset();
+                    Notify.CloseKeysTip();
                     return KeyProcessState.Done;
                 }
 

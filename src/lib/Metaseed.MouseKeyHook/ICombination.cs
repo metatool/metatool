@@ -1,9 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Metaseed.Input
 {
-    public interface ICombination :IKeyState
+    public interface IKeyEventAsync
+    {
+        Task<KeyEventArgsExt> UpAsync(int timeout);
+
+        Task<KeyEventArgsExt> DownAsync(int timeout);
+    }
+    public interface ICombination :IKeyState, IKeyEventAsync
     {
         Keys TriggerKey { get; }
         IEnumerable<Keys> Chord { get; }

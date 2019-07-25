@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Metaseed.Input
 {
@@ -7,6 +8,7 @@ namespace Metaseed.Input
     {
         void Remove();
     }
+
 
     public class Removable : IRemovable
     {

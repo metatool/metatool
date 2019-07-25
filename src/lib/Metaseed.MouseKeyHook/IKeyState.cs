@@ -7,5 +7,6 @@ namespace Metaseed.Input
     public interface IKeyState: IEnumerable<ICombination>
     {
         bool Disabled { get; set; }
+        object Context { get; set; }
     }
 }

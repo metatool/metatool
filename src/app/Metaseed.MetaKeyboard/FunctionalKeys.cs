@@ -14,6 +14,9 @@ namespace Metaseed.MetaKeyboard
     {
         public FunctionalKeys()
         {
+
+
+
             Keys.F.With(Keys.LWin).Down(e =>
             {
                 var c = UI.Window.CurrentWindowClass;

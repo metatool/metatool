@@ -87,7 +87,10 @@ namespace Clipboard.ViewModels
             if (channel == lastChannel)
                 ToggleChannelIsReplaceAll(channel);
             else
+            {
                 SetData(channel.GetContent());
+                channel.CurrentIndex = 0;
+            }
         }
 
         private int     indexBackup = -1;
@@ -117,19 +120,6 @@ namespace Clipboard.ViewModels
             }
 
             RaisePropertyChanged(nameof(CollectionView));
-
-            RaisePropertyChanged(nameof(IsReplaceAll));
-        }
-
-        internal void ResetIsReplaceAll()
-        {
-            _isReplaceAll = false;
-            indexBackup   = -1;
-            if (Channel != null)
-            {
-                Channel.CurrentIndex = -1;
-                Channel              = null;
-            }
 
             RaisePropertyChanged(nameof(IsReplaceAll));
         }

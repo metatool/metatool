@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
@@ -29,9 +30,13 @@ namespace Metaseed.Input
             return Keyboard.Hit(combination, keyAction, predicate, markHandled);
         }
 
-        public static IRemovable Map(this Keys key, Keys target, Predicate<KeyEventArgsExt> predicate = null)
+        public static IRemovable Map(this Keys key, Keys target, Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
         {
-            return Keyboard.Map(new Combination(key), new Combination(target), e => predicate == null || predicate(e));
+            return Keyboard.Map(new Combination(key), new Combination(target), e => predicate == null || predicate(e), repeat);
+        }
+        public static IRemovable Map(this Keys key, ICombination target, Predicate<KeyEventArgsExt> predicate = null, int repeat =1)
+        {
+            return Keyboard.Map(new Combination(key), target, e => predicate == null || predicate(e), repeat);
         }
 
         public static IRemovable MapOnHit(this Keys key, Keys target, Predicate<KeyEventArgsExt> predicate = null,
@@ -41,10 +46,6 @@ namespace Metaseed.Input
                 e => predicate == null || predicate(e), allUp);
         }
 
-        public static IRemovable Map(this Keys key, ICombination target, Predicate<KeyEventArgsExt> predicate = null)
-        {
-            return Keyboard.Map(new Combination(key), target, e => predicate == null || predicate(e));
-        }
 
         public static ICombination With(this Keys key, Keys chord)
         {
@@ -59,6 +60,19 @@ namespace Metaseed.Input
         public static ICombination With(this Keys triggerKey, IEnumerable<Keys> chordsKeys)
         {
             return new Combination(triggerKey, chordsKeys);
+        }
+
+        public static Task<KeyEventArgsExt> DownAsync(this Keys key, int timeout = 8888)
+        {
+            var comb = new Combination(key);
+            Keyboard.Add(comb, KeyEvent.Down, null);
+            return comb.DownAsync(timeout);
+        }
+        public static Task<KeyEventArgsExt> UpAsync(this Keys key, int timeout = 8888)
+        {
+            var comb = new Combination(key);
+            Keyboard.Add(comb, KeyEvent.Up, null);
+            return comb.UpAsync(timeout);
         }
     }
 }

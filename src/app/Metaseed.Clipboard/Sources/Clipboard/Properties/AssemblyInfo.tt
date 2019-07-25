@@ -22,7 +22,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Etienne BAUDOUX")]
 [assembly: AssemblyProduct("Clipboard")]
-[assembly: AssemblyCopyright("© 2010 - <#= DateTime.Now.Year.ToString() #> Etienne BAUDOUX. All rights reserved.")]
+[assembly: AssemblyCopyright("© 2010 - <#= DateTime.Now.Year.ToString() #>Metaseed. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]

@@ -12,7 +12,7 @@ namespace Metaseed.Input
 {
     public static class Keyboard
     {
-        public static IKeyState Root = null;
+        public static   IKeyState    Root        = null;
         static readonly KeyboardHook _Hook       = new KeyboardHook();
         static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 
@@ -37,16 +37,25 @@ namespace Metaseed.Input
         {
             if (isAsync)
             {
-                Async(()=> Hit(key,modifierKeys,false));
+                Async(() => Hit(key, modifierKeys, false));
                 return;
             }
+
             if (modifierKeys == null) InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
             InputSimu.Inst.Keyboard.ModifiedKeyStroke(modifierKeys.Cast<VirtualKeyCode>(),
                 (VirtualKeyCode) key);
         }
 
+        private static Action Repeat(int repeat, Action action)
+        {
+            return () =>
+            {
+                while (repeat-- > 0) action();
+            };
+
+        }
         internal static IRemovable Map(Combination source, ICombination target,
-            Predicate<KeyEventArgsExt> predicate = null)
+            Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
         {
             var handled = false;
             return new Removables()
@@ -55,22 +64,24 @@ namespace Metaseed.Input
                 {
                     if (predicate == null || predicate(e))
                     {
-                        handled = true;
-                        // KeyboardState.HandledDownKeys.Add(source.TriggerKey);
+                        handled   = true;
                         e.Handled = true;
+
                         if (target.TriggerKey == Keys.LButton)
                         {
-                            Async(() => InputSimu.Inst.Mouse.LeftButtonDown());
-                            return;
+                            Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftButtonDown()));
                         }
                         else if (target.TriggerKey == Keys.RButton)
                         {
-                            Async(() => InputSimu.Inst.Mouse.RightButtonDown());
-                            return;
+                            Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightButtonDown()));
+                        }
+                        else
+                        {
+                            Async(Repeat(repeat,() => InputSimu.Inst.Keyboard.ModifiedKeyDown(target.Chord.Cast<VirtualKeyCode>(),
+                                    (VirtualKeyCode) target.TriggerKey)
+                            ));
                         }
 
-                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(target.Chord.Cast<VirtualKeyCode>(),
-                            (VirtualKeyCode) target.TriggerKey));
                         return;
                     }
 
@@ -95,14 +106,14 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) target.TriggerKey);
-                },"Map_Up_{source}_To_{target}", "")
+                }, "Map_Up_{source}_To_{target}", "")
             };
         }
 
         internal static IRemovable MapOnHit(ICombination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null, bool allUp = true)
         {
-            var handling = false;
+            var             handling     = false;
             KeyEventArgsExt keyDownEvent = null;
 
             void AsyncCall()
@@ -142,7 +153,7 @@ namespace Metaseed.Input
                 {
                     if (predicate == null || predicate(e))
                     {
-                        handling = true;
+                        handling     = true;
                         keyDownEvent = e;
                         // KeyboardState.HandledDownKeys.Add(source.TriggerKey);
                         e.Handled = true;
@@ -153,15 +164,15 @@ namespace Metaseed.Input
                 }, $"MapOnHit_Down_{source}_To_{target}", ""),
                 allUp
                     ? AllKeyUp()
-                    : source.Up( e =>
+                    : source.Up(e =>
                     {
                         if (!handling) return;
-                        handling = false;
+                        handling  = false;
                         e.Handled = true;
 
                         if (keyDownEvent != e.LastKeyDownEvent) return;
                         AsyncCall();
-                    },$"MapOnHit_Up_{source}_To_{target}", "")
+                    }, $"MapOnHit_Up_{source}_To_{target}", "")
             };
         }
 
@@ -176,11 +187,11 @@ namespace Metaseed.Input
         internal static IRemovable Hit(ICombination combination, KeyAction keyAction,
             Predicate<KeyEventArgsExt> predicate = null, bool markHandled = true)
         {
-            var handling = false;
+            var             handling     = false;
             KeyEventArgsExt keyDownEvent = null;
             return new Removables()
             {
-                combination.Down( e =>
+                combination.Down(e =>
                 {
                     if (predicate == null || predicate(e))
                     {
@@ -194,8 +205,8 @@ namespace Metaseed.Input
                     }
 
                     handling = false;
-                },$"Hit_Down_{combination}_{keyAction.ActionId}"),
-                combination.Up( e =>
+                }, $"Hit_Down_{combination}_{keyAction.ActionId}"),
+                combination.Up(e =>
                 {
                     if (!handling) return;
                     handling = false;
@@ -208,7 +219,7 @@ namespace Metaseed.Input
                     {
                         Async(() => keyAction?.Action(e));
                     }
-                },$"MapOnHit_Up_{combination}_{keyAction.ActionId}", keyAction.Description)
+                }, $"MapOnHit_Up_{combination}_{keyAction.ActionId}", keyAction.Description)
             };
         }
 

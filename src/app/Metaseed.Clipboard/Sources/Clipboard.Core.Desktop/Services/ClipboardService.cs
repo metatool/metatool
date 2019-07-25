@@ -12,6 +12,7 @@ using Clipboard.Core.Desktop.Models;
 using Clipboard.Shared.Core;
 using Clipboard.Shared.Logs;
 using Clipboard.Shared.Services;
+using Metaseed.Input;
 using Application = System.Windows.Application;
 using Window = System.Windows.Window;
 
@@ -252,12 +253,12 @@ namespace Clipboard.Core.Desktop.Services
         {
             Pause();
             var delayer = new Delayer<object>(TimeSpan.FromMilliseconds(delay));
-            delayer.Action += (sender, args) =>
+            delayer.Action += async (sender, args) =>
             {
-                SendKeys.SendWait("^v"); // Ctrl + V
+                // SendKeys.SendWait("^v"); // Ctrl + V
+                Metaseed.Input.Keyboard.Hit(Keys.V, new List<Keys> { Keys.RControlKey });
 
-
-                delayer        =  new Delayer<object>(TimeSpan.FromMilliseconds(delay));
+                delayer =  new Delayer<object>(TimeSpan.FromMilliseconds(delay));
                 delayer.Action += (sender2, args2) => { Resume(); };
                 delayer.ResetAndTick();
             };
@@ -267,7 +268,8 @@ namespace Clipboard.Core.Desktop.Services
         {
             Pause();
             await Task.Delay(delay);
-            SendKeys.SendWait("^v"); // Ctrl + V
+            // SendKeys.SendWait("^v"); // Ctrl + V
+            Metaseed.Input.Keyboard.Hit(Keys.V, new List<Keys> { Keys.RControlKey });
             await Task.Delay(delay);
             Resume();
         }

@@ -111,6 +111,12 @@ namespace Metaseed.MetaKeyboard
             ShowMessage(b, 88888);
         }
 
+        public static void CloseKeysTip()
+        {
+            trayIcon.CloseBalloon();
+
+        }
+
         public static void ShowKeysTip1(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)
         {
             if (tips == null) return;

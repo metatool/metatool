@@ -33,7 +33,9 @@ namespace Metaseed.MetaKeyboard
             }, null, true);
             Keyboard.KeyPress += (o, e1) => { };
 
+
             var keyboard61 = new Keyboard61();
+            var mouse = new Mouse();
             var fun = new FunctionalKeys();
 
             var software = new Utilities();

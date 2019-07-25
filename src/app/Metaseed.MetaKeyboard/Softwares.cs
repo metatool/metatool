@@ -37,7 +37,7 @@ namespace Metaseed.MetaKeyboard
                 }
             }, null, "Metaseed.OpenCodeEditor", "Open &Code Editor", true);
 
-            Keys.D.With(Keys.CapsLock).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
+            Keys.Q.With(Keys.CapsLock).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
 
             Keys.F.With(Keys.CapsLock).Down(async e =>
             {
@@ -93,6 +93,7 @@ namespace Metaseed.MetaKeyboard
                     }
                 }.Start();
             }, "Metaseed.WebSearch", "&Web Search");
+            
 
             var softwareTrigger = Keys.Space.With(Keys.CapsLock).Handled();
 

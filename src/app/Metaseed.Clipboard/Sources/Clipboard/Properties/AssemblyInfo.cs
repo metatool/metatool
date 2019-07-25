@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Etienne BAUDOUX")]
 [assembly: AssemblyProduct("Clipboard")]
-[assembly: AssemblyCopyright("© 2010 - 2019 Etienne BAUDOUX. All rights reserved.")]
+[assembly: AssemblyCopyright("© 2010 - 2019Metaseed. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
@@ -55,8 +55,8 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2019.7.23.6")]
-[assembly: AssemblyFileVersion("2019.7.23.6")]
+[assembly: AssemblyVersion("2019.7.25.4")]
+[assembly: AssemblyFileVersion("2019.7.25.4")]
 
 [assembly: InternalsVisibleTo("Clipboard.Tests")]
 

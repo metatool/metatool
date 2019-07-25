@@ -97,6 +97,7 @@ namespace Clipboard.ViewModels
             }
 
             var firstStart = Settings.Default.FirstStart;
+#if !DEBUG
             if (firstStart)
             {
                 var dataMigrationRequired = Settings.Default.DataMigrationRequired;
@@ -118,6 +119,7 @@ namespace Clipboard.ViewModels
                 Settings.Default.Save();
                 Settings.Default.Reload();
             }
+#endif
 
             // First call and initialization of services.
             var dataService = ServiceLocator.GetService<DataService>();
@@ -159,9 +161,9 @@ namespace Clipboard.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Commands
+#region Commands
 
         /// <summary>
         /// Initialize the commands of the View Model
@@ -176,7 +178,7 @@ namespace Clipboard.ViewModels
             ContextMenuOpeningCommand = new RelayCommand(ExecuteContextMenuOpeningCommand);
         }
 
-        #region Paste
+#region Paste
 
         /// <summary>
         /// Gets or sets a <see cref="RelayCommand"/> executed when we click on the Paste button
@@ -204,9 +206,9 @@ namespace Clipboard.ViewModels
             });
         }
 
-        #endregion
+#endregion
 
-        #region Synchronize
+#region Synchronize
 
         /// <summary>
         /// Gets or sets a <see cref="RelayCommand"/> executed when we click on the Synchronize now button
@@ -231,9 +233,9 @@ namespace Clipboard.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Settings
+#region Settings
 
         /// <summary>
         /// Gets or sets a <see cref="RelayCommand"/> executed when we click on the Settings button
@@ -260,9 +262,9 @@ namespace Clipboard.ViewModels
             ServiceLocator.GetService<CloudStorageService>().Reset();
         }
 
-        #endregion
+#endregion
 
-        #region Exit
+#region Exit
 
         /// <summary>
         /// Gets or sets a <see cref="RelayCommand"/> executed when we click on the Quit button
@@ -297,9 +299,9 @@ namespace Clipboard.ViewModels
             delayer.ResetAndTick();
         }
 
-        #endregion
+#endregion
 
-        #region ContextMenuClosed
+#region ContextMenuClosed
 
         /// <summary>
         /// Gets or sets a <see cref="RelayCommand"/> executed when the context menu is closed
@@ -311,9 +313,9 @@ namespace Clipboard.ViewModels
             CoreHelper.MinimizeFootprint();
         }
 
-        #endregion
+#endregion
 
-        #region ContextMenuOpening
+#region ContextMenuOpening
 
         /// <summary>
         /// Gets or sets a <see cref="RelayCommand"/> executed when the context menu is opening
@@ -325,11 +327,11 @@ namespace Clipboard.ViewModels
             CommandManager.InvalidateRequerySuggested();
         }
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region Handled Methods
+#region Handled Methods
 
         private void PasteBarWindow_Closed(object sender, EventArgs e)
         {
@@ -448,9 +450,9 @@ namespace Clipboard.ViewModels
             }
         }
 
-        #endregion
+#endregion
 
-        #region Methods
+#region Methods
 
         /// <summary>
         /// Hide the <see cref="ComponentModel.UI.Controls.NotifyIcon"/> and disable the mouse and keyboard interaction.
@@ -582,6 +584,6 @@ namespace Clipboard.ViewModels
             delayer.ResetAndTick();
         }
 
-        #endregion
+#endregion
     }
 }

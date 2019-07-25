@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Threading;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using Clipboard.ComponentModel.Messages;
 using Clipboard.Core.Desktop.Models;
@@ -61,6 +57,8 @@ namespace Clipboard
 
             cState.Down(e =>
             {
+                if (e.IsVirtual) return;
+
                 e.Handled = true;
 
                 CopyTips.ViewModel.SetData(_clipboard.DataService.DataEntries);
@@ -68,12 +66,18 @@ namespace Clipboard
                     Notify.ShowMessage(CopyTips, null, NotifyPosition.ActiveWindowCenter, true);
             }, "Metaseed.CopyToHistory", $"&Copy To Clipboard");
 
+            cState.Up(e =>
+            {
+                if (e.IsVirtual)
+                    e.GoToState = Keyboard.Root;
+            });
             registerKeys.ForEach(key =>
+
             {
                 var register = cState.Then(key.With(Keys.LControlKey));
                 register.Down(e =>
                 {
-                    e.Handled = true;
+                    e.Handled       = true;
                     _currentChannel = Channel.GetChannel(key.ToString());
                     CopyTips.ViewModel.SetChannelData(_currentChannel);
                 }, $"Metaseed.CopyTo{key}", $"Copy to channel &{key}");
@@ -84,10 +88,7 @@ namespace Clipboard
             {
                 e.Handled = true;
 
-                e.BeginInvoke(() =>
-                {
-                    CopyTips.Next();
-                });
+                e.BeginInvoke(() => { CopyTips.Next(); });
             }, "Metaseed.CopyToNextPosition", "Copy to next position");
             nextC.Up(e => { e.GoToState = cState; });
 
@@ -96,10 +97,7 @@ namespace Clipboard
             {
                 e.Handled = true;
 
-                e.BeginInvoke(() =>
-                {
-                    CopyTips.Previous();
-                });
+                e.BeginInvoke(() => { CopyTips.Previous(); });
             }, "Metaseed.CopyToPreviousPosition", "Copy to previous position");
             lastC.Up(e => { e.GoToState = cState; });
 
@@ -109,14 +107,12 @@ namespace Clipboard
                 _copyTipsCloseToken?.Close();
                 _copyTipsCloseToken = null;
                 cState.Disabled     = true;
-                CopyTips.ViewModel.ResetIsReplaceAll();
-
                 e.BeginInvoke(() =>
                 {
                     _clipboard.CopyTo(_currentChannel);
                     _currentChannel = null;
-                    Thread.Sleep(10);
-                    cState.Disabled = false;
+                    cState.Disabled =
+                        false; // the copy action Ctrl+C keys handled async, so using IsVirtual at cState in case of Disabled = false happened before Ctrl+C keys process by message queen
                 });
             }, "Metaseed.CopyTakeEffect", "Do copy action");
 
@@ -124,11 +120,19 @@ namespace Clipboard
             var vState = Keys.V.With(Keys.ControlKey);
             vState.Down(e =>
             {
+                if (e.IsVirtual) return;
+
                 PasteTips.ViewModel.SetData(_clipboard.DataService.DataEntries);
                 _pasteTipsCloseToken =
                     Notify.ShowMessage(PasteTips, null, NotifyPosition.ActiveWindowCenter, true);
                 e.Handled = true;
-            },"Metaseed.PasteFromClipboardHistory", "&Paste from clipboard history");
+            }, "Metaseed.PasteFromClipboardHistory", "&Paste from clipboard history");
+
+            vState.Up(e =>
+            {
+                if (e.IsVirtual)
+                    e.GoToState = Keyboard.Root;
+            });
 
             registerKeys.ForEach(key =>
             {
@@ -146,8 +150,6 @@ namespace Clipboard
             {
                 _pasteTipsCloseToken?.Close();
                 _pasteTipsCloseToken = null;
-                vState.Disabled      = true;
-                PasteTips.ViewModel.ResetIsPasteAll();
 
                 e.BeginInvoke(async () =>
                 {
@@ -162,7 +164,6 @@ namespace Clipboard
                         await _clipboard.PasteFrom(channel, PasteTips.CurrentItemIndex);
                     }
 
-                    vState.Disabled = false;
                 });
             }, "Metaseed.DoPasteAction", "Do paste action");
 
@@ -171,10 +172,7 @@ namespace Clipboard
             {
                 e.Handled = true;
 
-                e.BeginInvoke(() =>
-                {
-                    PasteTips.Next();
-                });
+                e.BeginInvoke(() => { PasteTips.Next(); });
             }, "Metaseed.PasteFromNextPosition", "Paste from next position");
             next.Up(e => { e.GoToState = vState; });
 
@@ -183,10 +181,7 @@ namespace Clipboard
             {
                 e.Handled = true;
 
-                e.BeginInvoke(() =>
-                {
-                    PasteTips.Previous();
-                });
+                e.BeginInvoke(() => { PasteTips.Previous(); });
             }, "Metaseed.PasteFromPreviousPosition", "Paste from previous position");
             last.Up(e => { e.GoToState = vState; });
 
@@ -196,7 +191,7 @@ namespace Clipboard
                 e.Handled = true;
                 _pasteTipsCloseToken?.Close();
                 e.BeginInvoke(() => { Messenger.Default.Send(new Message(), MessageIdentifiers.ShowPasteBarWindow); });
-            },"Metaseed.ClipboardBrowseAndManagement", "&Browse and manage clipboard");
+            }, "Metaseed.ClipboardBrowseAndManagement", "&Browse and manage clipboard");
             _clipboard = ServiceLocator.GetService<ClipboardService>();
 
             Keyboard.Hook();

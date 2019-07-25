@@ -22,31 +22,7 @@ namespace ConsoleApp1
                     ToggleKeys.CapsLock.AlwaysOff();
             }, "Metaseed.ToggleCapsLockKey", "Toggle CapsLock");
 
-            Keys.H.With(Keys.CapsLock).Map(Keys.Left);
-            Keys.J.With(Keys.CapsLock).Map(Keys.Down);
-            Keys.K.With(Keys.CapsLock).Map(Keys.Up);
-            Keys.L.With(Keys.CapsLock).Map(Keys.Right);
-            Keys.I.With(Keys.CapsLock).Map(Keys.Home);
-            Keys.O.With(Keys.CapsLock).Map(Keys.End);
-            Keys.U.With(Keys.CapsLock).Map(Keys.PageUp);
-            Keys.N.With(Keys.CapsLock).Map(Keys.PageDown);
-
-            Keys.H.With(Keys.LMenu).Map(Keys.Left);
-            Keys.J.With(Keys.LMenu).Map(Keys.Down);
-            Keys.K.With(Keys.LMenu).Map(Keys.Up);
-            Keys.L.With(Keys.LMenu).Map(Keys.Right);
-            Keys.I.With(Keys.LMenu).Map(Keys.Home);
-            Keys.O.With(Keys.LMenu).Map(Keys.End);
-            Keys.U.With(Keys.LMenu).Map(Keys.PageUp);
-            Keys.N.With(Keys.LMenu).Map(Keys.PageDown);
-
-            Keys.Back.With(Keys.CapsLock).Map(Keys.Delete);
-            Keys.P.With(Keys.CapsLock).Map(Keys.PrintScreen);
-            Keys.B.With(Keys.CapsLock).Map(Keys.Pause); // Break
-            Keys.OemSemicolon.With(Keys.CapsLock).Map(Keys.Apps); // like right click on current selection
-            Keys.OemOpenBrackets.With(Keys.CapsLock).Map(Keys.LButton);
-            Keys.OemCloseBrackets.With(Keys.CapsLock).Map(Keys.RButton);
-
+            // Fn
             Keys.D1.With(Keys.CapsLock).Map(Keys.F1);
             Keys.D2.With(Keys.CapsLock).Map(Keys.F2);
             Keys.D3.With(Keys.CapsLock).Map(Keys.F3);
@@ -59,6 +35,34 @@ namespace ConsoleApp1
             Keys.D0.With(Keys.CapsLock).Map(Keys.F10);
             Keys.OemMinus.With(Keys.CapsLock).Map(Keys.F11);
             Keys.Oemplus.With(Keys.CapsLock).Map(Keys.F12);
+
+            // Move (Vim)
+            Keys.K.With(Keys.CapsLock).Map(Keys.Up);
+            Keys.J.With(Keys.CapsLock).Map(Keys.Down);
+            Keys.H.With(Keys.CapsLock).Map(Keys.Left);
+            Keys.L.With(Keys.CapsLock).Map(Keys.Right);
+            Keys.I.With(Keys.CapsLock).Map(Keys.Home);
+            Keys.O.With(Keys.CapsLock).Map(Keys.End);
+            Keys.U.With(Keys.CapsLock).Map(Keys.PageUp);
+            Keys.N.With(Keys.CapsLock).Map(Keys.PageDown);
+
+            // RAlt + Move
+            Keys.H.With(Keys.RMenu).Map(Keys.Left);
+            Keys.J.With(Keys.RMenu).Map(Keys.Down);
+            Keys.K.With(Keys.RMenu).Map(Keys.Up);
+            Keys.L.With(Keys.RMenu).Map(Keys.Right);
+            Keys.I.With(Keys.RMenu).Map(Keys.Home);
+            Keys.O.With(Keys.RMenu).Map(Keys.End);
+            Keys.U.With(Keys.RMenu).Map(Keys.PageUp);
+            Keys.N.With(Keys.RMenu).Map(Keys.PageDown);
+
+
+            // 
+            Keys.Back.With(Keys.CapsLock).Map(Keys.Delete);
+            Keys.P.With(Keys.CapsLock).Map(Keys.PrintScreen);
+            Keys.B.With(Keys.CapsLock).Map(Keys.Pause); // Break
+            Keys.OemSemicolon.With(Keys.CapsLock).Map(Keys.Apps); // like right click on current selection
+
         }
     }
 }
