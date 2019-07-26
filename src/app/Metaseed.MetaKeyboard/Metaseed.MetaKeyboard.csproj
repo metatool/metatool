@@ -5,6 +5,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <ApplicationIcon>metaKeyboard.ico</ApplicationIcon>
+    <DisableFody Condition="'$(Configuration)' == 'Debug'">true</DisableFody>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -33,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.Clipboard\Metaseed.Clipboard.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.Core\Metaseed.Core.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
@@ -54,7 +57,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\software /J&#xD;&#xA;xcopy /Y  $(OutDir)Metaseed.MetaKeyboard.dll $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.exe $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.runtimeconfig.json $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y  $(OutDir)config.json $(SolutionDir)..\exe" />
+    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\software /J&#xD;&#xA;xcopy /Y  $(OutDir)Metaseed.MetaKeyboard.dll $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.exe $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.runtimeconfig.json $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y  $(OutDir)config.json $(SolutionDir)..\exe&#xD;&#xA;)" />
   </Target>
 
 </Project>

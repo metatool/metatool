@@ -44,10 +44,10 @@ MetaKB redefined the CapsLock key as a function key:
 | CL+u | `PageUp`   |
 | CL+n | `PageDown` |
 
-> The `RAlt(right Alt)` key combined with the keys in this table gives you a shortcut:
-> i.e. if you want to press `Alt+Up` you could just press `RAlt+k`, no need to press `Alt+CL+k` together.
+> The `LAlt(left Alt)` key combined with the keys in this table gives you a shortcut:
+> i.e. if you want to press `Alt+Up` you could just press `LAlt+k`, no need to press `Alt+CL+k` together.
 
-> Note: the `LAlt` still act as normal `Alt` key.
+> Note: the `RAlt` still act as normal `Alt` key.
 
 ## Other Remapped Keys
 

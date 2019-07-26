@@ -37,14 +37,17 @@ namespace Metaseed.MetaKeyboard
             trayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
         }
 
-        public static void AddContextMenuItem(string header, Action<MenuItem> excute,
-            Func<MenuItem, bool> canExcute = null, bool isCheckable = false)
+        public static MenuItem AddContextMenuItem(string header, Action<MenuItem> excute,
+            Func<MenuItem, bool> canExcute = null, bool isCheckable = false, bool? initialState = null)
         {
             var item = new MenuItem() {Header = header, IsCheckable = isCheckable};
+            if (initialState.HasValue) item.IsChecked = initialState.Value;
             item.Command = new DelegateCommand<MenuItem>()
                 {CanExecuteFunc = canExcute, CommandAction = excute};
             item.CommandParameter = item;
             trayIcon.ContextMenu.Items.Insert(0, item);
+
+            return item;
         }
 
         public static void ShowMessage(string msg)

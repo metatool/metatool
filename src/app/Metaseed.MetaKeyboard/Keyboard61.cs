@@ -46,15 +46,15 @@ namespace ConsoleApp1
             Keys.U.With(Keys.CapsLock).Map(Keys.PageUp);
             Keys.N.With(Keys.CapsLock).Map(Keys.PageDown);
 
-            // RAlt + Move
-            Keys.H.With(Keys.RMenu).Map(Keys.Left);
-            Keys.J.With(Keys.RMenu).Map(Keys.Down);
-            Keys.K.With(Keys.RMenu).Map(Keys.Up);
-            Keys.L.With(Keys.RMenu).Map(Keys.Right);
-            Keys.I.With(Keys.RMenu).Map(Keys.Home);
-            Keys.O.With(Keys.RMenu).Map(Keys.End);
-            Keys.U.With(Keys.RMenu).Map(Keys.PageUp);
-            Keys.N.With(Keys.RMenu).Map(Keys.PageDown);
+            // LAlt + Move
+            Keys.H.With(Keys.LMenu).Map(Keys.Left);
+            Keys.J.With(Keys.LMenu).Map(Keys.Down);
+            Keys.K.With(Keys.LMenu).Map(Keys.Up);
+            Keys.L.With(Keys.LMenu).Map(Keys.Right);
+            Keys.I.With(Keys.LMenu).Map(Keys.Home);
+            Keys.O.With(Keys.LMenu).Map(Keys.End);
+            Keys.U.With(Keys.LMenu).Map(Keys.PageUp);
+            Keys.N.With(Keys.LMenu).Map(Keys.PageDown);
 
 
             // 
