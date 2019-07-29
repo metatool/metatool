@@ -7,14 +7,14 @@ using FlaUI.Core.AutomationElements;
 using FlaUI.UIA3;
 using Metaseed.Input;
 using Metaseed.UI;
-
+using static Metaseed.Input.Key;
 namespace Metaseed.MetaKeyboard
 {
     public class FunctionalKeys
     {
         public FunctionalKeys()
         {
-            Keys.F.With(Keys.LWin).Down(e =>
+            (LWin+F).Down(e =>
             {
                 var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;// Windows Explorer or open/save as dialog
@@ -32,7 +32,7 @@ namespace Metaseed.MetaKeyboard
             }, "Metaseed.FocusFileItemsView", "Focus &File Items View");
 
 
-            Keys.N.With(Keys.LWin).Down(e =>
+            (LWin+N).Down(e =>
             {
                 var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;
@@ -48,7 +48,7 @@ namespace Metaseed.MetaKeyboard
                 e.Handled = true;
             }, "Metaseed.FocusNavigationTreeView", "Focus &Navigation Tree View");
 
-            Keys.OemPipe.With(Keys.CapsLock).Down(async e =>
+            (Caps+Pipe).Down(async e =>
             {
                 var c = UI.Window.CurrentWindowClass;
                 if ("CabinetWClass" != c && "#32770" != c) return;
@@ -60,7 +60,7 @@ namespace Metaseed.MetaKeyboard
                 e.Handled = true;
             }, "Metaseed.CopySelectedFilesPath", "Copy Selected Files Path");
 
-            Keys.D.With(Keys.LWin).Down(e =>
+            (LWin+D).Down(e =>
                 {
                     Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                     e.Handled = true;
@@ -90,7 +90,7 @@ namespace Metaseed.MetaKeyboard
                  return true;
              },"Metaseed.NewFile", "&New File");
 
-            Keys.C.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
+            (LCtrl+C).With(Keys.LWin).With(Keys.LMenu)
                 .Down(e =>
                 {
                     Notify.ShowMessage("MetaKeyBoard Closing...");
@@ -98,8 +98,7 @@ namespace Metaseed.MetaKeyboard
                 }, "Metaseed.Close_MetaKeyBoard", "Close");
 
 
-            Keys.X.With(Keys.LControlKey).With(Keys.LWin).With(Keys.LMenu)
-                .Down(e =>
+            (LCtrl+LWin+LAlt+X).Down(e =>
                 {
                     Notify.ShowMessage("MetaKeyBoard Restarting...");
                     var p = Application.ExecutablePath;
@@ -107,7 +106,7 @@ namespace Metaseed.MetaKeyboard
                     Process.Start(path);
                     Environment.Exit(0);
                 }, "Metaseed.Restart_MetaKeyBoard", "Restart");
-            Keys.OemQuestion.With(Keys.CapsLock).Down(e =>
+            (Caps+Question).Down(e =>
             {
                 Keyboard.ShowTip();
                 e.Handled = true;

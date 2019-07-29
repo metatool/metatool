@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using Metaseed.Input;
-
 using static Metaseed.Input.Key;
+
 namespace ConsoleApp1
 {
     class Keyboard61
@@ -13,7 +13,7 @@ namespace ConsoleApp1
 
             Keys.CapsLock.MapOnHit(Keys.Escape, e => !e.IsVirtual, false);
 
-            Keys.Oemtilde.With(Keys.CapsLock).Down(e =>
+            (Caps + Tilde).Down(e =>
             {
                 e.Handled = true;
                 var state = ToggleKeys.CapsLock.State;
@@ -38,32 +38,30 @@ namespace ConsoleApp1
             (Caps + Plus).Map(F12);
 
             // Move (Vim)
-            Keys.K.With(Keys.CapsLock).Map(Keys.Up);
-            Keys.J.With(Keys.CapsLock).Map(Keys.Down);
-            Keys.H.With(Keys.CapsLock).Map(Keys.Left);
-            Keys.L.With(Keys.CapsLock).Map(Keys.Right);
-            Keys.I.With(Keys.CapsLock).Map(Keys.Home);
-            Keys.O.With(Keys.CapsLock).Map(Keys.End);
-            Keys.U.With(Keys.CapsLock).Map(Keys.PageUp);
-            Keys.N.With(Keys.CapsLock).Map(Keys.PageDown);
+            (Caps + K).Map(Up);
+            (Caps + J).Map(Down);
+            (Caps + H).Map(Left);
+            (Caps + L).Map(Right);
+            (Caps + I).Map(Home);
+            (Caps + O).Map(End);
+            (Caps + U).Map(PageUp);
+            (Caps + N).Map(PageDown);
 
             // LAlt + Move
-            Keys.H.With(Keys.LMenu).Map(Keys.Left);
-            Keys.J.With(Keys.LMenu).Map(Keys.Down);
-            Keys.K.With(Keys.LMenu).Map(Keys.Up);
-            Keys.L.With(Keys.LMenu).Map(Keys.Right);
-            Keys.I.With(Keys.LMenu).Map(Keys.Home);
-            Keys.O.With(Keys.LMenu).Map(Keys.End);
-            Keys.U.With(Keys.LMenu).Map(Keys.PageUp);
-            Keys.N.With(Keys.LMenu).Map(Keys.PageDown);
-
+            (LMenu + H).Map(Left);
+            (LMenu + J).Map(Down);
+            (LMenu + K).Map(Up);
+            (LMenu + L).Map(Right);
+            (LMenu + I).Map(Home);
+            (LMenu + O).Map(End);
+            (LMenu + U).Map(PageUp);
+            (LMenu + N).Map(PageDown);
 
             // 
-            Keys.Back.With(Keys.CapsLock).Map(Keys.Delete);
-            Keys.P.With(Keys.CapsLock).Map(Keys.PrintScreen);
-            Keys.B.With(Keys.CapsLock).Map(Keys.Pause); // Break
-            Keys.OemSemicolon.With(Keys.CapsLock).Map(Keys.Apps); // like right click on current selection
-
+            (Caps + Back).Map(Del);
+            (Caps + P).Map(PrintScreen);
+            (Caps + B).Map(Pause);        // Break
+            (Caps + SemiColon).Map(Apps); // like right click on current selection
         }
     }
 }

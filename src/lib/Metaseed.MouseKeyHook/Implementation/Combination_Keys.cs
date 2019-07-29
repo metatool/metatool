@@ -12,5 +12,9 @@ namespace Metaseed.Input
         {
             return new Combination(combB.TriggerKey, combA.AllKeys.Concat(combB.Chord));
         }
+        public static Combination operator +(Combination keyA, Key keyB)
+        {
+            return new Combination(keyB.KeyCode, keyA.AllKeys);
+        }
     }
 }

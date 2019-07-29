@@ -75,7 +75,12 @@ namespace Metaseed.Input
         public static readonly Key SemiColon = new Key(Keys.OemSemicolon);
         public static readonly Key OpenBrackets = new Key(Keys.OemOpenBrackets);
         public static readonly Key CloseBrackets = new Key(Keys.OemCloseBrackets);
+        /// <summary>
+        /// On US keyboard please use Pipe
+        /// </summary>
         public static readonly Key Backslash = new Key(Keys.OemBackslash);
+        public static readonly Key Pipe = new Key(Keys.OemPipe);
+
         public static readonly Key Esc = new Key(Keys.Escape);
 
 
