@@ -14,9 +14,6 @@ namespace Metaseed.MetaKeyboard
     {
         public FunctionalKeys()
         {
-
-
-
             Keys.F.With(Keys.LWin).Down(e =>
             {
                 var c = UI.Window.CurrentWindowClass;
@@ -49,7 +46,7 @@ namespace Metaseed.MetaKeyboard
                 }
 
                 e.Handled = true;
-            }, "Metaseed.FocusNavigAtionTreeView", "Focus &Navigation Tree View");
+            }, "Metaseed.FocusNavigationTreeView", "Focus &Navigation Tree View");
 
             Keys.OemPipe.With(Keys.CapsLock).Down(async e =>
             {

@@ -14,6 +14,7 @@ namespace Metaseed.Input
     {
         Keys TriggerKey { get; }
         IEnumerable<Keys> Chord { get; }
+        IEnumerable<Keys> AllKeys { get; }
         int ChordLength { get; }
         bool Disabled { get; set; }
 

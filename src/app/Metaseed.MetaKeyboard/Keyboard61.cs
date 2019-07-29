@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using Metaseed.Input;
 
+using static Metaseed.Input.Key;
 namespace ConsoleApp1
 {
     class Keyboard61
@@ -23,18 +24,18 @@ namespace ConsoleApp1
             }, "Metaseed.ToggleCapsLockKey", "Toggle CapsLock");
 
             // Fn
-            Keys.D1.With(Keys.CapsLock).Map(Keys.F1);
-            Keys.D2.With(Keys.CapsLock).Map(Keys.F2);
-            Keys.D3.With(Keys.CapsLock).Map(Keys.F3);
-            Keys.D4.With(Keys.CapsLock).Map(Keys.F4);
-            Keys.D5.With(Keys.CapsLock).Map(Keys.F5);
-            Keys.D6.With(Keys.CapsLock).Map(Keys.F6);
-            Keys.D7.With(Keys.CapsLock).Map(Keys.F7);
-            Keys.D8.With(Keys.CapsLock).Map(Keys.F8);
-            Keys.D9.With(Keys.CapsLock).Map(Keys.F9);
-            Keys.D0.With(Keys.CapsLock).Map(Keys.F10);
-            Keys.OemMinus.With(Keys.CapsLock).Map(Keys.F11);
-            Keys.Oemplus.With(Keys.CapsLock).Map(Keys.F12);
+            (Caps + D1).Map(F1);
+            (Caps + D2).Map(F2);
+            (Caps + D3).Map(F3);
+            (Caps + D4).Map(F4);
+            (Caps + D5).Map(F5);
+            (Caps + D6).Map(F6);
+            (Caps + D7).Map(F7);
+            (Caps + D8).Map(F8);
+            (Caps + D9).Map(F9);
+            (Caps + D0).Map(F10);
+            (Caps + Minus).Map(F11);
+            (Caps + Plus).Map(F12);
 
             // Move (Vim)
             Keys.K.With(Keys.CapsLock).Map(Keys.Up);

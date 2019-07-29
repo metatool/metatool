@@ -43,9 +43,9 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             var handler = KeyUp;
             if (handler == null || e.Handled || !e.IsKeyUp)
                 return;
-            if (KeyboardState.HandledDownKeys.Contains(e.KeyCode))
+            if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
             {
-                KeyboardState.HandledDownKeys.Remove(e.KeyCode);
+                KeyboardState.HandledDownKeys.SetKeyUp(e.KeyCode);
             }
             handler(this, e);
         }

@@ -1,4 +1,4 @@
-namespace Metaseed.Input.MouseKeyHook
+namespace Metaseed.Input
 {
     public partial class Combination
     {

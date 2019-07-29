@@ -9,9 +9,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 
-namespace Metaseed.Input.MouseKeyHook
+namespace Metaseed.Input
 {
     /// <summary>
     ///     Used to represent a key combination as frequently used in application as shortcuts.
@@ -57,6 +58,8 @@ namespace Metaseed.Input.MouseKeyHook
         ///     Number of chord (modifier) keys which must be already down when the trigger key is pressed.
         /// </summary>
         public int ChordLength => _chord.Count;
+
+        public IEnumerable<Keys> AllKeys => _chord.Append(TriggerKey);
 
         //        /// <summary>
         //        ///     A chainable builder method to simplify chord creation. Used along with <see cref="TriggeredBy" />,

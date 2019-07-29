@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -21,22 +22,39 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
     /// </remarks>
     public class KeyboardState
     {
-        public static ISet<Keys> HandledDownKeys = new SortedSet<Keys>();
-        private readonly byte[] m_KeyboardStateNative;
+        private static MemoryMappedViewAccessor accessor;
+        static KeyboardState()
+        {
+            var m = MemoryMappedFile.CreateOrOpen("Metaseed.HandledDownKeys", 256);
+            accessor = m.CreateViewAccessor(0, 256);
+        }
 
+        public static KeyboardState HandledDownKeys;
+        private byte[] _keyboardStateNative;
+      
         private KeyboardState(byte[] keyboardStateNative)
         {
-            m_KeyboardStateNative = keyboardStateNative;
+            this._keyboardStateNative = keyboardStateNative;
         }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (var handledDownKey in HandledDownKeys)
+
+            sb.Append(HandledDownKeys.ToString());
+            sb.Append(Environment.NewLine);
+            for (var i = 0; i < 256; i++)
             {
-                sb.Append(handledDownKey);
+                var key = (Keys) i;
+                if (_keyboardStateNative[i] != 0)
+                {
+                    sb.Append($"{key,12}");
+                    if (IsDown(key)) sb.Append("↓");
+                    if (IsUp(key)) sb.Append("↑");
+                    if (IsToggled(key)) sb.Append("⇫");
+                }
             }
-            return  sb + BitConverter.ToString(m_KeyboardStateNative);
+            return  sb.ToString();
         }
 
         /// <summary>
@@ -46,6 +64,9 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         /// <returns>An instance of <see cref="KeyboardState" /> class representing a snapshot of keyboard state at certain moment.</returns>
         public static KeyboardState GetCurrent()
         {
+            var bytes = new byte[256];
+            accessor.ReadArray<byte>(0, bytes, 0, 256);
+            HandledDownKeys = new KeyboardState(bytes);
             var keyboardStateNative = new byte[256];
             KeyboardNativeMethods.GetKeyboardState(keyboardStateNative);
             return new KeyboardState(keyboardStateNative);
@@ -53,7 +74,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         internal byte[] GetNativeState()
         {
-            return m_KeyboardStateNative;
+            return _keyboardStateNative;
         }
 
         /// <summary>
@@ -63,7 +84,11 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         /// <returns><b>true</b> if key was down, <b>false</b> - if key was up.</returns>
         public bool IsDown(Keys key)
         {
-            if (HandledDownKeys.Contains(key)) return true;
+            if (this != HandledDownKeys)
+            {
+                if (HandledDownKeys.IsDown(key)) return true;
+            }
+
             if ((int)key < 256) return IsDownRaw(key);
             if (key == Keys.Alt) return IsDownRaw(Keys.LMenu) || IsDownRaw(Keys.RMenu);
             if (key == Keys.Shift) return IsDownRaw(Keys.LShiftKey) || IsDownRaw(Keys.RShiftKey);
@@ -73,12 +98,43 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         public bool IsUp(Keys key)
         {
-            if (HandledDownKeys.Contains(key)) return false;
+            if (this != HandledDownKeys)
+            {
+                if (HandledDownKeys.IsDown(key)) return false;
+            }
+
             if ((int)key < 256) return IsUpRaw(key);
             if (key == Keys.Alt) return IsUpRaw(Keys.LMenu) || IsUpRaw(Keys.RMenu);
             if (key == Keys.Shift) return IsUpRaw(Keys.LShiftKey) || IsUpRaw(Keys.RShiftKey);
             if (key == Keys.Control) return IsUpRaw(Keys.LControlKey) || IsUpRaw(Keys.RControlKey);
             return false;
+        }
+
+        internal void SetKeyUp(Keys key)
+        {
+            var virtualKeyCode = (int)key;
+            if (virtualKeyCode < 0 || virtualKeyCode > 255)
+                throw new ArgumentOutOfRangeException("key", key, "The value must be between 0 and 255.");
+
+            var v = _keyboardStateNative[virtualKeyCode] &= 0x7F;
+
+            if (this == HandledDownKeys)
+            {
+                accessor.Write(virtualKeyCode, v);
+            }
+        }
+        internal void SetKeyDown(Keys key)
+        {
+            var virtualKeyCode = (int)key;
+            if (virtualKeyCode < 0 || virtualKeyCode > 255)
+                throw new ArgumentOutOfRangeException("key", key, "The value must be between 0 and 255.");
+
+            var v = _keyboardStateNative[virtualKeyCode] |= 0x80;
+
+            if (this == HandledDownKeys)
+            {
+                accessor.Write(virtualKeyCode, v);
+            }
         }
 
         private bool IsUpRaw(Keys key)
@@ -134,7 +190,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             var virtualKeyCode = (int) key;
             if (virtualKeyCode < 0 || virtualKeyCode > 255)
                 throw new ArgumentOutOfRangeException("key", key, "The value must be between 0 and 255.");
-            return m_KeyboardStateNative[virtualKeyCode];
+            return _keyboardStateNative[virtualKeyCode];
         }
 
         private static bool GetHighBit(byte value)

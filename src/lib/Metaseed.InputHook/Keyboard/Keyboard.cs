@@ -116,20 +116,17 @@ namespace Metaseed.Input
             var             handling     = false;
             KeyEventArgsExt keyDownEvent = null;
 
-            void AsyncCall()
+            void AsyncCall(KeyEventArgsExt e)
             {
-                Async(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
+                e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
                     target.Chord.Cast<VirtualKeyCode>(),
                     (VirtualKeyCode) target.TriggerKey));
             }
 
             IRemovable AllKeyUp()
             {
-                void keyUpHandler(Object s, KeyEventArgs e1)
+                void KeyUpHandler(object s, KeyEventArgsExt e)
                 {
-                    var e = e1 as KeyEventArgsExt;
-                    Debug.Assert(e != null, nameof(e) + " != null");
-
                     if (keyDownEvent != e.LastKeyDownEvent ||
                         !source.IsAnyKey(e.KeyCode)) return;
 
@@ -140,11 +137,11 @@ namespace Metaseed.Input
 
                     var up = e.KeyboardState.IsUp(source.TriggerKey) && e.KeyboardState.AreAllUp(source.Chord);
                     if (!up) return;
-                    AsyncCall();
+                    AsyncCall(e);
                 }
 
-                _Hook.KeyUp += keyUpHandler;
-                return new Removable(() => _Hook.KeyUp -= keyUpHandler);
+                _Hook.KeyUp += KeyUpHandler;
+                return new Removable(() => _Hook.KeyUp -= KeyUpHandler);
             }
 
             return new Removables()
@@ -155,7 +152,6 @@ namespace Metaseed.Input
                     {
                         handling     = true;
                         keyDownEvent = e;
-                        // KeyboardState.HandledDownKeys.Add(source.TriggerKey);
                         e.Handled = true;
                         return;
                     }
@@ -171,7 +167,8 @@ namespace Metaseed.Input
                         e.Handled = true;
 
                         if (keyDownEvent != e.LastKeyDownEvent) return;
-                        AsyncCall();
+
+                        AsyncCall(e);
                     }, $"MapOnHit_Up_{source}_To_{target}", "")
             };
         }
@@ -196,19 +193,20 @@ namespace Metaseed.Input
                     if (predicate == null || predicate(e))
                     {
                         handling = true;
-                        if (!markHandled) return;
-
                         keyDownEvent = e;
-                        // KeyboardState.HandledDownKeys.Add(combination.TriggerKey);
+
+                        if (!markHandled) return;
                         e.Handled = true;
                         return;
                     }
 
                     handling = false;
                 }, $"Hit_Down_{combination}_{keyAction.ActionId}"),
+
                 combination.Up(e =>
                 {
                     if (!handling) return;
+
                     handling = false;
                     if (markHandled)
                     {
@@ -217,7 +215,7 @@ namespace Metaseed.Input
 
                     if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
                     {
-                        Async(() => keyAction?.Action(e));
+                        e.BeginInvoke(() => keyAction?.Action(e));
                     }
                 }, $"MapOnHit_Up_{combination}_{keyAction.ActionId}", keyAction.Description)
             };

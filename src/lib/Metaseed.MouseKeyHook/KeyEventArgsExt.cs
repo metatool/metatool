@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Metaseed.Input.MouseKeyHook;
@@ -52,6 +53,23 @@ namespace Metaseed.Input
             _dispatcher.BeginInvoke(priority, action);
         }
 
+        public static async Task<T> InvokeAsync<T>(Func<T> action,  DispatcherPriority priority = DispatcherPriority.Send)
+        {
+            var o = _dispatcher.BeginInvoke(priority, action);
+            await o;
+            return (T)(o.Result);
+        }
+
+        public static async Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Send)
+        {
+            await InvokeAsync<object>(() =>
+            {
+                action();
+                return null;
+            }, priority);
+        }
+
+
         /// <summary>
         ///     The hardware scan code.
         /// </summary>
@@ -89,7 +107,7 @@ namespace Metaseed.Input
             get => base.Handled;
             set
             {
-                if (IsKeyDown && value) KeyboardState.HandledDownKeys.Add(KeyCode);
+                if (IsKeyDown && value) KeyboardState.HandledDownKeys.SetKeyDown(KeyCode);
 
                 base.Handled = value;
             }

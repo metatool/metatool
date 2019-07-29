@@ -12,7 +12,7 @@ namespace Metaseed.MetaKeyboard
     {
         public Utilities()
         {
-            Keys.C.With(Keys.CapsLock).Hit( async e =>
+            Keys.C.With(Keys.CapsLock).Hit(async e =>
             {
                 var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};
 
@@ -79,21 +79,43 @@ namespace Metaseed.MetaKeyboard
                     ? $"{Config.Current.Tools.Cmd} /start \"{path}\""
                     : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
             }, "Metaseed.Terminal", "Open &Terminal");
-            Keys.W.With(Keys.CapsLock).Down(e =>
+                  
+            Keys.W.With(Keys.CapsLock).Down(async e =>
             {
-                var altDown = e.KeyboardState.IsDown(Keys.Menu);
+                e.Handled = true;
+
+                var altDown     = e.KeyboardState.IsDown(Keys.Menu);
+                var url = altDown
+                    ? Config.Current.Tools.SearchEngineSecondary
+                    : Config.Current.Tools.SearchEngine;
+
+                var defaultPath = Browser.DefaultPath;
+                var exeName     = Path.GetFileNameWithoutExtension(defaultPath);
+                var process     = await VirtualDesktopManager.Inst.GetFirstProcessOnCurrentVirtualDesktop(exeName);
+                if (process == null)
+                {
+                    new Process
+                    {
+                        StartInfo =
+                        {
+                            UseShellExecute = true,
+                            FileName        = defaultPath,
+                            ArgumentList    = {url, "--new-window", "--new-instance"}
+                        }
+                    }.Start();
+                    return;
+                }
+
                 new Process
                 {
                     StartInfo =
                     {
                         UseShellExecute = true,
-                        FileName = altDown
-                            ? Config.Current.Tools.SearchEngineSecondary
-                            : Config.Current.Tools.SearchEngine
+                        FileName = url
                     }
                 }.Start();
-            }, "Metaseed.WebSearch", "&Web Search");
-            
+            }, "Metaseed.WebSearch", "&Web Search(Alt: second)");
+
 
             var softwareTrigger = Keys.Space.With(Keys.CapsLock).Handled();
 
@@ -118,13 +140,20 @@ namespace Metaseed.MetaKeyboard
                     Utils.Run(Config.Current.Tools.GifTool);
                 }, "Metaseed.GifRecord", "Start &Gif Record ");
 
-            softwareTrigger.Then(Keys.N).Down(e =>
+            softwareTrigger.Then(Keys.N).Down(async e =>
             {
                 e.Handled = true;
                 var exeName = "Notepad";
-                var notePad = Process.GetProcessesByName(exeName);
 
-                var hWnd = notePad.FirstOrDefault(p => p.MainWindowTitle == "Untitled - Notepad")?.MainWindowHandle;
+                var notePads = await
+                    VirtualDesktopManager.Inst.GetProcessesOnCurrentVirtualDesktop(exeName,
+                        p => p.MainWindowTitle == "Untitled - Notepad");
+
+
+                var notePad = notePads.FirstOrDefault();
+
+                var hWnd = notePad?.MainWindowHandle;
+
                 if (hWnd != null)
                 {
                     Window.Show(hWnd.Value);

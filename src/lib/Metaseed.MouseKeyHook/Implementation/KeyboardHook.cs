@@ -10,6 +10,7 @@ using Metaseed.MetaKeyboard;
 
 namespace Metaseed.Input.MouseKeyHook
 {
+    public delegate void KeyEventHandler(object sender, KeyEventArgsExt e);
     public class KeyboardHook
     {
         private readonly        IKeyboardMouseEvents _eventSource;
