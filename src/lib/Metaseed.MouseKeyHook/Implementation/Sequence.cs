@@ -14,6 +14,8 @@ namespace Metaseed.Input.MouseKeyHook
     /// </summary>
     public class Sequence : SequenceBase<ICombination>, ISequence
     {
+
+
         private static char Comma = '£¬';
 
         internal Sequence(params ICombination[] combinations) : base(combinations)

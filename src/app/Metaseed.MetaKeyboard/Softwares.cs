@@ -13,7 +13,7 @@ namespace Metaseed.MetaKeyboard
     {
         public Utilities()
         {
-            (Caps+C).Hit(async e =>
+            (Caps + C).Hit(async e =>
             {
                 var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};
 
@@ -38,9 +38,9 @@ namespace Metaseed.MetaKeyboard
                 }
             }, null, "Metaseed.OpenCodeEditor", "Open &Code Editor", true);
 
-            (Caps+Q).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
+            (Caps + Q).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
 
-            (Caps+F).Down(async e =>
+            (Caps + F).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -60,7 +60,7 @@ namespace Metaseed.MetaKeyboard
                     : $"{Config.Current.Tools.EveryThing} -path {path} -toggle-window");
             }, "Metaseed.Find", "&Find With Everything");
 
-            (Caps+T).Down(async e =>
+            (Caps + T).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -80,12 +80,12 @@ namespace Metaseed.MetaKeyboard
                     ? $"{Config.Current.Tools.Cmd} /start \"{path}\""
                     : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
             }, "Metaseed.Terminal", "Open &Terminal");
-                  
-            (Caps+W).Down(async e =>
+
+            (Caps + W).Down(async e =>
             {
                 e.Handled = true;
 
-                var altDown     = e.KeyboardState.IsDown(Keys.Menu);
+                var altDown = e.KeyboardState.IsDown(Keys.Menu);
                 var url = altDown
                     ? Config.Current.Tools.SearchEngineSecondary
                     : Config.Current.Tools.SearchEngine;
@@ -112,15 +112,15 @@ namespace Metaseed.MetaKeyboard
                     StartInfo =
                     {
                         UseShellExecute = true,
-                        FileName = url
+                        FileName        = url
                     }
                 }.Start();
             }, "Metaseed.WebSearch", "&Web Search(Alt: second)");
 
 
-            var softwareTrigger = Keys.Space.With(Keys.CapsLock).Handled();
+            var softwareTrigger = (Caps + Space).Handled();
 
-            softwareTrigger.Then(Keys.R).Down(
+            (softwareTrigger, R).Down(
                 e =>
                 {
                     e.Handled = true;

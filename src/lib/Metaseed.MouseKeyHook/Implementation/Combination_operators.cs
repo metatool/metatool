@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -17,4 +18,5 @@ namespace Metaseed.Input
             return new Combination(keyB, keyA.AllKeys);
         }
     }
-}
+
+  }

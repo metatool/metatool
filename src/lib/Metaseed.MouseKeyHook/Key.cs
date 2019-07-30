@@ -8,14 +8,14 @@ using System.Windows.Media.Animation;
 
 namespace Metaseed.Input
 {
-    /// <summary>
+      /// <summary>
     /// https://www.w3.org/TR/uievents-key/
     /// </summary>
     public partial class Key : IComparable, IComparable<Key>
     {
         private SortedSet<Keys> _codes;
         private int             _val;
-
+IKey
         public SortedSet<Keys> Codes
         {
             get => _codes;
@@ -55,7 +55,11 @@ namespace Metaseed.Input
         {
             return new Key(keys);
         }
+        public static implicit operator Combination(Key key)
+        {
+            return new Combination(key);
 
+        }
         public static explicit operator Keys(Key key)
         {
             return key.Codes.First();

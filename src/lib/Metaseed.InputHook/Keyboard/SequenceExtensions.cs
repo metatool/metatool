@@ -10,6 +10,28 @@ namespace Metaseed.Input
 {
     public static class SequenceExtensions
     {
+        public static void Down(this ValueTuple<ICombination, ICombination> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Down(action,actionId,description);
+        }
+        public static void Down(this ValueTuple<ICombination, ICombination, ICombination> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action, actionId, description);
+        }
+        public static void Down(this ValueTuple<ICombination, ICombination, ICombination,ICombination> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Down(action, actionId, description);
+        }
+
+        public static void Down(this ValueTuple<ICombination, ICombination, ICombination, ICombination, ICombination> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Down(action, actionId, description);
+        }
+
         public static void Down(this ISequence sequence,
             Action<KeyEventArgsExt> action, string actionId = "", string description = "")
         {
@@ -39,5 +61,7 @@ namespace Metaseed.Input
             sequence.Up(null);
             return last.UpAsync(timeout);
         }
+
+
     }
 }
