@@ -78,7 +78,7 @@ namespace Metaseed.Input
                         else
                         {
                             Async(Repeat(repeat,() => InputSimu.Inst.Keyboard.ModifiedKeyDown(target.Chord.Cast<VirtualKeyCode>(),
-                                    (VirtualKeyCode) target.TriggerKey)
+                                    (VirtualKeyCode)(Keys) target.TriggerKey)
                             ));
                         }
 
@@ -105,7 +105,7 @@ namespace Metaseed.Input
                     }
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) target.TriggerKey);
+                        (VirtualKeyCode) (Keys)target.TriggerKey);
                 }, "Map_Up_{source}_To_{target}", "")
             };
         }
@@ -120,7 +120,7 @@ namespace Metaseed.Input
             {
                 e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
                     target.Chord.Cast<VirtualKeyCode>(),
-                    (VirtualKeyCode) target.TriggerKey));
+                    (VirtualKeyCode) (Keys)target.TriggerKey));
             }
 
             IRemovable AllKeyUp()

@@ -96,6 +96,11 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             return false;
         }
 
+        public bool IsDown(Key key)
+        {
+            return key.Codes.Any(IsDown);
+        }
+
         public bool IsUp(Keys key)
         {
             if (this != HandledDownKeys)
@@ -108,6 +113,11 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (key == Keys.Shift) return IsUpRaw(Keys.LShiftKey) || IsUpRaw(Keys.RShiftKey);
             if (key == Keys.Control) return IsUpRaw(Keys.LControlKey) || IsUpRaw(Keys.RControlKey);
             return false;
+        }
+
+        public bool IsUp(Key key)
+        {
+            return key.Codes.Any(IsUp);
         }
 
         internal void SetKeyUp(Keys key)
@@ -179,8 +189,16 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         {
             return keys.All(IsDown);
         }
-
+        public bool AreAllDown(IEnumerable<Key> keys)
+        {
+            return keys.All(IsDown);
+        }
         public bool AreAllUp(IEnumerable<Keys> keys)
+        {
+            return keys.All(IsUp);
+        }
+
+        public bool AreAllUp(IEnumerable<Key> keys)
         {
             return keys.All(IsUp);
         }

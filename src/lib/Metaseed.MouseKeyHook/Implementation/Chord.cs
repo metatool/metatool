@@ -10,20 +10,24 @@ using System.Windows.Forms;
 
 namespace Metaseed.Input.MouseKeyHook.Implementation
 {
-    internal class Chord : IEnumerable<Keys>
+    internal class Chord : IEnumerable<Key>
     {
-        private readonly Keys[] _keys;
+        private readonly Key[] _keys;
 
-        internal Chord(IEnumerable<Keys> additionalKeys)
+        internal Chord(IEnumerable<Key> additionalKeys)
         {
             _keys = additionalKeys.OrderBy(k => k).ToArray();
+        }
+        internal Chord(IEnumerable<Keys> additionalKeys)
+        {
+            _keys = additionalKeys.OrderBy(k => k).Select(k=>new Key(k)).ToArray();
         }
 
         public int Count => _keys.Length;
 
-        public IEnumerator<Keys> GetEnumerator()
+        public IEnumerator<Key> GetEnumerator()
         {
-            return _keys.Cast<Keys>().GetEnumerator();
+            return _keys.Cast<Key>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -33,7 +37,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         public override string ToString()
         {
-            return string.Join("+", _keys);
+            return string.Join("+", _keys as IEnumerable<Key>);
         }
 
         public static Chord FromString(string chord)
@@ -60,22 +64,22 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             return Equals((Chord) obj);
         }
 
-        private int _hash = 0;
         public override int GetHashCode()
         {
-            if (_hash != 0) return _hash;
+            var hash = 0;
             var hc = _keys.Length;
             foreach (var t in _keys)
             {
-                hc = (int) unchecked(hc * 314159 + t);
+                hc = (int) unchecked(hc * 314159 + t.GetHashCode());
             }
+
             unchecked
             {
-              _hash = (_keys.Length + 13) ^
+                hash = (_keys.Length + 13) ^
                        ((_keys.Length != 0 ? (int) hc : 0) * 397);
             }
 
-            return _hash;
+            return hash;
         }
     }
 }

@@ -12,9 +12,9 @@ namespace Metaseed.Input
     }
     public interface ICombination :IKeyState, IKeyEventAsync
     {
-        Keys TriggerKey { get; }
-        IEnumerable<Keys> Chord { get; }
-        IEnumerable<Keys> AllKeys { get; }
+        Key TriggerKey { get; }
+        IEnumerable<Key> Chord { get; }
+        IEnumerable<Key> AllKeys { get; }
         int ChordLength { get; }
         bool Disabled { get; set; }
 

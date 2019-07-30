@@ -27,7 +27,7 @@ namespace Metaseed.Input
         }
         public static IRemovable Map(this ICombination key, Key target, Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
         {
-            return Keyboard.Map(key as Combination, new Combination(target.KeyCode), predicate, repeat);
+            return Keyboard.Map(key as Combination, new Combination(target), predicate, repeat);
         }
         public static IRemovable Map(this ICombination key, ICombination target, Predicate<KeyEventArgsExt> predicate = null, int repeat =1)
         {

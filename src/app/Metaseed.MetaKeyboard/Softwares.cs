@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static Metaseed.Input.Key;
 
 namespace Metaseed.MetaKeyboard
 {
@@ -12,7 +13,7 @@ namespace Metaseed.MetaKeyboard
     {
         public Utilities()
         {
-            Keys.C.With(Keys.CapsLock).Hit(async e =>
+            (Caps+C).Hit(async e =>
             {
                 var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};
 
@@ -37,9 +38,9 @@ namespace Metaseed.MetaKeyboard
                 }
             }, null, "Metaseed.OpenCodeEditor", "Open &Code Editor", true);
 
-            Keys.Q.With(Keys.CapsLock).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
+            (Caps+Q).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
 
-            Keys.F.With(Keys.CapsLock).Down(async e =>
+            (Caps+F).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -59,7 +60,7 @@ namespace Metaseed.MetaKeyboard
                     : $"{Config.Current.Tools.EveryThing} -path {path} -toggle-window");
             }, "Metaseed.Find", "&Find With Everything");
 
-            Keys.T.With(Keys.CapsLock).Down(async e =>
+            (Caps+T).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -80,7 +81,7 @@ namespace Metaseed.MetaKeyboard
                     : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
             }, "Metaseed.Terminal", "Open &Terminal");
                   
-            Keys.W.With(Keys.CapsLock).Down(async e =>
+            (Caps+W).Down(async e =>
             {
                 e.Handled = true;
 

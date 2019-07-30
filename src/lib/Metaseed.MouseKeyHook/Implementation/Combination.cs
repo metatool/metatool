@@ -6,8 +6,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
@@ -21,22 +19,36 @@ namespace Metaseed.Input
     public partial class Combination : ICombination
     {
         private readonly Chord _chord;
-        private          Keys  _key;
+        private          Key  _key;
 
-        public Combination(Keys triggerKey) : this(triggerKey, null)
+        public Combination(Keys triggerKey):this(triggerKey, null as Chord)
         {
+            
         }
 
         public Combination(Keys triggerKey, Keys chordKey) : this(triggerKey, new Keys[] {chordKey})
         {
         }
 
+
         public Combination(Keys triggerKey, IEnumerable<Keys> chordKeys)
             : this(triggerKey, new Chord(chordKeys ?? Enumerable.Empty<Keys>()))
         {
         }
+        public Combination(Key triggerKey) : this(triggerKey, null as Chord) { }
+        public Combination(Key triggerKey, Key chordKey):this(triggerKey, new Key[]{chordKey})
+        {
 
-        private Combination(Keys triggerKey, Chord chord)
+        }
+        public Combination(Key triggerKey, IEnumerable<Key> chordKeys) : this(triggerKey, new Chord(chordKeys ?? Enumerable.Empty<Key>())) { }
+
+        private Combination(Keys triggerKey, Chord chord) : this((Key)triggerKey, chord)
+        {
+
+        }
+
+
+        private Combination(Key triggerKey, Chord chord)
         {
             TriggerKey = triggerKey;
             _chord     = chord ?? new Chord(Enumerable.Empty<Keys>());
@@ -47,19 +59,19 @@ namespace Metaseed.Input
         /// <summary>
         ///     Last key which triggers the combination.
         /// </summary>
-        public Keys TriggerKey { get; }
+        public Key TriggerKey { get; }
 
         /// <summary>
         ///     Keys which all must be alredy down when trigger key is pressed.
         /// </summary>
-        public IEnumerable<Keys> Chord => _chord;
+        public IEnumerable<Key> Chord => _chord;
 
         /// <summary>
         ///     Number of chord (modifier) keys which must be already down when the trigger key is pressed.
         /// </summary>
         public int ChordLength => _chord.Count;
 
-        public IEnumerable<Keys> AllKeys => _chord.Append(TriggerKey);
+        public IEnumerable<Key> AllKeys => _chord.Append(TriggerKey);
 
         //        /// <summary>
         //        ///     A chainable builder method to simplify chord creation. Used along with <see cref="TriggeredBy" />,
@@ -78,7 +90,7 @@ namespace Metaseed.Input
         /// <param name="key"></param>
         public ICombination With(Keys key)
         {
-            return new Combination(TriggerKey, Chord.Concat(Enumerable.Repeat(key, 1)));
+            return new Combination(TriggerKey, Chord.Concat(Enumerable.Repeat((Key)key, 1)));
         }
 
         public ICombination With(IEnumerable<Keys> chordKeys)
@@ -191,14 +203,10 @@ namespace Metaseed.Input
             return Equals((Combination) obj);
         }
 
-        private int _hash = 0;
-
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            if (_hash != 0) return _hash;
-            _hash = Chord.GetHashCode() ^ (int) TriggerKey;
-            return _hash;
+            return Chord.GetHashCode() ^  TriggerKey.GetHashCode();
         }
     }
 }

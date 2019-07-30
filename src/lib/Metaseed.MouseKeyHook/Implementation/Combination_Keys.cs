@@ -14,7 +14,7 @@ namespace Metaseed.Input
         }
         public static Combination operator +(Combination keyA, Key keyB)
         {
-            return new Combination(keyB.KeyCode, keyA.AllKeys);
+            return new Combination(keyB, keyA.AllKeys);
         }
     }
 }
