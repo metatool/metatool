@@ -11,11 +11,10 @@ namespace Metaseed.Input
       /// <summary>
     /// https://www.w3.org/TR/uievents-key/
     /// </summary>
-    public partial class Key : IComparable, IComparable<Key>
+    public partial class Key : IComparable, IComparable<Key>, ISequencable
     {
         private SortedSet<Keys> _codes;
         private int             _val;
-IKey
         public SortedSet<Keys> Codes
         {
             get => _codes;

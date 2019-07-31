@@ -12,7 +12,7 @@ namespace Metaseed.Input.MouseKeyHook
     /// <summary>
     ///     Describes key or key combination sequences. e.g. Control+Z,Z
     /// </summary>
-    public class Sequence : SequenceBase<ICombination>, ISequence
+    public partial class Sequence : SequenceBase<ICombination>, ISequence 
     {
 
 
@@ -20,17 +20,6 @@ namespace Metaseed.Input.MouseKeyHook
 
         internal Sequence(params ICombination[] combinations) : base(combinations)
         {
-        }
-
-        public ISequence Then(Keys key)
-        {
-            return this.Then(new Combination(key));
-        }
-
-        public ISequence Then(ICombination combination)
-        {
-            this.Append(combination);
-            return this;
         }
 
         public bool Disabled

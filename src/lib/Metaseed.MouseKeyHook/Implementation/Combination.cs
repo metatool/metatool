@@ -98,16 +98,6 @@ namespace Metaseed.Input
             return chordKeys.Aggregate(this as ICombination, (c, k) => c.With(k));
         }
 
-        public ISequence Then(ICombination combination)
-        {
-            return new Sequence(this, combination as Combination);
-        }
-
-        public ISequence Then(Keys key)
-        {
-            return this.Then(new Combination(key));
-        }
-
         public bool IsAnyKey(Keys key)
         {
             if (key == TriggerKey) return true;
@@ -149,11 +139,6 @@ namespace Metaseed.Input
             return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)));
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         /// <summary>
         ///     TriggeredBy a chord from any string like this 'Alt+Shift+R'.
         ///     Nothe that the trigger key must be the last one.
@@ -187,11 +172,6 @@ namespace Metaseed.Input
             return
                 TriggerKey == other.TriggerKey
                 && Chord.Equals(other.Chord);
-        }
-
-        public IEnumerator<ICombination> GetEnumerator()
-        {
-            return new List<ICombination> {this}.GetEnumerator();
         }
 
         /// <inheritdoc />

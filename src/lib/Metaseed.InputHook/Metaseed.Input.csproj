@@ -14,12 +14,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Keyboard\Implementation\**" />
+    <EmbeddedResource Remove="Keyboard\Implementation\**" />
+    <None Remove="Keyboard\Implementation\**" />
+    <Page Remove="Keyboard\Implementation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj" />
     <ProjectReference Include="..\Metaseed.WindowsInput\Metaseed.WindowsInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Keyboard\Implementation\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Metaseed.Input
 {
-    public interface ISequence : IKeyState
+    public interface ISequence : IEnumerable<ICombination>, ISequencable, IKeyState
     {
-        ISequence Then(Keys key);
-        ISequence Then(ICombination combination);
     }
-
 }

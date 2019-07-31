@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Metaseed.Input
 {
-    public interface IKeyState: IEnumerable<ICombination>
+    public interface IKeyState : IEnumerable<ICombination>
     {
         bool Disabled { get; set; }
         object Context { get; set; }

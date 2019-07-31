@@ -10,22 +10,12 @@ namespace Metaseed.Input
 
         Task<KeyEventArgsExt> DownAsync(int timeout);
     }
-    public interface ICombination :IKeyState, IKeyEventAsync
+    public interface ICombination :IKeyState, IKeyEventAsync, ISequencable, ICombinable
     {
         Key TriggerKey { get; }
         IEnumerable<Key> Chord { get; }
-        IEnumerable<Key> AllKeys { get; }
         int ChordLength { get; }
-        bool Disabled { get; set; }
-
-        ICombination With(Keys chordKey);
-        ICombination With(IEnumerable<Keys> keys);
-        ICombination Control();
-        ICombination Shift();
-        ICombination Alt();
-
-        ISequence Then(Keys key);
-        ISequence Then(ICombination combination);
+        IEnumerable<Key> AllKeys { get; }
 
         bool IsAnyKey(Keys key);
 
