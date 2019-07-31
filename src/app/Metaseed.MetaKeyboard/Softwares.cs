@@ -127,21 +127,21 @@ namespace Metaseed.MetaKeyboard
                     Utils.Run(Config.Current.Tools.Ruler);
                 }, "Metaseed.ScreenRuler", "Start Screen &Ruler");
 
-            softwareTrigger.Then(Keys.T).Down(
+            (softwareTrigger, T).Down(
                 e =>
                 {
                     e.Handled = true;
                     Utils.Run(Config.Current.Tools.ProcessExplorer);
                 }, "Metaseed.TaskExplorer", "Start &Task Explorer ");
 
-            softwareTrigger.Then(Keys.G).Down(
+            (softwareTrigger, G).Down(
                 e =>
                 {
                     e.Handled = true;
                     Utils.Run(Config.Current.Tools.GifTool);
                 }, "Metaseed.GifRecord", "Start &Gif Record ");
 
-            softwareTrigger.Then(Keys.N).Down(async e =>
+            (softwareTrigger, N).Down(async e =>
             {
                 e.Handled = true;
                 var exeName = "Notepad";
@@ -164,7 +164,7 @@ namespace Metaseed.MetaKeyboard
                 Utils.Run("Notepad");
             }, "Metaseed.NodePad", "Start &Notepad ");
 
-            softwareTrigger.Then(Keys.V).Down(async e =>
+            (softwareTrigger, V).Down(async e =>
             {
                 if (!Window.IsExplorerOrOpenSaveDialog) return;
 

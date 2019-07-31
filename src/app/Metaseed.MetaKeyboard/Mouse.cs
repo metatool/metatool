@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using Metaseed.Input;
+using static Metaseed.MetaKeyboard.KeyboardConfig;
+using static Metaseed.Input.Key;
 
 namespace Metaseed.MetaKeyboard
 {
@@ -11,12 +13,12 @@ namespace Metaseed.MetaKeyboard
         public Mouse()
         {
             // LButton & RButton
-            Keys.OemOpenBrackets.With(Keys.CapsLock).Map(Keys.LButton);
-            Keys.OemCloseBrackets.With(Keys.CapsLock).Map(Keys.RButton);
+            (GK + OpenBrackets).Map(Keys.LButton);
+            (GK + CloseBrackets).Map(Keys.RButton);
 
             // Scroll up/down (reading, one hand)
-            Keys.E.With(Keys.CapsLock).Handled().Down(e => Input.Mouse.VerticalScroll(1));
-            Keys.D.With(Keys.CapsLock).Handled().Down(e => Input.Mouse.VerticalScroll(-1));
+            (GK + E).Handled().Down(e => Input.Mouse.VerticalScroll(1));
+            (GK + D).Handled().Down(e => Input.Mouse.VerticalScroll(-1));
         }
     }
 }

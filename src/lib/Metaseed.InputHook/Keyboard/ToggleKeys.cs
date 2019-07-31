@@ -74,7 +74,7 @@ namespace Metaseed.Input
 
                      // handled = KeyboardState.HandledDownKeys.Add(_key);
                     e.Handled = true;
-                }, $"Metaseed.AlwaysOnOff_{_key}_Down", "", false);
+                }, $"Metaseed.AlwaysOnOff_{_key}_Down", "");
             if (keyUpActionToken == null)
                 keyUpActionToken = _key.Up(e =>
                 {

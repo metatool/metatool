@@ -10,7 +10,12 @@ namespace Metaseed.Input
 
         Task<KeyEventArgsExt> DownAsync(int timeout);
     }
-    public interface ICombination :IKeyState, IKeyEventAsync, ISequencable, ICombinable
+
+    public interface ISequenceUnit: ISequencable
+    {
+        ICombination ToCombination();
+    }
+    public interface ICombination :IKeyState, IKeyEventAsync, ISequencable, ICombinable, ISequenceUnit
     {
         Key TriggerKey { get; }
         IEnumerable<Key> Chord { get; }

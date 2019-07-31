@@ -1,8 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace Metaseed.Input
 {
-    public interface IKey
+    public interface IKey: IComparable, IComparable<Key>, ISequencable, ISequenceUnit
     {
 
     }

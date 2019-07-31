@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using Metaseed.Input;
 using static Metaseed.Input.Key;
-
+using static Metaseed.MetaKeyboard.KeyboardConfig;
 namespace ConsoleApp1
 {
     class Keyboard61
@@ -22,31 +22,31 @@ namespace ConsoleApp1
                 else if (state == ToggleKeyState.AlwaysOn)
                     ToggleKeys.CapsLock.AlwaysOff();
             }, "Metaseed.ToggleCapsLockKey", "Toggle CapsLock");
-
+            
             // Fn
-            (Caps + D1).Map(F1);
-            (Caps + D2).Map(F2);
-            (Caps + D3).Map(F3);
-            (Caps + D4).Map(F4);
-            (Caps + D5).Map(F5);
-            (Caps + D6).Map(F6);
-            (Caps + D7).Map(F7);
-            (Caps + D8).Map(F8);
-            (Caps + D9).Map(F9);
-            (Caps + D0).Map(F10);
-            (Caps + Minus).Map(F11);
-            (Caps + Plus).Map(F12);
-
+            (GK + D1).Map(F1);
+            (GK + D2).Map(F2);
+            (GK + D3).Map(F3);
+            (GK + D4).Map(F4);
+            (GK + D5).Map(F5);
+            (GK + D6).Map(F6);
+            (GK + D7).Map(F7);
+            (GK + D8).Map(F8);
+            (GK + D9).Map(F9);
+            (GK + D0).Map(F10);
+            (GK + Minus).Map(F11);
+            (GK + Plus).Map(F12);
+            
             // Move (Vim)
-            (Caps + K).Map(Up);
-            (Caps + J).Map(Down);
-            (Caps + H).Map(Left);
-            (Caps + L).Map(Right);
-            (Caps + I).Map(Home);
-            (Caps + O).Map(End);
-            (Caps + U).Map(PageUp);
-            (Caps + N).Map(PageDown);
-
+            (GK + K).Map(Up);
+            (GK + J).Map(Down);
+            (GK + H).Map(Left);
+            (GK + L).Map(Right);
+            (GK + I).Map(Home);
+            (GK + O).Map(End);
+            (GK + U).Map(PageUp);
+            (GK + N).Map(PageDown);
+            
             // LAlt + Move
             (LMenu + H).Map(Left);
             (LMenu + J).Map(Down);
@@ -56,12 +56,12 @@ namespace ConsoleApp1
             (LMenu + O).Map(End);
             (LMenu + U).Map(PageUp);
             (LMenu + N).Map(PageDown);
-
+            
             // 
-            (Caps + Back).Map(Del);
-            (Caps + P).Map(PrintScreen);
-            (Caps + B).Map(Pause);        // Break
-            (Caps + SemiColon).Map(Apps); // like right click on current selection
+            (GK + Back).Map(Del);
+            (GK + P).Map(PrintScreen);
+            (GK + B).Map(Pause);        // Break
+            (GK + SemiColon).Map(Apps); // like right click on current selection
         }
     }
 }

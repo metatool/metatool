@@ -54,7 +54,7 @@ namespace Metaseed.Input
             };
 
         }
-        internal static IRemovable Map(Combination source, ICombination target,
+        internal static IRemovable Map(ICombination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
         {
             var handled = false;

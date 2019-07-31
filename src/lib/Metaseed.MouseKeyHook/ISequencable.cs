@@ -6,7 +6,8 @@ namespace Metaseed.Input
     public interface ISequencable 
     {
         ISequence Then(Keys key);
-        ISequence Then(ISequencable sequencable);
+        ISequence Then(ISequenceUnit sequencable);
+
     }
 
 }

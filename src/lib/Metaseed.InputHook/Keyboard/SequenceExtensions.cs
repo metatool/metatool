@@ -10,23 +10,23 @@ namespace Metaseed.Input
 {
     public static class SequenceExtensions
     {
-        public static void Down(this ValueTuple<ISequencable, ISequencable> sequence,
+        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
             Action<KeyEventArgsExt> action, string actionId = "", string description = "")
         {
             sequence.Item1.Then(sequence.Item2).Down(action,actionId,description);
         }
-        public static void Down(this ValueTuple<ISequencable, ISequencable, ISequencable> sequence,
+        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<KeyEventArgsExt> action, string actionId = "", string description = "")
         {
             sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action, actionId, description);
         }
-        public static void Down(this ValueTuple<ISequencable, ISequencable, ISequencable, ISequencable> sequence,
+        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<KeyEventArgsExt> action, string actionId = "", string description = "")
         {
             sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Down(action, actionId, description);
         }
 
-        public static void Down(this ValueTuple<ISequencable, ISequencable, ISequencable, ISequencable, ISequencable> sequence,
+        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<KeyEventArgsExt> action, string actionId = "", string description = "")
         {
             sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Down(action, actionId, description);
@@ -40,6 +40,27 @@ namespace Metaseed.Input
             Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down, new KeyAction(actionId, description, action));
         }
 
+        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Up(action, actionId, description);
+        }
+        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action, actionId, description);
+        }
+        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Up(action, actionId, description);
+        }
+
+        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        {
+            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Up(action, actionId, description);
+        }
         public static void Up(this ISequence sequence, Action<KeyEventArgsExt> action, string actionId = "",
             string description = "")
         {

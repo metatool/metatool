@@ -133,6 +133,8 @@ namespace Metaseed.Input
             return With(Keys.Shift);
         }
 
+        public ICombination ToCombination() => this;
+
         /// <inheritdoc />
         public override string ToString()
         {
@@ -167,26 +169,6 @@ namespace Metaseed.Input
         }
 
         /// <inheritdoc />
-        protected bool Equals(Combination other)
-        {
-            return
-                TriggerKey == other.TriggerKey
-                && Chord.Equals(other.Chord);
-        }
 
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Combination) obj);
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return Chord.GetHashCode() ^  TriggerKey.GetHashCode();
-        }
     }
 }

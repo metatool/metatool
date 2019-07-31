@@ -7,6 +7,6 @@ namespace Metaseed.Input
     {
         public ISequence Then(Keys key) => new Combination(this).Then(key);
 
-        public ISequence Then(ISequencable sequencable) => new Combination(this).Then(sequencable);
+        public ISequence Then(ISequenceUnit sequencable) => new Combination(this).Then(sequencable);
     }
 }

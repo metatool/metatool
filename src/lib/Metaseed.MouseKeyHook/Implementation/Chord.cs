@@ -75,8 +75,8 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
             unchecked
             {
-                hash = (_keys.Length + 13) ^
-                       ((_keys.Length != 0 ? (int) hc : 0) * 397);
+                hash = (hc + 13) ^
+                       ((hc != 0 ? (int) hc : 0) * 397);
             }
 
             return hash;

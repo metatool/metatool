@@ -68,7 +68,7 @@ namespace Metaseed.MetaKeyboard
                 }
                 , "Metaseed.ShowDesktopFolder", "Show &Desktop Folder");
 
-            (Ctrl + N).With(Keys.Alt).Hit(async e =>
+            (Ctrl + Alt + N).Hit(async e =>
             {
                 const string newFileName = "NewFile";
                 var          handle      = UI.Window.CurrentWindowHandle;
@@ -91,13 +91,12 @@ namespace Metaseed.MetaKeyboard
                 return true;
             }, "Metaseed.NewFile", "&New File");
 
-            (LCtrl + C).With(Keys.LWin).With(Keys.LMenu)
+            (LCtrl + LWin + C).With(Keys.LMenu)
                 .Down(e =>
                 {
                     Notify.ShowMessage("MetaKeyBoard Closing...");
                     Environment.Exit(0);
                 }, "Metaseed.Close_MetaKeyBoard", "Close");
-
 
             (LCtrl + LWin + LAlt + X).Down(e =>
             {
@@ -107,6 +106,7 @@ namespace Metaseed.MetaKeyboard
                 Process.Start(path);
                 Environment.Exit(0);
             }, "Metaseed.Restart_MetaKeyBoard", "Restart");
+
             (Caps + Question).Down(e =>
             {
                 Keyboard.ShowTip();

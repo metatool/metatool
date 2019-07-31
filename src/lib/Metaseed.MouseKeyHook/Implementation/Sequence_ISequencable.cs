@@ -10,9 +10,9 @@ namespace Metaseed.Input.MouseKeyHook
             return this.Then(new Combination(key));
         }
 
-        public ISequence Then(ISequencable sequencable)
+        public ISequence Then(ISequenceUnit sequencable)
         {
-            this.Append(sequencable);
+            this.Append(sequencable.ToCombination());
             return this;
         }
     }

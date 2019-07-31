@@ -5,9 +5,9 @@ namespace Metaseed.Input
 {
     public partial class Combination
     {
-        public ISequence Then(ISequencable sequencable)
+        public ISequence Then(ISequenceUnit sequencable)
         {
-            return new Sequence(this, (Combination)sequencable);
+            return new Sequence(this, sequencable.ToCombination());
         }
 
         public ISequence Then(Keys key)
