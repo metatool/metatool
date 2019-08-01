@@ -11,9 +11,21 @@ namespace Metaseed.MetaKeyboard
         {
             Apps.ToChoreKey();
             Space.ToChoreKey();
+            Enter.ToChoreKey();
+            Tab.ToChoreKey();
         }
 
+        /// <summary>
+        /// Global key
+        /// </summary>
         public static Key GK = new Key(Space);
-        public static Key CK = new Key(Caps, Apps);
+        /// <summary>
+        /// Context key
+        /// </summary>
+        public static Key CK = new Key(Caps, Enter);
+        /// <summary>
+        /// Apps key
+        /// </summary>
+        public static Key AK = new Key(Key.Apps,Key.Tab);
     }
 }

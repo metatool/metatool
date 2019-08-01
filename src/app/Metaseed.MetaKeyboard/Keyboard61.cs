@@ -11,7 +11,7 @@ namespace ConsoleApp1
             ToggleKeys.NumLock.AlwaysOn();
             ToggleKeys.CapsLock.AlwaysOff();
 
-            Keys.CapsLock.MapOnHit(Keys.Escape, e => !e.IsVirtual, false);
+            Caps.MapOnHit(Keys.Escape, e => !e.IsVirtual, false);
 
             (Caps + Tilde).Down(e =>
             {

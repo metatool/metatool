@@ -45,7 +45,7 @@ namespace Metaseed.MetaKeyboard
             var mouse      = new Mouse();
             var fun        = new FunctionalKeys();
 
-            var software = new Utilities();
+            var software = new Software();
             // var c = new ClipboardManager();
 
             Keyboard.Hook();

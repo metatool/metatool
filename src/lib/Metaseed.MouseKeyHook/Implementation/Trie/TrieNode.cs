@@ -104,7 +104,7 @@ namespace Metaseed.DataStructures
 
         public override string ToString()
         {
-            return Key!=null?$"{Key} [Disabled:{Key.Disabled,-8}]":"Root";
+            return Key!=null?$"{Key} [Disabled:{Key.Disabled,-6}]":"Root";
         }
     }
 }

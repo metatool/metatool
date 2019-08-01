@@ -72,7 +72,7 @@ namespace Metaseed.Input
 
         public bool IsEquals(Key key)
         {
-            return Codes.SetEquals(key.Codes);
+            return Codes.IsSupersetOf(key.Codes);
         }
 
         public bool Equals(Keys key)

@@ -120,7 +120,7 @@ namespace Metaseed.Input
         public static readonly Key Pause = new Key(Keys.Pause);
 
         public static readonly Key Break            = Pause;
-        public static readonly Key NumLock          = new Key(Keys.NumLock);
+        public static readonly Key Num          = new Key(Keys.NumLock);
         public static readonly Key Num0             = new Key(Keys.NumPad0);
         public static readonly Key Num1             = new Key(Keys.NumPad1);
         public static readonly Key Num2             = new Key(Keys.NumPad2);

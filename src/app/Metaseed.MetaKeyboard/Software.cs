@@ -6,14 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static Metaseed.Input.Key;
-
+using static Metaseed.MetaKeyboard.KeyboardConfig;
 namespace Metaseed.MetaKeyboard
 {
-    public class Utilities
+    public class Software
     {
-        public Utilities()
+        public Software()
         {
-            (Caps + C).Hit(async e =>
+            (AK + C).Hit(async e =>
             {
                 var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};
 
@@ -38,9 +38,9 @@ namespace Metaseed.MetaKeyboard
                 }
             }, null, "Metaseed.OpenCodeEditor", "Open &Code Editor", true);
 
-            (Caps + Q).MapOnHit(Keys.D.With(Keys.LMenu).With(Keys.ShiftKey));
+            (AK + D).MapOnHit(Shift + LAlt + D);
 
-            (Caps + F).Down(async e =>
+            (AK + F).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -60,7 +60,7 @@ namespace Metaseed.MetaKeyboard
                     : $"{Config.Current.Tools.EveryThing} -path {path} -toggle-window");
             }, "Metaseed.Find", "&Find With Everything");
 
-            (Caps + T).Down(async e =>
+            (AK + T).Down(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -81,7 +81,7 @@ namespace Metaseed.MetaKeyboard
                     : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
             }, "Metaseed.Terminal", "Open &Terminal");
 
-            (Caps + W).Down(async e =>
+            (AK + W).Down(async e =>
             {
                 e.Handled = true;
 
@@ -118,7 +118,7 @@ namespace Metaseed.MetaKeyboard
             }, "Metaseed.WebSearch", "&Web Search(Alt: second)");
 
 
-            var softwareTrigger = (Caps + Space).Handled();
+            var softwareTrigger = (AK + Space).Handled();
 
             (softwareTrigger, R).Down(
                 e =>

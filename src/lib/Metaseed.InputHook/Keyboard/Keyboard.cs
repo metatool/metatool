@@ -119,7 +119,7 @@ namespace Metaseed.Input
             void AsyncCall(KeyEventArgsExt e)
             {
                 e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                    target.Chord.Cast<VirtualKeyCode>(),
+                    target.Chord.Select(k=>(VirtualKeyCode)(Keys)k),
                     (VirtualKeyCode) (Keys)target.TriggerKey));
             }
 
