@@ -6,18 +6,21 @@ using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.DataStructures
 {
-    public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue> where TKey : ICombination where TValue: KeyEventAction
+    public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue>
+        where TKey : ICombination where TValue : KeyEventAction
     {
         protected readonly Dictionary<TKey, TrieNode<TKey, TValue>> _children;
-        private IList<TValue> _values = new KeyActionList<TValue>();
-        public TKey Key;
-        public TrieNode<TKey, TValue> Parent;
-        protected TrieNode(TKey key=default(TKey))
+        private            IList<TValue>                            _values = new KeyActionList<TValue>();
+        public             TKey                                     Key;
+        public             TrieNode<TKey, TValue>                   Parent;
+
+        protected TrieNode(TKey key = default(TKey))
         {
-            Key = key;
+            Key       = key;
             _children = new Dictionary<TKey, TrieNode<TKey, TValue>>();
         }
-        internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenPairs  => _children;
+
+        internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenPairs => _children;
 
 
         internal void Clear()
@@ -29,7 +32,10 @@ namespace Metaseed.DataStructures
         protected internal override int ChildrenCount => _children.Count;
 
 
-        internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip=>_children.Select(p=>(p.Key.ToString(),p.Value._values.Where(ea=> !string.IsNullOrEmpty(ea.Action.Description)).Select(ea=>(ea.KeyEvent==KeyEvent.Up?"↑ ": "↓ ") + ea.Action.Description)));
+        internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip => _children.Select(p =>
+            (p.Key.ToString(),
+                p.Value._values.Where(ea => !string.IsNullOrEmpty(ea.Action.Description)).Select(ea =>
+                    (ea.KeyEvent == KeyEvent.Up ? "↑ " : "↓ ") + ea.Action.Description)));
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {
@@ -43,7 +49,8 @@ namespace Metaseed.DataStructures
 
         protected override bool IsRemovable(IList<TKey> query, int position)
         {
-            return position < query.Count && _children.Count == 1 && _values.Count == 0 && _children.ContainsKey(query[position]) ||
+            return position < query.Count && _children.Count == 1 && _values.Count == 0 &&
+                   _children.ContainsKey(query[position]) ||
                    position == query.Count && _values.Count == 0 && _children.Count == 0;
         }
 
@@ -51,7 +58,7 @@ namespace Metaseed.DataStructures
         {
             if (_children.TryGetValue(key, out var child)) return child;
 
-            child = new TrieNode<TKey, TValue>(key);
+            child        = new TrieNode<TKey, TValue>(key);
             child.Parent = this;
             _children.Add(key, child);
             return child;
@@ -64,11 +71,12 @@ namespace Metaseed.DataStructures
             if (EqualityComparer<TKey>.Default.Equals(key, default(TKey))) return null;
             return GetChildOrNull(key);
         }
+
         internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)
         {
             return TryGetChild(key, out var childNode)
-                    ? childNode
-                    : null;
+                ? childNode
+                : null;
         }
 
         internal bool TryGetChild(TKey key, out TrieNode<TKey, TValue> child)
@@ -76,6 +84,7 @@ namespace Metaseed.DataStructures
             if (key == null) throw new ArgumentNullException(nameof(key));
             return _children.TryGetValue(key, out child);
         }
+
         protected override TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position)
         {
             return GetChildOrNull(query[position]);
@@ -99,6 +108,7 @@ namespace Metaseed.DataStructures
             _values.Remove(i);
             return true;
         }
+
         protected override void RemoveChild(TKey key)
         {
             _children.Remove(key);
@@ -106,7 +116,11 @@ namespace Metaseed.DataStructures
 
         public override string ToString()
         {
-            return Key==null|| Parent == null?"Root":$"{Parent.Key}{Key}";
+            return Key == null || Parent == null ?
+                "Root" : 
+                Parent.Key == null ?
+                    $"{Key}" : 
+                    $"{Parent.Key}, {Key}";
         }
     }
 }
