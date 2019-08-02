@@ -118,7 +118,7 @@ namespace Metaseed.Input
                     }
                     else
                     {
-                        if (!_stateWalker.IsOnRoot && // on root currentnode.key = null
+                        if (!_stateWalker.IsOnRoot && // on root CurrentNode.key = null
                             _stateWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
                         {
                             return KeyProcessState.Continue; // combination chord keys up, to process child

@@ -9,10 +9,10 @@ namespace Metaseed.MetaKeyboard
     {
         static KeyboardConfig()
         {
-            Apps.ToChoreKey();
-            Space.ToChoreKey();
-            Enter.ToChoreKey();
-            Tab.ToChoreKey();
+            Apps.AsChordKey();
+            Space.AsChordKey();
+            Enter.AsChordKey();
+            Tab.AsChordKey();
         }
 
         /// <summary>

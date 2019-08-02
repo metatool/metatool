@@ -1,4 +1,4 @@
-// This code is distributed under MIT license. 
+﻿// This code is distributed under MIT license. 
 // Copyright (c) 2010-2018 George Mamaladze
 // See license.txt or https://mit-license.org/
 
@@ -138,7 +138,7 @@ namespace Metaseed.Input
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)));
+            return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)))+ (Disabled? "⍻" : "");
         }
 
         /// <summary>

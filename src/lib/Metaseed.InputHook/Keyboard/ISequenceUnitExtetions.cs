@@ -5,7 +5,7 @@ using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.Input
 {
-    public static class CombinationExtetions
+    public static class ISequenceUnitExtetions
     {
         public static IRemovable Down(this ISequenceUnit sequenceUnit, Action<KeyEventArgsExt> action, string actionId = "", string description="")
         {
@@ -54,9 +54,6 @@ namespace Metaseed.Input
             return sequenceUnit.ToCombination();
         }
 
-        public static IRemovable ToChoreKey(this ISequenceUnit key)
-        {
-            return key.MapOnHit(key.ToCombination(), e => !e.IsVirtual, false);
-        }
+
     }
 }

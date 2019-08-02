@@ -13,6 +13,7 @@ namespace Metaseed.MetaKeyboard
     {
         public Software()
         {
+
             (AK + C).Hit(async e =>
             {
                 var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};

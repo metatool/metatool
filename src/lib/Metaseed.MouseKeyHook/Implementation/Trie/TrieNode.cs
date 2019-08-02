@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Metaseed.Input;
@@ -11,6 +11,7 @@ namespace Metaseed.DataStructures
         protected readonly Dictionary<TKey, TrieNode<TKey, TValue>> _children;
         private IList<TValue> _values = new KeyActionList<TValue>();
         public TKey Key;
+        public TrieNode<TKey, TValue> Parent;
         protected TrieNode(TKey key=default(TKey))
         {
             Key = key;
@@ -28,7 +29,7 @@ namespace Metaseed.DataStructures
         protected internal override int ChildrenCount => _children.Count;
 
 
-        internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip=>_children.Select(p=>(p.Key.ToString(),p.Value._values.Where(ea=> !string.IsNullOrEmpty(ea.Action.Description)).Select(ea=>(ea.KeyEvent==KeyEvent.Up?"¡ü ": "¡ý ") + ea.Action.Description)));
+        internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip=>_children.Select(p=>(p.Key.ToString(),p.Value._values.Where(ea=> !string.IsNullOrEmpty(ea.Action.Description)).Select(ea=>(ea.KeyEvent==KeyEvent.Up?"â†‘ ": "â†“ ") + ea.Action.Description)));
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {
@@ -48,10 +49,12 @@ namespace Metaseed.DataStructures
 
         protected override TrieNodeBase<TKey, TValue> GetOrCreateChild(TKey key)
         {
-            if (_children.TryGetValue(key, out var result)) return result;
-            result = new TrieNode<TKey, TValue>(key);
-            _children.Add(key, result);
-            return result;
+            if (_children.TryGetValue(key, out var child)) return child;
+
+            child = new TrieNode<TKey, TValue>(key);
+            child.Parent = this;
+            _children.Add(key, child);
+            return child;
         }
 
         internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc, TKey initKey)
@@ -104,7 +107,7 @@ namespace Metaseed.DataStructures
 
         public override string ToString()
         {
-            return Key!=null?$"{Key} [Disabled:{Key.Disabled,-6}]":"Root";
+            return Key==null?$"{Parent?.Key??""},{Key}":"â¨³";
         }
     }
 }

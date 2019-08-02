@@ -16,6 +16,7 @@ namespace Metaseed.DataStructures
         public void Add(IList<TKey> query, int position, TValue value)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));
+
             if (EndOfKeySequence(position, query))
             {
                 AddValue(value);
