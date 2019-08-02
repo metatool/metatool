@@ -99,7 +99,6 @@ namespace Metaseed.DataStructures
             _values.Remove(i);
             return true;
         }
-
         protected override void RemoveChild(TKey key)
         {
             _children.Remove(key);
@@ -107,7 +106,7 @@ namespace Metaseed.DataStructures
 
         public override string ToString()
         {
-            return Key==null?$"{Parent?.Key??""},{Key}":"⨳";
+            return Key==null|| Parent == null?"Root":$"{Parent.Key}{Key}";
         }
     }
 }
