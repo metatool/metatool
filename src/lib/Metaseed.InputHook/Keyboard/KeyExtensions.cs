@@ -32,7 +32,7 @@ namespace Metaseed.Input
             Keyboard.Add(comb, KeyEvent.Up, null);
             return comb.UpAsync(timeout);
         }
-        public static IRemovable AsChordKey(this Key key)
+        public static IMetaKey AsChordKey(this Key key)
         {
             return key.MapOnHit(key.ToCombination(), e => !e.IsVirtual, false);
         }

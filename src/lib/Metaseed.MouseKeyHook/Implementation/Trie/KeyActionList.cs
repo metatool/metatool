@@ -7,7 +7,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 {
     internal class KeyActionList<TValue>: BindingList<TValue> where TValue: KeyEventAction
     {
-        public IEnumerable<KeyAction> this[KeyEvent keyEvent]
+        public IEnumerable<KeyCommand> this[KeyEvent keyEvent]
         {
             get
             {
@@ -24,25 +24,25 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         }
 
         private bool _refresh = true;
-        private IEnumerable<KeyAction> _down;
-        public IEnumerable<KeyAction> Down 
+        private IEnumerable<KeyCommand> _down;
+        public IEnumerable<KeyCommand> Down 
         {
             get
             {
                 if (_down != null && !_refresh) return _down;
-                _down    = this.Where(e => e.KeyEvent == KeyEvent.Down).Select(e=>e.Action);
+                _down    = this.Where(e => e.KeyEvent == KeyEvent.Down).Select(e=>e.Command);
                 _refresh = false;
                 return _down;
             }
         }
 
-        private IEnumerable<KeyAction> _up;
-        public IEnumerable<KeyAction> Up
+        private IEnumerable<KeyCommand> _up;
+        public IEnumerable<KeyCommand> Up
         {
             get
             {
                 if (_up != null && !_refresh) return _up;
-                _up    = this.Where(e => e.KeyEvent == KeyEvent.Up).Select(e=>e.Action);
+                _up    = this.Where(e => e.KeyEvent == KeyEvent.Up).Select(e=>e.Command);
                 _refresh = false;
                 return _up;
 

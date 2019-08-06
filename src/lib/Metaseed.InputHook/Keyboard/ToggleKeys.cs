@@ -21,8 +21,8 @@ namespace Metaseed.Input
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
         private bool _valid;
-        private IRemovable keyDownActionToken;
-        private IRemovable keyUpActionToken;
+        private IMetaKey _metaKeyDownActionToken;
+        private IMetaKey keyUpActionToken;
         private ToggleKeys(Key key)
         {
             _key = key;
@@ -41,8 +41,8 @@ namespace Metaseed.Input
 
         void InstallHook()
         {
-            if (keyDownActionToken == null)
-                keyDownActionToken = _key.Down(e =>
+            if (_metaKeyDownActionToken == null)
+                _metaKeyDownActionToken = _key.Down(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
@@ -72,7 +72,7 @@ namespace Metaseed.Input
                     }
 
                     e.Handled = true;
-                }, $"Metaseed.AlwaysOnOff_{_key}_Down", "");
+                });
             if (keyUpActionToken == null)
                 keyUpActionToken = _key.Up(e =>
                 {
@@ -98,13 +98,13 @@ namespace Metaseed.Input
                     }
 
                     e.Handled = true;
-                }, $"Metaseed.AlwaysOnOff_{_key}_Up", "");
+                });
         }
 
         void RemoveHook()
         {
-            keyDownActionToken?.Remove();
-            keyDownActionToken = null;
+            _metaKeyDownActionToken?.Remove();
+            _metaKeyDownActionToken = null;
             keyUpActionToken?.Remove();
             keyUpActionToken = null;
         }

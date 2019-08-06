@@ -7,25 +7,26 @@ using WindowsInput.Native;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using System.Windows.Threading;
-
+using OneOf;
 namespace Metaseed.Input
 {
+using Hotkey=OneOf<ISequenceUnit,ISequence>;
     public static class Keyboard
     {
         public static   IKeyState    Root        = null;
         static readonly KeyboardHook _Hook       = new KeyboardHook();
         static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 
-        internal static IRemovable Add(ICombination combination, KeyEvent keyEvent, KeyAction action,
+        internal static IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,
             KeyStateMachine stateMachine = null)
         {
-            return Add(new List<ICombination>() {combination}, keyEvent, action, stateMachine);
+            return Add(new List<ICombination>() {combination}, keyEvent, command, stateMachine);
         }
 
-        internal static IRemovable Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyAction action,
+        internal static IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
             KeyStateMachine stateMachine = null)
         {
-            return _Hook.Add(combinations, new KeyEventAction(keyEvent, action), stateMachine);
+            return _Hook.Add(combinations, new KeyEventAction(keyEvent, command), stateMachine);
         }
 
         public static void ShowTip()
@@ -54,11 +55,11 @@ namespace Metaseed.Input
             };
 
         }
-        internal static IRemovable Map(ICombination source, ICombination target,
+        internal static IMetaKey Map(ICombination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
         {
             var handled = false;
-            return new Removables()
+            return new MetaKeys()
             {
                 source.Down(e =>
                 {
@@ -86,7 +87,7 @@ namespace Metaseed.Input
                     }
 
                     handled = false;
-                }, $"Map_Down_{source}_To_{target}", ""),
+                }),
                 source.Up(e =>
                 {
                     if (!handled) return;
@@ -106,11 +107,11 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys)target.TriggerKey);
-                }, "Map_Up_{source}_To_{target}", "")
+                })
             };
         }
 
-        internal static IRemovable MapOnHit(ICombination source, ICombination target,
+        internal static IMetaKey MapOnHit(ICombination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null, bool allUp = true)
         {
             var             handling     = false;
@@ -123,7 +124,7 @@ namespace Metaseed.Input
                     (VirtualKeyCode) (Keys)target.TriggerKey));
             }
 
-            IRemovable AllKeyUp()
+            IMetaKey AllKeyUp()
             {
                 void KeyUpHandler(object s, KeyEventArgsExt e)
                 {
@@ -144,7 +145,7 @@ namespace Metaseed.Input
                 return new Removable(() => _Hook.KeyUp -= KeyUpHandler);
             }
 
-            return new Removables()
+            return new MetaKeys()
             {
                 source.Down(e =>
                 {
@@ -157,7 +158,7 @@ namespace Metaseed.Input
                     }
 
                     handling = false;
-                }, $"MapOnHit_Down_{source}_To_{target}", ""),
+                }),
                 allUp
                     ? AllKeyUp()
                     : source.Up(e =>
@@ -169,7 +170,7 @@ namespace Metaseed.Input
                         if (keyDownEvent != e.LastKeyDownEvent) return;
 
                         AsyncCall(e);
-                    }, $"MapOnHit_Up_{source}_To_{target}", "")
+                    })
             };
         }
 
@@ -177,16 +178,16 @@ namespace Metaseed.Input
         /// down up happened successively
         /// </summary>
         /// <param name="combination"></param>
-        /// <param name="keyAction"></param>
+        /// <param name="keyCommand"></param>
         /// <param name="predicate"></param>
         /// <param name="markHandled"></param>
         /// <returns></returns>
-        internal static IRemovable Hit(ICombination combination, KeyAction keyAction,
+        internal static IMetaKey Hit(ICombination combination, KeyCommand keyCommand,
             Predicate<KeyEventArgsExt> predicate = null, bool markHandled = true)
         {
             var             handling     = false;
             KeyEventArgsExt keyDownEvent = null;
-            return new Removables()
+            var token = new MetaKeys()
             {
                 combination.Down(e =>
                 {
@@ -201,7 +202,7 @@ namespace Metaseed.Input
                     }
 
                     handling = false;
-                }, $"Hit_Down_{combination}_{keyAction.ActionId}"),
+                }),
 
                 combination.Up(e =>
                 {
@@ -215,10 +216,12 @@ namespace Metaseed.Input
 
                     if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
                     {
-                        e.BeginInvoke(() => keyAction?.Action(e));
+                        e.BeginInvoke(() => keyCommand?.Execute(e));
                     }
-                }, $"MapOnHit_Up_{combination}_{keyAction.ActionId}", keyAction.Description)
+                }, keyCommand.Description)
             };
+
+            return token;
         }
 
         public static event KeyPressEventHandler KeyPress
@@ -227,16 +230,16 @@ namespace Metaseed.Input
             remove => _Hook.KeyPress -= value;
         }
 
-        public static void HotKey(this string keys, string actionId, string description, Action action)
+        public static void HotKey(this string keys, string description, Action action)
         {
             if (keys.Contains(','))
             {
                 var sequence = Sequence.FromString(keys).ToList<ICombination>();
-                Add(sequence, KeyEvent.Down, new KeyAction(actionId, description, e => action()));
+                Add(sequence, KeyEvent.Down, new KeyCommand(  e => action()){Description = description});
             }
 
             var combination = Combination.FromString(keys) as Combination;
-            Add(combination, KeyEvent.Down, new KeyAction(actionId, description, e => action()));
+            Add(combination, KeyEvent.Down, new KeyCommand(e => action()){Description = description});
         }
 
         private static void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
@@ -263,5 +266,5 @@ namespace Metaseed.Input
         {
             _Hook.Run();
         }
-    }
+        }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Metaseed.Input
 {
-    public interface ICommandsPackage
+    public interface IMetaPackage
     {
         void Start();
     }

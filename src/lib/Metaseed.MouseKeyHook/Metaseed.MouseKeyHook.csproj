@@ -25,6 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="OneOf" Version="2.1.150" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
 

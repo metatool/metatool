@@ -34,8 +34,8 @@ namespace Metaseed.DataStructures
 
         internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip => _children.Select(p =>
             (p.Key.ToString(),
-                p.Value._values.Where(ea => !string.IsNullOrEmpty(ea.Action.Description)).Select(ea =>
-                    (ea.KeyEvent == KeyEvent.Up ? "↑ " : "↓ ") + ea.Action.Description)));
+                p.Value._values.Where(ea => !string.IsNullOrEmpty(ea.Command.Description)).Select(ea =>
+                    (ea.KeyEvent == KeyEvent.Up ? "↑ " : "↓ ") + ea.Command.Description))); 
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {

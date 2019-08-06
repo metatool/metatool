@@ -10,9 +10,10 @@ using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.Implementation.Trie;
 using Metaseed.MetaKeyboard;
-
+using OneOf;
 namespace Metaseed.Input
 {
+    using HotKey = OneOf<ISequenceUnit, ISequence>;
     public enum KeyProcessState
     {
         // well processed
@@ -38,27 +39,6 @@ namespace Metaseed.Input
             _stateWalker = new TrieWalker<ICombination, KeyEventAction>(_trie);
         }
 
-        public class CombinationRemoveToken : IRemovable
-        {
-            private readonly ITrie<ICombination, KeyEventAction> _trie;
-            private readonly IList<ICombination>                 _combinations;
-            private readonly KeyEventAction                      _action;
-
-            public CombinationRemoveToken(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> combinations,
-                KeyEventAction action)
-            {
-                _trie = trie;
-                _combinations = combinations;
-                _action = action;
-            }
-
-            public void Remove()
-            {
-                var r = _trie.Remove(_combinations, action => action.Equals(_action));
-                Console.WriteLine(r);
-            }
-        }
-
         public void Reset()
         {
             _stateWalker.GoToRoot();
@@ -67,13 +47,13 @@ namespace Metaseed.Input
         public IEnumerable<(string key, IEnumerable<string> descriptions)> Tips
             => _stateWalker.CurrentNode.Tip;
 
-        public IRemovable Add(IList<ICombination> combinations, KeyEventAction action)
+        public IMetaKey Add(IList<ICombination> combinations, KeyEventAction action)
         {
             _trie.Add(combinations, action);
-            return new CombinationRemoveToken(_trie, combinations, action);
+            return new MetaKey(_trie, combinations, action);
         }
 
-        public IRemovable Add(ICombination combination, KeyEventAction action)
+        public IMetaKey Add(ICombination combination, KeyEventAction action)
         {
             return Add(new List<ICombination> {combination}, action);
         }
@@ -138,22 +118,22 @@ namespace Metaseed.Input
 
             // execute
 #if !DEBUG
-                try
-                {
-#endif
-            (candidateChild.Key as Combination)?.OnEvent(args);
-            foreach (var keyEventAction in actionList[eventType])
+            try
             {
-                if (!string.IsNullOrEmpty(keyEventAction.Description))
-                    Console.WriteLine(keyEventAction.Description);
-                keyEventAction.Action?.Invoke(args);
-            }
-#if !DEBUG
-                }
-                catch (Exception e)
+#endif
+                (candidateChild.Key as Combination)?.OnEvent(args);
+                foreach (var keyEventAction in actionList[eventType])
                 {
-                    MessageBox.Show(e.ToString());
+                    if (!string.IsNullOrEmpty(keyEventAction.Description))
+                        Console.WriteLine(keyEventAction.Description);
+                    keyEventAction.Execute?.Invoke(args);
                 }
+#if !DEBUG
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
 #endif
             if (args.GoToState != null) // goto state by requiring
             {
@@ -164,6 +144,7 @@ namespace Metaseed.Input
 
                 return KeyProcessState.Continue;
             }
+
             if (eventType == KeyEvent.Up)
             {
                 // only navigate on up event to handle both the down actions and the up actions

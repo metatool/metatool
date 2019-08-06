@@ -10,63 +10,63 @@ namespace Metaseed.Input
 {
     public static class SequenceExtensions
     {
-        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
-            sequence.Item1.Then(sequence.Item2).Down(action,actionId,description);
+            return sequence.Item1.Then(sequence.Item2).Down(action,description);
         }
-        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
-            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action, actionId, description);
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action,  description);
         }
-        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
-            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Down(action, actionId, description);
-        }
-
-        public static void Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
-        {
-            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Down(action, actionId, description);
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Down(action,  description);
         }
 
-        public static void Down(this ISequence sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
+        {
+           return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Down(action,  description);
+        }
+
+        public static IMetaKey Down(this ISequence sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
-            Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down, new KeyAction(actionId, description, action));
+            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down, new KeyCommand( action){Description = description});
         }
 
-        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
-            sequence.Item1.Then(sequence.Item2).Up(action, actionId, description);
+            return sequence.Item1.Then(sequence.Item2).Up(action,  description);
         }
-        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
-            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action, actionId, description);
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action,  description);
         }
-        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
-            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Up(action, actionId, description);
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Up(action,  description);
         }
 
-        public static void Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action, string actionId = "", string description = "")
+        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action,  string description = "")
         {
-            sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Up(action, actionId, description);
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Up(action,  description);
         }
-        public static void Up(this ISequence sequence, Action<KeyEventArgsExt> action, string actionId = "",
+        public static IMetaKey Up(this ISequence sequence, Action<KeyEventArgsExt> action, 
             string description = "")
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
-            Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Up, new KeyAction(actionId, description, action));
+            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Up, new KeyCommand(  action){Description = description});
         }
 
         public static Task<KeyEventArgsExt> DownAsync(this ISequence sequence, int timeout = 8888)

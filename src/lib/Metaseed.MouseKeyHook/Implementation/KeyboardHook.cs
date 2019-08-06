@@ -7,9 +7,11 @@ using Metaseed.DataStructures;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.Implementation.Trie;
 using Metaseed.MetaKeyboard;
-
+using OneOf;
 namespace Metaseed.Input.MouseKeyHook
 {
+    using Hotkey = OneOf<ISequenceUnit, ISequence>;
+
     public delegate void KeyEventHandler(object sender, KeyEventArgsExt e);
     public class KeyboardHook
     {
@@ -25,7 +27,7 @@ namespace Metaseed.Input.MouseKeyHook
             _eventSource = Hook.GlobalEvents();
         }
 
-        public IRemovable Add(IList<ICombination> combinations, KeyEventAction action,
+        public IMetaKey Add(IList<ICombination> combinations, KeyEventAction action,
             KeyStateMachine keyStateMachine = null)
         {
             return (keyStateMachine ?? DefaultStateMachine).Add(combinations, action);
