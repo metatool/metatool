@@ -31,7 +31,7 @@ namespace Metaseed.Input
         }
 
         internal KeyEventArgsExt(Keys keyData, int scanCode, int timestamp, bool isKeyDown, bool isKeyUp,
-            bool isExtendedKey, KeyEventArgsExt lastKeyDownEvent, KeyboardState keyboardState)
+            bool isExtendedKey, KeyEventArgsExt lastKeyEvent, KeyboardState keyboardState)
             : this(keyData)
         {
             ScanCode                          = scanCode;
@@ -39,14 +39,16 @@ namespace Metaseed.Input
             IsKeyDown                         = isKeyDown;
             IsKeyUp                           = isKeyUp;
             IsExtendedKey                     = isExtendedKey;
-            LastKeyDownEvent                  = lastKeyDownEvent;
-            lastKeyDownEvent.LastKeyDownEvent = null;
+            LastKeyDownEvent                  = lastKeyEvent.LastKeyDownEvent;
+            LastKeyEvent = lastKeyEvent;
+            lastKeyEvent.LastKeyDownEvent = null;
+            lastKeyEvent.LastKeyEvent = null;
             KeyboardState                     = keyboardState;
         }
 
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
-        public IKeyState GoToState;
+        public IKeyPath PathToGo;
 
         public void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send)
         {
@@ -91,6 +93,8 @@ namespace Metaseed.Input
         public bool IsKeyDown { get; }
 
         public KeyEventArgsExt LastKeyDownEvent { get; private set; }
+        public KeyEventArgsExt LastKeyEvent { get; private set; }
+
 
         /// <summary>
         ///     True if event signals key up.
@@ -124,8 +128,8 @@ namespace Metaseed.Input
                 $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}";
         }
 
-        private static KeyEventArgsExt lastKeyDownGloable = new KeyEventArgsExt(Keys.None);
-        private static KeyEventArgsExt lastKeyDownApp     = new KeyEventArgsExt(Keys.None);
+        private static KeyEventArgsExt lastKeyEventGloable = new KeyEventArgsExt(Keys.None);
+        private static KeyEventArgsExt lastKeyEventApp     = new KeyEventArgsExt(Keys.None);
 
         internal static KeyEventArgsExt FromRawDataApp(CallbackData data)
         {
@@ -158,9 +162,10 @@ namespace Metaseed.Input
             var isKeyDown = !isKeyReleased;
             var isKeyUp   = wasKeyDown && isKeyReleased;
 
-            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey, lastKeyDownApp,
+            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey, lastKeyEventApp,
                 KeyboardState.GetCurrent());
-            if (isKeyDown) lastKeyDownApp = r;
+            lastKeyEventApp = r;
+            if (isKeyDown) lastKeyEventApp.LastKeyDownEvent = r;
             return r;
         }
 
@@ -182,8 +187,9 @@ namespace Metaseed.Input
             var        isExtendedKey   = (keyboardHookStruct.Flags & maskExtendedKey) > 0;
 
             var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
-                isKeyUp, isExtendedKey, lastKeyDownGloable, KeyboardState.GetCurrent());
-            if (isKeyDown) lastKeyDownGloable = r;
+                isKeyUp, isExtendedKey, lastKeyEventGloable, KeyboardState.GetCurrent());
+            lastKeyEventGloable = r;
+            if (isKeyDown) lastKeyEventGloable.LastKeyDownEvent = r;
             r.IsVirtual = isVirtual;
             return r;
         }

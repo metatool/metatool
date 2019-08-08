@@ -40,7 +40,7 @@ namespace Metaseed.MetaKeyboard
         public static MenuItem AddContextMenuItem(string header, Action<MenuItem> excute,
             Func<MenuItem, bool> canExcute = null, bool isCheckable = false, bool? initialState = null)
         {
-            var item = new MenuItem() {Header = header, IsCheckable = isCheckable};
+            var item                                  = new MenuItem() {Header = header, IsCheckable = isCheckable};
             if (initialState.HasValue) item.IsChecked = initialState.Value;
             item.Command = new DelegateCommand<MenuItem>()
                 {CanExecuteFunc = canExcute, CommandAction = excute};
@@ -100,6 +100,25 @@ namespace Metaseed.MetaKeyboard
             return trayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
         }
 
+        static Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> tipDictionary =
+            new Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>>();
+
+        public static void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
+            NotifyPosition position =
+                NotifyPosition.ActiveScreen)
+        {
+            tipDictionary.TryGetValue(name, out var tp);
+            if (tp!=null && tips.SequenceEqual(tp)) return;
+
+            tipDictionary[name] = tips;
+            var t = tipDictionary.SelectMany(pair => pair.Value).ToArray();
+            if (t.Any())
+                ShowKeysTip(t, position);
+            else
+            {
+                CloseKeysTip();
+            }
+        }
 
         public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
             NotifyPosition position =
@@ -114,10 +133,14 @@ namespace Metaseed.MetaKeyboard
             ShowMessage(b, 88888);
         }
 
+        public static void CloseKeysTip(string name)
+        {
+            ShowKeysTip(name, Enumerable.Empty<(string key, IEnumerable<string> descriptions)>());
+        }
+
         public static void CloseKeysTip()
         {
             trayIcon.CloseBalloon();
-
         }
 
         public static void ShowKeysTip1(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)

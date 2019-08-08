@@ -5,7 +5,7 @@ using static Metaseed.MetaKeyboard.KeyboardConfig;
 
 namespace ConsoleApp1
 {
-    class Keyboard61
+    class Keyboard61: KeyMetaPackage
     {
         public Keyboard61()
         {

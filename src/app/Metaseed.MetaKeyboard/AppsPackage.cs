@@ -10,7 +10,7 @@ using static Metaseed.MetaKeyboard.KeyboardConfig;
 
 namespace Metaseed.MetaKeyboard
 {
-    public class Software
+    public class Software : KeyMetaPackage
     {
         public IMetaKey ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
 

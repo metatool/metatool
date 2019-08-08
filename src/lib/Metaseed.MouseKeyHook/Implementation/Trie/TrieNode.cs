@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Metaseed.Input;
+using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 
 namespace Metaseed.DataStructures
@@ -13,6 +14,7 @@ namespace Metaseed.DataStructures
         private            IList<TValue>                            _values = new KeyActionList<TValue>();
         public             TKey                                     Key;
         public             TrieNode<TKey, TValue>                   Parent;
+        private            IKeyPath                                 _keyPath;
 
         protected TrieNode(TKey key = default(TKey))
         {
@@ -35,7 +37,7 @@ namespace Metaseed.DataStructures
         internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip => _children.Select(p =>
             (p.Key.ToString(),
                 p.Value._values.Where(ea => !string.IsNullOrEmpty(ea.Command.Description)).Select(ea =>
-                    (ea.KeyEvent == KeyEvent.Up ? "↑ " : "↓ ") + ea.Command.Description))); 
+                    (ea.KeyEvent == KeyEvent.Up ? "↑ " : "↓ ") + ea.Command.Description)));
 
         protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children()
         {
@@ -114,13 +116,25 @@ namespace Metaseed.DataStructures
             _children.Remove(key);
         }
 
+        public IKeyPath KeyPath
+        {
+            get
+            {
+                if (_keyPath != null) return _keyPath;
+                if (Key == null || Parent == null)
+                    return null;
+                _keyPath = new Sequence(Parent.Key == null
+                    ? new ICombination[] {Key}
+                    : Parent.KeyPath.Concat(Key).ToArray());
+                return _keyPath;
+            }
+        }
+
         public override string ToString()
         {
-            return Key == null || Parent == null ?
-                "Root" : 
-                Parent.Key == null ?
-                    $"{Key}" : 
-                    $"{Parent.Key}, {Key}";
+            return Key == null || Parent == null ? "Root" :
+                Parent.Key == null               ? $"{Key}" :
+                                                   $"{Parent.Key}, {Key}";
         }
     }
 }

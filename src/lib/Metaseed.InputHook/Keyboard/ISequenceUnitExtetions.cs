@@ -7,17 +7,23 @@ namespace Metaseed.Input
 {
     public static class ISequenceUnitExtetions
     {
-        public static IMetaKey Down(this ISequenceUnit sequenceUnit, Action<KeyEventArgsExt> action, string description="")
+        public static IMetaKey Down(this ISequenceUnit sequenceUnit, Action<KeyEventArgsExt> action, string description="", KeyStateMachine stateMachine = null)
         {
             var combination = sequenceUnit.ToCombination();
-            return Keyboard.Add(combination, KeyEvent.Down, new KeyCommand(action){Description = description});
+            return Keyboard.Add(combination, KeyEvent.Down, new KeyCommand(action){Description = description},stateMachine);
         }
 
-        public static IMetaKey Up(this ISequenceUnit sequenceUnit, Action<KeyEventArgsExt> action,  string description ="")
+        public static IMetaKey Up(this ISequenceUnit sequenceUnit, Action<KeyEventArgsExt> action,  string description ="", KeyStateMachine stateMachine = null)
         {
             var combination = sequenceUnit.ToCombination();
 
-            return Keyboard.Add(combination, KeyEvent.Up, new KeyCommand(action){Description = description});
+            return Keyboard.Add(combination, KeyEvent.Up, new KeyCommand(action){Description = description},stateMachine);
+        }
+        public static IMetaKey AllUp(this ISequenceUnit sequenceUnit, Action<KeyEventArgsExt> action, string description = "", KeyStateMachine stateMachine = null)
+        {
+            if(sequenceUnit is Key) throw new Exception("AllUp event could only be used on Key, please use Up event!");
+            var combination = sequenceUnit.ToCombination();
+            return Keyboard.Add(combination, KeyEvent.AllUp, new KeyCommand(action) { Description = description }, stateMachine);
         }
         public static IMetaKey Hit(this ISequenceUnit sequenceUnit,  Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> predicate, string description, bool markHandled = true)
         {

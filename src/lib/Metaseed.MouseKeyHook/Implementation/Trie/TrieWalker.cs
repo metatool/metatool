@@ -11,11 +11,12 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
 
         public TrieWalker(Trie<TKey, TValue> trie)
         {
-            _trie = trie;
+            _trie       = trie;
             CurrentNode = _trie;
         }
 
         private TrieNode<TKey, TValue> _CurrentNode;
+
         internal TrieNode<TKey, TValue> CurrentNode
         {
             get => _CurrentNode;
@@ -23,11 +24,12 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             {
                 if (_CurrentNode == value) return;
                 _CurrentNode = value;
-                Console.WriteLine($"==On state: {_CurrentNode}");
+                Console.WriteLine($"\t@{_CurrentNode}");
             }
         }
 
-        public   bool                   IsOnRoot    => CurrentNode == _trie;
+        public TrieNode<TKey, TValue> Root     => _trie;
+        public bool                   IsOnRoot => CurrentNode == _trie;
 
         public int                 ChildrenCount => CurrentNode.ChildrenCount;
         public IEnumerable<TValue> CurrentValues => CurrentNode.Values();
@@ -72,21 +74,21 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
             CurrentNode = _trie;
         }
 
-        public bool TryGoToState(IKeyState state, out TrieNode<TKey, TValue> node)
+        public bool TryGoToState(IKeyPath path, out TrieNode<TKey, TValue> node)
         {
             node = _trie;
 
-            if(state != null)
-            foreach (var combination in state)
-            {
-                if (node.TryGetChild((TKey)combination, out var child))
+            if (path != null)
+                foreach (var combination in path)
                 {
-                    node = child;
-                    continue;
-                }
+                    if (node.TryGetChild((TKey) combination, out var child))
+                    {
+                        node = child;
+                        continue;
+                    }
 
-                return false;
-            }
+                    return false;
+                }
 
             CurrentNode = node;
             return true;

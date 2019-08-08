@@ -17,6 +17,8 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
                         return Down;
                     case KeyEvent.Up:
                         return Up;
+                    case KeyEvent.AllUp:
+                        return AllUp;
                     default:
                         throw  new Exception(keyEvent + "not supported.");
                 }
@@ -48,7 +50,18 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
             }
         }
+        private IEnumerable<KeyCommand> _allUp;
+        public IEnumerable<KeyCommand> AllUp
+        {
+            get
+            {
+                if (_allUp != null && !_refresh) return _allUp;
+                _allUp = this.Where(e => e.KeyEvent == KeyEvent.AllUp).Select(e => e.Command);
+                _refresh = false;
+                return _allUp;
 
+            }
+        }
 
         protected override void OnListChanged(ListChangedEventArgs e)
         {

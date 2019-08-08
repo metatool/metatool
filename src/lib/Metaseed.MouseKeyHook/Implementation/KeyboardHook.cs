@@ -8,19 +8,24 @@ using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.Implementation.Trie;
 using Metaseed.MetaKeyboard;
 using OneOf;
+
 namespace Metaseed.Input.MouseKeyHook
 {
     using Hotkey = OneOf<ISequenceUnit, ISequence>;
 
     public delegate void KeyEventHandler(object sender, KeyEventArgsExt e);
+
     public class KeyboardHook
     {
-        private readonly        IKeyboardMouseEvents _eventSource;
-        private static readonly KeyStateMachine      DefaultStateMachine = new KeyStateMachine();
-        KeyStateMachine                              _currentMachine;
+        private readonly         IKeyboardMouseEvents _eventSource;
+        private static readonly  KeyStateMachine      DefaultStateMachine = new KeyStateMachine("Default");
+        internal static readonly KeyStateMachine      HardMapStateMachine = new KeyStateMachine("HardMap");
+        public static readonly   KeyStateMachine      MapStateMachine     = new KeyStateMachine("Map");
+
+        // KeyStateMachine _currentMachine;
 
         private readonly List<KeyStateMachine> _stateMachines = new List<KeyStateMachine>()
-            {DefaultStateMachine};
+            {HardMapStateMachine, DefaultStateMachine, MapStateMachine};
 
         public KeyboardHook()
         {
@@ -57,11 +62,16 @@ namespace Metaseed.Input.MouseKeyHook
             remove => _keyDownHandlers.Remove(value);
         }
 
-        public void ShowTip()
+        public void ShowTip(bool ifRootThenEmpty = false)
         {
-            if (_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
-            var tips = _stateMachines.SelectMany(m => m.Tips);
-            Notify.ShowKeysTip(tips);
+            //if (_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
+            var tips = _stateMachines.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
+            if(tips.Length>0)
+                Notify.ShowKeysTip(tips);
+            else
+            {
+                Notify.CloseKeysTip();
+            }
         }
 
 
@@ -72,49 +82,57 @@ namespace Metaseed.Input.MouseKeyHook
 
             void KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
             {
-                // continue process this event on current machine
-                if (_currentMachine != null)
-                {
-                    var result = _currentMachine.KeyEventProcess(eventType, args);
-                    if (result == KeyProcessState.Continue) return;
-                    else if (result == KeyProcessState.Done)
-                    {
-                        _currentMachine = null;
-                        return; // try to find current machine on next event 
-                    }
-
-                    else if (result == KeyProcessState.Reset)
-                        _currentMachine = null;
-
-                    // yield: try to process this event with other machine.
-                }
-
-                // find current machine
+                //what if key sent in other machine, and we are on the keypath
                 foreach (var keyStateMachine in _stateMachines)
                 {
-                    if(keyStateMachine == _currentMachine) continue; // yield
-
                     var result = keyStateMachine.KeyEventProcess(eventType, args);
-                    if (result == KeyProcessState.Continue)
-                    {
-                        _currentMachine = keyStateMachine;
-                        break;
-                    }
-                    else if (result == KeyProcessState.Done)
-                    {
-                        break; // this event is well handled
-                    }
-
-                    // yield or reset: continue finding
                 }
+
+                // // if machine_1 has A+B+C and machine_2's A+B would never processed
+                // // continue process this event on current machine
+                // if (_currentMachine != null)
+                // {
+                //     var result = _currentMachine.KeyEventProcess(eventType, args);
+                //     if (result == KeyProcessState.Continue) return;
+                //     else if (result == KeyProcessState.Done)
+                //     {
+                //         _currentMachine = null;
+                //         return; // try to find current machine on next event 
+                //     }
+                //
+                //     else if (result == KeyProcessState.Reset)
+                //         _currentMachine = null;
+                //
+                //     // yield: try to process this event with other machine.
+                // }
+                //
+                // // find current machine
+                // foreach (var keyStateMachine in _stateMachines)
+                // {
+                //     if(keyStateMachine == _currentMachine) continue; // yield
+                //
+                //     var result = keyStateMachine.KeyEventProcess(eventType, args);
+                //     if (result == KeyProcessState.Continue)
+                //     {
+                //         _currentMachine = keyStateMachine;
+                //         break;
+                //     }
+                //     else if (result == KeyProcessState.Done)
+                //     {
+                //         break; // this event is well handled
+                //     }
+                //
+                //     // yield or reset: continue finding
+                // }
             }
+
             _eventSource.KeyDown += (sender, args) =>
                 KeyEventProcess(KeyEvent.Down, args as KeyEventArgsExt);
             _eventSource.KeyUp += (sender, args) =>
                 KeyEventProcess(KeyEvent.Up, args as KeyEventArgsExt);
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
-            _keyUpHandlers.ForEach(h => _eventSource.KeyUp += h);
+            _keyUpHandlers.ForEach(h => _eventSource.KeyUp     += h);
         }
     }
 }

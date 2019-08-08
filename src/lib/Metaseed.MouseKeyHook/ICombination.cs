@@ -15,7 +15,7 @@ namespace Metaseed.Input
     {
         ICombination ToCombination();
     }
-    public interface ICombination :IKeyState, IKeyEventAsync, ISequencable, ICombinable, ISequenceUnit
+    public interface ICombination :IKeyPath, IKeyEventAsync, ISequencable, ICombinable, ISequenceUnit
     {
         Key TriggerKey { get; }
         IEnumerable<Key> Chord { get; }

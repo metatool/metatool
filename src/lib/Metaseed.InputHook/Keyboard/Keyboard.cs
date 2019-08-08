@@ -8,12 +8,14 @@ using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using System.Windows.Threading;
 using OneOf;
+
 namespace Metaseed.Input
 {
-using Hotkey=OneOf<ISequenceUnit,ISequence>;
+    using Hotkey = OneOf<ISequenceUnit, ISequence>;
+
     public static class Keyboard
     {
-        public static   IKeyState    Root        = null;
+        public static   IKeyPath    Root        = null;
         static readonly KeyboardHook _Hook       = new KeyboardHook();
         static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 
@@ -53,8 +55,8 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
             {
                 while (repeat-- > 0) action();
             };
-
         }
+
         internal static IMetaKey Map(ICombination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
         {
@@ -78,8 +80,9 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
                         }
                         else
                         {
-                            Async(Repeat(repeat,() => InputSimu.Inst.Keyboard.ModifiedKeyDown(target.Chord.Cast<VirtualKeyCode>(),
-                                    (VirtualKeyCode)(Keys) target.TriggerKey)
+                            Async(Repeat(repeat, () => InputSimu.Inst.Keyboard.ModifiedKeyDown(
+                                target.Chord.Cast<VirtualKeyCode>(),
+                                (VirtualKeyCode) (Keys) target.TriggerKey)
                             ));
                         }
 
@@ -106,7 +109,7 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
                     }
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys)target.TriggerKey);
+                        (VirtualKeyCode) (Keys) target.TriggerKey);
                 })
             };
         }
@@ -120,29 +123,21 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
             void AsyncCall(KeyEventArgsExt e)
             {
                 e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                    target.Chord.Select(k=>(VirtualKeyCode)(Keys)k),
-                    (VirtualKeyCode) (Keys)target.TriggerKey));
+                    target.Chord.Select(k => (VirtualKeyCode) (Keys) k),
+                    (VirtualKeyCode) (Keys) target.TriggerKey));
             }
 
-            IMetaKey AllKeyUp()
+            // if not: A+B -> C become A+C
+            void KeyUpHandler(KeyEventArgsExt e)
             {
-                void KeyUpHandler(object s, KeyEventArgsExt e)
-                {
-                    if (keyDownEvent != e.LastKeyDownEvent ||
-                        !source.IsAnyKey(e.KeyCode)) return;
+                if (!handling) return;
+                handling  = false;
+                e.Handled = true;
 
-                    if (handling && e.KeyCode == source.TriggerKey)
-                    {
-                        handling = false;
-                    }
+                if (!allUp && keyDownEvent != e.LastKeyEvent) return;
+                if (allUp && keyDownEvent != e.LastKeyDownEvent) return;
 
-                    var up = e.KeyboardState.IsUp(source.TriggerKey) && e.KeyboardState.AreAllUp(source.Chord);
-                    if (!up) return;
-                    AsyncCall(e);
-                }
-
-                _Hook.KeyUp += KeyUpHandler;
-                return new Removable(() => _Hook.KeyUp -= KeyUpHandler);
+                AsyncCall(e);
             }
 
             return new MetaKeys()
@@ -153,24 +148,15 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
                     {
                         handling     = true;
                         keyDownEvent = e;
-                        e.Handled = true;
+                        e.Handled    = true;
                         return;
                     }
 
                     handling = false;
-                }),
+                },"",KeyboardHook.MapStateMachine),
                 allUp
-                    ? AllKeyUp()
-                    : source.Up(e =>
-                    {
-                        if (!handling) return;
-                        handling  = false;
-                        e.Handled = true;
-
-                        if (keyDownEvent != e.LastKeyDownEvent) return;
-
-                        AsyncCall(e);
-                    })
+                    ? source.AllUp(KeyUpHandler,"",KeyboardHook.MapStateMachine)
+                    : source.Up(KeyUpHandler,"",KeyboardHook.MapStateMachine)
             };
         }
 
@@ -193,7 +179,7 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
                 {
                     if (predicate == null || predicate(e))
                     {
-                        handling = true;
+                        handling     = true;
                         keyDownEvent = e;
 
                         if (!markHandled) return;
@@ -235,11 +221,11 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
             if (keys.Contains(','))
             {
                 var sequence = Sequence.FromString(keys).ToList<ICombination>();
-                Add(sequence, KeyEvent.Down, new KeyCommand(  e => action()){Description = description});
+                Add(sequence, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
             }
 
             var combination = Combination.FromString(keys) as Combination;
-            Add(combination, KeyEvent.Down, new KeyCommand(e => action()){Description = description});
+            Add(combination, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
         }
 
         private static void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
@@ -266,5 +252,5 @@ using Hotkey=OneOf<ISequenceUnit,ISequence>;
         {
             _Hook.Run();
         }
-        }
+    }
 }

@@ -8,17 +8,14 @@ using static Metaseed.Input.Key;
 
 namespace Metaseed.MetaKeyboard
 {
-    public class Mouse
+    public class Mouse : KeyMetaPackage
     {
-        public Mouse()
-        {
-            // LButton & RButton
-            (GK + OpenBrackets).Map(Keys.LButton);
-            (GK + CloseBrackets).Map(Keys.RButton);
+        // LButton & RButton
+        public IMetaKey MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
+        public IMetaKey MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
 
-            // Scroll up/down (reading, one hand)
-            (GK + E).Handled().Down(e => Input.Mouse.VerticalScroll(1));
-            (GK + D).Handled().Down(e => Input.Mouse.VerticalScroll(-1));
-        }
+        // Scroll up/down (reading, one hand)
+        public IMetaKey MouseScrollUp   = (GK + E).Handled().Down(e => Input.Mouse.VerticalScroll(1));
+        public IMetaKey MouseScrollDown = (GK + D).Handled().Down(e => Input.Mouse.VerticalScroll(-1));
     }
 }

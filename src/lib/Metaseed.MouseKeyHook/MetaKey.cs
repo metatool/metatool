@@ -14,34 +14,34 @@ namespace Metaseed.Input
 
     public interface IMeta
     {
-        string Id { get; }
-        bool Disable { get; set; }
+        string Id      { get; set; }
+        bool   Disable { get; set; }
     }
 
     public class Meta
     {
-        public string Id { get; set; }
-        public bool Disable { get; set; }
+        public string Id      { get; set; }
+        public bool   Disable { get; set; }
     }
 
 
-    public interface IMetaKey : IMeta,IRemove
+    public interface IMetaKey : IMeta, IRemove
     {
         Hotkey Hotkey { get; set; }
     }
 
     public class HotkeyToken : IRemoveChangeable<Hotkey>
     {
-        private readonly   ITrie<ICombination, KeyEventAction> _trie;
+        private readonly  ITrie<ICombination, KeyEventAction> _trie;
         internal readonly IList<ICombination>                 _hotkey;
-        internal readonly   KeyEventAction                      _action;
+        internal readonly KeyEventAction                      _action;
 
         public HotkeyToken(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> hotkey,
             KeyEventAction action)
         {
-            _trie         = trie;
+            _trie   = trie;
             _hotkey = hotkey;
-            _action       = action;
+            _action = action;
         }
 
         public void Remove()
@@ -61,7 +61,8 @@ namespace Metaseed.Input
 
     public class MetaKey : IMetaKey
     {
-        private readonly HotkeyToken _token;
+        internal readonly HotkeyToken _token;
+
         public Hotkey Hotkey
         {
             get
@@ -85,10 +86,11 @@ namespace Metaseed.Input
             KeyEventAction action)
         {
             _token = new HotkeyToken(trie, combinations, action);
-
         }
 
-        public string Id { get; set; }
+        public string Id { get;
+            set; }
+
         public bool Disable
         {
             get => _token._hotkey.Last().Disabled;
@@ -98,7 +100,17 @@ namespace Metaseed.Input
 
     public class MetaKeys : List<IMetaKey>, IMetaKey
     {
-        public string Id { get;  }
+        public string Id
+        {
+            get => this.Aggregate("",(a,c)=>a+c.Id);
+            set
+            {
+                for (int i = 0; i < this.Count; i++)
+                {
+                    ((MetaKey) this[i]).Id = value + i;
+                }
+            }
+        }
 
         public bool Disable
         {
@@ -111,19 +123,20 @@ namespace Metaseed.Input
             get => this.First().Hotkey;
             set => this.ForEach(k => k.Hotkey = value);
         }
+
         public void Remove()
         {
             this.ForEach(k => k.Remove());
         }
     }
 
-    public class MetaPackage : IMetaPackage
+    public abstract class MetaPackage : IMetaPackage
     {
-        protected IEnumerable<(FieldInfo, MetaKey)> GetMetas()
+        protected IEnumerable<(FieldInfo, IMeta)> GetMetas()
         {
             var commands = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
-                .Where(f => typeof(IMetaKey).IsAssignableFrom(f.FieldType))
-                .Select(fi => (fi, fi.GetValue(this) as MetaKey));
+                .Where(f => typeof(IMeta).IsAssignableFrom(f.FieldType))
+                .Select(fi => (fi, fi.GetValue(this) as IMeta));
             return commands;
         }
 
@@ -133,12 +146,40 @@ namespace Metaseed.Input
             {
                 var (fi, metaKey) = c;
                 if (string.IsNullOrEmpty(metaKey.Id))
-                    metaKey.Id = GetType().FullName + fi.Name;
+                    metaKey.Id = GetType().FullName +"."+ fi.Name;
+                else
+                {
+                    metaKey.Id = metaKey.Id;
+                }
             });
         }
     }
 
     public class KeyMetaPackage : MetaPackage
     {
+        public KeyMetaPackage()
+        {
+            Start();
+        }
+
+        public sealed override void Start()
+        {
+            base.Start();
+            GetMetas().ToList().ForEach(c =>
+            {
+                void f(IMetaKey meta)
+                {
+                    if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token._action.Command.Id))
+                        metaKey._token._action.Command.Id = metaKey.Id;
+                }
+                var (fi, key) = c;
+                if (key is MetaKey m) f(m);
+                   
+                if (key is System.Collections.Generic.List<IMetaKey> metaKeys)
+                {
+                    metaKeys.ForEach(mk=>f(mk));
+                }
+            });
+        }
     }
 }

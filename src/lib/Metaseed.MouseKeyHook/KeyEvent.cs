@@ -1,4 +1,4 @@
 ﻿namespace Metaseed.Input
 {
-    public enum KeyEvent { Down, Up }
+    public enum KeyEvent { Down, Up, AllUp }
 }
