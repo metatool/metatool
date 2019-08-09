@@ -67,8 +67,8 @@ namespace Metaseed.Input
                 {
                     if (predicate == null || predicate(e))
                     {
-                        handled   = true;
-                        e.Handled = true;
+                        handled            = true;
+                        e.Handled          = true;
                         e.NoFurtherProcess = true;
 
                         InputSimu.Inst.Keyboard.ModifiedKeyDown(
@@ -78,20 +78,39 @@ namespace Metaseed.Input
                     }
 
                     handled = false;
-                },"",KeyStateMachine.HardMap),
+                }, "", KeyStateMachine.HardMap),
                 source.Up(e =>
                 {
                     if (!handled) return;
                     handled = false;
                     if (predicate != null && !predicate(e)) return;
-                    e.Handled = true;
+                    e.Handled          = true;
                     e.NoFurtherProcess = true;
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys) target.TriggerKey);
-                },"",KeyStateMachine.HardMap)
+                }, "", KeyStateMachine.HardMap)
             };
         }
+
+        internal static IMetaKey Map(string source, string target, Predicate<KeyEventArgsExt> predicate = null)
+        {
+            var sequence = Sequence.FromString(string.Join(",",source.ToUpper().ToCharArray()));
+            var send = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
+            return sequence.Down(e =>
+            {
+                if (predicate == null || predicate(e))
+                {
+                    e.BeginInvoke(() =>
+                        {
+                            InputSimu.Inst.Keyboard.KeyPress(send.ToArray());
+                            InputSimu.Inst.Keyboard.Type(target);
+                        }
+                    );
+                }
+            }, "", KeyStateMachine.Map);
+        }
+
 
         internal static IMetaKey Map(ICombination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
@@ -126,7 +145,7 @@ namespace Metaseed.Input
                     }
 
                     handled = false;
-                },"",KeyStateMachine.Map),
+                }, "", KeyStateMachine.Map),
                 source.Up(e =>
                 {
                     if (!handled) return;
@@ -146,7 +165,7 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys) target.TriggerKey);
-                },"",KeyStateMachine.Map)
+                }, "", KeyStateMachine.Map)
             };
         }
 

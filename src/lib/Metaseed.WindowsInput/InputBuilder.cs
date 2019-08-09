@@ -201,7 +201,7 @@ namespace WindowsInput
                                                    Scan = scanCode,
                                                    Flags = (UInt32)KeyboardFlag.Unicode,
                                                    Time = 0,
-                                                   ExtraInfo = IntPtr.Zero
+                                                   ExtraInfo = (IntPtr) EXTRA_INFO_IS_VIRTUAL_KEY
                                                }
                                    }
                            };
@@ -219,7 +219,7 @@ namespace WindowsInput
                                                  Flags =
                                                      (UInt32)(KeyboardFlag.KeyUp | KeyboardFlag.Unicode),
                                                  Time = 0,
-                                                 ExtraInfo = IntPtr.Zero
+                                                 ExtraInfo = (IntPtr) EXTRA_INFO_IS_VIRTUAL_KEY
                                              }
                                  }
                          };

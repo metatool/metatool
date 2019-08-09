@@ -44,6 +44,7 @@ namespace Metaseed.MetaKeyboard
             var keyboard61 = new Keyboard61();
             var mouse      = new Mouse();
             var fun        = new FunctionalKeys();
+            var hotstrings = new HostStrings();
 
             var software = new Software();
             // var c = new ClipboardManager();

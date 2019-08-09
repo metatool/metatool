@@ -33,11 +33,11 @@ namespace Metaseed.Input
         }
 
         public static IMetaKey Down(this ISequence sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
+            Action<KeyEventArgsExt> action,  string description = "", KeyStateMachine stateMachine = null)
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
-            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down, new KeyCommand( action){Description = description});
+            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down, new KeyCommand( action){Description = description},stateMachine);
         }
 
         public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
