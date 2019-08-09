@@ -40,7 +40,7 @@ namespace Metaseed.MetaKeyboard
 
             Keyboard.KeyPress += (o, e1) => { };
 
-
+            var keyConfig = new KeyboardConfig();
             var keyboard61 = new Keyboard61();
             var mouse      = new Mouse();
             var fun        = new FunctionalKeys();

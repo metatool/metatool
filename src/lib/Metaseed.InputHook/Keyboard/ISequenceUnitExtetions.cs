@@ -40,6 +40,10 @@ namespace Metaseed.Input
         {
             return Keyboard.Map(key.ToCombination(), new Combination(target), predicate, repeat);
         }
+        public static IMetaKey HardMap(this ISequenceUnit key, Key target, Predicate<KeyEventArgsExt> predicate = null)
+        {
+            return Keyboard.HardMap(key.ToCombination(), new Combination(target), predicate);
+        }
         public static IMetaKey Map(this ISequenceUnit key, ICombination target, Predicate<KeyEventArgsExt> predicate = null, int repeat =1)
         {
             return Keyboard.Map(key.ToCombination(), target, predicate, repeat);

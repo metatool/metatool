@@ -8,18 +8,21 @@ namespace Metaseed.Input
         public static readonly Key Caps          = new Key(Keys.CapsLock);
         public static readonly Key LCtrl         = new Key(Keys.LControlKey);
         public static readonly Key RCtrl         = new Key(Keys.RControlKey);
-        public static readonly Key Ctrl          = new Key(Keys.ControlKey);
+        public static readonly Key CtrlKey       = new Key(Keys.ControlKey);
+        public static readonly Key Ctrl          = new Key(Keys.LControlKey, Keys.RControlKey);
         public static readonly Key CtrlChord     = new Key(Keys.Control);
         public static readonly Key LShift        = new Key(Keys.LShiftKey);
         public static readonly Key RShift        = new Key(Keys.RShiftKey);
-        public static readonly Key Shift         = new Key(Keys.ShiftKey);
+        public static readonly Key ShiftKey      = new Key(Keys.ShiftKey);
+        public static readonly Key Shift         = new Key(Keys.LShiftKey, Keys.RShiftKey);
         public static readonly Key ShiftChord    = new Key(Keys.Shift);
         public static readonly Key LAlt          = new Key(Keys.LMenu);
         public static readonly Key LMenu         = LAlt;
         public static readonly Key RAlt          = new Key(Keys.RMenu);
         public static readonly Key RMenu         = RAlt;
-        public static readonly Key Alt           = new Key(Keys.Menu);
-        public static readonly Key Menu          = Alt;
+        public static readonly Key AltKey        = new Key(Keys.Menu);
+        public static readonly Key Alt           = new Key(Keys.LMenu, Keys.RMenu);
+        public static readonly Key Menu          = AltKey;
         public static readonly Key AltChord      = new Key(Keys.Alt);
         public static readonly Key Enter         = new Key(Keys.Enter);
         public static readonly Key Return        = Enter;
@@ -120,7 +123,7 @@ namespace Metaseed.Input
         public static readonly Key Pause = new Key(Keys.Pause);
 
         public static readonly Key Break            = Pause;
-        public static readonly Key Num          = new Key(Keys.NumLock);
+        public static readonly Key Num              = new Key(Keys.NumLock);
         public static readonly Key Num0             = new Key(Keys.NumPad0);
         public static readonly Key Num1             = new Key(Keys.NumPad1);
         public static readonly Key Num2             = new Key(Keys.NumPad2);

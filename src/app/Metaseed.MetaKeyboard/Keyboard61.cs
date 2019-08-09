@@ -64,5 +64,6 @@ namespace ConsoleApp1
         public IMetaKey PrintScreen = (GK + P).Map(Key.PrintScreen);
         public IMetaKey Pause       = (GK + B).Map(Key.Pause);        // Break
         public IMetaKey Apps        = (GK + SemiColon).Map(Key.Apps); // like right click on current selection
+
     }
 }

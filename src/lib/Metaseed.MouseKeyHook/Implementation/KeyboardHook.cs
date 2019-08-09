@@ -18,14 +18,11 @@ namespace Metaseed.Input.MouseKeyHook
     public class KeyboardHook
     {
         private readonly         IKeyboardMouseEvents _eventSource;
-        private static readonly  KeyStateMachine      DefaultStateMachine = new KeyStateMachine("Default");
-        internal static readonly KeyStateMachine      HardMapStateMachine = new KeyStateMachine("HardMap");
-        public static readonly   KeyStateMachine      MapStateMachine     = new KeyStateMachine("Map");
 
         // KeyStateMachine _currentMachine;
 
         private readonly List<KeyStateMachine> _stateMachines = new List<KeyStateMachine>()
-            {HardMapStateMachine, DefaultStateMachine, MapStateMachine};
+            {KeyStateMachine.HardMap, KeyStateMachine.Default, KeyStateMachine.Map};
 
         public KeyboardHook()
         {
@@ -35,7 +32,7 @@ namespace Metaseed.Input.MouseKeyHook
         public IMetaKey Add(IList<ICombination> combinations, KeyEventAction action,
             KeyStateMachine keyStateMachine = null)
         {
-            return (keyStateMachine ?? DefaultStateMachine).Add(combinations, action);
+            return (keyStateMachine ?? KeyStateMachine.Default).Add(combinations, action);
         }
 
         private readonly List<KeyEventHandler> _keyUpHandlers = new List<KeyEventHandler>();
@@ -86,6 +83,8 @@ namespace Metaseed.Input.MouseKeyHook
                 foreach (var keyStateMachine in _stateMachines)
                 {
                     var result = keyStateMachine.KeyEventProcess(eventType, args);
+                    if (result == KeyProcessState.NoFurtherProcess)
+                        return;
                 }
 
                 // // if machine_1 has A+B+C and machine_2's A+B would never processed

@@ -117,6 +117,8 @@ namespace Metaseed.Input
             }
         }
 
+        public bool NoFurtherProcess { get; set; }
+
         public KeyboardState KeyboardState { get; }
 
         public override string ToString()

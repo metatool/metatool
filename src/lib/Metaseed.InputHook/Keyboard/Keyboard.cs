@@ -15,7 +15,7 @@ namespace Metaseed.Input
 
     public static class Keyboard
     {
-        public static   IKeyPath    Root        = null;
+        public static   IKeyPath     Root        = null;
         static readonly KeyboardHook _Hook       = new KeyboardHook();
         static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 
@@ -57,6 +57,42 @@ namespace Metaseed.Input
             };
         }
 
+        internal static IMetaKey HardMap(ICombination source, ICombination target,
+            Predicate<KeyEventArgsExt> predicate = null)
+        {
+            var handled = false;
+            return new MetaKeys()
+            {
+                source.Down(e =>
+                {
+                    if (predicate == null || predicate(e))
+                    {
+                        handled   = true;
+                        e.Handled = true;
+                        e.NoFurtherProcess = true;
+
+                        InputSimu.Inst.Keyboard.ModifiedKeyDown(
+                            target.Chord.Cast<VirtualKeyCode>(),
+                            (VirtualKeyCode) (Keys) target.TriggerKey);
+                        return;
+                    }
+
+                    handled = false;
+                },"",KeyStateMachine.HardMap),
+                source.Up(e =>
+                {
+                    if (!handled) return;
+                    handled = false;
+                    if (predicate != null && !predicate(e)) return;
+                    e.Handled = true;
+                    e.NoFurtherProcess = true;
+
+                    InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
+                        (VirtualKeyCode) (Keys) target.TriggerKey);
+                },"",KeyStateMachine.HardMap)
+            };
+        }
+
         internal static IMetaKey Map(ICombination source, ICombination target,
             Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
         {
@@ -90,7 +126,7 @@ namespace Metaseed.Input
                     }
 
                     handled = false;
-                }),
+                },"",KeyStateMachine.Map),
                 source.Up(e =>
                 {
                     if (!handled) return;
@@ -110,7 +146,7 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys) target.TriggerKey);
-                })
+                },"",KeyStateMachine.Map)
             };
         }
 
@@ -135,7 +171,9 @@ namespace Metaseed.Input
                 e.Handled = true;
 
                 if (!allUp && keyDownEvent != e.LastKeyEvent) return;
-                if (allUp && keyDownEvent != e.LastKeyDownEvent) return;
+                if (allUp  && keyDownEvent != e.LastKeyDownEvent) return;
+
+                if (predicate != null && !predicate(e)) return;
 
                 AsyncCall(e);
             }
@@ -144,19 +182,19 @@ namespace Metaseed.Input
             {
                 source.Down(e =>
                 {
-                    if (predicate == null || predicate(e))
+                    if (predicate != null && !predicate(e))
                     {
-                        handling     = true;
-                        keyDownEvent = e;
-                        e.Handled    = true;
+                        handling = false;
                         return;
                     }
 
-                    handling = false;
-                },"",KeyboardHook.MapStateMachine),
+                    handling     = true;
+                    keyDownEvent = e;
+                    e.Handled    = true;
+                }, "", KeyStateMachine.Map),
                 allUp
-                    ? source.AllUp(KeyUpHandler,"",KeyboardHook.MapStateMachine)
-                    : source.Up(KeyUpHandler,"",KeyboardHook.MapStateMachine)
+                    ? source.AllUp(KeyUpHandler, "", KeyStateMachine.Map)
+                    : source.Up(KeyUpHandler, "", KeyStateMachine.Map)
             };
         }
 

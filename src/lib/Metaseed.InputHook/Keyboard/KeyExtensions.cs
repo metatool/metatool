@@ -34,7 +34,7 @@ namespace Metaseed.Input
         }
         public static IMetaKey AsChordKey(this Key key)
         {
-            return key.MapOnHit(key.ToCombination(), e => !e.IsVirtual, false);
+            return key.MapOnHit(key.ToCombination(), e => !e.IsVirtual && !e.KeyboardState.IsOtherDown(key), false);
         }
     }
 }

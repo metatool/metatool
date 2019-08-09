@@ -39,6 +39,11 @@ namespace Metaseed.Input
         Yield,
 
         /// <summary>
+        /// stop further process for this event
+        /// </summary>
+        NoFurtherProcess,
+
+        /// <summary>
         /// Max Recursive Count
         /// </summary>
         MaxRecursive
@@ -46,6 +51,10 @@ namespace Metaseed.Input
 
     public class KeyStateMachine
     {
+        internal static readonly KeyStateMachine Default = new KeyStateMachine("Default");
+        public static readonly  KeyStateMachine HardMap = new KeyStateMachine("HardMap");
+        public static readonly  KeyStateMachine Map     = new KeyStateMachine("Map");
+
         private readonly Trie<ICombination, KeyEventAction>       _trie = new Trie<ICombination, KeyEventAction>();
         private readonly TrieWalker<ICombination, KeyEventAction> _stateWalker;
         public           string                                   Name;
@@ -59,6 +68,11 @@ namespace Metaseed.Input
 
         public void Reset()
         {
+            var lastDownHit = "";
+            if (_lastKeyDownNode_ForAllUp != null)
+                lastDownHit = $"\t@↓{_lastKeyDownNode_ForAllUp}";
+            Console.WriteLine($"${Name}{lastDownHit}");
+
             Notify.CloseKeysTip(Name);
             _stateWalker.GoToRoot();
         }
@@ -67,6 +81,7 @@ namespace Metaseed.Input
         {
             Reset();
             recursiveCount++;
+            if(recursiveCount>1) Console.WriteLine("&"); // trace recurrent
             KeyEventProcess(eventType, args);
             recursiveCount--;
         }
@@ -98,10 +113,6 @@ namespace Metaseed.Input
 
         public KeyProcessState KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
         {
-            var lastDownHit = "";
-            if (_lastKeyDownNode_ForAllUp != null)
-                lastDownHit = $"\t@↓{_lastKeyDownNode_ForAllUp}";
-            Console.WriteLine($"${Name}{lastDownHit}"); // to trace recurrent
             if (recursiveCount > MaxRecursiveCount)
             {
                 Console.WriteLine($"\tRecursiveCount: {recursiveCount}>{MaxRecursiveCount}");
@@ -110,6 +121,7 @@ namespace Metaseed.Input
                 return KeyProcessState.MaxRecursive;
             }
 
+            if (args.NoFurtherProcess) return KeyProcessState.NoFurtherProcess;
             // to handle A+B+C(B is down in Chord)
             var downInChord = false;
 
@@ -196,6 +208,11 @@ namespace Metaseed.Input
                     }
                 }
             }
+
+            var lastDownHit = "";
+            if (_lastKeyDownNode_ForAllUp != null)
+                lastDownHit = $"\t@↓{_lastKeyDownNode_ForAllUp}";
+            Console.WriteLine($"${Name}{lastDownHit}");
 
             // matched
             var actionList = childNode.Values() as KeyActionList<KeyEventAction>;
