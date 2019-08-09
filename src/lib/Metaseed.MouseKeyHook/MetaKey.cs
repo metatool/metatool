@@ -81,6 +81,7 @@ namespace Metaseed.Input
             _token.Remove();
         }
 
+        internal KeyEvent KeyEvent => _token._action.KeyEvent; 
 
         public MetaKey(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> combinations,
             KeyEventAction action)
@@ -88,8 +89,7 @@ namespace Metaseed.Input
             _token = new HotkeyToken(trie, combinations, action);
         }
 
-        public string Id { get;
-            set; }
+        public string Id { get; set; }
 
         public bool Disable
         {
@@ -107,7 +107,8 @@ namespace Metaseed.Input
             {
                 for (int i = 0; i < this.Count; i++)
                 {
-                    ((MetaKey) this[i]).Id = value + i;
+                    var k = (MetaKey)this[i];
+                    k.Id = $"{value}_{i}-{k.KeyEvent}";
                 }
             }
         }
@@ -167,17 +168,20 @@ namespace Metaseed.Input
             base.Start();
             GetMetas().ToList().ForEach(c =>
             {
-                void f(IMetaKey meta)
+                void setId(IMetaKey meta)
                 {
                     if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token._action.Command.Id))
                         metaKey._token._action.Command.Id = metaKey.Id;
                 }
-                var (fi, key) = c;
-                if (key is MetaKey m) f(m);
-                   
-                if (key is System.Collections.Generic.List<IMetaKey> metaKeys)
+                var (_, key) = c;
+                switch (key)
                 {
-                    metaKeys.ForEach(mk=>f(mk));
+                    case MetaKey m:
+                        setId(m);
+                        break;
+                    case System.Collections.Generic.List<IMetaKey> metaKeys:
+                        metaKeys.ForEach(setId);
+                        break;
                 }
             });
         }
