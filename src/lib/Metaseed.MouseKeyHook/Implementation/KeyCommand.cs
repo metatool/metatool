@@ -4,21 +4,21 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 {
     public class KeyCommand : Command<KeyEventArgsExt>
     {
-        public KeyCommand(Action<KeyEventArgsExt> action) 
+        public KeyCommand(Action<KeyEventArgsExt> action)
         {
-            Execute      = action;
+            Execute = action;
         }
     }
 
     public class KeyEventAction
     {
-        public KeyEvent  KeyEvent { get; }
-        public KeyCommand Command   { get; }
+        public KeyEvent   KeyEvent { get; }
+        public KeyCommand Command  { get; }
 
         public KeyEventAction(KeyEvent keyEvent, KeyCommand command)
         {
             KeyEvent = keyEvent;
-            Command   = command;
+            Command  = command;
         }
 
         public override int GetHashCode()

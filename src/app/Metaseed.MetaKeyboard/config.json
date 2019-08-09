@@ -17,7 +17,8 @@
     "Ruler": ".\\software\\ruler\\aruler.exe",
     "VisualStudio": ".\\software\\Visual Studio 2019.lnk",
     "ProcessExplorer": ".\\software\\procexp64.exe",
-    "VirtualMachineManager": ".\\software\\Hyper-V Manager.lnk"
+    "VirtualMachineManager": ".\\software\\Hyper-V Manager.lnk",
+    "Inspect": ".\\software\\inspect" 
   },
   "Registers": {
     "WorkDir": "M:\\Workspace" 

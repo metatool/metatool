@@ -54,6 +54,10 @@ namespace Metaseed.Input
         {
             _dispatcher.BeginInvoke(priority, action);
         }
+        public void BeginInvoke(Action<KeyEventArgsExt> action, DispatcherPriority priority = DispatcherPriority.Send)
+        {
+            _dispatcher.BeginInvoke(priority, action,this);
+        }
 
         public static async Task<T> InvokeAsync<T>(Func<T> action,  DispatcherPriority priority = DispatcherPriority.Send)
         {

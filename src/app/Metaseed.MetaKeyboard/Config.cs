@@ -27,6 +27,7 @@ namespace Metaseed.MetaKeyboard
         public string VisualStudio;
         public string ProcessExplorer;
         public string VisualMachineManager;
+        public string Inspect;
     }
 
     public class Config

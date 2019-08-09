@@ -99,21 +99,21 @@ namespace Metaseed.MetaKeyboard
             {
                 e.Handled = true;
                 Utils.Run(Config.Current.Tools.Ruler);
-            }, "Start Screen &Ruler");
+            }, "Screen &Ruler");
 
         public IMetaKey StartTaskExplorer = (softwareTrigger, T).Down(
             e =>
             {
                 e.Handled = true;
                 Utils.Run(Config.Current.Tools.ProcessExplorer);
-            }, "Start &Task Explorer ");
+            }, "&Task Explorer ");
 
         public IMetaKey StartGifRecord = (softwareTrigger, G).Down(
             e =>
             {
                 e.Handled = true;
                 Utils.Run(Config.Current.Tools.GifTool);
-            }, "Start &Gif Record ");
+            }, "&Gif Record ");
 
         public IMetaKey StartNotepad = (softwareTrigger, N).Down(async e =>
         {
@@ -136,7 +136,7 @@ namespace Metaseed.MetaKeyboard
             }
 
             Utils.Run("Notepad");
-        }, "Start &Notepad ");
+        }, "&Notepad");
 
         public IMetaKey StartVisualStudio = (softwareTrigger, V).Down(async e =>
         {
@@ -157,8 +157,14 @@ namespace Metaseed.MetaKeyboard
                 Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
                     {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
             });
-        }, "Start &VisualStudio ");
+        }, "&VisualStudio");
 
+        public IMetaKey StartInspect = (softwareTrigger, I).Down(async e =>
+        {
+            var info = new ProcessStartInfo(Config.Current.Tools.Inspect) {UseShellExecute = true};
+
+            Process.Start(info);
+        }, "&Inspect");
 
         public IMetaKey OpenCodeEditor = (AK + C).Hit(async e =>
         {

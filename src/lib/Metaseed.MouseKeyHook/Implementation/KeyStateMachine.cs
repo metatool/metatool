@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
 using Metaseed.DataStructures;
@@ -226,8 +228,11 @@ namespace Metaseed.Input
             (childNode.Key as Combination)?.OnEvent(args);
             foreach (var keyEventAction in actionList[eventType])
             {
-                Console.WriteLine($"\t!{eventType}\t{keyEventAction.Id}\t{keyEventAction.Description}");
-                keyEventAction.Execute?.Invoke(args);
+                var exe = keyEventAction.Execute;
+                var isAsync = exe?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
+                Console.WriteLine($"\t!{eventType}{(isAsync ? "_async":"")}\t{keyEventAction.Id}\t{keyEventAction.Description}");
+                if (isAsync) args.BeginInvoke(exe);
+                else exe?.Invoke(args);
             }
 #if !DEBUG
             }
