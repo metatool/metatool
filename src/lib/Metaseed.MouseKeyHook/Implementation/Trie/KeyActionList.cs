@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Metaseed.Input.MouseKeyHook.Implementation
 {
-    internal class KeyActionList<TValue>: BindingList<TValue> where TValue: KeyEventAction
+    internal class KeyActionList<TValue>: BindingList<TValue> where TValue: KeyEventCommand
     {
         public IEnumerable<KeyCommand> this[KeyEvent keyEvent]
         {

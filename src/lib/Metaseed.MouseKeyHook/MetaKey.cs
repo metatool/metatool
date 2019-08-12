@@ -32,29 +32,29 @@ namespace Metaseed.Input
 
     public class HotkeyToken : IRemoveChangeable<Hotkey>
     {
-        private readonly  ITrie<ICombination, KeyEventAction> _trie;
+        private readonly  ITrie<ICombination, KeyEventCommand> _trie;
         internal readonly IList<ICombination>                 _hotkey;
-        internal readonly KeyEventAction                      _action;
+        internal readonly KeyEventCommand                      Command;
 
-        public HotkeyToken(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> hotkey,
-            KeyEventAction action)
+        public HotkeyToken(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> hotkey,
+            KeyEventCommand command)
         {
             _trie   = trie;
             _hotkey = hotkey;
-            _action = action;
+            Command = command;
         }
 
         public void Remove()
         {
-            var r = _trie.Remove(_hotkey, action => action.Equals(_action));
+            var r = _trie.Remove(_hotkey, action => action.Equals(Command));
             Console.WriteLine(r);
         }
 
         public bool Change(Hotkey key)
         {
             ((IRemove) this).Remove();
-            key.Switch(k => _trie.Add(k.ToCombination(), _action),
-                s => _trie.Add(s.ToList(), _action));
+            key.Switch(k => _trie.Add(k.ToCombination(), Command),
+                s => _trie.Add(s.ToList(), Command));
             return true;
         }
     }
@@ -81,12 +81,12 @@ namespace Metaseed.Input
             _token.Remove();
         }
 
-        internal KeyEvent KeyEvent => _token._action.KeyEvent; 
+        internal KeyEvent KeyEvent => _token.Command.KeyEvent; 
 
-        public MetaKey(ITrie<ICombination, KeyEventAction> trie, IList<ICombination> combinations,
-            KeyEventAction action)
+        public MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> combinations,
+            KeyEventCommand command)
         {
-            _token = new HotkeyToken(trie, combinations, action);
+            _token = new HotkeyToken(trie, combinations, command);
         }
 
         public string Id { get; set; }
@@ -170,8 +170,8 @@ namespace Metaseed.Input
             {
                 void setId(IMetaKey meta)
                 {
-                    if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token._action.Command.Id))
-                        metaKey._token._action.Command.Id = metaKey.Id;
+                    if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token.Command.Command.Id))
+                        metaKey._token.Command.Command.Id = metaKey.Id;
                 }
                 var (_, key) = c;
                 switch (key)

@@ -28,7 +28,7 @@ namespace Metaseed.MetaKeyboard
             }
 
             e.Handled = true;
-        }, "Focus &File Items View");
+        }, null, "Focus &File Items View");
 
 
         public IMetaKey FocusNavigationTreeView = (LWin + N).Down(e =>
@@ -45,7 +45,7 @@ namespace Metaseed.MetaKeyboard
             }
 
             e.Handled = true;
-        }, "Focus &Navigation Tree View");
+        }, null, "Focus &Navigation Tree View");
 
         public IMetaKey CopySelectedPath = (Caps + Pipe).Down(async e =>
         {
@@ -57,14 +57,14 @@ namespace Metaseed.MetaKeyboard
             var r      = string.Join(';', paths);
             System.Windows.Clipboard.SetText(r);
             e.Handled = true;
-        }, "Copy Selected Files Path");
+        }, null, "Copy Selected Files Path");
 
         public IMetaKey ShowDesktopFolder = (LWin + D).Down(e =>
             {
                 Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 e.Handled = true;
             }
-            , "Show &Desktop Folder");
+            , null, "Show &Desktop Folder");
 
         public IMetaKey NewFile = (Ctrl + Alt + N).Hit(async e =>
         {
@@ -94,7 +94,7 @@ namespace Metaseed.MetaKeyboard
             {
                 Notify.ShowMessage("MetaKeyBoard Closing...");
                 Environment.Exit(0);
-            }, "Close");
+            }, null, "Close");
 
         public IMetaKey RestartMetakeyAdmin = (LCtrl + LWin + LAlt + X).Down(e =>
         {
@@ -112,12 +112,12 @@ namespace Metaseed.MetaKeyboard
                 }
             }.Start();
             Environment.Exit(0);
-        }, "Restart(Admin)");
+        }, null, "Restart(Admin)");
 
         public IMetaKey ShowTips = (Caps + Question).Down(e =>
         {
             Keyboard.ShowTip();
             e.Handled = true;
-        }, "Show Tips");
+        }, null, "Show Tips");
     }
 }

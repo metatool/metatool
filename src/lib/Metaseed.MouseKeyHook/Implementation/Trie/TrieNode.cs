@@ -8,7 +8,7 @@ using Metaseed.Input.MouseKeyHook.Implementation;
 namespace Metaseed.DataStructures
 {
     public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue>
-        where TKey : ICombination where TValue : KeyEventAction
+        where TKey : ICombination where TValue : KeyEventCommand
     {
         protected readonly Dictionary<TKey, TrieNode<TKey, TValue>> _children;
         private            IList<TValue>                            _values = new KeyActionList<TValue>();

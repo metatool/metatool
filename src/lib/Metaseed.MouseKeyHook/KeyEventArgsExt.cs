@@ -34,16 +34,21 @@ namespace Metaseed.Input
             bool isExtendedKey, KeyEventArgsExt lastKeyEvent, KeyboardState keyboardState)
             : this(keyData)
         {
-            ScanCode                          = scanCode;
-            Timestamp                         = timestamp;
-            IsKeyDown                         = isKeyDown;
-            IsKeyUp                           = isKeyUp;
-            IsExtendedKey                     = isExtendedKey;
-            LastKeyDownEvent                  = lastKeyEvent.LastKeyDownEvent;
-            LastKeyEvent = lastKeyEvent;
-            lastKeyEvent.LastKeyDownEvent = null;
-            lastKeyEvent.LastKeyEvent = null;
-            KeyboardState                     = keyboardState;
+            ScanCode                           = scanCode;
+            Timestamp                          = timestamp;
+            IsKeyDown                          = isKeyDown;
+            IsKeyUp                            = isKeyUp;
+            IsExtendedKey                      = isExtendedKey;
+            LastKeyEvent                       = lastKeyEvent;
+            LastKeyDownEvent                   = lastKeyEvent.LastKeyDownEvent;
+            LastKeyDownEvent_NoneVirtual              = lastKeyEvent.LastKeyDownEvent_NoneVirtual;
+            LastKeyEvent_NoneVirtual                  = lastKeyEvent.LastKeyEvent_NoneVirtual;
+            lastKeyEvent.LastKeyDownEvent      = null;
+            lastKeyEvent.LastKeyEvent          = null;
+            lastKeyEvent.LastKeyDownEvent_NoneVirtual = null;
+            lastKeyEvent.LastKeyEvent_NoneVirtual     = null;
+
+            KeyboardState = keyboardState;
         }
 
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
@@ -54,16 +59,18 @@ namespace Metaseed.Input
         {
             _dispatcher.BeginInvoke(priority, action);
         }
+
         public void BeginInvoke(Action<KeyEventArgsExt> action, DispatcherPriority priority = DispatcherPriority.Send)
         {
-            _dispatcher.BeginInvoke(priority, action,this);
+            _dispatcher.BeginInvoke(priority, action, this);
         }
 
-        public static async Task<T> InvokeAsync<T>(Func<T> action,  DispatcherPriority priority = DispatcherPriority.Send)
+        public static async Task<T> InvokeAsync<T>(Func<T> action,
+            DispatcherPriority priority = DispatcherPriority.Send)
         {
             var o = _dispatcher.BeginInvoke(priority, action);
             await o;
-            return (T)(o.Result);
+            return (T) (o.Result);
         }
 
         public static async Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Send)
@@ -97,7 +104,10 @@ namespace Metaseed.Input
         public bool IsKeyDown { get; }
 
         public KeyEventArgsExt LastKeyDownEvent { get; private set; }
-        public KeyEventArgsExt LastKeyEvent { get; private set; }
+        public KeyEventArgsExt LastKeyEvent     { get; private set; }
+
+        public KeyEventArgsExt LastKeyDownEvent_NoneVirtual { get; private set; }
+        public KeyEventArgsExt LastKeyEvent_NoneVirtual     { get; private set; }
 
 
         /// <summary>
@@ -168,7 +178,8 @@ namespace Metaseed.Input
             var isKeyDown = !isKeyReleased;
             var isKeyUp   = wasKeyDown && isKeyReleased;
 
-            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey, lastKeyEventApp,
+            var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,
+                lastKeyEventApp,
                 KeyboardState.GetCurrent());
             lastKeyEventApp = r;
             if (isKeyDown) lastKeyEventApp.LastKeyDownEvent = r;
@@ -196,6 +207,9 @@ namespace Metaseed.Input
                 isKeyUp, isExtendedKey, lastKeyEventGloable, KeyboardState.GetCurrent());
             lastKeyEventGloable = r;
             if (isKeyDown) lastKeyEventGloable.LastKeyDownEvent = r;
+            if (!isVirtual) lastKeyEventGloable.LastKeyEvent_NoneVirtual = r;
+            if (isKeyDown && !isVirtual) lastKeyEventGloable.LastKeyDownEvent_NoneVirtual = r;
+
             r.IsVirtual = isVirtual;
             return r;
         }

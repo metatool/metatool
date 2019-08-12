@@ -10,12 +10,12 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         }
     }
 
-    public class KeyEventAction
+    public class KeyEventCommand
     {
         public KeyEvent   KeyEvent { get; }
         public KeyCommand Command  { get; }
 
-        public KeyEventAction(KeyEvent keyEvent, KeyCommand command)
+        public KeyEventCommand(KeyEvent keyEvent, KeyCommand command)
         {
             KeyEvent = keyEvent;
             Command  = command;
@@ -31,7 +31,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             return KeyEvent + ": " + Command.Description;
         }
 
-        protected bool Equals(KeyEventAction other)
+        protected bool Equals(KeyEventCommand other)
         {
             return KeyEvent == other.KeyEvent && Command == other.Command;
         }
@@ -41,7 +41,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((KeyEventAction) obj);
+            return Equals((KeyEventCommand) obj);
         }
     }
 }

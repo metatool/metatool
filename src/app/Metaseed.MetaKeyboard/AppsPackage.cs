@@ -32,7 +32,7 @@ namespace Metaseed.MetaKeyboard
             Utils.Run(shiftDown
                 ? $"{Config.Current.Tools.EveryThing} -path {path} -newwindow"
                 : $"{Config.Current.Tools.EveryThing} -path {path} -toggle-window");
-        }, "&Find With Everything");
+        }, null, "&Find With Everything");
 
         public IMetaKey OpenTerminal = (AK + T).Down(async e =>
         {
@@ -53,7 +53,7 @@ namespace Metaseed.MetaKeyboard
             Utils.Run(shiftDown
                 ? $"{Config.Current.Tools.Cmd} /start \"{path}\""
                 : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
-        }, "Open &Terminal");
+        }, null, "Open &Terminal");
 
         public IMetaKey WebSearch = (AK + W).Down(async e =>
         {
@@ -89,7 +89,7 @@ namespace Metaseed.MetaKeyboard
                     FileName        = url
                 }
             }.Start();
-        }, "&Web Search(Alt: second)");
+        }, null, "&Web Search(Alt: second)");
 
 
         private static readonly ICombination softwareTrigger = (AK + Space).Handled();
@@ -99,21 +99,21 @@ namespace Metaseed.MetaKeyboard
             {
                 e.Handled = true;
                 Utils.Run(Config.Current.Tools.Ruler);
-            }, "Screen &Ruler");
+            }, null, "Screen &Ruler");
 
         public IMetaKey StartTaskExplorer = (softwareTrigger, T).Down(
             e =>
             {
                 e.Handled = true;
                 Utils.Run(Config.Current.Tools.ProcessExplorer);
-            }, "&Task Explorer ");
+            }, null, "&Task Explorer ");
 
         public IMetaKey StartGifRecord = (softwareTrigger, G).Down(
             e =>
             {
                 e.Handled = true;
                 Utils.Run(Config.Current.Tools.GifTool);
-            }, "&Gif Record ");
+            }, null, "&Gif Record ");
 
         public IMetaKey StartNotepad = (softwareTrigger, N).Down(async e =>
         {
@@ -136,7 +136,7 @@ namespace Metaseed.MetaKeyboard
             }
 
             Utils.Run("Notepad");
-        }, "&Notepad");
+        }, null, "&Notepad");
 
         public IMetaKey StartVisualStudio = (softwareTrigger, V).Down(async e =>
         {
@@ -157,14 +157,29 @@ namespace Metaseed.MetaKeyboard
                 Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
                     {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
             });
-        }, "&VisualStudio");
+        }, null, "&VisualStudio");
 
         public IMetaKey StartInspect = (softwareTrigger, I).Down(async e =>
         {
+            var exeName = "Inspect";
+
+            var processes = await
+                VirtualDesktopManager.Inst.GetProcessesOnCurrentVirtualDesktop(exeName);
+
+            var process = processes.FirstOrDefault();
+
+            var hWnd = process?.MainWindowHandle;
+
+            if (hWnd != null)
+            {
+                Window.Show(hWnd.Value);
+                return;
+            }
+
             var info = new ProcessStartInfo(Config.Current.Tools.Inspect) {UseShellExecute = true};
 
             Process.Start(info);
-        }, "&Inspect");
+        }, null, "&Inspect");
 
         public IMetaKey OpenCodeEditor = (AK + C).Hit(async e =>
         {

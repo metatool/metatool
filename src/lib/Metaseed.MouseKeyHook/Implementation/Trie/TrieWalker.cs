@@ -5,7 +5,7 @@ using Metaseed.DataStructures;
 
 namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
 {
-    public class TrieWalker<TKey, TValue> where TKey : ICombination where TValue : KeyEventAction
+    public class TrieWalker<TKey, TValue> where TKey : ICombination where TValue : KeyEventCommand
     {
         private readonly Trie<TKey, TValue> _trie;
 

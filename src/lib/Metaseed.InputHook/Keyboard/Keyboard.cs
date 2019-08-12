@@ -20,15 +20,15 @@ namespace Metaseed.Input
         static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 
         internal static IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,
-            KeyStateMachine stateMachine = null)
+            KeyStateTree stateTree = null)
         {
-            return Add(new List<ICombination>() {combination}, keyEvent, command, stateMachine);
+            return Add(new List<ICombination>() {combination}, keyEvent, command, stateTree);
         }
 
         internal static IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
-            KeyStateMachine stateMachine = null)
+            KeyStateTree stateTree = null)
         {
-            return _Hook.Add(combinations, new KeyEventAction(keyEvent, command), stateMachine);
+            return _Hook.Add(combinations, new KeyEventCommand(keyEvent, command), stateTree);
         }
 
         public static void ShowTip()
@@ -78,7 +78,7 @@ namespace Metaseed.Input
                     }
 
                     handled = false;
-                }, "", KeyStateMachine.HardMap),
+                }, null, "", KeyStateTree.HardMap),
                 source.Up(e =>
                 {
                     if (!handled) return;
@@ -89,14 +89,14 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, "", KeyStateMachine.HardMap)
+                }, null, "", KeyStateTree.HardMap)
             };
         }
 
         internal static IMetaKey Map(string source, string target, Predicate<KeyEventArgsExt> predicate = null)
         {
-            var sequence = Sequence.FromString(string.Join(",",source.ToUpper().ToCharArray()));
-            var send = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
+            var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
+            var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
             return sequence.Down(e =>
             {
                 if (predicate == null || predicate(e))
@@ -108,7 +108,7 @@ namespace Metaseed.Input
                         }
                     );
                 }
-            }, "", KeyStateMachine.Map);
+            }, null, "", KeyStateTree.Map);
         }
 
 
@@ -145,7 +145,7 @@ namespace Metaseed.Input
                     }
 
                     handled = false;
-                }, "", KeyStateMachine.Map),
+                }, null, "", KeyStateTree.Map),
                 source.Up(e =>
                 {
                     if (!handled) return;
@@ -165,7 +165,7 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, "", KeyStateMachine.Map)
+                }, null, "", KeyStateTree.Map)
             };
         }
 
@@ -185,14 +185,32 @@ namespace Metaseed.Input
             // if not: A+B -> C become A+C
             void KeyUpHandler(KeyEventArgsExt e)
             {
-                if (!handling) return;
+                if (!handling)
+                {
+                    Console.WriteLine("\tHandling:false");
+                    return;
+                }
+
                 handling  = false;
                 e.Handled = true;
 
-                if (!allUp && keyDownEvent != e.LastKeyEvent) return;
-                if (allUp  && keyDownEvent != e.LastKeyDownEvent) return;
+                if (!allUp && keyDownEvent != e.LastKeyEvent)
+                {
+                    Console.WriteLine("\tkeyDownEvent != e.LastKeyEvent");
+                    return;
+                }
 
-                if (predicate != null && !predicate(e)) return;
+                if (allUp && keyDownEvent != e.LastKeyDownEvent)
+                {
+                    Console.WriteLine("\tkeyDownEvent != e.LastKeyDownEvent");
+                    return;
+                }
+
+                if (predicate != null && !predicate(e))
+                {
+                    Console.WriteLine("\tCanExecute:false");
+                    return;
+                }
 
                 AsyncCall(e);
             }
@@ -203,6 +221,7 @@ namespace Metaseed.Input
                 {
                     if (predicate != null && !predicate(e))
                     {
+                        Console.WriteLine("\tCanExecute:false");
                         handling = false;
                         return;
                     }
@@ -210,10 +229,10 @@ namespace Metaseed.Input
                     handling     = true;
                     keyDownEvent = e;
                     e.Handled    = true;
-                }, "", KeyStateMachine.Map),
+                }, null, "", KeyStateTree.Map),
                 allUp
-                    ? source.AllUp(KeyUpHandler, "", KeyStateMachine.Map)
-                    : source.Up(KeyUpHandler, "", KeyStateMachine.Map)
+                    ? source.AllUp(KeyUpHandler, null, "", KeyStateTree.Map)
+                    : source.Up(KeyUpHandler, null, "", KeyStateTree.Map)
             };
         }
 
@@ -222,11 +241,11 @@ namespace Metaseed.Input
         /// </summary>
         /// <param name="combination"></param>
         /// <param name="keyCommand"></param>
-        /// <param name="predicate"></param>
+        /// <param name="canExecute"></param>
         /// <param name="markHandled"></param>
         /// <returns></returns>
         internal static IMetaKey Hit(ICombination combination, KeyCommand keyCommand,
-            Predicate<KeyEventArgsExt> predicate = null, bool markHandled = true)
+            Predicate<KeyEventArgsExt> canExecute = null, bool markHandled = true)
         {
             var             handling     = false;
             KeyEventArgsExt keyDownEvent = null;
@@ -234,7 +253,7 @@ namespace Metaseed.Input
             {
                 combination.Down(e =>
                 {
-                    if (predicate == null || predicate(e))
+                    if (canExecute == null || canExecute(e))
                     {
                         handling     = true;
                         keyDownEvent = e;
@@ -243,13 +262,17 @@ namespace Metaseed.Input
                         e.Handled = true;
                         return;
                     }
-
+                    Console.WriteLine("\tCanExecute:false");
                     handling = false;
                 }),
 
                 combination.Up(e =>
                 {
-                    if (!handling) return;
+                    if (!handling)
+                    {
+                        Console.WriteLine("\tHandling:false");
+                        return;
+                    }
 
                     handling = false;
                     if (markHandled)
@@ -257,11 +280,16 @@ namespace Metaseed.Input
                         e.Handled = true;
                     }
 
-                    if (keyDownEvent == e.LastKeyDownEvent && (predicate == null || predicate(e)))
+                    if (keyDownEvent == e.LastKeyDownEvent && (canExecute == null || canExecute(e)))
                     {
                         e.BeginInvoke(() => keyCommand?.Execute(e));
                     }
-                }, keyCommand.Description)
+                    else
+                    {
+                        Console.WriteLine("\tCondition not meet, Not Execute!");
+
+                    }
+                }, null, keyCommand.Description)
             };
 
             return token;

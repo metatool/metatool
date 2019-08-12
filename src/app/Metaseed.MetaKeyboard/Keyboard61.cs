@@ -23,7 +23,7 @@ namespace ConsoleApp1
                 ToggleKeys.CapsLock.AlwaysOn();
             else if (state == ToggleKeyState.AlwaysOn)
                 ToggleKeys.CapsLock.AlwaysOff();
-        }, "Toggle CapsLock");
+        }, null, "Toggle CapsLock");
 
         // Fn
         public IMetaKey F1  = (GK + D1).Map(Key.F1);

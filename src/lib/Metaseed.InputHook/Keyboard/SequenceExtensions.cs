@@ -11,62 +11,78 @@ namespace Metaseed.Input
     public static class SequenceExtensions
     {
         public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
         {
-            return sequence.Item1.Then(sequence.Item2).Down(action,description);
-        }
-        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
-        {
-            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action,  description);
-        }
-        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
-        {
-            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Down(action,  description);
+            return sequence.Item1.Then(sequence.Item2).Down(action, canExecute, description);
         }
 
-        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
+        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
         {
-           return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Down(action,  description);
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action, canExecute, description);
+        }
+
+        public static IMetaKey Down(
+            this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
+        {
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4)
+                .Down(action, canExecute, description);
+        }
+
+        public static IMetaKey Down(
+            this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
+        {
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5)
+                .Down(action, canExecute, description);
         }
 
         public static IMetaKey Down(this ISequence sequence,
-            Action<KeyEventArgsExt> action,  string description = "", KeyStateMachine stateMachine = null)
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "",
+            KeyStateTree stateTree = null)
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
-            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down, new KeyCommand( action){Description = description},stateMachine);
+            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down,
+                new KeyCommand(action) {CanExecute = canExecute, Description = description}, stateTree);
         }
 
         public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
         {
-            return sequence.Item1.Then(sequence.Item2).Up(action,  description);
-        }
-        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
-        {
-            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action,  description);
-        }
-        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
-        {
-            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Up(action,  description);
+            return sequence.Item1.Then(sequence.Item2).Up(action, canExecute, description);
         }
 
-        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
-            Action<KeyEventArgsExt> action,  string description = "")
+        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
         {
-            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Up(action,  description);
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action, canExecute, description);
         }
-        public static IMetaKey Up(this ISequence sequence, Action<KeyEventArgsExt> action, 
+
+        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
+        {
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4)
+                .Up(action, canExecute, description);
+        }
+
+        public static IMetaKey Up(
+            this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            Action<KeyEventArgsExt> action, Predicate<KeyEventArgsExt> canExecute=null, string description = "")
+        {
+            return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5)
+                .Up(action, canExecute, description);
+        }
+
+        public static IMetaKey Up(this ISequence sequence, Action<KeyEventArgsExt> action,
+            Predicate<KeyEventArgsExt> canExecute=null,
             string description = "")
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
-            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Up, new KeyCommand(  action){Description = description});
+            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Up,
+                new KeyCommand(action) {CanExecute = canExecute, Description = description});
         }
 
         public static Task<KeyEventArgsExt> DownAsync(this ISequence sequence, int timeout = 8888)
@@ -82,7 +98,5 @@ namespace Metaseed.Input
             sequence.Up(null);
             return last.UpAsync(timeout);
         }
-
-
     }
 }

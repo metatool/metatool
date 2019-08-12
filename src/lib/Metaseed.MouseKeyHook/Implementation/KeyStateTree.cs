@@ -33,7 +33,7 @@ namespace Metaseed.Input
         /// <summary>
         /// reprocess this event on the current machine
         /// </summary>
-        Reset,
+        Reprocess,
 
         /// <summary>
         /// try to process this event with other machine.
@@ -51,20 +51,20 @@ namespace Metaseed.Input
         MaxRecursive
     }
 
-    public class KeyStateMachine
+    public class KeyStateTree
     {
-        internal static readonly KeyStateMachine Default = new KeyStateMachine("Default");
-        public static readonly  KeyStateMachine HardMap = new KeyStateMachine("HardMap");
-        public static readonly  KeyStateMachine Map     = new KeyStateMachine("Map");
+        internal static readonly KeyStateTree Default = new KeyStateTree("Default");
+        public static readonly  KeyStateTree HardMap = new KeyStateTree("HardMap");
+        public static readonly  KeyStateTree Map     = new KeyStateTree("Map");
 
-        private readonly Trie<ICombination, KeyEventAction>       _trie = new Trie<ICombination, KeyEventAction>();
-        private readonly TrieWalker<ICombination, KeyEventAction> _stateWalker;
+        private readonly Trie<ICombination, KeyEventCommand>       _trie = new Trie<ICombination, KeyEventCommand>();
+        private readonly TrieWalker<ICombination, KeyEventCommand> _stateWalker;
         public           string                                   Name;
 
-        public KeyStateMachine(string name)
+        public KeyStateTree(string name)
         {
             Name                      = name;
-            _stateWalker              = new TrieWalker<ICombination, KeyEventAction>(_trie);
+            _stateWalker              = new TrieWalker<ICombination, KeyEventCommand>(_trie);
             _lastKeyDownNode_ForAllUp = null;
         }
 
@@ -84,7 +84,7 @@ namespace Metaseed.Input
             Reset();
             recursiveCount++;
             if(recursiveCount>1) Console.WriteLine("&"); // trace recurrent
-            KeyEventProcess(eventType, args);
+            ProcessKeyEvent(eventType, args);
             recursiveCount--;
         }
 
@@ -98,22 +98,22 @@ namespace Metaseed.Input
             return _stateWalker.CurrentNode.Tip;
         }
 
-        public IMetaKey Add(IList<ICombination> combinations, KeyEventAction action)
+        public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command)
         {
-            _trie.Add(combinations, action);
-            return new MetaKey(_trie, combinations, action);
+            _trie.Add(combinations, command);
+            return new MetaKey(_trie, combinations, command);
         }
 
-        public IMetaKey Add(ICombination combination, KeyEventAction action)
+        public IMetaKey Add(ICombination combination, KeyEventCommand command)
         {
-            return Add(new List<ICombination> {combination}, action);
+            return Add(new List<ICombination> {combination}, command);
         }
 
         private const int                                    MaxRecursiveCount = 50;
         private       int                                    recursiveCount    = 0;
-        private       TrieNode<ICombination, KeyEventAction> _lastKeyDownNode_ForAllUp;
+        private       TrieNode<ICombination, KeyEventCommand> _lastKeyDownNode_ForAllUp;
 
-        public KeyProcessState KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
+        public KeyProcessState ProcessKeyEvent(KeyEvent eventType, KeyEventArgsExt args)
         {
             if (recursiveCount > MaxRecursiveCount)
             {
@@ -158,7 +158,7 @@ namespace Metaseed.Input
                         return KeyProcessState.Continue; // waiting for trigger key
 
                     Reset(eventType, args);
-                    return KeyProcessState.Reset; // to process combination chord up
+                    return KeyProcessState.Reprocess; // to process combination chord up
                 }
                 else // Chord_up or AnyKeyNotInRoot_up
                 {
@@ -192,7 +192,7 @@ namespace Metaseed.Input
                             //   KeyInChord_up : A+B when A_up. if A mapto C, A_up -> C_up
                             //   other keyup: A+B and B mapto C??
                             Reset(eventType, args);
-                            return KeyProcessState.Reset; // to process combination chord up
+                            return KeyProcessState.Reprocess; // to process combination chord up
                         }
                         else
                         {
@@ -205,7 +205,7 @@ namespace Metaseed.Input
 
                             // KeyNotInChord_up & HaveChild: B+D, F when C_up. if B mapto C, A_up -> C_up
                             Reset(eventType, args);
-                            return KeyProcessState.Reset; // to process combination chord up
+                            return KeyProcessState.Reprocess; // to process combination chord up
                         }
                     }
                 }
@@ -217,7 +217,7 @@ namespace Metaseed.Input
             Console.WriteLine($"${Name}{lastDownHit}");
 
             // matched
-            var actionList = childNode.Values() as KeyActionList<KeyEventAction>;
+            var actionList = childNode.Values() as KeyActionList<KeyEventCommand>;
             Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
             // execute
@@ -228,6 +228,8 @@ namespace Metaseed.Input
             (childNode.Key as Combination)?.OnEvent(args);
             foreach (var keyEventAction in actionList[eventType])
             {
+                if(keyEventAction.CanExecute !=null && !keyEventAction.CanExecute(args)) continue;
+
                 var exe = keyEventAction.Execute;
                 var isAsync = exe?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
                 Console.WriteLine($"\t!{eventType}{(isAsync ? "_async":"")}\t{keyEventAction.Id}\t{keyEventAction.Description}");

@@ -19,20 +19,22 @@ namespace Metaseed.Input.MouseKeyHook
     {
         private readonly         IKeyboardMouseEvents _eventSource;
 
-        // KeyStateMachine _currentMachine;
+        KeyStateTree _currentTree;
 
-        private readonly List<KeyStateMachine> _stateMachines = new List<KeyStateMachine>()
-            {KeyStateMachine.HardMap, KeyStateMachine.Default, KeyStateMachine.Map};
+        private readonly List<KeyStateTree> _stateMachines = new List<KeyStateTree>()
+            {KeyStateTree.HardMap, KeyStateTree.Default, KeyStateTree.Map};
 
         public KeyboardHook()
         {
             _eventSource = Hook.GlobalEvents();
         }
 
-        public IMetaKey Add(IList<ICombination> combinations, KeyEventAction action,
-            KeyStateMachine keyStateMachine = null)
+        public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command,
+            KeyStateTree keyStateTree = null)
         {
-            return (keyStateMachine ?? KeyStateMachine.Default).Add(combinations, action);
+            var stateMachine = keyStateTree ?? KeyStateTree.Default;
+            if(!_stateMachines.Contains(stateMachine)) _stateMachines.Add(stateMachine);
+            return stateMachine.Add(combinations, command);
         }
 
         private readonly List<KeyEventHandler> _keyUpHandlers = new List<KeyEventHandler>();
@@ -79,50 +81,52 @@ namespace Metaseed.Input.MouseKeyHook
 
             void KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
             {
-                //what if key sent in other machine, and we are on the keypath
-                foreach (var keyStateMachine in _stateMachines)
-                {
-                    var result = keyStateMachine.KeyEventProcess(eventType, args);
-                    if (result == KeyProcessState.NoFurtherProcess)
-                        return;
-                }
+                //Q: what if key sent in other machine, and we are on the keypath
+                //A: we could use is virtual key filter
+                 // foreach (var keyStateMachine in _stateMachines)
+                 // {
+                 //     var result = keyStateMachine.KeyEventProcess(eventType, args);
+                 //     if (result == KeyProcessState.NoFurtherProcess)
+                 //         return;
+                 // }
 
-                // // if machine_1 has A+B+C and machine_2's A+B would never processed
-                // // continue process this event on current machine
-                // if (_currentMachine != null)
-                // {
-                //     var result = _currentMachine.KeyEventProcess(eventType, args);
-                //     if (result == KeyProcessState.Continue) return;
-                //     else if (result == KeyProcessState.Done)
-                //     {
-                //         _currentMachine = null;
-                //         return; // try to find current machine on next event 
-                //     }
-                //
-                //     else if (result == KeyProcessState.Reset)
-                //         _currentMachine = null;
-                //
-                //     // yield: try to process this event with other machine.
-                // }
-                //
-                // // find current machine
-                // foreach (var keyStateMachine in _stateMachines)
-                // {
-                //     if(keyStateMachine == _currentMachine) continue; // yield
-                //
-                //     var result = keyStateMachine.KeyEventProcess(eventType, args);
-                //     if (result == KeyProcessState.Continue)
-                //     {
-                //         _currentMachine = keyStateMachine;
-                //         break;
-                //     }
-                //     else if (result == KeyProcessState.Done)
-                //     {
-                //         break; // this event is well handled
-                //     }
-                //
-                //     // yield or reset: continue finding
-                // }
+                // if machine_1 has A+B+C and machine_2's A+B would never processed
+                // continue process this event on current machine
+
+                if (_currentTree != null)
+                {
+                    var result = _currentTree.ProcessKeyEvent(eventType, args);
+                    if (result == KeyProcessState.Continue) return;
+                    else if (result == KeyProcessState.Done)
+                    {
+                        _currentTree = null;
+                        return; // try to find current machine on next event 
+                    }
+                
+                    else if (result == KeyProcessState.Reprocess)
+                        _currentTree = null;
+                
+                    // yield: try to process this event with other machine.
+                }
+                
+                // find current machine
+                foreach (var stateTree in _stateMachines)
+                {
+                    if(stateTree == _currentTree) continue; // yield
+                
+                    var result = stateTree.ProcessKeyEvent(eventType, args);
+                    if (result == KeyProcessState.Continue)
+                    {
+                        _currentTree = stateTree;
+                        break;
+                    }
+                    else if (result == KeyProcessState.Done)
+                    {
+                        break; // this event is well handled
+                    }
+                
+                    // yield or reset: continue finding
+                }
             }
 
             _eventSource.KeyDown += (sender, args) =>
