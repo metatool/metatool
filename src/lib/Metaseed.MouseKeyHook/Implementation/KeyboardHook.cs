@@ -17,9 +17,8 @@ namespace Metaseed.Input.MouseKeyHook
 
     public class KeyboardHook
     {
-        private readonly         IKeyboardMouseEvents _eventSource;
+        private readonly IKeyboardMouseEvents _eventSource;
 
-        KeyStateTree _currentTree;
 
         private readonly List<KeyStateTree> _stateMachines = new List<KeyStateTree>()
             {KeyStateTree.HardMap, KeyStateTree.Default, KeyStateTree.Map};
@@ -33,7 +32,7 @@ namespace Metaseed.Input.MouseKeyHook
             KeyStateTree keyStateTree = null)
         {
             var stateMachine = keyStateTree ?? KeyStateTree.Default;
-            if(!_stateMachines.Contains(stateMachine)) _stateMachines.Add(stateMachine);
+            if (!_stateMachines.Contains(stateMachine)) _stateMachines.Add(stateMachine);
             return stateMachine.Add(combinations, command);
         }
 
@@ -65,7 +64,7 @@ namespace Metaseed.Input.MouseKeyHook
         {
             //if (_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
             var tips = _stateMachines.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
-            if(tips.Length>0)
+            if (tips.Length > 0)
                 Notify.ShowKeysTip(tips);
             else
             {
@@ -73,59 +72,94 @@ namespace Metaseed.Input.MouseKeyHook
             }
         }
 
+        private const int MaxRecursiveCount = 50;
 
         public void Run()
         {
             _stateMachines.ForEach(m => m.Reset());
+            int recursiveCount = 0;
+
+          
+            KeyStateTree currentTree = null;
 
 
             void KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
             {
                 //Q: what if key sent in other machine, and we are on the keypath
                 //A: we could use is virtual key filter
-                 // foreach (var keyStateMachine in _stateMachines)
-                 // {
-                 //     var result = keyStateMachine.KeyEventProcess(eventType, args);
-                 //     if (result == KeyProcessState.NoFurtherProcess)
-                 //         return;
-                 // }
+                // foreach (var keyStateMachine in _stateMachines)
+                // {
+                //     var result = keyStateMachine.KeyEventProcess(eventType, args);
+                //     if (result == KeyProcessState.NoFurtherProcess)
+                //         return;
+                // }
 
-                // if machine_1 has A+B+C and machine_2's A+B would never processed
+                // if machine_1 has A+B and machine_2's A+B would never processed
                 // continue process this event on current machine
 
-                if (_currentTree != null)
+
+                if (currentTree != null)
                 {
-                    var result = _currentTree.ProcessKeyEvent(eventType, args);
-                    if (result == KeyProcessState.Continue) return;
-                    else if (result == KeyProcessState.Done)
+                    var result = currentTree.ProcessKeyEvent(eventType, args);
+                    switch (result)
                     {
-                        _currentTree = null;
-                        return; // try to find current machine on next event 
+                        case KeyProcessState.Continue:
+                            return;
+                        case KeyProcessState.Done:
+                            currentTree = null;
+                            return; // try to find current tree on next event 
+                        case KeyProcessState.Reprocess:
+                            currentTree = null;
+                            break;
+                        case KeyProcessState.Yield:
+                            break;
+                        case KeyProcessState.NoFurtherProcess:
+                            currentTree = null;
+                            return;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
-                
-                    else if (result == KeyProcessState.Reprocess)
-                        _currentTree = null;
-                
+
                     // yield: try to process this event with other machine.
                 }
-                
-                // find current machine
+
+                reprocess:
+                if (recursiveCount > 1) Console.WriteLine("&"); // trace recurrent
+
+                if (recursiveCount > MaxRecursiveCount)
+                {
+                    Console.WriteLine($"\tRecursiveCount: {recursiveCount}>{MaxRecursiveCount}");
+                    recursiveCount = 0;
+                }
+
+                // find current tree
                 foreach (var stateTree in _stateMachines)
                 {
-                    if(stateTree == _currentTree) continue; // yield
-                
+                    if (stateTree == currentTree) continue; // yield
+
                     var result = stateTree.ProcessKeyEvent(eventType, args);
-                    if (result == KeyProcessState.Continue)
+                    if (result == KeyProcessState.Reprocess) recursiveCount++;
+                    else recursiveCount--;
+                    switch (result)
                     {
-                        _currentTree = stateTree;
-                        break;
+                        case KeyProcessState.Continue:
+                            currentTree = stateTree;
+                            return;
+                        case KeyProcessState.Done:
+                            currentTree = null;
+                            return; // try to find current tree on next event 
+                        case KeyProcessState.Reprocess:
+
+                            currentTree = null;
+                            goto reprocess;
+
+                        case KeyProcessState.Yield:
+                            break;
+                        case KeyProcessState.NoFurtherProcess:
+                            return;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
-                    else if (result == KeyProcessState.Done)
-                    {
-                        break; // this event is well handled
-                    }
-                
-                    // yield or reset: continue finding
                 }
             }
 

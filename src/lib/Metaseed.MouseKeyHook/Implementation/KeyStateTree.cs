@@ -26,29 +26,25 @@ namespace Metaseed.Input
         Done,
 
         /// <summary>
-        /// continue handling next event on the current machine
+        /// continue handling next event on the current state
         /// </summary>
         Continue,
 
         /// <summary>
-        /// reprocess this event on the current machine
+        /// reprocess this event on the root of trees, and the tree is at root
         /// </summary>
         Reprocess,
 
         /// <summary>
-        /// try to process this event with other machine.
+        /// could not process the event, try to process this event with other machine.
         /// </summary>
         Yield,
 
         /// <summary>
-        /// stop further process for this event
+        /// stop further process for this event on any further tree
         /// </summary>
         NoFurtherProcess,
 
-        /// <summary>
-        /// Max Recursive Count
-        /// </summary>
-        MaxRecursive
     }
 
     public class KeyStateTree
@@ -58,13 +54,13 @@ namespace Metaseed.Input
         public static readonly  KeyStateTree Map     = new KeyStateTree("Map");
 
         private readonly Trie<ICombination, KeyEventCommand>       _trie = new Trie<ICombination, KeyEventCommand>();
-        private readonly TrieWalker<ICombination, KeyEventCommand> _stateWalker;
+        private readonly TrieWalker<ICombination, KeyEventCommand> _treeWalker;
         public           string                                   Name;
 
         public KeyStateTree(string name)
         {
             Name                      = name;
-            _stateWalker              = new TrieWalker<ICombination, KeyEventCommand>(_trie);
+            _treeWalker              = new TrieWalker<ICombination, KeyEventCommand>(_trie);
             _lastKeyDownNode_ForAllUp = null;
         }
 
@@ -76,26 +72,18 @@ namespace Metaseed.Input
             Console.WriteLine($"${Name}{lastDownHit}");
 
             Notify.CloseKeysTip(Name);
-            _stateWalker.GoToRoot();
+            _treeWalker.GoToRoot();
         }
 
-        public void Reset(KeyEvent eventType, KeyEventArgsExt args)
-        {
-            Reset();
-            recursiveCount++;
-            if(recursiveCount>1) Console.WriteLine("&"); // trace recurrent
-            ProcessKeyEvent(eventType, args);
-            recursiveCount--;
-        }
 
         public IEnumerable<(string key, IEnumerable<string> descriptions)> Tips(bool ifRootThenEmpty = false)
         {
-            if (ifRootThenEmpty && _stateWalker.CurrentNode == _stateWalker.Root)
+            if (ifRootThenEmpty && _treeWalker.CurrentNode == _treeWalker.Root)
             {
                 return Enumerable.Empty<(string key, IEnumerable<string> descriptions)>();
             }
 
-            return _stateWalker.CurrentNode.Tip;
+            return _treeWalker.CurrentNode.Tip;
         }
 
         public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command)
@@ -109,31 +97,23 @@ namespace Metaseed.Input
             return Add(new List<ICombination> {combination}, command);
         }
 
-        private const int                                    MaxRecursiveCount = 50;
-        private       int                                    recursiveCount    = 0;
         private       TrieNode<ICombination, KeyEventCommand> _lastKeyDownNode_ForAllUp;
 
         public KeyProcessState ProcessKeyEvent(KeyEvent eventType, KeyEventArgsExt args)
         {
-            if (recursiveCount > MaxRecursiveCount)
-            {
-                Console.WriteLine($"\tRecursiveCount: {recursiveCount}>{MaxRecursiveCount}");
-                recursiveCount            = 0;
-                _lastKeyDownNode_ForAllUp = null;
-                return KeyProcessState.MaxRecursive;
-            }
+
 
             if (args.NoFurtherProcess) return KeyProcessState.NoFurtherProcess;
             // to handle A+B+C(B is down in Chord)
             var downInChord = false;
 
             var type = eventType;
-            var childNode = _stateWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
+            var childNode = _treeWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
             {
                 // mark down_in_chord and continue try to find trigger
                 if (type == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
 
-                if (combination.Disabled || args.KeyCode != combination.TriggerKey) return acc;
+                if ( args.KeyCode != combination.TriggerKey || combination.Disabled ) return acc;
                 var mach = combination.Chord.All(args.KeyboardState.IsDown);
                 if (!mach) return acc;
                 if (acc == null) return combination;
@@ -147,17 +127,17 @@ namespace Metaseed.Input
                 if (eventType == KeyEvent.Down)
                 {
                     // AnyKeyNotInRoot_down: *A_down is not registered in root
-                    if (_stateWalker.IsOnRoot)
+                    if (_treeWalker.IsOnRoot)
                     {
                         _lastKeyDownNode_ForAllUp = null;
                         return KeyProcessState.Yield;
                     }
 
-                    //  KeyInChord_down: A+B A_down
+                    //  KeyInChord_down:C+D, A+B A_down
                     if (downInChord)
                         return KeyProcessState.Continue; // waiting for trigger key
 
-                    Reset(eventType, args);
+                    Reset();
                     return KeyProcessState.Reprocess; // to process combination chord up
                 }
                 else // Chord_up or AnyKeyNotInRoot_up
@@ -166,8 +146,7 @@ namespace Metaseed.Input
                     if (_lastKeyDownNode_ForAllUp != null &&
                         _lastKeyDownNode_ForAllUp.Key.IsAnyKey(args.KeyCode))
                     {
-                        if (args.KeyboardState.IsUp(_lastKeyDownNode_ForAllUp.Key.TriggerKey) &&
-                            args.KeyboardState.AreAllUp(_lastKeyDownNode_ForAllUp.Key.Chord))
+                        if (args.KeyboardState.AreAllUp(_lastKeyDownNode_ForAllUp.Key.AllKeys))
                         {
                             childNode = _lastKeyDownNode_ForAllUp;
                             eventType = KeyEvent.AllUp;
@@ -180,31 +159,31 @@ namespace Metaseed.Input
                     else // not any key_up in last down
                     {
                         // AnyKeyNotInRoot_up: *A_up is not registered in root
-                        if (_stateWalker.IsOnRoot)
+                        if (_treeWalker.IsOnRoot)
                         {
                             _lastKeyDownNode_ForAllUp = null;
                             return KeyProcessState.Yield;
                         }
 
-                        if (_stateWalker.ChildrenCount == 0)
+                        if (_treeWalker.ChildrenCount == 0)
                         {
                             // NoChild & NotOnRoot:
                             //   KeyInChord_up : A+B when A_up. if A mapto C, A_up -> C_up
                             //   other keyup: A+B and B mapto C??
-                            Reset(eventType, args);
+                            Reset();
                             return KeyProcessState.Reprocess; // to process combination chord up
                         }
                         else
                         {
                             // KeyInChord_up & haveChild: A+B, C when A_up continue wait C
                             // should we also process the Chord_up at root?
-                            if (_stateWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
+                            if (_treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
                             {
                                 return KeyProcessState.Continue; // combination chord keys up, to process child
                             }
 
-                            // KeyNotInChord_up & HaveChild: B+D, F when C_up. if B mapto C, A_up -> C_up
-                            Reset(eventType, args);
+                            // KeyNotInChord_up & HaveChild: B+D, F when C_up. if B mapto C, B_up -> C_up
+                            Reset();
                             return KeyProcessState.Reprocess; // to process combination chord up
                         }
                     }
@@ -245,7 +224,7 @@ namespace Metaseed.Input
 #endif
             if (args.PathToGo != null && !args.PathToGo.SequenceEqual(childNode.KeyPath)) // goto state by requiring
             {
-                if (!_stateWalker.TryGoToState(args.PathToGo, out var state))
+                if (!_treeWalker.TryGoToState(args.PathToGo, out var state))
                 {
                     Console.WriteLine($"Couldn't go to state {state}");
                 }
@@ -259,12 +238,13 @@ namespace Metaseed.Input
                 case KeyEvent.Up:
                 {
                     // only navigate on up/AllUp event
-                    _stateWalker.GoToChild(childNode);
+                    _treeWalker.GoToChild(childNode);
 
                     if (childNode.ChildrenCount == 0)
                     {
                         if (actionList[KeyEvent.AllUp].Any())
                         {
+                            // wait for chord up
                             return KeyProcessState.Continue;
                         }
 
@@ -275,7 +255,7 @@ namespace Metaseed.Input
                     }
                     else
                     {
-                        Notify.ShowKeysTip(Name, _stateWalker.CurrentNode.Tip);
+                        Notify.ShowKeysTip(Name, _treeWalker.CurrentNode.Tip);
                         return KeyProcessState.Continue;
                     }
                 }
@@ -283,9 +263,10 @@ namespace Metaseed.Input
                 case KeyEvent.AllUp:
                     _lastKeyDownNode_ForAllUp = null;
                     // navigate on AllUp event only when not navigated by up
-                    if (_stateWalker.CurrentNode.Equals(childNode.Parent))
+                    // A+B then B_up then A_up would not execute if clause
+                    if (_treeWalker.CurrentNode.Equals(childNode.Parent))
                     {
-                        _stateWalker.GoToChild(childNode);
+                        _treeWalker.GoToChild(childNode);
                         if (childNode.ChildrenCount == 0)
                         {
                             Notify.CloseKeysTip(Name);
@@ -293,7 +274,7 @@ namespace Metaseed.Input
                         }
                         else
                         {
-                            Notify.ShowKeysTip(Name,_stateWalker.CurrentNode.Tip);
+                            Notify.ShowKeysTip(Name,_treeWalker.CurrentNode.Tip);
                             return KeyProcessState.Continue;
                         }
                     }
