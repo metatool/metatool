@@ -12,7 +12,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation.Trie
         public TrieWalker(Trie<TKey, TValue> trie)
         {
             _trie       = trie;
-            CurrentNode = _trie;
+            _CurrentNode = _trie;
         }
 
         private TrieNode<TKey, TValue> _CurrentNode;

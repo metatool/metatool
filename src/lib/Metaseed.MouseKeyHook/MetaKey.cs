@@ -105,7 +105,7 @@ namespace Metaseed.Input
             get => this.Aggregate("",(a,c)=>a+c.Id);
             set
             {
-                for (int i = 0; i < this.Count; i++)
+                for (var i = 0; i < this.Count; i++)
                 {
                     var k = (MetaKey)this[i];
                     k.Id = $"{value}_{i}-{k.KeyEvent}";

@@ -77,13 +77,13 @@ namespace Metaseed.Input.MouseKeyHook
         public void Run()
         {
             _stateMachines.ForEach(m => m.Reset());
-            int recursiveCount = 0;
 
-          
-            KeyStateTree currentTree = null;
+            var selectedNodes =
+                new List<(KeyStateTree tree, TrieNode<ICombination, KeyEventCommand> node, bool downInChord)
+                >();
 
 
-            void KeyEventProcess(KeyEvent eventType, KeyEventArgsExt args)
+            void ClimbTree(KeyEvent eventType, KeyEventArgsExt args)
             {
                 //Q: what if key sent in other machine, and we are on the keypath
                 //A: we could use is virtual key filter
@@ -94,79 +94,82 @@ namespace Metaseed.Input.MouseKeyHook
                 //         return;
                 // }
 
-                // if machine_1 has A+B and machine_2's A+B would never processed
-                // continue process this event on current machine
 
+                // if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed
+                // if machine_1 has A and machine_2 has A, both should be processed.
+                // // continue process this event on current machine
 
-                if (currentTree != null)
+                do
                 {
-                    var result = currentTree.ProcessKeyEvent(eventType, args);
-                    switch (result)
+                    var reprocess = false;
+                    var hasSelectedNodes = selectedNodes.Count > 0;
+                    foreach (var c in selectedNodes.GetRange(0, selectedNodes.Count))
                     {
-                        case KeyProcessState.Continue:
+                        var r = c.tree.TryClimb(eventType, args);
+                        selectedNodes[selectedNodes.IndexOf(c)] = r;
+
+                        var rt = r.tree.Climb(eventType, args, r.node, r.downInChord);
+                        Console.WriteLine($"\t={rt}@{c.tree.Name}");
+                        if (rt == KeyProcessState.Continue)
+                        {
+                        }
+                        else if (rt == KeyProcessState.Done)
+                        {
+                            selectedNodes.Remove(c);
+                        }
+                        else if (rt == KeyProcessState.NoFurtherProcess)
+                        {
+                            selectedNodes.Remove(c);
                             return;
-                        case KeyProcessState.Done:
-                            currentTree = null;
-                            return; // try to find current tree on next event 
-                        case KeyProcessState.Reprocess:
-                            currentTree = null;
-                            break;
-                        case KeyProcessState.Yield:
-                            break;
-                        case KeyProcessState.NoFurtherProcess:
-                            currentTree = null;
-                            return;
-                        default:
+                        }
+                        else if (rt == KeyProcessState.Reprocess || rt == KeyProcessState.Yield)
+                        {
+                            selectedNodes.Remove(c);
+                            reprocess = true;
+                        }
+                        else
+                        {
                             throw new ArgumentOutOfRangeException();
+                        }
                     }
 
-                    // yield: try to process this event with other machine.
-                }
 
-                reprocess:
-                if (recursiveCount > 1) Console.WriteLine("&"); // trace recurrent
-
-                if (recursiveCount > MaxRecursiveCount)
-                {
-                    Console.WriteLine($"\tRecursiveCount: {recursiveCount}>{MaxRecursiveCount}");
-                    recursiveCount = 0;
-                }
-
-                // find current tree
-                foreach (var stateTree in _stateMachines)
-                {
-                    if (stateTree == currentTree) continue; // yield
-
-                    var result = stateTree.ProcessKeyEvent(eventType, args);
-                    if (result == KeyProcessState.Reprocess) recursiveCount++;
-                    else recursiveCount--;
-                    switch (result)
+                    if (selectedNodes.Count > 0 || !reprocess && hasSelectedNodes)
                     {
-                        case KeyProcessState.Continue:
-                            currentTree = stateTree;
-                            return;
-                        case KeyProcessState.Done:
-                            currentTree = null;
-                            return; // try to find current tree on next event 
-                        case KeyProcessState.Reprocess:
-
-                            currentTree = null;
-                            goto reprocess;
-
-                        case KeyProcessState.Yield:
-                            break;
-                        case KeyProcessState.NoFurtherProcess:
-                            return;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        return; // Continue on branch
                     }
-                }
+                    // Reprocess or Yield, the Yield state on tree is valid, we are not on tree 
+
+                    //all on root, find current trees
+                    foreach (var stateTree in _stateMachines)
+                    {
+                        // if (stateTree.State == KeyProcessState.Yield) continue;
+
+                        var candidate = stateTree.TryClimb(eventType, args);
+                        if (candidate.node == null) continue;
+
+                        if (selectedNodes.Count            == 0 ||
+                            candidate.node.Key.ChordLength == selectedNodes[0].node.Key.ChordLength)
+                        {
+                            selectedNodes.Add(candidate);
+                        }
+                        else if (candidate.node.Key.ChordLength > selectedNodes[0].node.Key.ChordLength)
+                        {
+                            selectedNodes.Clear();
+                            selectedNodes.Add(candidate);
+                        }
+                    }
+
+                    if (selectedNodes.Count > 0)
+                        Console.WriteLine(
+                            $"\tToClimb:{string.Join(",", selectedNodes.Select(t => "$" + t.tree.Name))}");
+                } while (selectedNodes.Count > 0);
             }
 
             _eventSource.KeyDown += (sender, args) =>
-                KeyEventProcess(KeyEvent.Down, args as KeyEventArgsExt);
+                ClimbTree(KeyEvent.Down, args as KeyEventArgsExt);
             _eventSource.KeyUp += (sender, args) =>
-                KeyEventProcess(KeyEvent.Up, args as KeyEventArgsExt);
+                ClimbTree(KeyEvent.Up, args as KeyEventArgsExt);
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
             _keyUpHandlers.ForEach(h => _eventSource.KeyUp     += h);

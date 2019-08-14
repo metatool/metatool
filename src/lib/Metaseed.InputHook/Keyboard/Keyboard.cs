@@ -120,37 +120,32 @@ namespace Metaseed.Input
             {
                 source.Down(e =>
                 {
-                    if (predicate == null || predicate(e))
+                    handled   = true;
+                    e.Handled = true;
+
+                    if (target.TriggerKey == Keys.LButton)
                     {
-                        handled   = true;
-                        e.Handled = true;
-
-                        if (target.TriggerKey == Keys.LButton)
-                        {
-                            Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftButtonDown()));
-                        }
-                        else if (target.TriggerKey == Keys.RButton)
-                        {
-                            Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightButtonDown()));
-                        }
-                        else
-                        {
-                            Async(Repeat(repeat, () => InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                                target.Chord.Cast<VirtualKeyCode>(),
-                                (VirtualKeyCode) (Keys) target.TriggerKey)
-                            ));
-                        }
-
-                        return;
+                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftButtonDown()));
+                    }
+                    else if (target.TriggerKey == Keys.RButton)
+                    {
+                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightButtonDown()));
+                    }
+                    else
+                    {
+                        Async(Repeat(repeat, () => InputSimu.Inst.Keyboard.ModifiedKeyDown(
+                            target.Chord.Cast<VirtualKeyCode>(),
+                            (VirtualKeyCode) (Keys) target.TriggerKey)
+                        ));
                     }
 
-                    handled = false;
-                }, null, "", KeyStateTree.Map),
+                    return;
+
+                }, predicate, "", KeyStateTree.Map),
                 source.Up(e =>
                 {
                     if (!handled) return;
                     handled = false;
-                    if (predicate != null && !predicate(e)) return;
                     e.Handled = true;
                     if (target.TriggerKey == Keys.LButton)
                     {
@@ -165,7 +160,7 @@ namespace Metaseed.Input
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, null, "", KeyStateTree.Map)
+                }, predicate, "", KeyStateTree.Map)
             };
         }
 
@@ -206,11 +201,6 @@ namespace Metaseed.Input
                     return;
                 }
 
-                if (predicate != null && !predicate(e))
-                {
-                    Console.WriteLine("\tCanExecute:false");
-                    return;
-                }
 
                 AsyncCall(e);
             }
@@ -219,20 +209,13 @@ namespace Metaseed.Input
             {
                 source.Down(e =>
                 {
-                    if (predicate != null && !predicate(e))
-                    {
-                        Console.WriteLine("\tCanExecute:false");
-                        handling = false;
-                        return;
-                    }
-
                     handling     = true;
                     keyDownEvent = e;
                     e.Handled    = true;
-                }, null, "", KeyStateTree.Map),
+                }, predicate, "", KeyStateTree.Map),
                 allUp
-                    ? source.AllUp(KeyUpHandler, null, "", KeyStateTree.Map)
-                    : source.Up(KeyUpHandler, null, "", KeyStateTree.Map)
+                    ? source.AllUp(KeyUpHandler, predicate, "", KeyStateTree.Map)
+                    : source.Up(KeyUpHandler, predicate, "", KeyStateTree.Map)
             };
         }
 
@@ -262,6 +245,7 @@ namespace Metaseed.Input
                         e.Handled = true;
                         return;
                     }
+
                     Console.WriteLine("\tCanExecute:false");
                     handling = false;
                 }),
@@ -287,7 +271,6 @@ namespace Metaseed.Input
                     else
                     {
                         Console.WriteLine("\tCondition not meet, Not Execute!");
-
                     }
                 }, null, keyCommand.Description)
             };

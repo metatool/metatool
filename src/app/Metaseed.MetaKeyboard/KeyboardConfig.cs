@@ -8,10 +8,10 @@ namespace Metaseed.MetaKeyboard
 {
     public class KeyboardConfig : KeyMetaPackage
     {
-        public IMetaKey AppsChord  = Apps.AsChordKey();
-        public IMetaKey SpaceChord = Space.AsChordKey();
-        public IMetaKey EnterChord = Enter.AsChordKey();
-        public IMetaKey TabChord   = Tab.AsChordKey();
+        public IMetaKey AppsAsChord  = Apps.AsChordKey();
+        public IMetaKey SpaceAsChord = Space.AsChordKey();
+        public IMetaKey EnterAsChord = Enter.AsChordKey();
+        public IMetaKey TabAsChord   = Tab.AsChordKey();
 
         /// <summary>
         /// Global key
@@ -26,6 +26,6 @@ namespace Metaseed.MetaKeyboard
         /// <summary>
         /// Apps key
         /// </summary>
-        public static Key AK = new Key(Key.Apps, Key.Tab);
+        public static Key AK    = new Key(Key.Apps, Key.Tab);
     }
 }
