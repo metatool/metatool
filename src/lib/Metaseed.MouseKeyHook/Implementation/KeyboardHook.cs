@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using Metaseed.DataStructures;
 using Metaseed.Input.MouseKeyHook.Implementation;
@@ -12,7 +13,6 @@ using OneOf;
 namespace Metaseed.Input.MouseKeyHook
 {
     using Hotkey = OneOf<ISequenceUnit, ISequence>;
-
     public delegate void KeyEventHandler(object sender, KeyEventArgsExt e);
 
     public class KeyboardHook
@@ -20,7 +20,7 @@ namespace Metaseed.Input.MouseKeyHook
         private readonly IKeyboardMouseEvents _eventSource;
 
 
-        private readonly List<KeyStateTree> _stateMachines = new List<KeyStateTree>()
+        private readonly List<KeyStateTree> _stateTrees = new List<KeyStateTree>()
             {KeyStateTree.HardMap, KeyStateTree.Default, KeyStateTree.Map};
 
         public KeyboardHook()
@@ -32,7 +32,7 @@ namespace Metaseed.Input.MouseKeyHook
             KeyStateTree keyStateTree = null)
         {
             var stateMachine = keyStateTree ?? KeyStateTree.Default;
-            if (!_stateMachines.Contains(stateMachine)) _stateMachines.Add(stateMachine);
+            if (!_stateTrees.Contains(stateMachine)) _stateTrees.Add(stateMachine);
             return stateMachine.Add(combinations, command);
         }
 
@@ -63,7 +63,7 @@ namespace Metaseed.Input.MouseKeyHook
         public void ShowTip(bool ifRootThenEmpty = false)
         {
             //if (_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
-            var tips = _stateMachines.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
+            var tips = _stateTrees.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
             if (tips.Length > 0)
                 Notify.ShowKeysTip(tips);
             else
@@ -76,55 +76,57 @@ namespace Metaseed.Input.MouseKeyHook
 
         public void Run()
         {
-            _stateMachines.ForEach(m => m.Reset());
+            _stateTrees.ForEach(m => m.Reset());
 
-            var selectedNodes =
-                new List<(KeyStateTree tree, TrieNode<ICombination, KeyEventCommand> node, bool downInChord)
-                >();
-
+           var selectTrees = new List<KeyStateTree.SelectionResult>();
 
             void ClimbTree(KeyEvent eventType, KeyEventArgsExt args)
             {
-                //Q: what if key sent in other machine, and we are on the keypath
-                //A: we could use is virtual key filter
-                // foreach (var keyStateMachine in _stateMachines)
-                // {
-                //     var result = keyStateMachine.KeyEventProcess(eventType, args);
-                //     if (result == KeyProcessState.NoFurtherProcess)
-                //         return;
-                // }
-
-
                 // if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed
                 // if machine_1 has A and machine_2 has A, both should be processed.
+                // runs like all are in the same tree, but provide state jump for every tree
                 // // continue process this event on current machine
-
+                var reprocess        = false;
+                bool hasSelectedNodes;
                 do
                 {
-                    var reprocess = false;
-                    var hasSelectedNodes = selectedNodes.Count > 0;
-                    foreach (var c in selectedNodes.GetRange(0, selectedNodes.Count))
+                    var onGround = false;
+                    if (selectTrees.Count == 0)
                     {
-                        var r = c.tree.TryClimb(eventType, args);
-                        selectedNodes[selectedNodes.IndexOf(c)] = r;
+                        onGround = true;
+                        selectTrees = SelectTree(eventType, args);
+                    }
 
-                        var rt = r.tree.Climb(eventType, args, r.node, r.downInChord);
-                        Console.WriteLine($"\t={rt}@{c.tree.Name}");
+                    hasSelectedNodes = selectTrees.Count > 0;
+                    if (selectTrees.Count <= 0) goto @return;
+
+                    foreach (var c in selectTrees.GetRange(0, selectTrees.Count))
+                    {
+                        var selectResult = c;
+                        if (!onGround)
+                        {
+                            var r = selectResult.Tree.TrySelect(eventType, args);
+                            selectTrees[selectTrees.IndexOf(selectResult)] = r;
+                            selectResult = r;
+                        }
+
+                        var rt = selectResult.Tree.Climb(eventType, args,selectResult.CandidateNode, selectResult.DownInChord);
+                        Console.WriteLine($"\t={rt}${selectResult.Tree.Name}@{selectResult.Tree.CurrentNode}");
                         if (rt == KeyProcessState.Continue)
                         {
                         }
                         else if (rt == KeyProcessState.Done)
                         {
-                            selectedNodes.Remove(c);
+                            selectTrees.Remove(selectResult);
                         }
                         else if (rt == KeyProcessState.NoFurtherProcess)
                         {
-                            selectedNodes.Remove(c);
-                            return;
+                            selectTrees.Remove(selectResult);
+                            goto @return;
                         }
                         else if (rt == KeyProcessState.Reprocess || rt == KeyProcessState.Yield)
                         {
-                            selectedNodes.Remove(c);
+                            selectTrees.Remove(selectResult);
                             reprocess = true;
                         }
                         else
@@ -132,47 +134,49 @@ namespace Metaseed.Input.MouseKeyHook
                             throw new ArgumentOutOfRangeException();
                         }
                     }
+                } while (selectTrees.Count == 0 && /*no KeyProcessState.Continue*/
+                         reprocess                && hasSelectedNodes /*Yield or Reprocess*/);
 
-
-                    if (selectedNodes.Count > 0 || !reprocess && hasSelectedNodes)
-                    {
-                        return; // Continue on branch
-                    }
-                    // Reprocess or Yield, the Yield state on tree is valid, we are not on tree 
-
-                    //all on root, find current trees
-                    foreach (var stateTree in _stateMachines)
-                    {
-                        // if (stateTree.State == KeyProcessState.Yield) continue;
-
-                        var candidate = stateTree.TryClimb(eventType, args);
-                        if (candidate.node == null) continue;
-
-                        if (selectedNodes.Count            == 0 ||
-                            candidate.node.Key.ChordLength == selectedNodes[0].node.Key.ChordLength)
-                        {
-                            selectedNodes.Add(candidate);
-                        }
-                        else if (candidate.node.Key.ChordLength > selectedNodes[0].node.Key.ChordLength)
-                        {
-                            selectedNodes.Clear();
-                            selectedNodes.Add(candidate);
-                        }
-                    }
-
-                    if (selectedNodes.Count > 0)
-                        Console.WriteLine(
-                            $"\tToClimb:{string.Join(",", selectedNodes.Select(t => "$" + t.tree.Name))}");
-                } while (selectedNodes.Count > 0);
+                @return:
+                _stateTrees.ForEach(t => t.MarkDoneIfYield());
             }
 
             _eventSource.KeyDown += (sender, args) =>
-                ClimbTree(KeyEvent.Down, args as KeyEventArgsExt);
+                ClimbTree(KeyEvent.Down, args);
             _eventSource.KeyUp += (sender, args) =>
-                ClimbTree(KeyEvent.Up, args as KeyEventArgsExt);
+                ClimbTree(KeyEvent.Up, args);
 
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
             _keyUpHandlers.ForEach(h => _eventSource.KeyUp     += h);
+        }
+
+        private List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, KeyEventArgsExt args)
+        {
+            var selectedNodes = new List<KeyStateTree.SelectionResult>();
+            //all on root, find current trees
+            foreach (var stateTree in _stateTrees)
+            {
+                Debug.Assert(stateTree.IsOnRoot);
+                if (stateTree.ProcessState == KeyProcessState.Yield) continue;
+
+                var selectionResult = stateTree.TrySelect(eventType, args);
+                if (selectionResult.CandidateNode == null) continue;
+
+                if (selectedNodes.Count            == 0 ||
+                    selectionResult.CandidateNode.Key.ChordLength == selectedNodes[0].CandidateNode.Key.ChordLength)
+                {
+                    selectedNodes.Add(selectionResult);
+                }
+                else if (selectionResult.CandidateNode.Key.ChordLength > selectedNodes[0].CandidateNode.Key.ChordLength)
+                {
+                    selectedNodes.Clear();
+                    selectedNodes.Add(selectionResult);
+                }
+            }
+
+            if (selectedNodes.Count > 0)
+                Console.WriteLine( $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
+            return selectedNodes;
         }
     }
 }
