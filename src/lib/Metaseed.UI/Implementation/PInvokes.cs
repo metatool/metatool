@@ -4,25 +4,65 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using Point = System.Drawing.Point;
 
 namespace Metaseed.UI.Implementation
 {
     public delegate bool EnumWindowsProc(IntPtr hwnd, IntPtr lParam);
+
     public delegate bool EnumWindowsProc_List(IntPtr handleWindow, ArrayList handles);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public uint Left;
+        public uint Top;
+        public uint Right;
+        public uint Bottom;
+    };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GUITHREADINFO
+    {
+        public uint   cbSize;
+        public uint   flags;
+        public IntPtr hwndActive;
+        public IntPtr hwndFocus;
+        public IntPtr hwndCapture;
+        public IntPtr hwndMenuOwner;
+        public IntPtr hwndMoveSize;
+        public IntPtr hwndCaret;
+        public RECT   rcCaret;
+    };
 
     //https://docs.microsoft.com/en-us/windows/desktop/winmsg/window-features#message-only-windows
     public class PInvokes
     {
+        /// <summary>
+        /// Retrieves information about the active window or a specified GUI thread.
+        /// </summary>
+        /// <param name="idThread">If this parameter is NULL, the function returns information for the foreground thread.</param>
+        /// <param name="threadInfo"></param>
+        /// <returns></returns>
+        [DllImport("user32.dll", EntryPoint = "GetGUIThreadInfo")]
+        public static extern bool GetGUIThreadInfo(uint idThread, out GUITHREADINFO threadInfo);
+        [DllImport("user32.dll")]
+        public static extern bool ClientToScreen(IntPtr hWnd, out Point position);
         [DllImport("kernel32.dll", SetLastError = true)]
-public static extern bool AllocConsole();
+
+        public static extern bool AllocConsole();
+
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetConsoleWindow();
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowsProc_List lpEnumFunc, ArrayList lParam);
+        public static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowsProc_List lpEnumFunc,
+            ArrayList lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -33,7 +73,8 @@ public static extern bool AllocConsole();
         public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
+        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className,
+            string windowTitle);
 
 
         [DllImport("user32.dll")]
@@ -41,6 +82,7 @@ public static extern bool AllocConsole();
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool SetForegroundWindow(IntPtr windowHandle);
+
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
 
@@ -83,6 +125,7 @@ public static extern bool AllocConsole();
             /// If the specified window is a child window, the handle identifies a sibling window.
             /// </summary>
             GW_HWNDFIRST = 0,
+
             /// <summary>
             /// The retrieved handle identifies the window of the same type that is lowest in the Z order.
             /// <para />
@@ -91,6 +134,7 @@ public static extern bool AllocConsole();
             /// If the specified window is a child window, the handle identifies a sibling window.
             /// </summary>
             GW_HWNDLAST = 1,
+
             /// <summary>
             /// The retrieved handle identifies the window below the specified window in the Z order.
             /// <para />
@@ -99,6 +143,7 @@ public static extern bool AllocConsole();
             /// If the specified window is a child window, the handle identifies a sibling window.
             /// </summary>
             GW_HWNDNEXT = 2,
+
             /// <summary>
             /// The retrieved handle identifies the window above the specified window in the Z order.
             /// <para />
@@ -107,16 +152,19 @@ public static extern bool AllocConsole();
             /// If the specified window is a child window, the handle identifies a sibling window.
             /// </summary>
             GW_HWNDPREV = 3,
+
             /// <summary>
             /// The retrieved handle identifies the specified window's owner window, if any.
             /// </summary>
             GW_OWNER = 4,
+
             /// <summary>
             /// The retrieved handle identifies the child window at the top of the Z order,
             /// if the specified window is a parent window; otherwise, the retrieved handle is NULL.
             /// The function examines only child windows of the specified window. It does not examine descendant windows.
             /// </summary>
             GW_CHILD = 5,
+
             /// <summary>
             /// The retrieved handle identifies the enabled popup window owned by the specified window (the
             /// search uses the first such window found using GW_HWNDNEXT); otherwise, if there are no enabled
@@ -221,18 +269,22 @@ public static extern bool AllocConsole();
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, StringBuilder lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam,
+            [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam,
+            [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, ref IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
         [Flags]
         public enum SendMessageTimeoutFlags : uint
         {
@@ -242,6 +294,7 @@ public static extern bool AllocConsole();
             SMTO_NOTIMEOUTIFNOTHUNG = 0x8,
             SMTO_ERRORONEXIT        = 0x20
         }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
@@ -250,9 +303,11 @@ public static extern bool AllocConsole();
             public int Right;  // x position of lower-right corner  
             public int Bottom; // y position of lower-right corner  
         }
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessageTimeout(
             IntPtr windowHandle,
@@ -262,17 +317,20 @@ public static extern bool AllocConsole();
             SendMessageTimeoutFlags flags,
             uint timeout,
             out IntPtr result);
+
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
         public enum SW : int
         {
             /// <summary>
             /// Hides the window and activates another window.
             /// </summary>
             Hide = 0,
+
             /// <summary>
             /// Activates and displays a window. If the window is minimized or
             /// maximized, the system restores it to its original size and position.
@@ -280,57 +338,68 @@ public static extern bool AllocConsole();
             /// for the first time.
             /// </summary>
             Normal = 1,
+
             /// <summary>
             /// Activates the window and displays it as a minimized window.
             /// </summary>
             ShowMinimized = 2,
+
             /// <summary>
             /// Maximizes the specified window.
             /// </summary>
             Maximize = 3, // is this the right value?
-                          /// <summary>
-                          /// Activates the window and displays it as a maximized window.
-                          /// </summary>
+
+            /// <summary>
+            /// Activates the window and displays it as a maximized window.
+            /// </summary>
             ShowMaximized = 3,
+
             /// <summary>
             /// Displays a window in its most recent size and position. This value
             /// is similar to <see cref="Win32.ShowWindowCommand.Normal"/>, except
             /// the window is not activated.
             /// </summary>
             ShowNoActivate = 4,
+
             /// <summary>
             /// Activates the window and displays it in its current size and position.
             /// </summary>
             Show = 5,
+
             /// <summary>
             /// Minimizes the specified window and activates the next top-level
             /// window in the Z order.
             /// </summary>
             Minimize = 6,
+
             /// <summary>
             /// Displays the window as a minimized window. This value is similar to
             /// <see cref="Win32.ShowWindowCommand.ShowMinimized"/>, except the
             /// window is not activated.
             /// </summary>
             ShowMinNoActive = 7,
+
             /// <summary>
             /// Displays the window in its current size and position. This value is
             /// similar to <see cref="Win32.ShowWindowCommand.Show"/>, except the
             /// window is not activated.
             /// </summary>
             ShowNA = 8,
+
             /// <summary>
             /// Activates and displays the window. If the window is minimized or
             /// maximized, the system restores it to its original size and position.
             /// An application should specify this flag when restoring a minimized window.
             /// </summary>
             Restore = 9,
+
             /// <summary>
             /// Sets the show state based on the SW_* value specified in the
             /// STARTUPINFO structure passed to the CreateProcess function by the
             /// program that started the application.
             /// </summary>
             ShowDefault = 10,
+
             /// <summary>
             ///  <b>Windows 2000/XP:</b> Minimizes a window, even if the thread
             /// that owns the window is not responding. This flag should only be
@@ -338,6 +407,7 @@ public static extern bool AllocConsole();
             /// </summary>
             ForceMinimize = 11
         }
+
         [DllImport("user32.dll")]
         public static extern bool ShowWindowAsync(IntPtr hWnd, SW nCmdShow);
     }

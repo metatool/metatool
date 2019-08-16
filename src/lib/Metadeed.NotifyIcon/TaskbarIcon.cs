@@ -1,28 +1,4 @@
-﻿// hardcodet.net NotifyIcon for WPF
-// Copyright (c) 2009 - 2013 Philipp Sumi
-// Contact and Information: http://www.hardcodet.net
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the Code Project Open License (CPOL);
-// either version 1.0 of the License, or (at your option) any later
-// version.
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
-//
-// THIS COPYRIGHT NOTICE MAY NOT BE REMOVED FROM THIS FILE
-
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
@@ -46,23 +22,15 @@ namespace Metaseed.NotifyIcon
             Popup = popup;
         }
 
-
         public void Close()
         {
             Popup.IsOpen = false;
-
-            //remove the reference of the popup to the balloon in case we want to reuse
-            //the balloon (then added to a new popup)
             Popup.Child = null;
 
         }
     }
 
-    /// <summary>
-    /// A WPF proxy to for a taskbar icon (NotifyIcon) that sits in the system's
-    /// taskbar notification area ("system tray").
-    /// </summary>
-    public partial class TaskbarIcon : FrameworkElement, IDisposable
+     public partial class TaskbarIcon : FrameworkElement, IDisposable
     {
         #region Members
 
@@ -199,8 +167,7 @@ namespace Metaseed.NotifyIcon
             var dispatcher = this.GetDispatcher();
             if (!dispatcher.CheckAccess())
             {
-                var action = new Func<CloseToken>(() => ShowCustomBalloon(balloon, animation, timeout));
-                return dispatcher.Invoke(DispatcherPriority.Normal, action) as CloseToken;
+                return dispatcher.Invoke(DispatcherPriority.Normal, (Func<CloseToken>)(() => ShowCustomBalloon(balloon, animation, timeout))) as CloseToken;
             }
 
             if (balloon == null) throw new ArgumentNullException("balloon");

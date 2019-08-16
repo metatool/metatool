@@ -7,6 +7,7 @@ using WindowsInput.Native;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using System.Windows.Threading;
+using Metaseed.MetaKeyboard;
 using OneOf;
 
 namespace Metaseed.Input
@@ -99,16 +100,21 @@ namespace Metaseed.Input
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
             return sequence.Down(e =>
             {
-                if (predicate == null || predicate(e))
-                {
-                    e.BeginInvoke(() =>
+                e.BeginInvoke(() =>
+                    {
+                        Notify.ShowSelectionAction(new[]
                         {
-                            InputSimu.Inst.Keyboard.KeyPress(send.ToArray());
-                            InputSimu.Inst.Keyboard.Type(target);
-                        }
-                    );
-                }
-            }, null, "", KeyStateTree.Map);
+                            (target,
+                                (Action) (() =>
+                                    {
+                                        InputSimu.Inst.Keyboard.KeyPress(send.ToArray());
+                                        InputSimu.Inst.Keyboard.Type(target);
+                                    }
+                                ))
+                        });
+                    }
+                );
+            }, predicate, "", KeyStateTree.Map);
         }
 
 
@@ -138,14 +144,11 @@ namespace Metaseed.Input
                             (VirtualKeyCode) (Keys) target.TriggerKey)
                         ));
                     }
-
-                    return;
-
                 }, predicate, "", KeyStateTree.Map),
                 source.Up(e =>
                 {
                     if (!handled) return;
-                    handled = false;
+                    handled   = false;
                     e.Handled = true;
                     if (target.TriggerKey == Keys.LButton)
                     {

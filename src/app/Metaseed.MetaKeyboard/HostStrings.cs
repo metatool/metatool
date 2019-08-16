@@ -9,6 +9,8 @@ namespace Metaseed.MetaKeyboard
     {
         public IMetaKey Tks = "tks".Map("thank you very much");
         public IMetaKey hh = "hh".Map("哈哈😊");
+        public IMetaKey hh1 = "hh".Map("😊SSSS");
+
 
     }
 }

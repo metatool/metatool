@@ -11,41 +11,6 @@ using Metaseed.NotifyIcon;
 
 namespace Metaseed.UI.Notify
 {
-    public class Des
-    {
-        public string pre { get; set; }
-        public string bold { get; set; }
-        public string post { get; set; }
-    }
-    public class TipItem
-    {
-        public string key { get; set; }
-
-        Des _Description;
-
-        public Des description
-        {
-            get { return _Description; }
-        }
-
-        public string Description
-        {
-            set
-            {
-                _Description = new Des();
-                if (string.IsNullOrEmpty(value)) return;
-                var b = value.IndexOf('&');
-                if (b == -1) _Description.pre= value;
-                var parts = value.Split('&');
-                _Description.pre = parts[0];
-                if (parts.Length <= 1) return;
-                _Description.bold = parts[1].Substring(0, 1);
-                if (parts[1].Length <= 1) return;
-                _Description.post =parts[1].Substring(1);
-            }
-        }
-    }
-
     /// <summary>
     /// Interaction logic for FancyBalloon.xaml
     /// </summary>

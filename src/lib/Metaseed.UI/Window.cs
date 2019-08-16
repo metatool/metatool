@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Threading;
 using Metaseed.UI.Implementation;
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
 
 namespace Metaseed.UI
 {
@@ -50,10 +54,27 @@ namespace Metaseed.UI
             PInvokes.SetForegroundWindow(hWnd);
         }
 
+        public static Rect GetCurrentWindowCaretPosition()
+        {
+           var guiInfo        = new GUITHREADINFO();
+            guiInfo.cbSize = (uint)Marshal.SizeOf(guiInfo);
+
+            PInvokes.GetGUIThreadInfo(0, out guiInfo);
+
+            var lt = new Point((int)guiInfo.rcCaret.Left, (int)guiInfo.rcCaret.Top);
+            var rb = new Point((int)guiInfo.rcCaret.Right, (int)guiInfo.rcCaret.Bottom);
+
+            PInvokes.ClientToScreen(guiInfo.hwndCaret, out lt);
+            PInvokes.ClientToScreen(guiInfo.hwndCaret, out rb);
+            Console.WriteLine(lt.ToString()+ rb.ToString());
+            //SystemInformation.WorkingArea
+            return new Rect(new System.Windows.Point() { X = lt.X, Y = lt.Y }, new System.Windows.Point() { X = rb.X, Y = rb.Y });
+        }
+
         public static Rect GetCurrentWindowRect()
         {
             PInvokes.GetWindowRect(CurrentWindowHandle, out var rect);
-            return new Rect(new Point(){X = rect.Left, Y = rect.Top}, new Size(){Width = rect.Right-rect.Left, Height = rect.Bottom -rect.Top});
+            return new Rect(new System.Windows.Point(){X = rect.Left, Y = rect.Top}, new System.Windows.Point() { X = rect.Right, Y = rect.Bottom });
         }
 
         public static void InitialConsole()

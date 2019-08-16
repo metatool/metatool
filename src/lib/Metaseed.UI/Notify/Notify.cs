@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Metaseed.NotifyIcon;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using Metaseed.UI.Notify;
 using Application = System.Windows.Application;
 using MenuItem = System.Windows.Controls.MenuItem;
 using System.Windows.Threading;
 using Metaseed.NotifyIcon.Interop;
+using Metaseed.UI.Implementation;
+using Point = System.Windows.Point;
 
 namespace Metaseed.MetaKeyboard
 {
@@ -22,7 +24,8 @@ namespace Metaseed.MetaKeyboard
     {
         Default,
         ActiveScreen,
-        ActiveWindowCenter
+        ActiveWindowCenter,
+        Caret
     }
 
     public class Notify
@@ -55,6 +58,186 @@ namespace Metaseed.MetaKeyboard
             if (msg == "") return;
             trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
+
+        public class MessageToken
+        {
+            private readonly Popup           _popup;
+            internal         DispatcherTimer _timer;
+            public           bool            IsClosed;
+
+
+            internal MessageToken(Popup popup)
+            {
+                _popup = popup;
+            }
+
+            public void Close()
+            {
+                if (IsClosed) return;
+                (_popup.DataContext as ObservableCollection<object>)?.Clear();
+                _popup.IsOpen = false;
+                _timer?.Stop();
+                IsClosed = true;
+            }
+
+            public void Refresh()
+            {
+                IsClosed      = false;
+                _popup.IsOpen = true;
+                _timer?.Stop();
+                _timer?.Start();
+            }
+        }
+
+        private static ObservableCollection<TipItem> selectActions;
+        public static  MessageToken                  SelectionToken;
+
+        public static MessageToken ShowSelectionAction(IEnumerable<(string des, Action action)> tips)
+        {
+            var valueTuples = tips.ToArray();
+            var description =
+                valueTuples.Select(d => new TipItem() {Key = "", DescriptionInfo = d.des, Action = d.action});
+            if (selectActions == null || (SelectionToken != null && SelectionToken.IsClosed))
+            {
+                selectActions = new ObservableCollection<TipItem>(description);
+                var b = new SelectableMessage();
+                return SelectionToken = ShowMessage(b, selectActions, 8888, NotifyPosition.Caret);
+            }
+            else
+            {
+                description.ToList().ForEach(tt => selectActions.Add(tt));
+                SelectionToken.Refresh();
+                return SelectionToken;
+            }
+        }
+
+        public static MessageToken ShowMessage(System.Windows.FrameworkElement balloon,
+            ObservableCollection<TipItem> data, int? timeout,
+            NotifyPosition position = NotifyPosition.ActiveScreen, PopupAnimation animation = PopupAnimation.None)
+        {
+            var dispatcher = balloon.Dispatcher;
+            if (!dispatcher.CheckAccess())
+            {
+                return dispatcher.Invoke(DispatcherPriority.Normal,
+                        (Func<MessageToken>) (() => ShowMessage(balloon, data, timeout, position, animation))) as
+                    MessageToken;
+            }
+
+            if (balloon == null) throw new ArgumentNullException("balloon");
+            if (timeout.HasValue && timeout < 500)
+            {
+                var msg = "Invalid timeout of {0} milliseconds. Timeout must be at least 500 ms";
+                msg = String.Format(msg, timeout);
+                throw new ArgumentOutOfRangeException("timeout", msg);
+            }
+
+            if (LogicalTreeHelper.GetParent(balloon) is Popup parent)
+            {
+                parent.Child = null;
+                var msg =
+                    "Cannot display control [{0}] in a new balloon popup - that control already has a parent. You may consider creating new balloons every time you want to show one.";
+                msg = String.Format(msg, balloon);
+                throw new InvalidOperationException(msg);
+            }
+
+            var popup = new Popup();
+            popup.AllowsTransparency = true;
+            popup.PopupAnimation     = animation;
+            popup.Placement          = PlacementMode.AbsolutePoint;
+            popup.StaysOpen          = true;
+            balloon.DataContext      = data;
+
+            Point point;
+            switch (position)
+            {
+                case NotifyPosition.ActiveWindowCenter:
+                {
+                    var rect = UI.Window.GetCurrentWindowRect();
+                    var X    = (rect.X + rect.Width  / 2 - balloon.ActualWidth  / 2);
+                    var Y    = (rect.Y + rect.Height / 2 - balloon.ActualHeight / 2);
+                    point = new Point(X, Y);
+                    break;
+                }
+
+                case NotifyPosition.ActiveScreen:
+                {
+                    var screen = Screen.FromHandle(UI.Window.CurrentWindowHandle);
+                    if (screen.Equals(Screen.PrimaryScreen))
+                    {
+                        var p = TrayInfo.GetTrayLocation();
+                        point = new Point(p.X, p.Y);
+                        break;
+                    }
+
+                    var bounds = screen.Bounds;
+                    var X      = bounds.X + bounds.Width;
+                    var Y      = bounds.Y + bounds.Height;
+                    point = new Point(X, Y);
+                    break;
+                }
+
+                case NotifyPosition.Default:
+                {
+                    var p = TrayInfo.GetTrayLocation();
+                    point = new Point(p.X, p.Y);
+                    break;
+                }
+
+                case NotifyPosition.Caret:
+                {
+                    var rect = UI.Window.GetCurrentWindowCaretPosition();
+                    var X    = (rect.X + rect.Width  / 2 - balloon.ActualWidth  / 2);
+                    var Y    = (rect.Y + rect.Height / 2 - balloon.ActualHeight / 2);
+                    point = new Point(X, Y);
+                    break;
+                }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
+            }
+
+
+            popup.Child            = balloon;
+            popup.HorizontalOffset = point.X - 1;
+            popup.VerticalOffset   = point.Y - 1;
+            balloon.Focusable      = true;
+
+            IInputElement element = null;
+            popup.Opened += (s, a) =>
+            {
+                element = Keyboard.FocusedElement;
+                var source = (HwndSource) PresentationSource.FromVisual(balloon);
+                var handle = source.Handle;
+                PInvokes.SetForegroundWindow(handle);
+                Keyboard.Focus(balloon);
+            };
+
+            popup.IsOpen = true;
+            popup.Focus();
+
+            var r = new MessageToken(popup);
+            popup.Closed += (s, a) =>
+            {
+                Keyboard.Focus(element);
+                r.Close();
+            };
+
+            void TimerTick(object sender, EventArgs e)
+            {
+                r._timer.Tick -= TimerTick;
+                r.Close();
+            }
+
+            if (timeout.HasValue)
+            {
+                r._timer      =  new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(timeout.Value)};
+                r._timer.Tick += TimerTick;
+                r._timer.Start();
+            }
+
+            return r;
+        }
+
 
         public static CloseToken ShowMessage(System.Windows.FrameworkElement control, int? timeout,
             NotifyPosition position = NotifyPosition.ActiveScreen, bool onlyCloseByToken = false)
@@ -93,7 +276,7 @@ namespace Metaseed.MetaKeyboard
                 case NotifyPosition.Default:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(position), position, null);
+                    throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
             }
 
             trayIcon.CustomPopupPosition = func;
@@ -104,11 +287,10 @@ namespace Metaseed.MetaKeyboard
             new Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>>();
 
         public static void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
-            NotifyPosition position =
-                NotifyPosition.ActiveScreen)
+            NotifyPosition position = NotifyPosition.ActiveScreen)
         {
             tipDictionary.TryGetValue(name, out var tp);
-            if (tp!=null && tips.SequenceEqual(tp)) return;
+            if (tp != null && tips.SequenceEqual(tp)) return;
 
             tipDictionary[name] = tips;
             var t = tipDictionary.SelectMany(pair => pair.Value).ToArray();
@@ -121,16 +303,15 @@ namespace Metaseed.MetaKeyboard
         }
 
         public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
-            NotifyPosition position =
-                NotifyPosition.ActiveScreen)
+            NotifyPosition position = NotifyPosition.ActiveScreen)
         {
             if (tips == null) return;
             var description =
-                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {key = t.key, Description = d}));
+                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {Key = t.key, DescriptionInfo = d}));
             var t = new ObservableCollection<TipItem>(description);
             if (t.Count == 0) return;
-            var b = new FancyBalloon() {Tips = t};
-            ShowMessage(b, 88888);
+            var keytipsBalloon = new FancyBalloon() {Tips = t};
+            ShowMessage(keytipsBalloon, 88888);
         }
 
         public static void CloseKeysTip(string name)
@@ -147,7 +328,7 @@ namespace Metaseed.MetaKeyboard
         {
             if (tips == null) return;
             var description =
-                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {key = t.key, Description = d}));
+                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {Key = t.key, DescriptionInfo = d}));
             var b = new FancyBalloon() {Tips = new ObservableCollection<TipItem>(description)};
 
 

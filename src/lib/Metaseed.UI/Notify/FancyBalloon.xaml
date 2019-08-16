@@ -103,13 +103,13 @@
             </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding key}" />
+                    <GridViewColumn DisplayMemberBinding="{Binding Key}" />
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                                    <Run Text="{Binding Path=description.pre}" /><Run FontWeight="DemiBold" TextDecorations="UnderLine"
-                                         Text="{Binding Path=description.bold}" /><Run Text="{Binding Path=description.post}" />
+                                    <Run Text="{Binding Path=Description.Pre}" /><Run FontWeight="DemiBold" TextDecorations="UnderLine"
+                                         Text="{Binding Path=Description.Bold}" /><Run Text="{Binding Path=Description.Post}" />
                                 </TextBlock>
                             </DataTemplate>
 

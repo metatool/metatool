@@ -15,7 +15,26 @@ namespace Metaseed.DataStructures
         public             TKey                                     Key;
         public             TrieNode<TKey, TValue>                   Parent;
         private            IKeyPath                                 _keyPath;
+        public IKeyPath KeyPath
+        {
+            get
+            {
+                if (_keyPath != null) return _keyPath;
+                if (Key == null || Parent == null)
+                    return null;
+                _keyPath = new Sequence(Parent.Key == null
+                    ? new ICombination[] { Key }
+                    : Parent.KeyPath.Concat(Key).ToArray());
+                return _keyPath;
+            }
+        }
 
+        public override string ToString()
+        {
+            return Key == null || Parent == null ? "Root" :
+                Parent.Key == null               ? $"{Key}" :
+                                                   $"{Parent.Key}, {Key}";
+        }
         protected TrieNode(TKey key = default(TKey))
         {
             Key       = key;
@@ -116,25 +135,6 @@ namespace Metaseed.DataStructures
             _children.Remove(key);
         }
 
-        public IKeyPath KeyPath
-        {
-            get
-            {
-                if (_keyPath != null) return _keyPath;
-                if (Key == null || Parent == null)
-                    return null;
-                _keyPath = new Sequence(Parent.Key == null
-                    ? new ICombination[] {Key}
-                    : Parent.KeyPath.Concat(Key).ToArray());
-                return _keyPath;
-            }
-        }
 
-        public override string ToString()
-        {
-            return Key == null || Parent == null ? "Root" :
-                Parent.Key == null               ? $"{Key}" :
-                                                   $"{Parent.Key}, {Key}";
-        }
     }
 }

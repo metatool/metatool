@@ -62,7 +62,6 @@ namespace Metaseed.Input.MouseKeyHook
 
         public void ShowTip(bool ifRootThenEmpty = false)
         {
-            //if (_currentMachine != null) Notify.ShowKeysTip(_currentMachine.Tips);
             var tips = _stateTrees.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
             if (tips.Length > 0)
                 Notify.ShowKeysTip(tips);

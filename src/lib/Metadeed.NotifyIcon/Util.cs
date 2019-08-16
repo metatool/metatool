@@ -278,7 +278,7 @@ namespace Metaseed.NotifyIcon
         /// Returns a dispatcher for multi-threaded scenarios
         /// </summary>
         /// <returns></returns>
-        internal static Dispatcher GetDispatcher(this DispatcherObject source)
+        public static Dispatcher GetDispatcher(this DispatcherObject source)
         {
             //use the application's dispatcher by default
             if (Application.Current != null) return Application.Current.Dispatcher;

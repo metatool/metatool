@@ -135,7 +135,7 @@ namespace Metaseed.Input
             var downInChord = false;
 
             var type = eventType;
-            var childNode = _treeWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
+            var candidateNode = _treeWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
             {
                 // mark down_in_chord and continue try to find trigger
                 if (type == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
@@ -147,12 +147,10 @@ namespace Metaseed.Input
                 return acc.ChordLength >= combination.ChordLength ? acc : combination;
             });
 
-            return new SelectionResult(this, childNode, downInChord);
+            return new SelectionResult(this, candidateNode, downInChord);
         }
 
-        internal KeyProcessState Climb(KeyEvent eventType, KeyEventArgsExt args,
-            TrieNode<ICombination, KeyEventCommand> candidateNode,
-            bool downInChord)
+        internal KeyProcessState Climb(KeyEvent eventType, KeyEventArgsExt args, TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
         {
             if (args.NoFurtherProcess) return ProcessState = KeyProcessState.NoFurtherProcess;
 

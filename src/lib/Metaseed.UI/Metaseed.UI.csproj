@@ -22,6 +22,7 @@
     <None Remove="metaKeyboard.ico" />
     <None Remove="NotifyIconResources.xaml" />
     <None Remove="Notify\FancyBalloon.xaml" />
+    <None Remove="Notify\SelectableMessage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +59,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Notify\SelectableMessage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Notify\FancyBalloon.xaml">
       <SubType>Designer</SubType>
     </Page>
