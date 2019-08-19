@@ -19,10 +19,9 @@
     <UserControl.InputBindings>
         <KeyBinding Key="Escape" Command="Close" />
         <KeyBinding Command="Select"
-                    Key="Enter"
-                    />
-</UserControl.InputBindings>
-    <Grid           MouseEnter="grid_MouseEnter">
+                    Key="Enter" />
+    </UserControl.InputBindings>
+    <Grid MouseEnter="grid_MouseEnter">
         <Border HorizontalAlignment="Stretch"
                 Margin="1"
                 BorderThickness="1,1,1,1"
@@ -40,40 +39,22 @@
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
-        <ListView x:Name="listView" FontSize="14" SelectionMode="Single" SelectedItem="{Binding ElementName=me, Path=SelectedItem}" ItemsSource="{Binding}" Background="{x:Null}" BorderBrush="{x:Null}"
-                  Foreground="White" Margin="5">
+        <ListView x:Name="listView" FontSize="14" SelectionMode="Single"
+                  SelectedItem="{Binding ElementName=me, Path=SelectedItem}" ItemsSource="{Binding}"
+                  Background="{x:Null}" BorderBrush="{x:Null}"
+                  Foreground="White">
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="true" >
-                            <Setter Property="Foreground" Value="Black" />
-                            <Setter Property="Background" Value="Teal" />
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Background" Value="DarkSlateGray" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
-</ListView.Resources>
-            <!-- <ListView.ItemContainerStyle> -->
-            <!--     <Style TargetType="{x:Type ListViewItem}"> -->
-            <!--         <Setter Property="Background" Value="Transparent" /> -->
-            <!--         <Setter Property="Template"> -->
-            <!--             <Setter.Value> -->
-            <!--                 <ControlTemplate TargetType="{x:Type ListViewItem}"> -->
-            <!--                     <Border -->
-            <!--                         BorderBrush="Transparent" -->
-            <!--                         BorderThickness="0" -->
-            <!--                         Background="{TemplateBinding Background}"> -->
-            <!--                         <GridViewRowPresenter HorizontalAlignment="Stretch" -->
-            <!--                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" -->
-            <!--                                               Width="Auto" Margin="0" Content="{TemplateBinding Content}" /> -->
-            <!--                     </Border> -->
-            <!--                 </ControlTemplate> -->
-            <!--             </Setter.Value> -->
-            <!--         </Setter> -->
-            <!--     </Style> -->
-            <!-- </ListView.ItemContainerStyle> -->
+            </ListView.Resources>
             <ListView.View>
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding Key}" />

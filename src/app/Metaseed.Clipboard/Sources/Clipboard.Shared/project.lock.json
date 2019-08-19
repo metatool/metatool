@@ -14666,11 +14666,7 @@
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {},
-        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/choco-dev-local": {},
-        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/nuget-dev": {},
-        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/nuget-dev-local": {},
-        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/nuget-hmi-stable": {},
-        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/thirdparty-dev-local": {}
+        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/nuget-dev-local": {}
       }
     },
     "dependencies": {

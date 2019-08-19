@@ -150,6 +150,19 @@ namespace Metaseed.MetaKeyboard
             Point point;
             switch (position)
             {
+                case NotifyPosition.Caret:
+                {
+                    var rect = UI.Window.GetCurrentWindowCaretPosition();
+                    var X    = (rect.Left + rect.Width  / 2 - balloon.ActualWidth  / 2);
+                    var Y    = (rect.Bottom + rect.Height / 2 - balloon.ActualHeight / 2);
+                    if (X == 0 && Y == 0)
+                    {
+                        goto case NotifyPosition.ActiveWindowCenter;
+                    }
+
+                    point = new Point(X, Y);
+                    break;
+                }
                 case NotifyPosition.ActiveWindowCenter:
                 {
                     var rect = UI.Window.GetCurrentWindowRect();
@@ -183,14 +196,7 @@ namespace Metaseed.MetaKeyboard
                     break;
                 }
 
-                case NotifyPosition.Caret:
-                {
-                    var rect = UI.Window.GetCurrentWindowCaretPosition();
-                    var X    = (rect.X + rect.Width  / 2 - balloon.ActualWidth  / 2);
-                    var Y    = (rect.Y + rect.Height / 2 - balloon.ActualHeight / 2);
-                    point = new Point(X, Y);
-                    break;
-                }
+
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
@@ -198,8 +204,8 @@ namespace Metaseed.MetaKeyboard
 
 
             popup.Child            = balloon;
-            popup.HorizontalOffset = point.X - 1;
-            popup.VerticalOffset   = point.Y - 1;
+            popup.HorizontalOffset = point.X + 1;
+            popup.VerticalOffset   = point.Y - 2;
             balloon.Focusable      = true;
 
             IInputElement element = null;
