@@ -77,12 +77,12 @@ namespace Metaseed.Input
 
         public static IMetaKey Up(this ISequence sequence, Action<KeyEventArgsExt> action,
             Predicate<KeyEventArgsExt> canExecute=null,
-            string description = "")
+            string description = "", KeyStateTree stateTree = null)
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
             return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Up,
-                new KeyCommand(action) {CanExecute = canExecute, Description = description});
+                new KeyCommand(action) {CanExecute = canExecute, Description = description}, stateTree);
         }
 
         public static Task<KeyEventArgsExt> DownAsync(this ISequence sequence, int timeout = 8888)

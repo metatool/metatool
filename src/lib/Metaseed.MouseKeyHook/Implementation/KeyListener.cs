@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook.WinApi;
 
@@ -46,7 +47,9 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
             {
                 KeyboardState.HandledDownKeys.SetKeyUp(e.KeyCode);
+
             }
+
             handler(this, e);
         }
 

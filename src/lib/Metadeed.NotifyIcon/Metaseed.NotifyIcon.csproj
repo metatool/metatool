@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-
+    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
 
     <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
@@ -17,5 +17,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\..\pkg\Metaseed.NotifyIcon</OutputPath>
   </PropertyGroup>
+
+
 
 </Project>

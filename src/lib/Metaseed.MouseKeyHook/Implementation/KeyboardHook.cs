@@ -21,7 +21,7 @@ namespace Metaseed.Input.MouseKeyHook
 
 
         private readonly List<KeyStateTree> _stateTrees = new List<KeyStateTree>()
-            {KeyStateTree.HardMap, KeyStateTree.Default, KeyStateTree.Map};
+            {KeyStateTree.HardMap, KeyStateTree.Default, KeyStateTree.Map, KeyStateTree.HotString};
 
         public KeyboardHook()
         {
@@ -85,10 +85,11 @@ namespace Metaseed.Input.MouseKeyHook
                 // if machine_1 has A and machine_2 has A, both should be processed.
                 // runs like all are in the same tree, but provide state jump for every tree
                 // // continue process this event on current machine
-                var reprocess        = false;
                 bool hasSelectedNodes;
+                bool  reprocess;
                 do
                 {
+                    reprocess = false;
                     var onGround = false;
                     if (selectTrees.Count == 0)
                     {
@@ -144,7 +145,7 @@ namespace Metaseed.Input.MouseKeyHook
                 ClimbTree(KeyEvent.Down, args);
             _eventSource.KeyUp += (sender, args) =>
                 ClimbTree(KeyEvent.Up, args);
-
+            
             _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
             _keyUpHandlers.ForEach(h => _eventSource.KeyUp     += h);
         }

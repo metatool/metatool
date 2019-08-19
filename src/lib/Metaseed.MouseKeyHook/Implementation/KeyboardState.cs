@@ -41,18 +41,15 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         public override string ToString()
         {
             var sb = new StringBuilder();
-
-            sb.Append(HandledDownKeys.ToString());
-            sb.Append(Environment.NewLine);
+            if (this != HandledDownKeys)
+                sb.Append(HandledDownKeys.ToString() + "|");
             for (var i = 0; i < 256; i++)
             {
-                var key = (Keys) i;
-                if (_keyboardStateNative[i] != 0)
-                {
-                    sb.Append($"{key,12}");
-                    if (IsDown(key)) sb.Append("↓");
-                    if (IsUp(key)) sb.Append("↑");
-                    if (IsToggled(key)) sb.Append("⇫");
+                 var key = (Keys) i;
+                  if (_keyboardStateNative[i] != 0)
+                  {
+                    if (IsDown(key)) sb.Append($"{key}↓ ");
+                    if (IsToggled(key)) sb.Append($"{key}~ ");
                 }
             }
 
@@ -100,13 +97,12 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         public bool IsOtherDown(Key key)
         {
-            if (key == Key.CtrlChord) key = Key.Ctrl;
-            if (key == Key.AltChord) key = Key.Alt;
+            if (key == Key.CtrlChord) key  = Key.Ctrl;
+            if (key == Key.AltChord) key   = Key.Alt;
             if (key == Key.ShiftChord) key = Key.Shift;
 
             var downKeys = DownKeys.ToArray();
             return downKeys.Length > key.Codes.Count || downKeys.Any(k => !key.Codes.Contains(k));
-
         }
 
         public bool IsOtherDown(Keys key)
@@ -119,7 +115,8 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             return downKeys.Length > 1 || (downKeys.Length == 1 && downKeys[0] != key);
         }
 
-        public IEnumerable<Keys> DownKeys {
+        public IEnumerable<Keys> DownKeys
+        {
             get
             {
                 IEnumerable<Keys> getDownKeys()
@@ -127,7 +124,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
                     for (var i = 0; i < _keyboardStateNative.Length; i++)
                     {
                         if (GetHighBit(_keyboardStateNative[i]))
-                            yield return (Keys)i;
+                            yield return (Keys) i;
                     }
                 }
 
@@ -137,7 +134,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             }
         }
 
-    public bool IsDown(Key key)
+        public bool IsDown(Key key)
         {
             return key.Codes.Any(IsDown);
         }
@@ -191,9 +188,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         private bool IsUpRaw(Keys key)
         {
-            var keyState = GetKeyState(key);
-            var isUp     = !GetHighBit(keyState);
-            return isUp;
+            return !IsDownRaw(key);
         }
 
         private bool IsDownRaw(Keys key)
@@ -208,6 +203,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
 
         /// <summary>
         ///     Indicate weather specified key was toggled at the moment when snapshot was created or not.
+        ///     The low-order bit is meaningless for non-toggle keys.  
         /// </summary>
         /// <param name="key">Key (corresponds to the virtual code of the key)</param>
         /// <returns>
@@ -216,9 +212,12 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         /// </returns>
         public bool IsToggled(Keys key)
         {
+            if (key != Keys.CapsLock && key != Keys.NumLock && key != Keys.Scroll && key != Keys.Insert) return false;
+
             var keyState  = GetKeyState(key);
             var isToggled = GetLowBit(keyState);
             return isToggled;
+
         }
 
         /// <summary>

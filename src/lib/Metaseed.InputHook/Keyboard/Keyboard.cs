@@ -98,7 +98,7 @@ namespace Metaseed.Input
         {
             var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
-            return sequence.Down(e =>
+            return sequence.Up(e =>
             {
                 e.BeginInvoke(() =>
                     {

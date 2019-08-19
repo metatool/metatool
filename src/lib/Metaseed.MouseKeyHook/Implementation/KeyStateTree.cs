@@ -52,6 +52,8 @@ namespace Metaseed.Input
         public static readonly   KeyStateTree HardMap = new KeyStateTree("HardMap");
         internal static readonly KeyStateTree Default = new KeyStateTree("Default");
         public static readonly   KeyStateTree Map     = new KeyStateTree("Map");
+        public static readonly KeyStateTree HotString = new KeyStateTree("Hotsting");
+
 
         private readonly Trie<ICombination, KeyEventCommand>       _trie = new Trie<ICombination, KeyEventCommand>();
         private readonly TrieWalker<ICombination, KeyEventCommand> _treeWalker;
