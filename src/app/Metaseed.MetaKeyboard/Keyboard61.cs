@@ -1,16 +1,19 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Metaseed.Input;
+using Microsoft.Win32;
 using static Metaseed.Input.Key;
 using static Metaseed.MetaKeyboard.KeyboardConfig;
 
 namespace ConsoleApp1
 {
-    class Keyboard61: KeyMetaPackage
+    partial class Keyboard61 : KeyMetaPackage
     {
         public Keyboard61()
         {
             ToggleKeys.NumLock.AlwaysOn();
             ToggleKeys.CapsLock.AlwaysOff();
+            SetupWinLock();
         }
 
         public IMetaKey Esc = Caps.MapOnHit(Keys.Escape, e => !e.IsVirtual, false);
@@ -64,6 +67,5 @@ namespace ConsoleApp1
         public IMetaKey PrintScreen = (GK + P).Map(Key.PrintScreen);
         public IMetaKey Pause       = (GK + B).Map(Key.Pause);        // Break
         public IMetaKey Apps        = (GK + SemiColon).Map(Key.Apps); // like right click on current selection
-
     }
 }

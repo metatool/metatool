@@ -13,81 +13,9 @@ namespace Metaseed.MetaKeyboard
 {
     public class FunctionalKeys : KeyMetaPackage
     {
-        public IMetaKey FocusFileItemsView = (LWin + F).Down(e =>
-        {
-            var c = UI.Window.CurrentWindowClass;
-            if ("CabinetWClass" != c && "#32770" != c) return; // Windows Explorer or open/save as dialog
-
-            using (var automation = new UIA3Automation())
-            {
-                var h       = UI.Window.CurrentWindowHandle;
-                var element = automation.FromHandle(h);
-                var listBox = element.FindFirstDescendant(cf => cf.ByClassName("UIItemsView"))?.AsListBox();
-                if (listBox?.SelectedItem != null) listBox.SelectedItem.Focus();
-                else listBox?.Items.FirstOrDefault()?.Select();
-            }
-
-            e.Handled = true;
-        }, null, "Focus &File Items View");
+        public IMetaKey CloseMetaKeys = (LWin + L).Handled().Down(null);
 
 
-        public IMetaKey FocusNavigationTreeView = (LWin + N).Down(e =>
-        {
-            var c = UI.Window.CurrentWindowClass;
-            if ("CabinetWClass" != c && "#32770" != c) return;
-
-            using (var automation = new UIA3Automation())
-            {
-                var h        = UI.Window.CurrentWindowHandle;
-                var element  = automation.FromHandle(h);
-                var treeView = element.FindFirstDescendant(cf => cf.ByClassName("SysTreeView32"));
-                treeView?.AsTree().SelectedTreeItem.Focus();
-            }
-
-            e.Handled = true;
-        }, null, "Focus &Navigation Tree View");
-
-        public IMetaKey CopySelectedPath = (Caps + Pipe).Down(async e =>
-        {
-            var c = UI.Window.CurrentWindowClass;
-            if ("CabinetWClass" != c && "#32770" != c) return;
-
-            var handle = UI.Window.CurrentWindowHandle;
-            var paths  = await Explorer.GetSelectedPath(handle);
-            var r      = string.Join(';', paths);
-            System.Windows.Clipboard.SetText(r);
-            e.Handled = true;
-        }, null, "Copy Selected Files Path");
-
-        public IMetaKey ShowDesktopFolder = (LWin + D).Down(e =>
-            {
-                Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-                e.Handled = true;
-            }
-            , null, "Show &Desktop Folder");
-
-        public IMetaKey NewFile = (Ctrl + Alt + N).Hit(async e =>
-        {
-            const string newFileName = "NewFile";
-            var          handle      = UI.Window.CurrentWindowHandle;
-            var          fullPath    = await Explorer.Path(handle);
-            var          fileName    = newFileName;
-            var          i           = 1;
-            while (File.Exists(fullPath + "\\" + fileName))
-            {
-                fileName = newFileName + i++;
-            }
-
-            var file = File.Create(fullPath + "\\" + fileName);
-            file.Close();
-            Explorer.Select(handle, new[] {fileName});
-            Keyboard.Type(Keys.F2);
-        }, e =>
-        {
-            var c = UI.Window.CurrentWindowClass;
-            if ("CabinetWClass" != c) return false;
-            return true;
-        }, "&New File");
 
         public IMetaKey CloseMetaKey = (LCtrl + LWin + C).With(Keys.LMenu)
             .Down(e =>

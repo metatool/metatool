@@ -12,7 +12,7 @@ namespace Metaseed.UI
         {
             get
             {
-                string      name   = string.Empty;
+                var      name   = string.Empty;
                 RegistryKey regKey = null;
 
                 try
