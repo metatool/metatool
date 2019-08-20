@@ -25,8 +25,7 @@ namespace Metaseed.Input
             }
             else
             {
-                if(_upEvent==null)return;
-                    _upEvent.Release();
+                _upEvent?.Release();
             }
         }
 

@@ -213,6 +213,8 @@ namespace Metaseed.Input
                     // HaveChild & KeyInChord_up: A+B, C when A_up continue wait C
                     if (_treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
                     {
+                        Console.WriteLine(" would never been here:treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode)");
+                        Debugger.Break();
                         return ProcessState = KeyProcessState.Continue;
                     }
 
@@ -253,8 +255,7 @@ namespace Metaseed.Input
                 var isAsync = exe?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
                 Console.WriteLine(
                     $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyEventAction.Id}\t{keyEventAction.Description}");
-                if (isAsync) args.BeginInvoke(exe);
-                else exe?.Invoke(args);
+                exe?.Invoke(args);
             }
 
             if (!oneExecuted && actionList[eventType].Any())
@@ -316,10 +317,12 @@ namespace Metaseed.Input
                     _lastKeyDownNodeForAllUp = null;
                     // navigate on AllUp event only when not navigated by up
                     // A+B then B_up then A_up would not execute if clause
-                    if (!_treeWalker.CurrentNode.Equals(candidateNode))
+                    if (_treeWalker.CurrentNode.Equals(candidateNode))
                     {
-                        _treeWalker.GoToChild(candidateNode);
+                        return ProcessState;
                     }
+
+                    _treeWalker.GoToChild(candidateNode);
 
                     if (candidateNode.ChildrenCount == 0)
                     {

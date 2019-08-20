@@ -66,31 +66,38 @@ namespace Metaseed.Input
             {
                 source.Down(e =>
                 {
-                    if (predicate == null || predicate(e))
-                    {
-                        handled            = true;
-                        e.Handled          = true;
-                        e.NoFurtherProcess = true;
+                    handled            = true;
+                    e.Handled          = true;
+                    e.NoFurtherProcess = true;
 
-                        InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                            target.Chord.Cast<VirtualKeyCode>(),
-                            (VirtualKeyCode) (Keys) target.TriggerKey);
-                        return;
-                    }
-
-                    handled = false;
-                }, null, "", KeyStateTree.HardMap),
+                    InputSimu.Inst.Keyboard.ModifiedKeyDown(
+                        target.Chord.Cast<VirtualKeyCode>(),
+                        (VirtualKeyCode) (Keys) target.TriggerKey);
+                }, predicate, "", KeyStateTree.HardMap),
                 source.Up(e =>
                 {
-                    if (!handled) return;
                     handled = false;
-                    if (predicate != null && !predicate(e)) return;
+                   
                     e.Handled          = true;
                     e.NoFurtherProcess = true;
 
                     InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
                         (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, null, "", KeyStateTree.HardMap)
+                }, e =>
+                {
+                    if (!handled)
+                    {
+                        Console.WriteLine("\t/!Handling:false");
+                        return false;
+                    }
+
+                    if (predicate != null && !predicate(e))
+                    {
+                        Console.WriteLine("\t/!predicate(e):false");
+                        return false;
+                    }
+                    return true;
+                }, "", KeyStateTree.HardMap)
             };
         }
 
@@ -114,7 +121,7 @@ namespace Metaseed.Input
                         });
                     }
                 );
-            }, predicate, "", KeyStateTree.Map);
+            }, predicate, "", KeyStateTree.HotString);
         }
 
 
@@ -175,37 +182,37 @@ namespace Metaseed.Input
 
             void AsyncCall(KeyEventArgsExt e)
             {
+                e.Handled = true;
                 e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
                     target.Chord.Select(k => (VirtualKeyCode) (Keys) k),
                     (VirtualKeyCode) (Keys) target.TriggerKey));
             }
 
             // if not: A+B -> C become A+C
-            void KeyUpHandler(KeyEventArgsExt e)
+            bool KeyUpPredicate(KeyEventArgsExt e)
             {
                 if (!handling)
                 {
-                    Console.WriteLine("\tHandling:false");
-                    return;
+                    Console.WriteLine("\t/!Handling:false");
+                    return false;
                 }
 
-                handling  = false;
-                e.Handled = true;
+                handling = false;
 
-                if (!allUp && keyDownEvent != e.LastKeyEvent)
+                if (!allUp && keyDownEvent != e.LastKeyDownEvent
+                ) // should not use LastKeyEvent for 2 fast key strokes, a_down b_down a_up b_up, then the a_keyAsChord would not fire 
                 {
-                    Console.WriteLine("\tkeyDownEvent != e.LastKeyEvent");
-                    return;
+                    Console.WriteLine("\t/!up: keyDownEvent != e.LastKeyDownEvent");
+                    return false;
                 }
 
                 if (allUp && keyDownEvent != e.LastKeyDownEvent)
                 {
-                    Console.WriteLine("\tkeyDownEvent != e.LastKeyDownEvent");
-                    return;
+                    Console.WriteLine("\t/!allUp: keyDownEvent != e.LastKeyDownEvent");
+                    return false;
                 }
 
-
-                AsyncCall(e);
+                return true;
             }
 
             return new MetaKeys()
@@ -217,8 +224,8 @@ namespace Metaseed.Input
                     e.Handled    = true;
                 }, predicate, "", KeyStateTree.Map),
                 allUp
-                    ? source.AllUp(KeyUpHandler, predicate, "", KeyStateTree.Map)
-                    : source.Up(KeyUpHandler, predicate, "", KeyStateTree.Map)
+                    ? source.AllUp(AsyncCall, KeyUpPredicate, "", KeyStateTree.Map)
+                    : source.Up(AsyncCall, KeyUpPredicate, "", KeyStateTree.Map)
             };
         }
 

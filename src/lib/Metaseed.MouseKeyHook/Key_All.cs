@@ -4,7 +4,9 @@ namespace Metaseed.Input
 {
     public partial class Key
     {
+        const Keys AnyKeyCode = Keys.KeyCode; 
         public static readonly Key None          = new Key(Keys.None);
+        public static readonly Key Any           = new Key(AnyKeyCode);
         public static readonly Key Caps          = new Key(Keys.CapsLock);
         public static readonly Key LCtrl         = new Key(Keys.LControlKey);
         public static readonly Key RCtrl         = new Key(Keys.RControlKey);

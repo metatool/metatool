@@ -38,7 +38,7 @@ namespace Metaseed.Input
 
         public static bool operator !=(Key keyA, Key keyB)
         {
-            return !object.Equals(keyB, keyA);
+            return !Equals(keyB, keyA);
         }
 
         public static bool operator ==(Key keyA, Keys keyB)
@@ -72,12 +72,12 @@ namespace Metaseed.Input
 
         public bool IsEquals(Key key)
         {
-            return Codes.IsSupersetOf(key.Codes);
+            return Codes.Contains(AnyKeyCode) || Codes.IsSupersetOf(key.Codes);
         }
 
         public bool Equals(Keys key)
         {
-            return Codes.Contains(key);
+            return Codes.Contains(AnyKeyCode) || Codes.Contains(key);
         }
 
         public bool Equals(Key obj)
@@ -94,7 +94,10 @@ namespace Metaseed.Input
 
             return IsEquals(obj);
         }
-
+        public int CompareTo(object obj)
+        {
+            return CompareTo((Key)obj);
+        }
 
         public int CompareTo(Key other)
         {

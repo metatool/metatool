@@ -1,4 +1,7 @@
-﻿namespace Metaseed.Input
+﻿using System;
+
+namespace Metaseed.Input
 {
-    public enum KeyEvent { Down, Up, AllUp }
+    [Flags]
+    public enum KeyEvent { Down =1 , Up = 2, AllUp= 3 }
 }

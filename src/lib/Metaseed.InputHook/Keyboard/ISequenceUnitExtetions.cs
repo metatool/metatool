@@ -77,10 +77,14 @@ namespace Metaseed.Input
             return Keyboard.MapOnHit(key.ToCombination(), target, canExecute, allUp);
         }
 
-        public static ICombination Handled(this ISequenceUnit sequenceUnit)
+        public static ICombination Handled(this ISequenceUnit sequenceUnit, KeyEvent keyEvent = KeyEvent.Down | KeyEvent.Up | KeyEvent.AllUp)
         {
-            sequenceUnit.Down(e => e.Handled = true);
-            sequenceUnit.Up(e => e.Handled   = true);
+            if((keyEvent & KeyEvent.Down) == KeyEvent.Down)
+                sequenceUnit.Down(e => e.Handled = true);
+            if ((keyEvent & KeyEvent.Up) == KeyEvent.Up)
+                sequenceUnit.Up(e => e.Handled   = true);
+            if ((keyEvent & KeyEvent.AllUp) == KeyEvent.AllUp)
+                sequenceUnit.AllUp(e => e.Handled = true);
             return sequenceUnit.ToCombination();
         }
     }

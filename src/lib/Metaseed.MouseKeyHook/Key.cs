@@ -29,10 +29,21 @@ namespace Metaseed.Input
         public Key(params Keys[] keyCodes)
         {
             Codes = new SortedSet<Keys>(keyCodes);
+            if (Codes.Contains(AnyKeyCode))
+            {
+                Codes.Clear();
+                Codes.Add(AnyKeyCode);
+            }
+
         }
         public Key(params Key[] keys)
         {
             Codes = new SortedSet<Keys>(keys.SelectMany(k=>k.Codes));
+            if (Codes.Contains(AnyKeyCode))
+            {
+                Codes.Clear();
+                Codes.Add(AnyKeyCode);
+            }
         }
 
 
@@ -44,9 +55,6 @@ namespace Metaseed.Input
             return $"({string.Join("|", Codes)})";
         }
 
-        public int CompareTo(object obj)
-        {
-            return CompareTo((Key) obj);
-        }
+
     }
 }
