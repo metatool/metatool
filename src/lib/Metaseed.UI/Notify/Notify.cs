@@ -59,12 +59,11 @@ namespace Metaseed.MetaKeyboard
             trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
 
-        public class MessageToken
+        public class MessageToken<T>
         {
             private readonly Popup           _popup;
             internal         DispatcherTimer _timer;
             public           bool            IsClosed;
-
 
             internal MessageToken(Popup popup)
             {
@@ -74,7 +73,8 @@ namespace Metaseed.MetaKeyboard
             public void Close()
             {
                 if (IsClosed) return;
-                (_popup.DataContext as ObservableCollection<object>)?.Clear();
+                var dataContext = _popup.DataContext as ObservableCollection<T>;
+                dataContext.Clear();
                 _popup.IsOpen = false;
                 _timer?.Stop();
                 IsClosed = true;
@@ -90,13 +90,28 @@ namespace Metaseed.MetaKeyboard
         }
 
         private static ObservableCollection<TipItem> selectActions;
-        public static  MessageToken                  SelectionToken;
+        public static  MessageToken<TipItem>                  SelectionToken;
 
-        public static MessageToken ShowSelectionAction(IEnumerable<(string des, Action action)> tips)
+        public static MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips)
         {
             var valueTuples = tips.ToArray();
             var description =
-                valueTuples.Select(d => new TipItem() {Key = "", DescriptionInfo = d.des, Action = d.action});
+                valueTuples.Select((d, i) =>
+                {
+                    i = selectActions?.Count ?? 0 + i;
+                    string key;
+                    if (i < 9)
+                    {
+                        key = i.ToString();
+                    }
+                    else
+                    {
+                        key = (Key.D0 + i).ToString();
+                    }
+
+                    return new TipItem()
+                        {Key = key, DescriptionInfo = d.des, Action = d.action};
+                });
             if (selectActions == null || (SelectionToken != null && SelectionToken.IsClosed))
             {
                 selectActions = new ObservableCollection<TipItem>(description);
@@ -111,7 +126,7 @@ namespace Metaseed.MetaKeyboard
             }
         }
 
-        public static MessageToken ShowMessage(System.Windows.FrameworkElement balloon,
+        public static MessageToken<TipItem> ShowMessage(System.Windows.FrameworkElement balloon,
             ObservableCollection<TipItem> data, int? timeout,
             NotifyPosition position = NotifyPosition.ActiveScreen, PopupAnimation animation = PopupAnimation.None)
         {
@@ -119,8 +134,8 @@ namespace Metaseed.MetaKeyboard
             if (!dispatcher.CheckAccess())
             {
                 return dispatcher.Invoke(DispatcherPriority.Normal,
-                        (Func<MessageToken>) (() => ShowMessage(balloon, data, timeout, position, animation))) as
-                    MessageToken;
+                        (Func<MessageToken<TipItem>>) (() => ShowMessage(balloon, data, timeout, position, animation))) as
+                    MessageToken<TipItem>;
             }
 
             if (balloon == null) throw new ArgumentNullException("balloon");
@@ -145,7 +160,7 @@ namespace Metaseed.MetaKeyboard
             popup.PopupAnimation     = animation;
             popup.Placement          = PlacementMode.AbsolutePoint;
             popup.StaysOpen          = true;
-            balloon.DataContext      = data;
+            popup.DataContext      = data;
 
             Point point;
             switch (position)
@@ -153,7 +168,7 @@ namespace Metaseed.MetaKeyboard
                 case NotifyPosition.Caret:
                 {
                     var rect = UI.Window.GetCurrentWindowCaretPosition();
-                    var X    = (rect.Left + rect.Width  / 2 - balloon.ActualWidth  / 2);
+                    var X    = (rect.Left   + rect.Width  / 2 - balloon.ActualWidth  / 2);
                     var Y    = (rect.Bottom + rect.Height / 2 - balloon.ActualHeight / 2);
                     if (X == 0 && Y == 0)
                     {
@@ -163,6 +178,7 @@ namespace Metaseed.MetaKeyboard
                     point = new Point(X, Y);
                     break;
                 }
+
                 case NotifyPosition.ActiveWindowCenter:
                 {
                     var rect = UI.Window.GetCurrentWindowRect();
@@ -197,7 +213,6 @@ namespace Metaseed.MetaKeyboard
                 }
 
 
-
                 default:
                     throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
             }
@@ -221,7 +236,7 @@ namespace Metaseed.MetaKeyboard
             popup.IsOpen = true;
             popup.Focus();
 
-            var r = new MessageToken(popup);
+            var r = new MessageToken<TipItem>(popup);
             popup.Closed += (s, a) =>
             {
                 Keyboard.Focus(element);

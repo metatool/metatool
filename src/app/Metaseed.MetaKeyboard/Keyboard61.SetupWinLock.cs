@@ -43,7 +43,7 @@ namespace ConsoleApp1
             }
             catch (Exception e)
             {
-                MessageBox.Show("Could not disable WinLock(Win+L), try to run with Admin rights");
+                MessageBox.Show("Could not disable WinLock(Win+L), so *+Win+L would trigger ScreenLock, try to run with Admin rights (LCtrl+LWin+LAlt+X)");
                 Console.WriteLine(e);
             }
         }

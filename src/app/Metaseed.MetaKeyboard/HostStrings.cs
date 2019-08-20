@@ -8,8 +8,8 @@ namespace Metaseed.MetaKeyboard
     public class HostStrings: KeyMetaPackage
     {
         public IMetaKey Tks = "tks".Map("thank you very much");
-        public IMetaKey hh = "hh".Map("哈哈😊");
-        public IMetaKey hh1 = "hh".Map("😊SSSS");
+        public IMetaKey hh = "hh".Map("0哈哈😊");
+        public IMetaKey hh1 = "hh".Map("1😊SSSS");
 
 
     }

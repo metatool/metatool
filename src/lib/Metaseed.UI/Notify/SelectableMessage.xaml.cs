@@ -53,7 +53,7 @@ namespace Metaseed.UI.Notify
         protected override void OnGotFocus(RoutedEventArgs e)
         {
             base.OnGotFocus(e);
-            var listBoxItem = (ListBoxItem)listView
+            var listBoxItem = (ListBoxItem) listView
                 .ItemContainerGenerator
                 .ContainerFromItem(listView.SelectedItem);
 
@@ -71,7 +71,16 @@ namespace Metaseed.UI.Notify
             InitializeComponent();
             TaskbarIcon.AddBalloonClosingHandler(this, OnBalloonClosing);
             listView.SelectedIndex = 0;
-            
+            this.KeyDown += (o, e) =>
+            {
+                var index = e.Key - Key.D0;
+                if (DataContext is ObservableCollection<TipItem> col && index < col.Count)
+                {
+                    listView.SelectedIndex = index;
+
+                    Confirm(null, null);
+                }
+            };
         }
 
         public TipItem SelectedItem { get; set; }
