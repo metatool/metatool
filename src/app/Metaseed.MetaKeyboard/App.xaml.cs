@@ -50,7 +50,8 @@ namespace Metaseed.MetaKeyboard
 
             var software = new Software();
             // var c = new ClipboardManager();
-
+ScreenPoint.MainWindow a= new ScreenPoint. MainWindow();
+a.Show();
             Keyboard.Hook();
         }
     }
