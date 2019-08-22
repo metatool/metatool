@@ -7,12 +7,6 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using FlaUI.Core.Conditions;
-using FlaUI.UIA3;
-using AndCondition = FlaUI.Core.Conditions.AndCondition;
-using AutomationElement = FlaUI.Core.AutomationElements.AutomationElement;
-using PropertyCondition = FlaUI.Core.Conditions.PropertyCondition;
-using TreeScope = FlaUI.Core.Definitions.TreeScope;
 
 namespace Metaseed.ScreenPoint
 {
@@ -23,10 +17,8 @@ namespace Metaseed.ScreenPoint
 
     public class PointBuilder
     {
-
         public string GetKey(int index)
         {
-
             var len = Config.Keys.Length;
             // if (index < len) return Keys[index].ToString();
             if (index < len * len + len)
@@ -56,46 +48,55 @@ namespace Metaseed.ScreenPoint
             // }
         }
 
-        public (System.Drawing.Rectangle windowRect, Dictionary<string, System.Drawing.Rectangle> rects) Run(MainWindow window)
+        public (Rect windowRect, Dictionary<string, Rect> rects) Run(
+            MainWindow window)
         {
             var w = new Stopwatch();
             w.Start();
-            var       h          = UI.Window.CurrentWindowHandle;
-            using var automation = new UIA3Automation();
-            var       element    = automation.FromHandle(h);
+            var          h            = UI.Window.CurrentWindowHandle;
+            CacheRequest cacheRequest = new CacheRequest();
+            // cacheRequest.Add(AutomationElement.NameProperty);
+            //cacheRequest.Add(AutomationElement.ClassNameProperty);
+            //cacheRequest.Add(AutomationElement.);
+            cacheRequest.Add(AutomationElement.BoundingRectangleProperty);
+            AutomationElementCollection all;
+            AutomationElement win;
+            using (cacheRequest.Activate())
+            {
+                win = AutomationElement.FromHandle(h);
+                var condition = new AndCondition(
+                    new PropertyCondition(AutomationElement.IsEnabledProperty, true),
+                    new PropertyCondition(AutomationElement.IsOffscreenProperty, false)
+                );
+                all = win.FindAll(TreeScope.Descendants, condition);
+            }
 
-            var all = element.FindAll(TreeScope.Descendants,
-                new AndCondition(
-                    new PropertyCondition(automation.PropertyLibrary.Element.IsEnabled, true),
-                    new PropertyCondition(automation.PropertyLibrary.Element.IsOffscreen, false)
-                ));
-            var eles = new Dictionary<string, System.Drawing.Rectangle>();
+
+            var eles = new Dictionary<string, Rect>();
             Debug.WriteLine("----------");
 
             Debug.WriteLine(w.ElapsedMilliseconds);
             w.Restart();
 
-            var rr = element.BoundingRectangle;
-            for (var i = 0; i < all.Length; i++)
+            var rr = win.Cached.BoundingRectangle;
+            for (var i = 0; i < all.Count; i++)
             {
                 var ele = all[i];
 
-                var r = ele.BoundingRectangle;
+                var r = ele.Cached.BoundingRectangle;
                 if (r.Width  < 3 ||
                     r.Height < 3) continue;
                 var key = GetKey(i);
-                r.X = r.X - rr.X -2;
-                r.Y = r.Y - rr.Y -1; 
+                r.X = r.X - rr.X;
+                r.Y = r.Y - rr.Y;
                 eles.Add(key, r);
             }
 
-            Debug.WriteLine(w.ElapsedMilliseconds);
-            w.Restart();
             var color = System.Drawing.Color.Red;
 
-            window.Top = rr.Top;
-            window.Left = rr.Left;
-            window.Width =rr.Width;
+            window.Top    = rr.Top;
+            window.Left   = rr.Left;
+            window.Width  = rr.Width;
             window.Height = rr.Height;
 
             Debug.WriteLine(w.ElapsedMilliseconds);
@@ -103,9 +104,12 @@ namespace Metaseed.ScreenPoint
             window.Canvas.Children.Clear();
             foreach (var e in eles)
             {
-                var r = new TextBlock() {Foreground = Brushes.Red, Background = Brushes.Yellow, Text = e.Key, FontWeight = FontWeights.Bold};
-                Canvas.SetLeft(r, e.Value.Left);
-                Canvas.SetTop(r, e.Value.Top);
+                var r = new TextBlock()
+                {
+                    Foreground = Brushes.Red, Background = Brushes.Yellow, Text = e.Key, FontWeight = FontWeights.Bold
+                };
+                Canvas.SetLeft(r, e.Value.Left +e.Value.Width/2 -10);
+                Canvas.SetTop(r, e.Value.Top +e.Value.Height/2 -10);
                 window.Canvas.Children.Add(r);
             }
 
