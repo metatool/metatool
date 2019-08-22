@@ -4,18 +4,12 @@ using System.Windows.Forms;
 
 namespace Metaseed.Input
 {
-    public interface IKeyEventAsync
-    {
-        Task<KeyEventArgsExt> UpAsync(int timeout);
-
-        Task<KeyEventArgsExt> DownAsync(int timeout);
-    }
 
     public interface ISequenceUnit: ISequencable
     {
         ICombination ToCombination();
     }
-    public interface ICombination :IKeyPath, IKeyEventAsync, ISequencable, ICombinable, ISequenceUnit
+    public interface ICombination :IKeyPath, ISequencable, ICombinable, ISequenceUnit
     {
         Key TriggerKey { get; }
         IEnumerable<Key> Chord { get; }

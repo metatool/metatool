@@ -74,11 +74,15 @@ namespace Metaseed.UI.Notify
             this.KeyDown += (o, e) =>
             {
                 var index = e.Key - Key.D0;
-                if (DataContext is ObservableCollection<TipItem> col && index < col.Count)
+                if (index >= 0 && DataContext is ObservableCollection<TipItem> col && index < col.Count)
                 {
                     listView.SelectedIndex = index;
 
                     Confirm(null, null);
+                }
+                else
+                {
+                    Close();
                 }
             };
         }

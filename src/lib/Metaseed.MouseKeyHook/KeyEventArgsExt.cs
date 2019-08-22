@@ -120,6 +120,8 @@ namespace Metaseed.Input
         /// </summary>
         public bool IsExtendedKey { get; }
 
+        public KeyEvent KeyEvent;
+
         public new bool Handled
         {
             get => base.Handled;

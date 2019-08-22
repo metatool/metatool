@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
@@ -86,6 +87,28 @@ namespace Metaseed.Input
             if ((keyEvent & KeyEvent.AllUp) == KeyEvent.AllUp)
                 sequenceUnit.AllUp(e => e.Handled = true);
             return sequenceUnit.ToCombination();
+        }
+
+        /// <summary>
+        /// register the key to the state tree, and wait the down event;
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        public static Task<KeyEventArgsExt> DownAsync(this ISequenceUnit sequenceUnit, int timeout = -1)
+        {
+            var comb    =sequenceUnit.ToCombination();
+            var command = new KeyEventAsync(KeyEvent.Down);
+            Keyboard.Add(comb, KeyEvent.Down, new KeyCommand(command.OnEvent));
+            return command.WaitAsync(timeout);
+        }
+
+        public static Task<KeyEventArgsExt> UpAsync(this ISequenceUnit sequenceUnit, int timeout = -1)
+        {
+            var comb = sequenceUnit.ToCombination();
+            var command = new KeyEventAsync(KeyEvent.Up);
+            Keyboard.Add(comb, KeyEvent.Up, new KeyCommand(command.OnEvent));
+            return command.WaitAsync(timeout);
         }
     }
 }

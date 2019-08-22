@@ -33,7 +33,7 @@ namespace Metaseed.Input
     public class HotkeyToken : IRemoveChangeable<Hotkey>
     {
         private readonly  ITrie<ICombination, KeyEventCommand> _trie;
-        internal readonly IList<ICombination>                 _hotkey;
+        internal readonly IList<ICombination>                  _hotkey;
         internal readonly KeyEventCommand                      Command;
 
         public HotkeyToken(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> hotkey,
@@ -81,7 +81,7 @@ namespace Metaseed.Input
             _token.Remove();
         }
 
-        internal KeyEvent KeyEvent => _token.Command.KeyEvent; 
+        internal KeyEvent KeyEvent => _token.Command.KeyEvent;
 
         public MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> combinations,
             KeyEventCommand command)
@@ -102,12 +102,12 @@ namespace Metaseed.Input
     {
         public string Id
         {
-            get => this.Aggregate("",(a,c)=>a+c.Id);
+            get => this.Aggregate("", (a, c) => a + c.Id);
             set
             {
                 for (var i = 0; i < this.Count; i++)
                 {
-                    var k = (MetaKey)this[i];
+                    var k = (MetaKey) this[i];
                     k.Id = $"{value}_{i}-{k.KeyEvent}";
                 }
             }
@@ -147,7 +147,7 @@ namespace Metaseed.Input
             {
                 var (fi, metaKey) = c;
                 if (string.IsNullOrEmpty(metaKey.Id))
-                    metaKey.Id = GetType().FullName +"."+ fi.Name;
+                    metaKey.Id = GetType().FullName + "." + fi.Name;
                 else
                 {
                     metaKey.Id = metaKey.Id;
@@ -173,6 +173,7 @@ namespace Metaseed.Input
                     if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token.Command.Command.Id))
                         metaKey._token.Command.Command.Id = metaKey.Id;
                 }
+
                 var (_, key) = c;
                 switch (key)
                 {

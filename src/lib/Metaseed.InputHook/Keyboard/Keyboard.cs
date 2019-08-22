@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput.Native;
 using Metaseed.Input.MouseKeyHook;
@@ -9,6 +11,7 @@ using Metaseed.Input.MouseKeyHook.Implementation;
 using System.Windows.Threading;
 using Metaseed.MetaKeyboard;
 using OneOf;
+using KeyEventHandler = Metaseed.Input.MouseKeyHook.KeyEventHandler;
 
 namespace Metaseed.Input
 {
@@ -293,7 +296,29 @@ namespace Metaseed.Input
             add => _Hook.KeyPress += value;
             remove => _Hook.KeyPress -= value;
         }
+        public static event KeyEventHandler KeyDown
+        {
+            add => _Hook.KeyDown += value;
+            remove => _Hook.KeyDown -= value;
+        }
 
+        public static async Task<KeyEventArgsExt> KeyDownAsync()
+        {
+            return await TaskExt.FromEvent<KeyEventArgsExt>()
+                .HandlerConversion<KeyEventHandler>(h=> new KeyEventHandler(h))
+                .Start(h => KeyDown += h, h => KeyUp -= h, CancellationToken.None);
+        }
+        public static async Task<KeyEventArgsExt> KeyUpAsync()
+        {
+            return await TaskExt.FromEvent<KeyEventArgsExt>()
+                .HandlerConversion<KeyEventHandler>(h => new KeyEventHandler(h))
+                .Start(h => KeyUp += h, h => KeyUp -= h, CancellationToken.None);
+        }
+        public static event KeyEventHandler KeyUp
+        {
+            add => _Hook.KeyUp += value;
+            remove => _Hook.KeyUp -= value;
+        }
         public static void HotKey(this string keys, string description, Action action)
         {
             if (keys.Contains(','))

@@ -13,6 +13,7 @@ using OneOf;
 namespace Metaseed.Input.MouseKeyHook
 {
     using Hotkey = OneOf<ISequenceUnit, ISequence>;
+
     public delegate void KeyEventHandler(object sender, KeyEventArgsExt e);
 
     public class KeyboardHook
@@ -77,7 +78,7 @@ namespace Metaseed.Input.MouseKeyHook
         {
             _stateTrees.ForEach(m => m.Reset());
 
-           var selectTrees = new List<KeyStateTree.SelectionResult>();
+            var selectTrees = new List<KeyStateTree.SelectionResult>();
 
             void ClimbTree(KeyEvent eventType, KeyEventArgsExt args)
             {
@@ -86,14 +87,14 @@ namespace Metaseed.Input.MouseKeyHook
                 // runs like all are in the same tree, but provide state jump for every tree
                 // // continue process this event on current machine
                 bool hasSelectedNodes;
-                bool  reprocess;
+                bool reprocess;
                 do
                 {
                     reprocess = false;
                     var onGround = false;
                     if (selectTrees.Count == 0)
                     {
-                        onGround = true;
+                        onGround    = true;
                         selectTrees = SelectTree(eventType, args);
                     }
 
@@ -107,10 +108,11 @@ namespace Metaseed.Input.MouseKeyHook
                         {
                             var r = selectResult.Tree.TrySelect(eventType, args);
                             selectTrees[selectTrees.IndexOf(selectResult)] = r;
-                            selectResult = r;
+                            selectResult                                   = r;
                         }
 
-                        var rt = selectResult.Tree.Climb(eventType, args,selectResult.CandidateNode, selectResult.DownInChord);
+                        var rt = selectResult.Tree.Climb(eventType, args, selectResult.CandidateNode,
+                            selectResult.DownInChord);
                         Console.WriteLine($"\t={rt}${selectResult.Tree.Name}@{selectResult.Tree.CurrentNode}");
                         if (rt == KeyProcessState.Continue)
                         {
@@ -135,19 +137,22 @@ namespace Metaseed.Input.MouseKeyHook
                         }
                     }
                 } while (selectTrees.Count == 0 && /*no KeyProcessState.Continue*/
-                         reprocess                && hasSelectedNodes /*Yield or Reprocess*/);
+                         reprocess              && hasSelectedNodes /*Yield or Reprocess*/);
 
                 @return:
                 _stateTrees.ForEach(t => t.MarkDoneIfYield());
             }
 
             _eventSource.KeyDown += (sender, args) =>
+            {
                 ClimbTree(KeyEvent.Down, args);
+                _keyDownHandlers.ForEach(h => h?.Invoke(sender, args));
+            };
             _eventSource.KeyUp += (sender, args) =>
+            {
                 ClimbTree(KeyEvent.Up, args);
-            
-            _keyDownHandlers.ForEach(h => _eventSource.KeyDown += h);
-            _keyUpHandlers.ForEach(h => _eventSource.KeyUp     += h);
+                _keyUpHandlers.ForEach(h => h?.Invoke(sender, args));
+            };
         }
 
         private List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, KeyEventArgsExt args)
@@ -162,7 +167,7 @@ namespace Metaseed.Input.MouseKeyHook
                 var selectionResult = stateTree.TrySelect(eventType, args);
                 if (selectionResult.CandidateNode == null) continue;
 
-                if (selectedNodes.Count            == 0 ||
+                if (selectedNodes.Count                           == 0 ||
                     selectionResult.CandidateNode.Key.ChordLength == selectedNodes[0].CandidateNode.Key.ChordLength)
                 {
                     selectedNodes.Add(selectionResult);
@@ -175,7 +180,8 @@ namespace Metaseed.Input.MouseKeyHook
             }
 
             if (selectedNodes.Count > 0)
-                Console.WriteLine( $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
+                Console.WriteLine(
+                    $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
             return selectedNodes;
         }
     }

@@ -19,19 +19,7 @@ namespace Metaseed.Input
             return new Combination(triggerKey, chordsKeys);
         }
 
-        public static Task<KeyEventArgsExt> DownAsync(this Key key, int timeout = 8888)
-        {
-            var comb = new Combination(key);
-            Keyboard.Add(comb, KeyEvent.Down, null);
-            return comb.DownAsync(timeout);
-        }
 
-        public static Task<KeyEventArgsExt> UpAsync(this Key key, int timeout = 8888)
-        {
-            var comb = new Combination(key);
-            Keyboard.Add(comb, KeyEvent.Up, null);
-            return comb.UpAsync(timeout);
-        }
         public static IMetaKey AsChordKey(this Key key)
         {
             return key.MapOnHit(key.ToCombination(), e => !e.IsVirtual , false);

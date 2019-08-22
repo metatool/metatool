@@ -224,6 +224,7 @@ namespace Metaseed.Input
                 }
             }
 
+            args.KeyEvent = eventType;
 
             var lastDownHit = "";
             if (_lastKeyDownNodeForAllUp != null)
@@ -239,11 +240,10 @@ namespace Metaseed.Input
             try
             {
 #endif
-            (candidateNode.Key as Combination)?.OnEvent(args);
-
             var oneExecuted = false;
             foreach (var keyEventAction in actionList[eventType])
             {
+
                 if (keyEventAction.CanExecute != null && !keyEventAction.CanExecute(args))
                 {
                     Console.WriteLine($"\t/!{eventType}\t{keyEventAction.Id}\t{keyEventAction.Description}");
