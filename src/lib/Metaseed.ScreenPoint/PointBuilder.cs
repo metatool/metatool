@@ -56,19 +56,22 @@ namespace Metaseed.ScreenPoint
             // }
         }
 
-        public (System.Windows.Window window, Dictionary<string, (System.Drawing.Rectangle rect, AutomationElement element)> dic) Run()
+        public (System.Drawing.Rectangle windowRect, Dictionary<string, System.Drawing.Rectangle> rects) Run(MainWindow window)
         {
             var w = new Stopwatch();
             w.Start();
             var       h          = UI.Window.CurrentWindowHandle;
             using var automation = new UIA3Automation();
             var       element    = automation.FromHandle(h);
+
             var all = element.FindAll(TreeScope.Descendants,
                 new AndCondition(
                     new PropertyCondition(automation.PropertyLibrary.Element.IsEnabled, true),
                     new PropertyCondition(automation.PropertyLibrary.Element.IsOffscreen, false)
                 ));
-            var eles = new Dictionary<string, (System.Drawing.Rectangle rect, AutomationElement element)>();
+            var eles = new Dictionary<string, System.Drawing.Rectangle>();
+            Debug.WriteLine("----------");
+
             Debug.WriteLine(w.ElapsedMilliseconds);
             w.Restart();
 
@@ -83,57 +86,35 @@ namespace Metaseed.ScreenPoint
                 var key = GetKey(i);
                 r.X = r.X - rr.X -2;
                 r.Y = r.Y - rr.Y -1; 
-                eles.Add(key, (r, ele));
+                eles.Add(key, r);
             }
 
             Debug.WriteLine(w.ElapsedMilliseconds);
             w.Restart();
             var color = System.Drawing.Color.Red;
 
-            var win = new System.Windows.Window
-            {
-                AllowsTransparency = true,
-                WindowStyle        = WindowStyle.None,
-                Topmost            = true,
-                ShowActivated      = false,
-                ShowInTaskbar      = false,
-                Background         = Brushes.Transparent,
-                Top                = element.BoundingRectangle.Top,
-                Left               = element.BoundingRectangle.Left,
-                Width              = element.BoundingRectangle.Width,
-                Height             = element.BoundingRectangle.Height,
-            };
-
-            var grid = new System.Windows.Controls.Grid();
-            var border = new Border
-            {
-                BorderThickness = new Thickness(2),
-                BorderBrush =
-                    new SolidColorBrush(System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)),
-            };
-            var canv = new Canvas() {Background = Brushes.Transparent};
-            grid.Children.Add(border);
-            grid.Children.Add(canv);
-
-            win.Content = grid;
+            window.Top = rr.Top;
+            window.Left = rr.Left;
+            window.Width =rr.Width;
+            window.Height = rr.Height;
 
             Debug.WriteLine(w.ElapsedMilliseconds);
             w.Restart();
-
+            window.Canvas.Children.Clear();
             foreach (var e in eles)
             {
                 var r = new TextBlock() {Foreground = Brushes.Red, Background = Brushes.Yellow, Text = e.Key, FontWeight = FontWeights.Bold};
-                Canvas.SetLeft(r, e.Value.rect.Left);
-                Canvas.SetTop(r, e.Value.rect.Top);
-                canv.Children.Add(r);
+                Canvas.SetLeft(r, e.Value.Left);
+                Canvas.SetTop(r, e.Value.Top);
+                window.Canvas.Children.Add(r);
             }
 
             Debug.WriteLine(w.ElapsedMilliseconds);
             w.Restart();
-            win.Show();
+            window.Show();
             Debug.WriteLine(w.ElapsedMilliseconds);
             w.Restart();
-            return (win,eles);
+            return (rr, eles);
         }
     }
 }

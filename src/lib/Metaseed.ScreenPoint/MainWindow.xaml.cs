@@ -20,9 +20,12 @@ namespace Metaseed.ScreenPoint
     /// </summary>
     public partial class MainWindow : Window
     {
+        internal static MainWindow Inst;
         public MainWindow()
         {
             InitializeComponent();
+            Hide();
+            Inst = this;
         }
     }
 }

@@ -2,55 +2,56 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FlaUI.Core.Input;
 using FlaUI.Core.Tools;
 using Metaseed.Input;
 using static Metaseed.Input.Key;
-using Mouse = FlaUI.Core.Input.Mouse;
-
+using Keyboard = Metaseed.Input.Keyboard;
+using Mouse=FlaUI.Core.Input.Mouse ;
 namespace Metaseed.ScreenPoint
 {
     internal class HotKey
     {
         public HotKey()
         {
-            (Ctrl + Q).Down(async e =>
+            (Ctrl + Q).Down(e =>
             {
-                var             r = new PointBuilder().Run();
-                KeyEventArgsExt a;
-                var   str = new StringBuilder();
-
                 e.BeginInvoke(async () =>
                 {
+                    var             r = new PointBuilder().Run(MainWindow.Inst);
+                    var             str = new StringBuilder();
                     while (true)
                     {
-                        a = await Keyboard.KeyDownAsync();
+                        var downArg = await Keyboard.KeyDownAsync();
 
-                        var k = a.KeyCode.ToString();
-                        if (k.Length > 1 || !Config.Keys.Contains(k))
+                        var downKey = downArg.KeyCode.ToString();
+                        if ( downKey.Length > 1 || !Config.Keys.Contains(downKey))
                         {
-                            r.window.Close();
+                            MainWindow.Inst.Hide();
                             return;
                         }
 
-                        str.Append(k);
-                        var ks = r.dic.Keys.Where(k => k.StartsWith(str.ToString())).ToArray();
+                        str.Append(downKey);
+                        var ks = r.rects.Keys.Where(k => k.StartsWith(str.ToString())).ToArray();
                         if (ks.Length == 0)
                         {
-                            r.window.Close();
+                            MainWindow.Inst.Hide();
                             return;
                         }
 
                         var key = ks.FirstOrDefault(k => k.Length == str.Length);
                         if (!string.IsNullOrEmpty(key))
                         {
-                            var v = r.dic[key];
-                            var p = v.element.BoundingRectangle.Center();
-                            Mouse.MoveTo(p);
+                            var v = r.rects[key];
+                            v.X = r.windowRect.X + v.X;
+                            v.Y = r.windowRect.Y + v.Y;
+                            var p =v.Center();
+                            Mouse.Position = p;
+                            Wait.UntilInputIsProcessed();
+                            MainWindow.Inst.Hide();
                             Mouse.LeftClick();
-                            r.window.Close();
                             return;
                         }
-
                     }
                 });
             });

@@ -7,6 +7,12 @@
         mc:Ignorable="d"
 >
     <Grid>
+        <Border BorderThickness="2" BorderBrush="Red">
+            <Canvas x:Name="Canvas" Background="Transparent">
+
+            </Canvas>
+
+        </Border>
 
     </Grid>
 </Window>

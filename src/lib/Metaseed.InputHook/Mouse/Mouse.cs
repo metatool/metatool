@@ -1,4 +1,5 @@
-﻿using WindowsInput;
+﻿using System.Drawing;
+using WindowsInput;
 
 namespace Metaseed.Input
 {
@@ -48,10 +49,13 @@ namespace Metaseed.Input
         /// </summary>
         /// <param name="absoluteX">The destination's absolute X-coordinate on the primary display device where 0 is the extreme left hand side of the display device and 65535 is the extreme right hand side of the display device.</param>
         /// <param name="absoluteY">The destination's absolute Y-coordinate on the primary display device where 0 is the top of the display device and 65535 is the bottom of the display device.</param>
-        public static void MoveMouseTo(double absoluteX, double absoluteY)
+        public static void MoveTo(double absoluteX, double absoluteY)
         {
             InputSimu.Inst.Mouse.MoveMouseTo(absoluteX, absoluteY);
-
+        }
+        public static void MoveTo(Point point)
+        {
+            MoveTo(point.X,point.Y);
         }
     }
 }
