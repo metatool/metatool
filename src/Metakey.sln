@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Clipboard", "lib\M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Core", "lib\Metaseed.Core\Metaseed.Core.csproj", "{6F0C44CE-998B-40C4-9399-85014FD61AEA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.ScreenPoint", "lib\Metaseed.ScreenPoint\Metaseed.ScreenPoint.csproj", "{B259D988-1B8A-45E0-8CD4-F951474BD1A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.ScreenHint", "lib\Metaseed.ScreenPoint\Metaseed.ScreenHint.csproj", "{B259D988-1B8A-45E0-8CD4-F951474BD1A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

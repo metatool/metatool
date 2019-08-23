@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using FlaUI.UIA3;
 using Metaseed.Input;
+using Metaseed.ScreenHint;
 using Metaseed.UI;
 using static Metaseed.MetaKeyboard.KeyboardConfig;
 using static Metaseed.Input.Key;
@@ -21,33 +22,37 @@ namespace Metaseed.MetaKeyboard
             using var automation = new UIA3Automation();
             var       active     = automation.FocusedElement();
             var       bounding   = active.BoundingRectangle;
-            
-            var       x          = bounding.X + bounding.Width  / 2;
-            var       y          = bounding.Y + bounding.Height / 2;
+
+            var x = bounding.X + bounding.Width  / 2;
+            var y = bounding.Y + bounding.Height / 2;
             if (x == 0 && y == 0)
             {
                 var r = Window.GetCurrentWindowRect();
-                x = (int) (r.X + r.Width/2);
-                y = (int) (r.Y + r.Height/2);
+                x = (int) (r.X + r.Width  / 2);
+                y = (int) (r.Y + r.Height / 2);
             }
 
             FlaUI.Core.Input.Mouse.MoveTo(x, y);
         }
 
         // Scroll up/down (reading, one hand)
-        public IMetaKey MouseToFocus = (GK + F).Handled().Down(e =>
-        {
-            MoveCursorToActiveControl();
-        });
+        public IMetaKey MouseToFocus = (GK + F).Handled().Down(e => { MoveCursorToActiveControl(); });
+
         // Scroll up/down (reading, one hand)
-        public IMetaKey MouseScrollUp = (GK + W).Handled().Down(e =>
+        public IMetaKey MouseScrollUp = (GK + W).Handled().Down(e => { Input.Mouse.VerticalScroll(1); });
+
+        public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.VerticalScroll(-1); });
+
+        public IMetaKey MouseClick = (Caps + S).Down(e =>
         {
-            Input.Mouse.VerticalScroll(1);
+            e.Handled = true;
+            e.BeginInvoke(() => Hint.Show());
         });
 
-        public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e =>
+        public IMetaKey MouseClickLast = (Caps + A).Down(e =>
         {
-            Input.Mouse.VerticalScroll(-1);
+            e.Handled = true;
+            e.BeginInvoke(() => Hint.Show(false));
         });
     }
 }

@@ -37,7 +37,7 @@
     <ProjectReference Include="..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.Core\Metaseed.Core.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
-    <ProjectReference Include="..\..\lib\Metaseed.ScreenPoint\Metaseed.ScreenPoint.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.ScreenPoint\Metaseed.ScreenHint.csproj" />
     <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
 

@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using Metaseed.ScreenPoint;
 
-namespace Metaseed.ScreenPoint
+namespace Metaseed.ScreenHint
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
-        private HotKey hotKey;
+        private Hint _hint;
         public App()
         {
-            hotKey = new HotKey();
+            _hint = new Hint();
+            _hint.Hook();
         }
     }
 }
