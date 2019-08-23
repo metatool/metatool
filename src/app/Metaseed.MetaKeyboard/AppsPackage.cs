@@ -4,6 +4,7 @@ using Metaseed.UI;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Windows.Forms;
 using static Metaseed.Input.Key;
 using static Metaseed.MetaKeyboard.KeyboardConfig;
@@ -69,17 +70,40 @@ namespace Metaseed.MetaKeyboard
             var process     = await VirtualDesktopManager.Inst.GetFirstProcessOnCurrentVirtualDesktop(exeName);
             if (process == null)
             {
-                new Process
+                void RunAsNormalUser(string exewithArgs)
                 {
-                    StartInfo =
+                    var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
+                    File.WriteAllText(tempBat, exewithArgs);
+
+                    var proc = new Process
                     {
-                        // below 2 lines are used to load extensions for chrome if not started yet. if the metakey is run as admin.
-                        UseShellExecute = false,
-                        LoadUserProfile = true,
-                        FileName        = defaultPath,
-                        ArgumentList    = {url, "--new-window", "--new-instance"},
-                    }
-                }.Start();
+                        StartInfo = new ProcessStartInfo()
+                        {
+                            FileName        = "explorer.exe",
+                            Arguments       = tempBat,
+                            CreateNoWindow  = true,
+                            UseShellExecute = false,
+                            WindowStyle     = ProcessWindowStyle.Hidden
+                        }
+                    };
+                    proc.Start();
+                }
+                bool IsElevated = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+
+                if (IsElevated)
+                RunAsNormalUser($"start \"\" \"{defaultPath}\" --new-window --new-instance \n exit");
+                else
+                {
+                    new Process
+                    {
+                        StartInfo =
+                        {
+                            UseShellExecute = true,
+                            FileName        = defaultPath,
+                            ArgumentList = {url, "--new-window", "--new-instance"},
+                        }
+                    }.Start();
+                }
                 return;
             }
 
@@ -207,5 +231,7 @@ namespace Metaseed.MetaKeyboard
                 Process.Start(info);
             }
         }, null, "Open &Code Editor", true);
+
+
     }
 }
