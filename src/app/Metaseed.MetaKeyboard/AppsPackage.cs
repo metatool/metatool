@@ -73,9 +73,11 @@ namespace Metaseed.MetaKeyboard
                 {
                     StartInfo =
                     {
-                        UseShellExecute = true,
+                        // below 2 lines are used to load extensions for chrome if not started yet. if the metakey is run as admin.
+                        UseShellExecute = false,
+                        LoadUserProfile = true,
                         FileName        = defaultPath,
-                        ArgumentList    = {url, "--new-window", "--new-instance"}
+                        ArgumentList    = {url, "--new-window", "--new-instance"},
                     }
                 }.Start();
                 return;
