@@ -7,8 +7,8 @@ namespace Metaseed.ScreenHint
     /// </summary>
     public partial class MainWindow : Window
     {
-        internal static MainWindow Inst;
-        public MainWindow()
+        internal static MainWindow Inst = new MainWindow();
+        private MainWindow()
         {
             InitializeComponent();
             Hide();

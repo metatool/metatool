@@ -100,6 +100,8 @@ namespace Metaseed.ScreenPoint
 
         public void CreateHint(ScreenHint.MainWindow window, (Rect windowRect, Dictionary<string, Rect> rects) points)
         {
+            var w = new Stopwatch();
+            w.Start();
             var rr = points.windowRect;
             window.Top    = rr.Top;
             window.Left   = rr.Left;
@@ -119,6 +121,7 @@ namespace Metaseed.ScreenPoint
                 Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
                 window.Canvas.Children.Add(r);
             }
+            Console.WriteLine("CreateHint:" + w.ElapsedMilliseconds);
         }
 
         public (Rect windowRect, Dictionary<string, Rect> rects) BuildHintPositions(
@@ -128,10 +131,13 @@ namespace Metaseed.ScreenPoint
             w.Start();
             var h      = UI.Window.CurrentWindowHandle;
             var points = GetPoints(h);
+            Console.WriteLine("GetPoints:"+w.ElapsedMilliseconds);
+            w.Restart();
             var eles   = GetKeyPointPairs(points.rects, Config.Keys);
+            Console.WriteLine("GetKeyPointPairs:" + w.ElapsedMilliseconds);
+            w.Restart();
             var rr     = points.winRect;
-
-               return (rr, eles);
+            return (rr, eles);
         }
     }
 }
