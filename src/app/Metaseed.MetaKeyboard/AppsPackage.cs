@@ -20,40 +20,35 @@ namespace Metaseed.MetaKeyboard
             e.Handled = true;
             var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
 
-            var c = Window.CurrentWindowClass;
-            if ("CabinetWClass" != c)
+            var    c = Window.CurrentWindowClass;
+            var arg = shiftDown
+                ? "-newwindow"
+                : "-toggle-window";
+            
+            if ("CabinetWClass" == c)
             {
-                Utils.Run(shiftDown
-                    ? $"{Config.Current.Tools.EveryThing} -newwindow"
-                    : $"{Config.Current.Tools.EveryThing} -toggle-window");
+                var path = await Explorer.Path(Window.CurrentWindowHandle);
+                ProcessEx.Run(Config.Current.Tools.EveryThing, arg, "-path", path);
                 return;
             }
 
-            var path = await Explorer.Path(Window.CurrentWindowHandle);
-            Utils.Run(shiftDown
-                ? $"{Config.Current.Tools.EveryThing} -path {path} -newwindow"
-                : $"{Config.Current.Tools.EveryThing} -path {path} -toggle-window");
+            ProcessEx.Run(Config.Current.Tools.EveryThing, arg);
         }, null, "&Find With Everything");
 
         public IMetaKey OpenTerminal = (AK + T).Down(async e =>
         {
+            string path;
             e.Handled = true;
-            var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
-
             var c = Window.CurrentWindowClass;
+            var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
             if ("CabinetWClass" != c)
-            {
-                var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                Utils.Run(shiftDown
-                    ? $"{Config.Current.Tools.Cmd}  /single /start \"{folderPath}\""
-                    : $"{Config.Current.Tools.Cmd}  /start \"{folderPath}\"");
-                return;
-            }
-
-            var path = await Explorer.Path(Window.CurrentWindowHandle);
-            Utils.Run(shiftDown
-                ? $"{Config.Current.Tools.Cmd} /start \"{path}\""
-                : $"{Config.Current.Tools.Cmd} /single /start \"{path}\"");
+                path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            else
+                path = await Explorer.Path(Window.CurrentWindowHandle);
+            if (shiftDown)
+                ProcessEx.Run(Config.Current.Tools.Cmd, "/single", "/start", path);
+            else
+                ProcessEx.Run(Config.Current.Tools.Cmd, "/start", path);
         }, null, "Open &Terminal");
 
         public IMetaKey WebSearch = (AK + W).Down(async e =>
@@ -75,23 +70,14 @@ namespace Metaseed.MetaKeyboard
                     var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
                     File.WriteAllText(tempBat, exewithArgs);
 
-                    var proc = new Process
-                    {
-                        StartInfo = new ProcessStartInfo()
-                        {
-                            FileName        = "explorer.exe",
-                            Arguments       = tempBat,
-                            CreateNoWindow  = true,
-                            UseShellExecute = false,
-                            WindowStyle     = ProcessWindowStyle.Hidden
-                        }
-                    };
-                    proc.Start();
+                    ProcessEx.Start(tempBat);
                 }
-                bool IsElevated = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+
+                var IsElevated =
+                    new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
                 if (IsElevated)
-                RunAsNormalUser($"start \"\" \"{defaultPath}\" --new-window --new-instance \n exit");
+                    RunAsNormalUser($"start \"\" \"{defaultPath}\" --new-window --new-instance \n exit");
                 else
                 {
                     new Process
@@ -100,10 +86,11 @@ namespace Metaseed.MetaKeyboard
                         {
                             UseShellExecute = true,
                             FileName        = defaultPath,
-                            ArgumentList = {url, "--new-window", "--new-instance"},
+                            ArgumentList    = {url, "--new-window", "--new-instance"},
                         }
                     }.Start();
                 }
+
                 return;
             }
 
@@ -124,21 +111,21 @@ namespace Metaseed.MetaKeyboard
             e =>
             {
                 e.Handled = true;
-                Utils.Run(Config.Current.Tools.Ruler);
+                ProcessEx.Run(Config.Current.Tools.Ruler);
             }, null, "Screen &Ruler");
 
         public IMetaKey StartTaskExplorer = (softwareTrigger, T).Down(
             e =>
             {
                 e.Handled = true;
-                Utils.Run(Config.Current.Tools.ProcessExplorer);
+                ProcessEx.Run(Config.Current.Tools.ProcessExplorer);
             }, null, "&Task Explorer ");
 
         public IMetaKey StartGifRecord = (softwareTrigger, G).Down(
             e =>
             {
                 e.Handled = true;
-                Utils.Run(Config.Current.Tools.GifTool);
+                ProcessEx.Run(Config.Current.Tools.GifTool);
             }, null, "&Gif Record ");
 
         public IMetaKey StartNotepad = (softwareTrigger, N).Down(async e =>
@@ -161,7 +148,7 @@ namespace Metaseed.MetaKeyboard
                 return;
             }
 
-            Utils.Run("Notepad");
+            ProcessEx.Run("Notepad");
         }, null, "&Notepad");
 
         public IMetaKey StartVisualStudio = (softwareTrigger, V).Down(async e =>
@@ -173,15 +160,14 @@ namespace Metaseed.MetaKeyboard
             var path = await Explorer.Path(Window.CurrentWindowHandle);
             if (string.IsNullOrEmpty(path))
             {
-                Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
-                    {UseShellExecute = true});
+                ProcessEx.Start(Config.Current.Tools.VisualStudio);
                 return;
             }
 
             Directory.CreateDirectory(path).EnumerateFiles("*.sln").Select(f => f.FullName).AsParallel().ForAll(s =>
             {
                 Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
-                    {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
+                    { UseShellExecute = true, Arguments = s, WorkingDirectory = path });
             });
         }, null, "&VisualStudio");
 
@@ -202,18 +188,15 @@ namespace Metaseed.MetaKeyboard
                 return;
             }
 
-            var info = new ProcessStartInfo(Config.Current.Tools.Inspect) {UseShellExecute = true};
 
-            Process.Start(info);
+            ProcessEx.Start(Config.Current.Tools.Inspect);
         }, null, "&Inspect");
 
         public IMetaKey OpenCodeEditor = (AK + C).Hit(async e =>
         {
-            var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true};
-
             if (!Window.IsExplorerOrOpenSaveDialog)
             {
-                Process.Start(info);
+                ProcessEx.Start(Config.Current.Tools.Code);
                 return;
             }
 
@@ -221,17 +204,16 @@ namespace Metaseed.MetaKeyboard
 
             if (paths.Length == 0)
             {
-                Process.Start(info);
+                ProcessEx.Start(Config.Current.Tools.Code);
                 return;
             }
 
             foreach (var path in paths)
             {
-                info.Arguments = path;
+                // need to find a way to start *.lnk with arguments, but still not killed if parent process exit
+                var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true, Arguments = path};
                 Process.Start(info);
             }
         }, null, "Open &Code Editor", true);
-
-
     }
 }

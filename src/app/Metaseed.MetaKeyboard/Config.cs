@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace Metaseed.MetaKeyboard
@@ -44,16 +45,15 @@ namespace Metaseed.MetaKeyboard
                 _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(@".\config.json"));
                 var tools = _config.Tools;
 
-                void ToAbsPath(ref string relativePath)
+                foreach (var info in tools.GetType().GetFields())
                 {
-                    if (relativePath.StartsWith('.'))
+                    if (info.GetValue(tools) is string v && v.StartsWith('.'))
                     {
-                        relativePath = Path.Combine(baseDir, relativePath);
+                        var abs = Path.GetFullPath( Path.Combine(baseDir,v));
+                        info.SetValue(tools,abs);
                     }
                 }
 
-                ToAbsPath(ref tools.VisualStudio);
-                ToAbsPath(ref tools.Code);
                 return _config;
             }
         }

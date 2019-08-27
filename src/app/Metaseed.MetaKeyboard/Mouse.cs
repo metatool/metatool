@@ -35,19 +35,19 @@ namespace Metaseed.MetaKeyboard
                 y = (int)(r.Y + r.Height / 2);
             }
 
-            FlaUI.Core.Input.Mouse.MoveTo(x, y);
+            Metaseed.Input.Mouse.MoveTo(x, y);
         }
 
         // Scroll up/down (reading, one hand)
-        public IMetaKey MouseToFocus = (GK + F).Handled().Down(e => { MoveCursorToActiveControl(); });
+        public IMetaKey MouseToFocus = (GK + F).Handled().Down(e => { e.BeginInvoke(MoveCursorToActiveControl); });
 
         // Scroll up/down (reading, one hand)
         public IMetaKey MouseScrollUp = (GK + W).Handled().Down(e => { Input.Mouse.VerticalScroll(1); });
 
         public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.VerticalScroll(-1); });
 
-        public IMetaKey MouseLeftClick = Hint.MouseClick.SetHotkey(Caps+S);
-        public IMetaKey MouseLeftClick_Last = Hint.MouseClickLast.SetHotkey(Caps+A);
+        public IMetaKey MouseLeftClick = Hint.MouseClick.ChangeHotkey(GK+C);
+        public IMetaKey MouseLeftClick_Last = Hint.MouseClickLast.ChangeHotkey(GK+LShift+C);
 
     }
 }
