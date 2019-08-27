@@ -98,45 +98,21 @@ namespace Metaseed.ScreenPoint
             return keyPointPairs;
         }
 
-        public void CreateHint(ScreenHint.MainWindow window, (Rect windowRect, Dictionary<string, Rect> rects) points)
-        {
-            var w = new Stopwatch();
-            w.Start();
-            var rr = points.windowRect;
-            window.Top    = rr.Top;
-            window.Left   = rr.Left;
-            window.Width  = rr.Width;
-            window.Height = rr.Height;
-            window.Canvas.Children.Clear();
-            foreach (var e in points.rects)
-            {
-                var r = new TextBlock()
-                {
-                    Foreground = Brushes.Red,
-                    Background = Brushes.Yellow,
-                    Text       = e.Key,
-                    FontWeight = FontWeights.Bold
-                };
-                Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
-                Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
-                window.Canvas.Children.Add(r);
-            }
-            Console.WriteLine("CreateHint:" + w.ElapsedMilliseconds);
-        }
+      
 
         public (Rect windowRect, Dictionary<string, Rect> rects) BuildHintPositions(
-            ScreenHint.MainWindow window)
+            )
         {
             var w = new Stopwatch();
             w.Start();
             var h      = UI.Window.CurrentWindowHandle;
             var points = GetPoints(h);
-            Console.WriteLine("GetPoints:"+w.ElapsedMilliseconds);
+            Console.WriteLine("GetPoints:" + w.ElapsedMilliseconds);
             w.Restart();
-            var eles   = GetKeyPointPairs(points.rects, Config.Keys);
+            var eles = GetKeyPointPairs(points.rects, Config.Keys);
             Console.WriteLine("GetKeyPointPairs:" + w.ElapsedMilliseconds);
             w.Restart();
-            var rr     = points.winRect;
+            var rr = points.winRect;
             return (rr, eles);
         }
     }

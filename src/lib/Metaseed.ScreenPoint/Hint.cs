@@ -22,13 +22,13 @@ namespace Metaseed.ScreenHint
             if (buildHints)
             {
                 var builder = new HintsBuilder();
-                _positions = builder.BuildHintPositions(ScreenHint.MainWindow.Inst);
-                builder.CreateHint(ScreenHint.MainWindow.Inst, _positions);
+                _positions = builder.BuildHintPositions();
+                HintUI.Inst.CreateHint(_positions);
             }
 
-            ScreenHint.MainWindow.Inst.Show();
+            HintUI.Inst.Show();
 
-            var str = new StringBuilder();
+            var hits = new StringBuilder();
             while (true)
             {
                 var downArg = await Keyboard.KeyDownAsync();
@@ -36,42 +36,56 @@ namespace Metaseed.ScreenHint
 
                 if (downArg.KeyCode == Keys.LShiftKey)
                 {
-                    ScreenHint.MainWindow.Inst.Canvas.Visibility = Visibility.Hidden;
+                    HintUI.Inst.HideHints();
                     var upArg = await Keyboard.KeyUpAsync();
-                    ScreenHint.MainWindow.Inst.Canvas.Visibility = Visibility.Visible;
+                    HintUI.Inst.ShowHints();
                     continue;
                 }
 
                 var downKey = downArg.KeyCode.ToString();
                 if (downKey.Length > 1 || !Config.Keys.Contains(downKey))
                 {
-                    ScreenHint.MainWindow.Inst.Hide();
+                    HintUI.Inst.Hide();
                     return;
                 }
 
-                str.Append(downKey);
-                var ks = _positions.rects.Keys.Where(k => k.StartsWith(str.ToString())).ToArray();
-                if (ks.Length == 0)
+                hits.Append(downKey);
+                var ks = new List<string>();
+                foreach (var k in _positions.rects.Keys)
                 {
-                    ScreenHint.MainWindow.Inst.Hide();
+                    if (k.StartsWith(hits.ToString()))
+                    {
+                        ks.Add(k);
+                    }
+                    else
+                    {
+                        HintUI.Inst.HideHint(k);
+                    }
+                }
+
+                if (ks.Count == 0)
+                {
+                    HintUI.Inst.Hide();
                     return;
                 }
 
-                var key = ks.FirstOrDefault(k => k.Length == str.Length);
+                var key = ks.FirstOrDefault(k => k.Length == hits.Length);
                 if (!string.IsNullOrEmpty(key))
                 {
                     var v = _positions.rects[key];
+                    HintUI.Inst.HighLight(v);
                     v.X = _positions.windowRect.X + v.X;
                     v.Y = _positions.windowRect.Y + v.Y;
-                    var p = new Point((int)(v.X + v.Width / 2), (int)(v.Y + v.Height / 2));
+                    var p = new Point((int) (v.X + v.Width / 2), (int) (v.Y + v.Height / 2));
                     Mouse.Position = p;
                     Wait.UntilInputIsProcessed();
-                    ScreenHint.MainWindow.Inst.Hide();
+                    HintUI.Inst.HideHints();
                     Mouse.LeftClick();
                     return;
                 }
             }
         }
+
         public void Hook()
         {
             (Key.Ctrl + Key.S).Down(e =>

@@ -4,15 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Metaseed.ScreenPoint"
-        mc:Ignorable="d"
+        mc:Ignorable="d" d:DesignWidth="478.076" d:DesignHeight="246.156"
 >
     <Grid>
         <Border BorderThickness="2" BorderBrush="Red">
-            <Canvas x:Name="Canvas" Background="Transparent">
+            <Canvas x:Name="_Canvas" Background="Transparent">
 
             </Canvas>
-
+            
         </Border>
-
+        <Canvas Background="Transparent">
+            <Rectangle x:Name="highLight" Width="60" Height="60" Stroke="Yellow" StrokeThickness="2"></Rectangle>
+        </Canvas>
     </Grid>
 </Window>
