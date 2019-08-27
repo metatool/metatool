@@ -89,32 +89,31 @@ namespace Metaseed.ScreenHint
                 }
             }
         }
+        static void MouseLeftClick((Rect winRect, Rect clientRect) position)
+        {
+            var rect    = position.clientRect;
+            var winRect = position.winRect;
+            rect.X = winRect.X + rect.X;
+            rect.Y = winRect.Y + rect.Y;
+            var p = new Point((int)(rect.X + rect.Width / 2), (int)(rect.Y + rect.Height / 2));
+            FlaUI.Core.Input.Mouse.Position = p;
+            Wait.UntilInputIsProcessed();
+            FlaUI.Core.Input.Mouse.LeftClick();
+        }
 
+        public IMetaKey MouseClick = (Ctrl+Alt + X).Down(e =>
+        {
+            e.Handled = true;
+            e.BeginInvoke(() => Hint.Show(MouseLeftClick));
+        });
+
+        public IMetaKey MouseClickLast = (Ctrl+Alt+Z).Down(e =>
+        {
+            e.Handled = true;
+            e.BeginInvoke(() => Hint.Show(MouseLeftClick, false));
+        });
         public void Hook()
         {
-            static void MouseLeftClick((Rect winRect, Rect clientRect) position)
-            {
-                var rect = position.clientRect;
-                rect.X = position.winRect.X + rect.X;
-                rect.Y = position.winRect.Y + rect.Y;
-                var p = new Point((int) (rect.X + rect.Width / 2), (int) (rect.Y + rect.Height / 2));
-                FlaUI.Core.Input.Mouse.Position = p;
-                Wait.UntilInputIsProcessed();
-                FlaUI.Core.Input.Mouse.LeftClick();
-            }
-
-            IMetaKey MouseClick = (Caps + S).Down(e =>
-            {
-                e.Handled = true;
-                e.BeginInvoke(() => Hint.Show(MouseLeftClick));
-            });
-
-            IMetaKey MouseClickLast = (Caps + A).Down(e =>
-            {
-                e.Handled = true;
-                e.BeginInvoke(() => Hint.Show(MouseLeftClick, false));
-            });
-
             Keyboard.Hook();
         }
     }

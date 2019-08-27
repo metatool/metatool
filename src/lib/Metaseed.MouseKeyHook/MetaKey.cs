@@ -28,6 +28,7 @@ namespace Metaseed.Input
     public interface IMetaKey : IMeta, IRemove
     {
         Hotkey Hotkey { get; set; }
+        IMetaKey SetHotkey(Hotkey hotkey);
     }
 
     public class HotkeyToken : IRemoveChangeable<Hotkey>
@@ -74,6 +75,12 @@ namespace Metaseed.Input
                 return first.TriggerKey;
             }
             set => _token.Change(value);
+        }
+
+        public IMetaKey SetHotkey(Hotkey hotkey)
+        {
+            Hotkey = hotkey;
+            return this;
         }
 
         public void Remove()
@@ -123,6 +130,12 @@ namespace Metaseed.Input
         {
             get => this.First().Hotkey;
             set => this.ForEach(k => k.Hotkey = value);
+        }
+
+        public IMetaKey SetHotkey(Hotkey hotkey)
+        {
+            Hotkey = hotkey;
+            return this;
         }
 
         public void Remove()

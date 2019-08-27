@@ -125,7 +125,7 @@ namespace Metaseed.DataStructures
             }
 
             var i = _values.FirstOrDefault(v => predicate(v));
-            if (!object.Equals(i, default(TValue))) return false;
+            if (object.Equals(i, default(TValue))) return false;
             _values.Remove(i);
             return true;
         }

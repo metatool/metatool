@@ -16,10 +16,10 @@ namespace Metaseed.MetaKeyboard
 {
     public class Mouse : KeyMetaPackage
     {
+        static readonly Hint Hint= new Hint();
         // LButton & RButton
         public IMetaKey MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
         public IMetaKey MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
-
         static void MoveCursorToActiveControl()
         {
             using var automation = new UIA3Automation();
@@ -31,8 +31,8 @@ namespace Metaseed.MetaKeyboard
             if (x == 0 && y == 0)
             {
                 var r = Window.GetCurrentWindowRect();
-                x = (int) (r.X + r.Width  / 2);
-                y = (int) (r.Y + r.Height / 2);
+                x = (int)(r.X + r.Width  / 2);
+                y = (int)(r.Y + r.Height / 2);
             }
 
             FlaUI.Core.Input.Mouse.MoveTo(x, y);
@@ -46,26 +46,8 @@ namespace Metaseed.MetaKeyboard
 
         public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.VerticalScroll(-1); });
 
-        static private void MouseLeftClick((Rect winRect, Rect clientRect) position)
-        {
-            var rect = position.clientRect;
-            rect.X = position.winRect.X + rect.X;
-            rect.Y = position.winRect.Y + rect.Y;
-            var p = new System.Drawing.Point((int)(rect.X + rect.Width / 2), (int)(rect.Y + rect.Height / 2));
-            FlaUI.Core.Input.Mouse.Position = p;
-            Wait.UntilInputIsProcessed();
-            FlaUI.Core.Input.Mouse.LeftClick();
-        }
-        public IMetaKey MouseClick = (Caps + S).Down(e =>
-        {
-            e.Handled = true;
-            e.BeginInvoke(() => Hint.Show(MouseLeftClick));
-        });
+        public IMetaKey MouseLeftClick = Hint.MouseClick.SetHotkey(Caps+S);
+        public IMetaKey MouseLeftClick_Last = Hint.MouseClickLast.SetHotkey(Caps+A);
 
-        public IMetaKey MouseClickLast = (Caps + A).Down(e =>
-        {
-            e.Handled = true;
-            e.BeginInvoke(() => Hint.Show(MouseLeftClick, false));
-        });
     }
 }
