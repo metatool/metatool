@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace Metaseed.ScreenHint
@@ -18,11 +19,21 @@ namespace Metaseed.ScreenHint
 
         readonly ScreenHint.MainWindow _window = MainWindow.Inst;
 
-        public void Show()
+        public void Show(bool isReshow = false)
         {
-            foreach (var point in _points)
+            if (isReshow)
             {
-                point.Value.hint.Visibility = Visibility.Visible;
+                foreach (var point in _points)
+                {
+                    point.Value.hint.Visibility = Visibility.Visible;
+                }
+
+                foreach (var hint in markedHints)
+                {
+                    foreach (Run run in hint.Inlines)
+                    {
+                        run.ClearValue(TextElement.ForegroundProperty);                    }
+                }
             }
 
             _window._Canvas.Visibility = System.Windows.Visibility.Visible;
@@ -37,7 +48,21 @@ namespace Metaseed.ScreenHint
 
         public void HideHints()
         {
-            _window._Canvas.Visibility = System.Windows.Visibility.Hidden;
+             _window._Canvas.Visibility = System.Windows.Visibility.Hidden;
+        }
+        List<TextBlock> markedHints = new List<TextBlock>();
+
+        public void MarkHit(string key, int len)
+        {
+            _points.TryGetValue(key, out var ui);
+            markedHints.Add(ui.hint);
+            var i = 0;
+            foreach (Run run in ui.hint.Inlines)
+            {
+                if (i == len) break;
+                run.Foreground = Brushes.Blue;
+                i++;
+            }
         }
 
         public void HideHint(string key)
@@ -68,16 +93,29 @@ namespace Metaseed.ScreenHint
             _window.Height = rr.Height;
             var childrenCount = _window._Canvas.Children.Count;
             var i             = 0;
+
+            static void SetText(TextBlock ui, string key)
+            {
+                ui.Inlines.Clear();
+                foreach (var c in key)
+                {
+                    var run = new Run()
+                    {
+                        Text = c.ToString()
+                    };
+                    // run.SetValue(UIElement.IsHitTestVisibleProperty,false);
+                    ui.Inlines.Add(run);
+                }
+            }
+
             foreach (var e in points.rects)
             {
                 TextBlock r;
                 if (i < childrenCount)
                 {
                     r      = _window._Canvas.Children[i] as TextBlock;
-                    r.Text = e.Key;
                     Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
                     Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
-                    r.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -85,20 +123,21 @@ namespace Metaseed.ScreenHint
                     {
                         Foreground = Brushes.Red,
                         Background = Brushes.Yellow,
-                        Text       = e.Key,
-                        FontWeight = FontWeights.Bold
+                        FontWeight = FontWeights.Bold,
                     };
                     Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
                     Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
-                    r.Visibility = Visibility.Visible;
                     _window._Canvas.Children.Add(r);
-                }
 
+                }
+                SetText(r, e.Key);
+                r.Visibility = Visibility.Visible;
+                // r.IsHitTestVisible = false;
                 _points.Add(e.Key,(e.Value, r));
                 i++;
             }
 
-            for (int j = points.rects.Count; j < childrenCount; j++)
+            for (var j = points.rects.Count; j < childrenCount; j++)
             {
                 _window._Canvas.Children[j].Visibility = Visibility.Hidden;
             }

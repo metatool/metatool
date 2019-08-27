@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
+using FlaUI.Core.Input;
 using FlaUI.UIA3;
 using Metaseed.Input;
 using Metaseed.ScreenHint;
-using Metaseed.UI;
+using Metaseed.UI.Implementation;
 using static Metaseed.MetaKeyboard.KeyboardConfig;
 using static Metaseed.Input.Key;
+using Window = Metaseed.UI.Window;
 
 namespace Metaseed.MetaKeyboard
 {
@@ -43,16 +46,26 @@ namespace Metaseed.MetaKeyboard
 
         public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.VerticalScroll(-1); });
 
+        static private void MouseLeftClick((Rect winRect, Rect clientRect) position)
+        {
+            var rect = position.clientRect;
+            rect.X = position.winRect.X + rect.X;
+            rect.Y = position.winRect.Y + rect.Y;
+            var p = new System.Drawing.Point((int)(rect.X + rect.Width / 2), (int)(rect.Y + rect.Height / 2));
+            FlaUI.Core.Input.Mouse.Position = p;
+            Wait.UntilInputIsProcessed();
+            FlaUI.Core.Input.Mouse.LeftClick();
+        }
         public IMetaKey MouseClick = (Caps + S).Down(e =>
         {
             e.Handled = true;
-            e.BeginInvoke(() => Hint.Show());
+            e.BeginInvoke(() => Hint.Show(MouseLeftClick));
         });
 
         public IMetaKey MouseClickLast = (Caps + A).Down(e =>
         {
             e.Handled = true;
-            e.BeginInvoke(() => Hint.Show(false));
+            e.BeginInvoke(() => Hint.Show(MouseLeftClick, false));
         });
     }
 }

@@ -56,11 +56,14 @@ namespace Metaseed.Input
     /// </summary>
     public static class TaskExt
     {
-        public static EAPTask<TEventArgs, EventHandler<TEventArgs>> FromEvent<TEventArgs>()
+        public static EAPTask<TEventArgs, EventHandler<TEventArgs>> FromEvent<TEventArgs>(Action<TEventArgs> action=null)
         {
             var tcs     = new TaskCompletionSource<TEventArgs>();
-            var handler = new EventHandler<TEventArgs>((s, e) => 
-                tcs.TrySetResult(e));
+            var handler = new EventHandler<TEventArgs>((s, e) =>
+            {
+                action?.Invoke(e);
+                tcs.TrySetResult(e);
+            });
             return new EAPTask<TEventArgs, EventHandler<TEventArgs>>(tcs, handler);
         }
     }

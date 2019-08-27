@@ -80,7 +80,7 @@ namespace Metaseed.Input
                 source.Up(e =>
                 {
                     handled = false;
-                   
+
                     e.Handled          = true;
                     e.NoFurtherProcess = true;
 
@@ -99,6 +99,7 @@ namespace Metaseed.Input
                         Console.WriteLine("\t/!predicate(e):false");
                         return false;
                     }
+
                     return true;
                 }, "", KeyStateTree.HardMap)
             };
@@ -296,29 +297,40 @@ namespace Metaseed.Input
             add => _Hook.KeyPress += value;
             remove => _Hook.KeyPress -= value;
         }
+
         public static event KeyEventHandler KeyDown
         {
             add => _Hook.KeyDown += value;
             remove => _Hook.KeyDown -= value;
         }
 
-        public static async Task<KeyEventArgsExt> KeyDownAsync()
+        public static async Task<KeyEventArgsExt> KeyDownAsync(bool handled = false)
         {
-            return await TaskExt.FromEvent<KeyEventArgsExt>()
-                .HandlerConversion<KeyEventHandler>(h=> new KeyEventHandler(h))
-                .Start(h => KeyDown += h, h => KeyUp -= h, CancellationToken.None);
+            return await TaskExt.FromEvent<KeyEventArgsExt>(e =>
+                {
+                    if (handled)
+                        e.Handled = true;
+                })
+                .HandlerConversion<KeyEventHandler>(h => new KeyEventHandler(h))
+                .Start(h => KeyDown += h, h => KeyDown -= h, CancellationToken.None);
         }
-        public static async Task<KeyEventArgsExt> KeyUpAsync()
+
+        public static async Task<KeyEventArgsExt> KeyUpAsync(bool handled = false)
         {
-            return await TaskExt.FromEvent<KeyEventArgsExt>()
+            return await TaskExt.FromEvent<KeyEventArgsExt>(e=>{
+                    if (handled)
+                        e.Handled = true;
+                })
                 .HandlerConversion<KeyEventHandler>(h => new KeyEventHandler(h))
                 .Start(h => KeyUp += h, h => KeyUp -= h, CancellationToken.None);
         }
+
         public static event KeyEventHandler KeyUp
         {
             add => _Hook.KeyUp += value;
             remove => _Hook.KeyUp -= value;
         }
+
         public static void HotKey(this string keys, string description, Action action)
         {
             if (keys.Contains(','))

@@ -14,7 +14,7 @@
             
         </Border>
         <Canvas Background="Transparent">
-            <Rectangle x:Name="highLight" Width="60" Height="60" Stroke="Yellow" StrokeThickness="2"></Rectangle>
+            <Rectangle IsHitTestVisible="False" x:Name="highLight"  Stroke="Yellow" Visibility="Hidden" StrokeThickness="2"></Rectangle>
         </Canvas>
     </Grid>
 </Window>
