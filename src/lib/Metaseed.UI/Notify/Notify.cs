@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Metaseed.NotifyIcon;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;

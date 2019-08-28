@@ -3,13 +3,10 @@
 // See license.txt or https://mit-license.org/
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
-using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.Input.MouseKeyHook.WinApi;
 

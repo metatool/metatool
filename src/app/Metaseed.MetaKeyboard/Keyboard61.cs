@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Metaseed.Input;
-using Microsoft.Win32;
 using static Metaseed.Input.Key;
 using static Metaseed.MetaKeyboard.KeyboardConfig;
 

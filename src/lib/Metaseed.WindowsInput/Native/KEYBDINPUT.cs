@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsInput.Native
+namespace Metaseed.WindowsInput.Native
 {
 #pragma warning disable 649
     /// <summary>

@@ -1,6 +1,6 @@
-﻿using WindowsInput.Native;
+﻿using Metaseed.WindowsInput.Native;
 
-namespace WindowsInput
+namespace Metaseed.WindowsInput
 {
     /// <summary>
     /// The contract for a service that interprets the state of input devices.

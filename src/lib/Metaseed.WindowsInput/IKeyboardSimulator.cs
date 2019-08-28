@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using WindowsInput.Native;
+using Metaseed.WindowsInput.Native;
 
-namespace WindowsInput
+namespace Metaseed.WindowsInput
 {
     /// <summary>
     /// The service contract for a keyboard simulator for the Windows platform.

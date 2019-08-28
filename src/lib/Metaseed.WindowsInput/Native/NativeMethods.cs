@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace WindowsInput.Native
+namespace Metaseed.WindowsInput.Native
 {
     /// <summary>
     /// References all of the Native Windows API methods for the WindowsInput functionality.
@@ -97,5 +97,30 @@ namespace WindowsInput.Native
         /// <remarks>To set a thread's extra message information, use the SetMessageExtraInfo function. </remarks>
         [DllImport("user32.dll")]
         public static extern IntPtr GetMessageExtraInfo();
+
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetCursorPos(out POINT lpPoint);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool SetCursorPos(int x, int y);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam,
+            SendMessageTimeoutFlags fuFlags, uint uTimeout, out UIntPtr lpdwResult);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int GetSystemMetrics(SystemMetric nIndex);
+    }
+    public enum SystemMetric
+    {
+        /// <summary>
+        /// Nonzero if the meanings of the left and right mouse buttons are swapped; otherwise, 0.
+        /// </summary>
+        SM_SWAPBUTTON = 23,
+        SM_XVIRTUALSCREEN  = 76,
+        SM_YVIRTUALSCREEN  = 77,
+        SM_CXVIRTUALSCREEN = 78,
+        SM_CYVIRTUALSCREEN = 79
     }
 }

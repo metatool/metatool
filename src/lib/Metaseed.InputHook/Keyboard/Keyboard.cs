@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsInput.Native;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using System.Windows.Threading;
 using Metaseed.MetaKeyboard;
+using Metaseed.WindowsInput.Native;
 using OneOf;
 using KeyEventHandler = Metaseed.Input.MouseKeyHook.KeyEventHandler;
 
@@ -142,11 +141,11 @@ namespace Metaseed.Input
 
                     if (target.TriggerKey == Keys.LButton)
                     {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftButtonDown()));
+                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftDown()));
                     }
                     else if (target.TriggerKey == Keys.RButton)
                     {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightButtonDown()));
+                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightDown()));
                     }
                     else
                     {
@@ -163,12 +162,12 @@ namespace Metaseed.Input
                     e.Handled = true;
                     if (target.TriggerKey == Keys.LButton)
                     {
-                        Async(() => InputSimu.Inst.Mouse.LeftButtonUp());
+                        Async(() => InputSimu.Inst.Mouse.LeftUp());
                         return;
                     }
                     else if (target.TriggerKey == Keys.RButton)
                     {
-                        Async(() => InputSimu.Inst.Mouse.RightButtonUp());
+                        Async(() => InputSimu.Inst.Mouse.RightUp());
                         return;
                     }
 

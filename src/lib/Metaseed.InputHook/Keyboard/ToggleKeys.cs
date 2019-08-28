@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Threading;
-using WindowsInput.Native;
-using static  Metaseed.Input.Key;
 using System.Windows.Forms;
+using Metaseed.WindowsInput.Native;
+
 namespace Metaseed.Input
 {
     public enum ToggleKeyState

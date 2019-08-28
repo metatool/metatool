@@ -1,4 +1,4 @@
-﻿namespace WindowsInput
+﻿namespace Metaseed.WindowsInput
 {
     /// <summary>
     /// The mouse button
@@ -19,5 +19,14 @@
         /// Right moust button
         /// </summary>
         RightButton,
+        /// <summary>
+        /// The fourth mouse button
+        /// </summary>
+        XButton1,
+
+        /// <summary>
+        /// The fifth mouse button
+        /// </summary>
+        XButton2
     }
 }

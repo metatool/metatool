@@ -1,4 +1,4 @@
-﻿namespace WindowsInput
+﻿namespace Metaseed.WindowsInput
 {
     /// <summary>
     /// The contract for a service that simulates Keyboard and Mouse input and Hardware Input Device state detection for the Windows Platform.

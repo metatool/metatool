@@ -1,11 +1,12 @@
 ﻿using System;
 
-namespace WindowsInput.Native
+namespace Metaseed.WindowsInput.Native
 {
 #pragma warning disable 649
     /// <summary>
     /// The INPUT structure is used by SendInput to store information for synthesizing input events such as keystrokes, mouse movement, and mouse clicks. (see: http://msdn.microsoft.com/en-us/library/ms646270(VS.85).aspx)
     /// Declared in Winuser.h, include Windows.h
+    /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input
     /// </summary>
     /// <remarks>
     /// This structure contains information identical to that used in the parameter list of the keybd_event or mouse_event function.

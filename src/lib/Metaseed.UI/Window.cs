@@ -2,11 +2,9 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Metaseed.UI.Implementation;
 using Point = System.Drawing.Point;
-using Size = System.Drawing.Size;
 
 namespace Metaseed.UI
 {

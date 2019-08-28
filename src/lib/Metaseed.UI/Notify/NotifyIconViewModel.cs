@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Metaseed.MetaKeyboard;
 
 namespace Metaseed.UI.Notify
 {

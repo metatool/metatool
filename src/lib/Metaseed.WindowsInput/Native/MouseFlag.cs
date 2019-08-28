@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsInput.Native
+namespace Metaseed.WindowsInput.Native
 {
     /// <summary>
     /// The set of MouseFlags for use in the Flags property of the <see cref="MOUSEINPUT"/> structure. (See: http://msdn.microsoft.com/en-us/library/ms646273(VS.85).aspx)

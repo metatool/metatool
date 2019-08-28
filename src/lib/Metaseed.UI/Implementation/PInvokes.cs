@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
 using Point = System.Drawing.Point;
 
 namespace Metaseed.UI.Implementation

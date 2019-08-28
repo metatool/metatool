@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using Metaseed.Input;
-using static Metaseed.Input.Key;
-
-namespace Metaseed.MetaKeyboard
+﻿namespace Metaseed.MetaKeyboard
 {
     public class WindowKeys
     {

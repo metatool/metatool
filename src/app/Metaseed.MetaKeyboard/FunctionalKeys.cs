@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using FlaUI.Core.AutomationElements;
-using FlaUI.UIA3;
 using Metaseed.Input;
-using Metaseed.UI;
 using static Metaseed.Input.Key;
 
 namespace Metaseed.MetaKeyboard

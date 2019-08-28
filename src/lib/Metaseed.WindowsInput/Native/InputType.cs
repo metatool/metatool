@@ -1,4 +1,4 @@
-﻿namespace WindowsInput.Native
+﻿namespace Metaseed.WindowsInput.Native
 {
     /// <summary>
     /// Specifies the type of the input event. This member can be one of the following values. 

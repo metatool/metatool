@@ -5,13 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Threading;
-using FlaUI.Core.Input;
 using Metaseed.Input;
 using Metaseed.ScreenPoint;
-using DragAction = System.Windows.DragAction;
 using Keyboard = Metaseed.Input.Keyboard;
-using Mouse = FlaUI.Core.Input.Mouse;
 using Point = System.Drawing.Point;
 using static Metaseed.Input.Key;
 
@@ -96,9 +92,8 @@ namespace Metaseed.ScreenHint
             rect.X = winRect.X + rect.X;
             rect.Y = winRect.Y + rect.Y;
             var p = new Point((int)(rect.X + rect.Width / 2), (int)(rect.Y + rect.Height / 2));
-            FlaUI.Core.Input.Mouse.Position = p;
-            Wait.UntilInputIsProcessed();
-            FlaUI.Core.Input.Mouse.LeftClick();
+            Input.Mouse.Simu.Position = p;
+            Input.Mouse.Simu.LeftClick();
         }
 
         public IMetaKey MouseClick = (Ctrl+Alt + X).Down(e =>

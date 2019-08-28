@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Drawing;
 
-namespace WindowsInput
+namespace Metaseed.WindowsInput
 {
     /// <summary>
     /// The service contract for a mouse simulator for the Windows platform.
@@ -18,15 +19,25 @@ namespace WindowsInput
         /// </summary>
         /// <param name="pixelDeltaX">The distance in pixels to move the mouse horizontally.</param>
         /// <param name="pixelDeltaY">The distance in pixels to move the mouse vertically.</param>
-        IMouseSimulator MoveMouseBy(int pixelDeltaX, int pixelDeltaY);
+        IMouseSimulator MoveBy(int pixelDeltaX, int pixelDeltaY);
 
         /// <summary>
         /// Simulates mouse movement to the specified location on the primary display device.
+        /// Note: this function not as precise as Position, because the position is calculated relative to 65535
+        /// https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-mouseinput#remarks
         /// </summary>
-        /// <param name="absoluteX">The destination's absolute X-coordinate on the primary display device where 0 is the extreme left hand side of the display device and 65535 is the extreme right hand side of the display device.</param>
-        /// <param name="absoluteY">The destination's absolute Y-coordinate on the primary display device where 0 is the top of the display device and 65535 is the bottom of the display device.</param>
-        IMouseSimulator MoveMouseTo(double absoluteX, double absoluteY);
+        /// <param name="absoluteX">The destination's absolute X-coordinate</param>
+        /// <param name="absoluteY">The destination's absolute Y-coordinate</param>
+        IMouseSimulator MoveTo(double absoluteX, double absoluteY);
 
+        bool AreButtonsSwapped { get; }
+        IMouseSimulator MoveByWithTrace(int deltaX, int deltaY);
+        IMouseSimulator MoveToWithTrace(Point newPosition);
+        IMouseSimulator MoveToWithTrace(int newX, int newY);
+        /// <summary>
+        /// Current position of the mouse cursor
+        /// </summary>
+        Point Position { get; set; }
         /// <summary>
         /// Simulates mouse movement to the specified location on the Virtual Desktop which includes all active displays.
         /// </summary>
@@ -37,37 +48,39 @@ namespace WindowsInput
         /// <summary>
         /// Simulates a mouse left button down gesture.
         /// </summary>
-        IMouseSimulator LeftButtonDown();
+        IMouseSimulator LeftDown();
 
         /// <summary>
         /// Simulates a mouse left button up gesture.
         /// </summary>
-        IMouseSimulator LeftButtonUp();
+        IMouseSimulator LeftUp();
 
         /// <summary>
         /// Simulates a mouse left button click gesture.
         /// </summary>
-        IMouseSimulator LeftButtonClick();
+        IMouseSimulator LeftClick();
 
         /// <summary>
         /// Simulates a mouse left button double-click gesture.
         /// </summary>
-        IMouseSimulator LeftButtonDoubleClick();
+        IMouseSimulator LeftDoubleClick();
 
+        IMouseSimulator MiddleDown();
         /// <summary>
         /// Simulates a mouse right button down gesture.
         /// </summary>
-        IMouseSimulator RightButtonDown();
+        IMouseSimulator RightDown();
 
+        IMouseSimulator MiddleUp();
         /// <summary>
         /// Simulates a mouse right button up gesture.
         /// </summary>
-        IMouseSimulator RightButtonUp();
+        IMouseSimulator RightUp();
 
         /// <summary>
         /// Simulates a mouse right button click gesture.
         /// </summary>
-        IMouseSimulator RightButtonClick();
+        IMouseSimulator RightClick();
 
         /// <summary>
         /// Simulates a mouse right button double-click gesture.
@@ -86,6 +99,8 @@ namespace WindowsInput
         /// <param name="buttonId">The button id.</param>
         IMouseSimulator XButtonUp(int buttonId);
 
+        IMouseSimulator Down(MouseButton mouseButton);
+        IMouseSimulator Up(MouseButton mouseButton);
         /// <summary>
         /// Simulates a mouse X button click gesture.
         /// </summary>
@@ -110,6 +125,10 @@ namespace WindowsInput
         /// <param name="scrollAmountInClicks">The amount to scroll in clicks. A positive value indicates that the wheel was rotated to the right; a negative value indicates that the wheel was rotated to the left.</param>
         IMouseSimulator HorizontalScroll(int scrollAmountInClicks);
 
+        IMouseSimulator DragHorizontally(MouseButton mouseButton, Point startingPoint, int distance);
+        IMouseSimulator DragVertically(MouseButton mouseButton, Point startingPoint, int distance);
+        IMouseSimulator Drag(MouseButton mouseButton, Point startingPoint, int distanceX, int distanceY);
+        IMouseSimulator Drag(MouseButton mouseButton, Point startingPoint, Point endingPoint);
         /// <summary>
         /// Sleeps the executing thread to create a pause between simulated inputs.
         /// </summary>

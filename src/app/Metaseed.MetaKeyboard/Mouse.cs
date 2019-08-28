@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Forms;
-using FlaUI.Core.Input;
+﻿using System.Windows.Forms;
 using FlaUI.UIA3;
 using Metaseed.Input;
 using Metaseed.ScreenHint;
-using Metaseed.UI.Implementation;
 using static Metaseed.MetaKeyboard.KeyboardConfig;
 using static Metaseed.Input.Key;
 using Window = Metaseed.UI.Window;
@@ -34,17 +28,16 @@ namespace Metaseed.MetaKeyboard
                 x = (int)(r.X + r.Width  / 2);
                 y = (int)(r.Y + r.Height / 2);
             }
-
-            Metaseed.Input.Mouse.MoveTo(x, y);
+            Input.Mouse.Simu.MoveToWithTrace(x, y);
         }
 
         // Scroll up/down (reading, one hand)
         public IMetaKey MouseToFocus = (GK + F).Handled().Down(e => { e.BeginInvoke(MoveCursorToActiveControl); });
 
         // Scroll up/down (reading, one hand)
-        public IMetaKey MouseScrollUp = (GK + W).Handled().Down(e => { Input.Mouse.VerticalScroll(1); });
+        public IMetaKey MouseScrollUp = (GK + W).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(1); });
 
-        public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.VerticalScroll(-1); });
+        public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(-1); });
 
         public IMetaKey MouseLeftClick = Hint.MouseClick.ChangeHotkey(GK+C);
         public IMetaKey MouseLeftClick_Last = Hint.MouseClickLast.ChangeHotkey(GK+LShift+C);

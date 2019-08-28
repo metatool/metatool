@@ -1,11 +1,8 @@
-﻿using System;
-using System.Reflection;
-using System.Windows;
+﻿using System.Windows;
 using ConsoleApp1;
 using Metaseed.Core;
 using Metaseed.Input;
 using Metaseed.NotifyIcon;
-using Microsoft.Win32;
 
 namespace Metaseed.MetaKeyboard
 {

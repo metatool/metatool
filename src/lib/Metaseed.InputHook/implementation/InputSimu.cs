@@ -1,4 +1,4 @@
-﻿using WindowsInput;
+﻿using Metaseed.WindowsInput;
 
 namespace Metaseed.Input
 {

@@ -1,4 +1,4 @@
-﻿namespace WindowsInput.Native
+﻿namespace Metaseed.WindowsInput.Native
 {
     /// <summary>
     /// The list of VirtualKeyCodes (see: https://docs.microsoft.com/en-us/windows/desktop/inputdev/virtual-key-codes)

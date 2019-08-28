@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WindowsInput.Native
+namespace Metaseed.WindowsInput.Native
 {
     /// <summary>
     /// Specifies various aspects of a keystroke. This member can be certain combinations of the following values.

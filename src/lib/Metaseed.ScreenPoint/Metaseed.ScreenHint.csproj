@@ -9,11 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FlaUI.Core" Version="2.0.0-rc1" />
-    <PackageReference Include="FlaUI.UIA3" Version="2.0.0-rc1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Metaseed.InputHook\Metaseed.Input.csproj" />
     <ProjectReference Include="..\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using WindowsInput.Native;
+using Metaseed.WindowsInput.Native;
 
-namespace WindowsInput
+namespace Metaseed.WindowsInput
 {
     /// <summary>
     /// A helper class for building a list of <see cref="INPUT"/> messages ready to be sent to the native Windows API.
@@ -292,6 +292,7 @@ namespace WindowsInput
             movement.Data.Mouse.Flags = (UInt32)(MouseFlag.Move | MouseFlag.Absolute);
             movement.Data.Mouse.X = absoluteX;
             movement.Data.Mouse.Y = absoluteY;
+            movement.Data.Mouse.ExtraInfo = NativeMethods.GetMessageExtraInfo();
 
             _inputList.Add(movement);
 
@@ -315,7 +316,59 @@ namespace WindowsInput
 
             return this;
         }
+        /// <summary>
+        /// Flag to indicate if the buttons are swapped (left-handed)
+        /// </summary>
+        public static bool AreButtonsSwapped => NativeMethods.GetSystemMetrics(SystemMetric.SM_SWAPBUTTON) != 0;
+        /// <summary>
+        /// Swaps the left/right button if <see cref="AreButtonsSwapped" /> is set
+        /// </summary>
+        private static MouseButton SwapButtonIfNeeded(MouseButton mouseButton)
+        {
+            if (!AreButtonsSwapped) return mouseButton;
+            switch (mouseButton)
+            {
+                case MouseButton.LeftButton:
+                    return MouseButton.RightButton;
+                case MouseButton.RightButton:
+                    return MouseButton.LeftButton;
+                default:
+                    return mouseButton;
+            }
+        }
+        private static MouseFlag ToMouseButtonDownFlag(MouseButton button)
+        {
+            switch (button)
+            {
+                case MouseButton.LeftButton:
+                    return MouseFlag.LeftDown;
 
+                case MouseButton.MiddleButton:
+                    return MouseFlag.MiddleDown;
+
+                case MouseButton.RightButton:
+                    return MouseFlag.RightDown;
+                default:
+                    throw new ArgumentOutOfRangeException("mouseButton");
+            }
+        }
+
+        private static MouseFlag ToMouseButtonUpFlag(MouseButton button)
+        {
+            switch (button)
+            {
+                case MouseButton.LeftButton:
+                    return MouseFlag.LeftUp;
+
+                case MouseButton.MiddleButton:
+                    return MouseFlag.MiddleUp;
+
+                case MouseButton.RightButton:
+                    return MouseFlag.RightUp;
+                default:
+                    throw new ArgumentOutOfRangeException("mouseButton");
+            }
+        }
         /// <summary>
         /// Adds a mouse button down for the specified button.
         /// </summary>
@@ -447,40 +500,6 @@ namespace WindowsInput
             return this;
         }
 
-        private static MouseFlag ToMouseButtonDownFlag(MouseButton button)
-        {
-            switch (button)
-            {
-                case MouseButton.LeftButton:
-                    return MouseFlag.LeftDown;
 
-                case MouseButton.MiddleButton:
-                    return MouseFlag.MiddleDown;
-
-                case MouseButton.RightButton:
-                    return MouseFlag.RightDown;
-
-                default:
-                    return MouseFlag.LeftDown;
-            }
-        }
-
-        private static MouseFlag ToMouseButtonUpFlag(MouseButton button)
-        {
-            switch (button)
-            {
-                case MouseButton.LeftButton:
-                    return MouseFlag.LeftUp;
-
-                case MouseButton.MiddleButton:
-                    return MouseFlag.MiddleUp;
-
-                case MouseButton.RightButton:
-                    return MouseFlag.RightUp;
-
-                default:
-                    return MouseFlag.LeftUp;
-            }
-        }
     }
 }

@@ -28,7 +28,6 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Resources;
 using System.Windows.Threading;
 using Metaseed.NotifyIcon.Interop;
 
