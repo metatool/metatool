@@ -13,7 +13,7 @@ using static Metaseed.Input.Key;
 
 namespace Metaseed.ScreenHint
 {
-    public class Hint
+    public class ScreenHint
     {
         static (Rect windowRect, Dictionary<string, Rect> rects) _positions;
 
@@ -99,13 +99,13 @@ namespace Metaseed.ScreenHint
         public IMetaKey MouseClick = (Ctrl+Alt + X).Down(e =>
         {
             e.Handled = true;
-            e.BeginInvoke(() => Hint.Show(MouseLeftClick));
+            e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick));
         });
 
         public IMetaKey MouseClickLast = (Ctrl+Alt+Z).Down(e =>
         {
             e.Handled = true;
-            e.BeginInvoke(() => Hint.Show(MouseLeftClick, false));
+            e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick, false));
         });
         public void Hook()
         {

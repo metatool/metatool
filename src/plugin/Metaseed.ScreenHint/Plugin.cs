@@ -7,12 +7,12 @@ namespace Metaseed.ScreenHint
 {
     public class ScreenHintPlugin :PluginBase
     {
-        private Hint _hint;
+        private ScreenHint _screenHint;
 
         public override bool Init()
         {
-            _hint = new Hint();
-            _hint.Hook();
+            _screenHint = new ScreenHint();
+            _screenHint.Hook();
             return base.Init();
         }
     }

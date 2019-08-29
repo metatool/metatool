@@ -16,7 +16,7 @@ namespace Metaseed.ScreenHint
         {
         }
 
-        readonly ScreenHint.MainWindow _window = MainWindow.Inst;
+        readonly Metaseed.ScreenHint.MainWindow _window = MainWindow.Inst;
 
         public void Show(bool isReshow = false)
         {
