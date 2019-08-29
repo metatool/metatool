@@ -41,7 +41,8 @@ namespace Metaseed.MetaKeyboard
                 var baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
                 if (_config != null) return _config;
-                _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(@".\config.json"));
+                var configPath = Path.Combine(Path.GetDirectoryName(typeof(Config).Assembly.Location), @".\config.json");
+                _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configPath));
                 var tools = _config.Tools;
 
                 foreach (var info in tools.GetType().GetFields())

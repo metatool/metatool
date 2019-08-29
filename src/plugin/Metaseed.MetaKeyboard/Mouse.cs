@@ -10,7 +10,7 @@ namespace Metaseed.MetaKeyboard
 {
     public class Mouse : KeyMetaPackage
     {
-        static readonly Hint Hint= new Hint();
+        // static readonly Hint Hint= new Hint();
         // LButton & RButton
         public IMetaKey MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
         public IMetaKey MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
@@ -39,8 +39,8 @@ namespace Metaseed.MetaKeyboard
 
         public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(-1); });
 
-        public IMetaKey MouseLeftClick = Hint.MouseClick.ChangeHotkey(GK+C);
-        public IMetaKey MouseLeftClick_Last = Hint.MouseClickLast.ChangeHotkey(GK+LShift+C);
+        // public IMetaKey MouseLeftClick = Hint.MouseClick.ChangeHotkey(GK+C);
+        // public IMetaKey MouseLeftClick_Last = Hint.MouseClickLast.ChangeHotkey(GK+LShift+C);
 
     }
 }

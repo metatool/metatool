@@ -16,6 +16,7 @@ namespace Metaseed.Input.MouseKeyHook
     public class KeyboardHook
     {
         private readonly IKeyboardMouseEvents _eventSource;
+        public bool IsRuning { get; set; }
 
 
         private readonly List<KeyStateTree> _stateTrees = new List<KeyStateTree>()
@@ -73,6 +74,9 @@ namespace Metaseed.Input.MouseKeyHook
 
         public void Run()
         {
+            if (IsRuning) return;
+            IsRuning = true;
+
             _stateTrees.ForEach(m => m.Reset());
 
             var selectTrees = new List<KeyStateTree.SelectionResult>();

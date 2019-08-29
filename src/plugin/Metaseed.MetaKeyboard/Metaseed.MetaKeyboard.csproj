@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <UseWPF>true</UseWPF>
-    <OutputType>WinExe</OutputType>
+    <!-- <GeneratePackageOnBuild>true</GeneratePackageOnBuild> -->
+    <!-- <OutputType>WinExe</OutputType> -->
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ApplicationIcon>metaKeyboard.ico</ApplicationIcon>
@@ -29,12 +30,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj" />
-    <ProjectReference Include="..\..\lib\Metaseed.Core\Metaseed.Core.csproj" />
-    <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
-    <ProjectReference Include="..\..\lib\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj" />
-    <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj" />
-    <ProjectReference Include="..\Metaseed.ScreenHint\Metaseed.ScreenHint.csproj" />
+    <ProjectReference Include="..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.Core\Metaseed.Core.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.WindowsInput\Metaseed.WindowsInput.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -54,9 +70,5 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\software /J&#xD;&#xA;xcopy /Y  $(OutDir)Metaseed.MetaKeyboard.dll $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.exe $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.runtimeconfig.json $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y  $(OutDir)config.json $(SolutionDir)..\exe&#xD;&#xA;)" />
-  </Target>
 
 </Project>
