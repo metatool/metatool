@@ -1,7 +1,14 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using Metaseed.MetaPlugin;
+using Metaseed.ScreenHint;
 
-namespace Metaseed.ScreenHint
+namespace Metaseed.PluginDebugHelp
 {
     /// <summary>
     /// Interaction logic for App.xaml

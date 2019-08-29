@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <!-- <OutputType>WinExe</OutputType> -->
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <UseWPF>true</UseWPF>
@@ -17,13 +17,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj">
+      <Private>false</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj">
       <Private>false</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\lib\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj">
       <Private>false</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.MouseKeyHook\Metaseed.MouseKeyHook.csproj">
+      <Private>false</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metaseed.WindowsInput\Metaseed.WindowsInput.csproj">
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
