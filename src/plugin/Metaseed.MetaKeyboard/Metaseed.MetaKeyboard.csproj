@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <UseWPF>true</UseWPF>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ApplicationIcon>metaKeyboard.ico</ApplicationIcon>
+    <DisableFody Condition="'$(Configuration)' == 'Debug'">true</DisableFody>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>$(SolutionDir)..\exe\debug\plugins\$(AssemblyName)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>$(SolutionDir)..\exe\release\plugins\$(AssemblyName)</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="4.0.0" />
+    <PackageReference Include="FlaUI.Core" Version="2.0.0-rc1" />
+    <PackageReference Include="FlaUI.UIA3" Version="2.0.0-rc1" />
+    <PackageReference Include="Fody" Version="5.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Metadeed.NotifyIcon\Metaseed.NotifyIcon.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.Core\Metaseed.Core.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.UI\Metaseed.UI.csproj" />
+    <ProjectReference Include="..\Metaseed.ScreenHint\Metaseed.ScreenHint.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Remove="MainWindow.xaml" />
+    <None Update="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\software /J&#xD;&#xA;xcopy /Y  $(OutDir)Metaseed.MetaKeyboard.dll $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.exe $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y $(OutDir)Metaseed.MetaKeyboard.runtimeconfig.json $(SolutionDir)..\exe&#xD;&#xA;xcopy /Y  $(OutDir)config.json $(SolutionDir)..\exe&#xD;&#xA;)" />
+  </Target>
+
+</Project>

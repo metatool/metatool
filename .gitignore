@@ -9,8 +9,6 @@
 # Build results
 
 [Dd]ebug/
-[Rr]elease/
-x64/
 build/
 [Bb]in/
 [Oo]bj/
@@ -158,9 +156,10 @@ $RECYCLE.BIN/
 pkg
 */package/**
 /src/packages
-/exe/software/Clipjump_x64/cache
-/exe/software/everything/Everything.db
-/exe/software/everything/Run History.csv
+/exe/release/software/Clipjump_x64/cache
+/exe/release/software/everything/Everything.db
+/exe/release/software/everything/Run History.csv
 /src/app/Metaseed.Clipboard/packages
 /src/app/Metaseed.Clipboard/passwords.txt
 /src/app/Metaseed.Clipboard/Windows Store/ClipboardApp/win32
+!/exe/[Rr]elease/
