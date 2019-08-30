@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Metaseed.MetaPlugin;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Metaseed.Metaing
 {
@@ -24,27 +27,31 @@ namespace Metaseed.Metaing
             return plugins;
         }
 
-        private static IEnumerable<IMetaPlugin> GetPlugin(Assembly assembly)
+        private static void GetPlugin(Assembly assembly, IServiceCollection services)
         {
-            return (from type in assembly.GetTypes() where typeof(IMetaPlugin).IsAssignableFrom(type) select Activator.CreateInstance(type)).OfType<IMetaPlugin>();
+            foreach (var type in assembly.GetTypes())
+            {
+                if (typeof(IMetaPlugin).IsAssignableFrom(type))
+                {
+                    services.AddSingleton(typeof(IMetaPlugin), type);
+                    //object      o      = Activator.CreateInstance(type);
+                    //IMetaPlugin plugin = o as IMetaPlugin;
+                    //if (plugin != null) yield return plugin;
+                }
+            }
         }
 
-        internal static void Load()
+        internal static void Load(IServiceCollection services, IConfiguration configuration)
         {
             try
             {
                 var pluginPaths = GetPluginDlls();
-                var plugins = pluginPaths.SelectMany(p =>
+                pluginPaths.ForEach(p =>
                 {
                     var context  = new PluginLoadContext(p);
                     var assembly = context.LoadFromAssemblyPath(p);
-                    return GetPlugin(assembly);
+                    GetPlugin(assembly, services);
                 });
-
-                foreach (var plugin in plugins)
-                {
-                    plugin.Init();
-                }
             }
             catch (Exception ex)
             {
