@@ -32,6 +32,9 @@
           "CounterFormat": "00"
         }
       ]
+    },
+    "Console": {
+      "IncludeScopes": false
     }
   },
   // global filter settings 

@@ -5,15 +5,19 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Metaseed.Core;
 using Metaseed.Input.MouseKeyHook.WinApi;
+using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Input.MouseKeyHook.Implementation
 {
     internal abstract class KeyListener : BaseListener, IKeyboardEvents
     {
+        private ILogger _logger;
         protected KeyListener(Subscribe subscribe)
             : base(subscribe)
         {
+            _logger = ServiceLocator.Current?.GetService(typeof(ILogger<KeyListener>)) as ILogger;
         }
 
         public event KeyEventHandler KeyDown;
@@ -34,7 +38,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (handler == null || e.Handled || e.IsNonChar)
                 return;
             handler(this, e);
-            Console.WriteLine(new String('\t', _indentCounter)+e.ToString());
+            _logger.LogInformation(new String('\t', _indentCounter)+e.ToString());
 
         }
 
@@ -57,20 +61,24 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         protected override bool Callback(CallbackData data)
         {
             var eDownUp = GetDownUpEventArgs(data);
-
-            Console.WriteLine(new String('\t',_indentCounter++) + "¡ú" + eDownUp.ToString());
-
-            InvokeKeyDown(eDownUp);
-
-            if (KeyPress != null)
+            using (_logger.BeginScope("KeyEvent"))
             {
-                var pressEventArgs = GetPressEventArgs(data);
-                foreach (var pressEventArg in pressEventArgs)
-                    InvokeKeyPress(pressEventArg);
+
+                _logger.LogInformation(new String('\t', _indentCounter++) + "¡ú" + eDownUp.ToString());
+
+                InvokeKeyDown(eDownUp);
+
+                if (KeyPress != null)
+                {
+                    var pressEventArgs = GetPressEventArgs(data);
+                    foreach (var pressEventArg in pressEventArgs)
+                        InvokeKeyPress(pressEventArg);
+                }
+
+                InvokeKeyUp(eDownUp);
+                _logger.LogInformation(new String('\t', --_indentCounter) + "¡û" + eDownUp.ToString());
+                //Console.Write(Environment.NewLine);
             }
-            InvokeKeyUp(eDownUp);
-            Console.WriteLine(new String('\t', --_indentCounter)+ "¡û" + eDownUp.ToString());
-            Console.Write(Environment.NewLine);
 
             return !eDownUp.Handled;
         }

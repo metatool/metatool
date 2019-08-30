@@ -7,8 +7,10 @@ using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using System.Windows.Threading;
+using Metaseed.Core;
 using Metaseed.MetaKeyboard;
 using Metaseed.WindowsInput.Native;
+using Microsoft.Extensions.Logging;
 using OneOf;
 using KeyEventHandler = Metaseed.Input.MouseKeyHook.KeyEventHandler;
 
@@ -19,7 +21,7 @@ namespace Metaseed.Input
     public static class Keyboard
     {
         public static   IKeyPath     Root        = null;
-        static readonly KeyboardHook _Hook       = new KeyboardHook();
+        static readonly KeyboardHook _Hook       = new KeyboardHook(ServiceLocator.Current.GetService(typeof(ILogger<KeyboardHook>)) as ILogger<KeyboardHook>);
         static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
 
         internal static IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,

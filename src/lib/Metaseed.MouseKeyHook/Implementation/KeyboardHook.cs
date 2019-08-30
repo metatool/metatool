@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Metaseed.Input.MouseKeyHook.Implementation;
 using Metaseed.MetaKeyboard;
+using Microsoft.Extensions.Logging;
 using OneOf;
 
 namespace Metaseed.Input.MouseKeyHook
@@ -15,6 +16,7 @@ namespace Metaseed.Input.MouseKeyHook
 
     public class KeyboardHook
     {
+        private readonly ILogger<KeyboardHook> _logger;
         private readonly IKeyboardMouseEvents _eventSource;
         public bool IsRuning { get; set; }
 
@@ -22,8 +24,9 @@ namespace Metaseed.Input.MouseKeyHook
         private readonly List<KeyStateTree> _stateTrees = new List<KeyStateTree>()
             {KeyStateTree.HardMap, KeyStateTree.Default, KeyStateTree.Map, KeyStateTree.HotString};
 
-        public KeyboardHook()
+        public KeyboardHook(ILogger<KeyboardHook> logger)
         {
+            _logger = logger;
             _eventSource = Hook.GlobalEvents();
         }
 
@@ -114,7 +117,7 @@ namespace Metaseed.Input.MouseKeyHook
 
                         var rt = selectResult.Tree.Climb(eventType, args, selectResult.CandidateNode,
                             selectResult.DownInChord);
-                        Console.WriteLine($"\t={rt}${selectResult.Tree.Name}@{selectResult.Tree.CurrentNode}");
+                        _logger.LogInformation($"\t={rt}${selectResult.Tree.Name}@{selectResult.Tree.CurrentNode}");
                         if (rt == KeyProcessState.Continue)
                         {
                         }
@@ -181,7 +184,7 @@ namespace Metaseed.Input.MouseKeyHook
             }
 
             if (selectedNodes.Count > 0)
-                Console.WriteLine(
+               _logger.LogInformation(
                     $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
             return selectedNodes;
         }
