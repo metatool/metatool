@@ -9,7 +9,7 @@ namespace Metaseed.Metaing
 {
     internal class PluginLoad
     {
-        static List<string> GetPluginPaths()
+        static List<string> GetPluginDlls()
         {
             var plugins    = new List<string>();
             var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
@@ -26,22 +26,14 @@ namespace Metaseed.Metaing
 
         private static IEnumerable<IMetaPlugin> GetPlugin(Assembly assembly)
         {
-            foreach (var type in assembly.GetTypes())
-            {
-                if (typeof(IMetaPlugin).IsAssignableFrom(type))
-                {
-                    object      o      = Activator.CreateInstance(type);
-                    IMetaPlugin plugin = o as IMetaPlugin;
-                    if (plugin != null) yield return plugin;
-                }
-            }
+            return (from type in assembly.GetTypes() where typeof(IMetaPlugin).IsAssignableFrom(type) select Activator.CreateInstance(type)).OfType<IMetaPlugin>();
         }
 
         internal static void Load()
         {
             try
             {
-                var pluginPaths = GetPluginPaths();
+                var pluginPaths = GetPluginDlls();
                 var plugins = pluginPaths.SelectMany(p =>
                 {
                     var context  = new PluginLoadContext(p);
