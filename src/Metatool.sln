@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MetaKeyboard", "pl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Clipboard", "plugin\Metaseed.Clipboard_notused\Metaseed.Clipboard.csproj", "{20AC635F-C39C-4D2C-ACA7-703B43112963}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metaing", "app\Metaseed.Metaing.csproj", "{0216438A-EC18-4353-8436-0B1BA5540D3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool.csproj", "{0216438A-EC18-4353-8436-0B1BA5540D3B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.MetaPlugin", "lib\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj", "{9274D2A0-13C2-4629-A677-6A778B20BDE3}"
 EndProject

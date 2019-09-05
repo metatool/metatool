@@ -33,9 +33,9 @@ namespace Metaseed.MetaKeyboard
 
         static Notify()
         {
-            var foo = new Uri("pack://application:,,,/Metaseed.UI;component/Notify/NotifyIconResources.xaml",
+            var resource = new Uri("pack://application:,,,/Metaseed.UI;component/Notify/NotifyIconResources.xaml",
                 UriKind.RelativeOrAbsolute);
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() {Source = foo});
+            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() {Source = resource});
             trayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
         }
 

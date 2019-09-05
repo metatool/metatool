@@ -8,7 +8,8 @@ namespace Metaseed.Metaing
 {
     class PluginLoadContext : AssemblyLoadContext
     {
-        private AssemblyDependencyResolver _resolver;
+        private  AssemblyDependencyResolver _resolver;
+        readonly Assembly[]                 _assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
         public PluginLoadContext(string pluginPath)
         {
@@ -17,23 +18,21 @@ namespace Metaseed.Metaing
 
         protected override Assembly Load(AssemblyName assemblyName)
         {
-           
             var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
             if (assemblyPath != null)
             {
-                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
                 var ab = LoadFromAssemblyPath(assemblyPath);
                 // solve problem of ILogger loaded from different location, i.e. global assembly cache and packages folder
-                var assembly = assemblies.FirstOrDefault(a => a.FullName.Equals(ab.FullName));
+                var assembly = _assemblies.FirstOrDefault(a => a.FullName.Equals(ab.FullName));
                 if (assembly != null)
                 {
                     return assembly;
                 }
 
                 return ab;
-
             }
 
+            // all the dependency assemblies are loaded into the default context and only the assemblies explicitly loaded into the new context are in this context.
             return null;
         }
 

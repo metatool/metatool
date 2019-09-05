@@ -4,10 +4,14 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Metaseed.Core</RootNamespace>
 
-    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
 
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reactive.Linq" Version="4.2.0-preview.625" />
+  </ItemGroup>
 
 </Project>

@@ -3,12 +3,13 @@
   <PropertyGroup>
     <UseWPF>true</UseWPF>
     <OutputType>WinExe</OutputType>
-    <ApplicationIcon>metaing.ico</ApplicationIcon>
+    <ApplicationIcon>Metatool.ico</ApplicationIcon>
     <DisableFody Condition="'$(Configuration)' == 'Debug'">true</DisableFody>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>preview</LangVersion>
-
+    <!-- <RuntimeIdentifier>win10-x64</RuntimeIdentifier> -->
+    <!-- <PublishSingleFile>true</PublishSingleFile> -->
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -51,6 +52,10 @@
     <Page Update="Settings.xaml">
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Plugin\LibraryModel\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -7,6 +8,7 @@ namespace Metaseed.Input
     /// <summary>
     /// https://www.w3.org/TR/uievents-key/
     /// </summary>
+    // [DebuggerDisplay("{this}")]
     public partial class Key : IKey
     {
         private SortedSet<Keys> _codes;

@@ -3,26 +3,19 @@
                     xmlns:ni="http://www.metaseed.com/notifyicon"
                     xmlns:notify="clr-namespace:Metaseed.UI.Notify">
 
-    <!-- The taskbar context menu - the first row is a dummy to show off simple data binding -->
-    <!--
-        The "shared" directive is needed if we reopen the sample window a few times - WPF will otherwise
-        reuse the same context menu (which is a resource) again (which will have its DataContext set to the old TaskbarIcon)
-  -->
-    <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
+     <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
         <MenuItem x:Name="menu" Header="Show Window" Command="{Binding ShowWindowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
         <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
     </ContextMenu>
 
 
-    <!-- the application's NotifyIcon - started from App.xaml.cs. Declares its own view model. -->
     <ni:TaskbarIcon x:Key="NotifyIcon"
-                    IconSource="./metaKeyboard.ico"
+                    IconSource="./Metatool.ico"
                     ToolTipText="Double-click for window, right-click for menu"
                     DoubleClickCommand="{Binding ShowWindowCommand}"
                     ContextMenu="{StaticResource SysTrayMenu}">
 
-        <!-- self-assign a data context (could also be done programmatically) -->
         <ni:TaskbarIcon.DataContext>
             <notify:NotifyIconViewModel />
         </ni:TaskbarIcon.DataContext>

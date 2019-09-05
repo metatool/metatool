@@ -14,15 +14,16 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
     internal abstract class KeyListener : BaseListener, IKeyboardEvents
     {
         private ILogger _logger;
+
         protected KeyListener(Subscribe subscribe)
             : base(subscribe)
         {
             _logger = ServiceLocator.Current?.GetService(typeof(ILogger<KeyListener>)) as ILogger;
         }
 
-        public event KeyEventHandler KeyDown;
+        public event KeyEventHandler      KeyDown;
         public event KeyPressEventHandler KeyPress;
-        public event KeyEventHandler KeyUp;
+        public event KeyEventHandler      KeyUp;
 
         public void InvokeKeyDown(KeyEventArgsExt e)
         {
@@ -38,8 +39,7 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (handler == null || e.Handled || e.IsNonChar)
                 return;
             handler(this, e);
-            _logger.LogInformation(new String('\t', _indentCounter)+e.ToString());
-
+            _logger.LogInformation(new String('\t', _indentCounter) + e.ToString());
         }
 
         public void InvokeKeyUp(KeyEventArgsExt e)
@@ -50,7 +50,6 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
             if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
             {
                 KeyboardState.HandledDownKeys.SetKeyUp(e.KeyCode);
-
             }
 
             handler(this, e);
@@ -61,24 +60,21 @@ namespace Metaseed.Input.MouseKeyHook.Implementation
         protected override bool Callback(CallbackData data)
         {
             var eDownUp = GetDownUpEventArgs(data);
-            using (_logger.BeginScope("KeyEvent"))
+
+            _logger.LogInformation(new String('\t', _indentCounter++) + "¡ú" + eDownUp.ToString());
+
+            InvokeKeyDown(eDownUp);
+
+            if (KeyPress != null)
             {
-
-                _logger.LogInformation(new String('\t', _indentCounter++) + "¡ú" + eDownUp.ToString());
-
-                InvokeKeyDown(eDownUp);
-
-                if (KeyPress != null)
-                {
-                    var pressEventArgs = GetPressEventArgs(data);
-                    foreach (var pressEventArg in pressEventArgs)
-                        InvokeKeyPress(pressEventArg);
-                }
-
-                InvokeKeyUp(eDownUp);
-                _logger.LogInformation(new String('\t', --_indentCounter) + "¡û" + eDownUp.ToString());
-                //Console.Write(Environment.NewLine);
+                var pressEventArgs = GetPressEventArgs(data);
+                foreach (var pressEventArg in pressEventArgs)
+                    InvokeKeyPress(pressEventArg);
             }
+
+            InvokeKeyUp(eDownUp);
+            _logger.LogInformation(new String('\t', --_indentCounter) + "¡û" + eDownUp.ToString());
+            //Console.Write(Environment.NewLine);
 
             return !eDownUp.Handled;
         }
