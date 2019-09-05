@@ -49,6 +49,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.NotifyIcon", "lib\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.PluginDebugHelp", "plugin\Metaseed.PluginDebugHelp\Metaseed.PluginDebugHelp.csproj", "{027120B7-B5ED-4B82-9EF6-3BCDBB379CD2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "install", "install", "{F08B70CC-9FF9-4D8A-B7D5-CB7F0C774410}"
+	ProjectSection(SolutionItems) = preProject
+		install.ps1 = install.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

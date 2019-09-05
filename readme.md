@@ -4,6 +4,16 @@ The `goal` of MetaKB is described by the below gif:
 
 ![keyboard](./keyboard.gif)
 
+## Installing
+```
+choco install metatool
+```
+We also provide a PowerShell script for installation.
+
+``` powershell
+(new-object Net.WebClient).DownloadString("https://raw.githubusercontent.com/metatool/metatool/master/install/install.ps1") | iex
+```
+
 MetaKeyboard is based on [AutoHostKey](https://autohotkey.com/).
 
 # Quick start
