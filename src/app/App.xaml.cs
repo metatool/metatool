@@ -85,7 +85,7 @@ namespace Metaseed.MetaKeyboard
             var serviceCollection = new ServiceCollection();
             var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
             ConfigureServices(serviceCollection, configuration);
-            PluginLoad.Load(serviceCollection, configuration);
+            PluginLoad.Load(serviceCollection);
 
 
             Application.Current.MainWindow = new Settings();

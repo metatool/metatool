@@ -1,0 +1,17 @@
+trigger:
+- master
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  solution: src/Metatool.sln
+  buildConfiguration: Release
+  sdkVersion: 3.0.0-preview9-19423-09
+
+steps:
+  - task: DotNetCoreInstaller@0
+    inputs:
+      version: $(sdkVersion)
+  - script: dotnet msbuild /restore /bl /p:Configuration=$(buildConfiguration) $(solution)
+    displayName: Build

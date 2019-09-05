@@ -5,13 +5,12 @@ using System.Linq;
 using System.Reflection;
 using Metaseed.MetaPlugin;
 using Metaseed.Metatool.Plugin;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Metaseed.Metaing
 {
-    internal class PluginLoad
+    public class PluginLoad
     {
         private static List<PluginLoader> GetPluginLoaders()
         {
@@ -48,7 +47,7 @@ namespace Metaseed.Metaing
             }
         }
 
-        internal static void Load(IServiceCollection services, IConfiguration configuration)
+        public static void Load(IServiceCollection services)
         {
             try
             {

@@ -12,6 +12,7 @@
     <!-- <PublishSingleFile>true</PublishSingleFile> -->
   </PropertyGroup>
 
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>$(SolutionDir)..\exe\debug</OutputPath>
   </PropertyGroup>
@@ -28,15 +29,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="4.0.0" />
-    <PackageReference Include="Fody" Version="5.1.1">
+    <PackageReference Include="Costura.Fody" Version="4.1.0" />
+    <PackageReference Include="Fody" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.0.0-rc1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview8.19405.4" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview8.19405.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0-preview8.19405.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview9.19423.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview9.19423.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0-preview9.19423.4" />
 
   </ItemGroup>
 
@@ -45,6 +46,7 @@
     <ProjectReference Include="..\lib\Metaseed.Core\Metaseed.Core.csproj" />
     <ProjectReference Include="..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
     <ProjectReference Include="..\lib\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj" />
+    <ProjectReference Include="..\lib\Metaseed.Plugin\Metaseed.Plugin.csproj" />
     <ProjectReference Include="..\lib\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
 
@@ -52,10 +54,6 @@
     <Page Update="Settings.xaml">
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Plugin\LibraryModel\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
