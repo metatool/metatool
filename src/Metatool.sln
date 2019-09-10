@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugin", "plugin", "{0C2683F4-FE4F-42F8-81CD-C4A8F205250D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{0C2683F4-FE4F-42F8-81CD-C4A8F205250D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Core", "lib\Metaseed.Core\Metaseed.Core.csproj", "{5E647060-FCA3-4D48-93B7-4D04604A5484}"
 EndProject
@@ -55,9 +55,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "install", "install", "{F08B
 		install.ps1 = install.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.Script", "lib\Metaseed.Script\Metaseed.Script.csproj", "{08D3C886-FB48-4089-A2CB-596E851EB008}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Script", "lib\Metaseed.Script\Metaseed.Script.csproj", "{08D3C886-FB48-4089-A2CB-596E851EB008}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.Plugin", "lib\Metaseed.Plugin\Metaseed.Plugin.csproj", "{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Plugin", "lib\Metaseed.Plugin\Metaseed.Plugin.csproj", "{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

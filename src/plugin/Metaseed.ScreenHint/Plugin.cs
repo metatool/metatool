@@ -24,4 +24,26 @@ namespace Metaseed.ScreenHint
             return base.Init();
         }
     }
+
+    internal sealed class Program
+    {
+        public class AA: PluginBase
+        {
+            private readonly IMy _iMy;
+            private readonly ILogger<ScreenHintPlugin> _logger;
+
+            public AA(IMy iMy, ILogger<ScreenHintPlugin> logger)
+            {
+                _iMy = iMy;
+                _logger = logger;
+            }
+            public override bool Init()
+            {
+                _logger.LogError("dsdfsdfsdfd++++++++");
+                return base.Init();
+            }
+
+
+        }
+    }
 }

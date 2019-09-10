@@ -12,14 +12,17 @@ namespace Metaseed.Metatool.Script.Resolver
     /// </summary>
     public class NuGetSourceReferenceResolver : SourceReferenceResolver
     {
-        private readonly SourceReferenceResolver _sourceReferenceResolver;
+        private readonly SourceReferenceResolver                    _sourceReferenceResolver;
         private readonly IDictionary<string, IReadOnlyList<string>> _scriptMap;
-        private static readonly Regex PackageNameMatcher = new Regex(@"\s*nuget\s*:\s*(.*)\s*,", RegexOptions.Compiled | RegexOptions.IgnoreCase); 
 
-        public NuGetSourceReferenceResolver(SourceReferenceResolver sourceReferenceResolver, IDictionary<string, IReadOnlyList<string>> scriptMap)
+        internal static readonly Regex PackageNameVersionMatcher =
+            new Regex(@"\s*nuget\s*:\s*([^,\/]+)\s*[,\/]*([^,\/]*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        public NuGetSourceReferenceResolver(SourceReferenceResolver sourceReferenceResolver,
+            IDictionary<string, IReadOnlyList<string>> scriptMap)
         {
             _sourceReferenceResolver = sourceReferenceResolver;
-            _scriptMap = scriptMap;
+            _scriptMap               = scriptMap;
         }
 
         public override bool Equals(object obj)
@@ -49,16 +52,20 @@ namespace Metaseed.Metatool.Script.Resolver
         {
             if (path.StartsWith("nuget:", StringComparison.OrdinalIgnoreCase))
             {
-                var packageName = PackageNameMatcher.Match(path).Groups[1].Value;
+                var packageName = PackageNameVersionMatcher.Match(path).Groups[1].Value;
+                var version = PackageNameVersionMatcher.Match(path).Groups[2].Value;
+
                 if (_scriptMap.TryGetValue(packageName, out var scripts))
                 {
                     if (scripts.Count == 1)
                     {
                         return scripts[0];
                     }
+
                     return path;
                 }
             }
+
             var resolvedReference = _sourceReferenceResolver.ResolveReference(path, baseFilePath);
             return resolvedReference;
         }
@@ -67,12 +74,13 @@ namespace Metaseed.Metatool.Script.Resolver
         {
             if (resolvedPath.StartsWith("nuget:", StringComparison.OrdinalIgnoreCase))
             {
-                var packageName = PackageNameMatcher.Match(resolvedPath).Groups[1].Value;
-                var scripts = _scriptMap[packageName];
+                var packageName = PackageNameVersionMatcher.Match(resolvedPath).Groups[1].Value;
+                var scripts     = _scriptMap[packageName];
                 if (scripts.Count == 1)
                 {
                     return _sourceReferenceResolver.OpenRead(resolvedPath);
                 }
+
                 if (scripts.Count > 1)
                 {
                     MemoryStream memoryStream = new MemoryStream();
@@ -82,13 +90,14 @@ namespace Metaseed.Metatool.Script.Resolver
                         var loadStatement = $"#load \"{script}\"";
                         streamWriter.WriteLine(loadStatement);
                     }
+
                     streamWriter.Flush();
                     memoryStream.Position = 0;
                     return memoryStream;
                 }
             }
 
-                return _sourceReferenceResolver.OpenRead(resolvedPath);            
+            return _sourceReferenceResolver.OpenRead(resolvedPath);
         }
     }
 }

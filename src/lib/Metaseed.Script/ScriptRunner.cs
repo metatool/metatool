@@ -60,7 +60,7 @@ namespace Metaseed.Script
             References       = references?.AsImmutable() ?? ImmutableArray<MetadataReference>.Empty;
             Usings           = usings?.AsImmutable()     ?? ImmutableArray<string>.Empty;
             FilePath         = filePath                  ?? string.Empty;
-            MetadataResolver = metadataResolver          ?? ScriptMetadataResolver.Default;
+                MetadataResolver = metadataResolver          ?? ScriptMetadataResolver.Default.WithBaseDirectory(workingDirectory);
             SourceResolver = sourceResolver ??
                              (workingDirectory != null
                                  ? new SourceFileResolver(ImmutableArray<string>.Empty, workingDirectory)
@@ -191,7 +191,7 @@ namespace Metaseed.Script
 
         private static async Task CopyToFileAsync(string path, Stream stream)
         {
-            using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 4096,
+            await using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 4096,
                 FileOptions.Asynchronous);
             await stream.CopyToAsync(fileStream).ConfigureAwait(false);
         }

@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace Metaseed.Metatool.Script.Resolver
 {
@@ -17,9 +18,11 @@ namespace Metaseed.Metatool.Script.Resolver
         /// Initializes a new instance of the <see cref="NuGetMetadataReferenceResolver"/> class.
         /// </summary>
         /// <param name="metadataReferenceResolver">The target <see cref="MetadataReferenceResolver"/>.</param>                
-        public NuGetMetadataReferenceResolver(MetadataReferenceResolver metadataReferenceResolver)
+        public NuGetMetadataReferenceResolver(string workingDirectory,MetadataReferenceResolver metadataReferenceResolver=null)
         {
             _metadataReferenceResolver = metadataReferenceResolver;
+            if(_metadataReferenceResolver == null)
+                _metadataReferenceResolver = ScriptMetadataResolver.Default.WithBaseDirectory(workingDirectory);
         }
         
         public override bool Equals(object other)
@@ -42,7 +45,7 @@ namespace Metaseed.Metatool.Script.Resolver
 
         public override ImmutableArray<PortableExecutableReference> ResolveReference(string reference, string baseFilePath, MetadataReferenceProperties properties)
         {
-            if (reference.StartsWith("nuget", StringComparison.OrdinalIgnoreCase))
+            if (reference.StartsWith("nuget:", StringComparison.OrdinalIgnoreCase))
             {
                 // HACK We need to return something here to "mark" the reference as resolved. 
                 // https://github.com/dotnet/roslyn/blob/master/src/Compilers/Core/Portable/ReferenceManager/CommonReferenceManager.Resolution.cs#L838

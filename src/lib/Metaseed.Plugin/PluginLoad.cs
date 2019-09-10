@@ -16,7 +16,7 @@ namespace Metaseed.Metaing
         {
             var loaders = new List<PluginLoader>();
 
-            var pluginsDir = Path.Combine(AppContext.BaseDirectory, "plugins");
+            var pluginsDir = Path.Combine(AppContext.BaseDirectory, "tools");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
                 var dirName   = Path.GetFileName(dir);

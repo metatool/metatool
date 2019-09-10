@@ -12,10 +12,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\debug\plugins\$(AssemblyName)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\debug\tools\$(AssemblyName)</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\release\plugins\$(AssemblyName)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\release\tools\$(AssemblyName)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
