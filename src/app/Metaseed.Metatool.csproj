@@ -47,6 +47,7 @@
     <ProjectReference Include="..\lib\Metaseed.InputHook\Metaseed.Input.csproj" />
     <ProjectReference Include="..\lib\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj" />
     <ProjectReference Include="..\lib\Metaseed.Plugin\Metaseed.Plugin.csproj" />
+    <ProjectReference Include="..\lib\Metaseed.Script\Metaseed.Script.csproj" />
     <ProjectReference Include="..\lib\Metaseed.UI\Metaseed.UI.csproj" />
   </ItemGroup>
 
