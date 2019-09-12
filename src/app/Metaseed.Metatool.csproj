@@ -62,7 +62,7 @@
   </Target>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="xcopy /s $(ProjectDir)DefaultTools $(OutDir)tools" />
+    <Exec Command="xcopy /s /y $(ProjectDir)..\tools $(OutDir)tools" />
   </Target>
 
 </Project>

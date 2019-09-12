@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-    class bb
-    {
-    }
+class bb
+{
+}
 
 void BBc()
 {
