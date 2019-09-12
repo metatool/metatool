@@ -15,7 +15,7 @@ namespace RoslynPad.Hosting
                 new JProperty("runtimeOptions", new JObject(
                     new JProperty("tfm", "netcoreapp3.0"),
                     new JProperty("framework", new JObject(
-                        new JProperty("name", "Microsoft.NETCore.App"),
+                        new JProperty("name", "Microsoft.WindowsDesktop.App"),
                         new JProperty("version", "3.0.0"))))));
         }
 

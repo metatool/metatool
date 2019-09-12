@@ -31,7 +31,7 @@ namespace Metaseed.Script
         private string                                           _assemblyPath;
         private string                                           _depsFile;
         private CancellationTokenSource                          _executeCts;
-        private bool _initializeBuildPathAfterRun;
+        private bool                                             _initializeBuildPathAfterRun;
         public event Action<IList<CompilationErrorResultObject>> CompilationErrors;
 
 
@@ -41,20 +41,23 @@ namespace Metaseed.Script
             BuildPath   = buildPath;
             Name        = name;
 
+            Initialize(parameters);
             // for execu
             _jsonSerializer = new JsonSerializer
             {
                 TypeNameHandling = TypeNameHandling.Auto
             };
         }
+
         public Task Update(ExecutionHostParameters parameters)
         {
             Initialize(parameters);
             return Task.CompletedTask;
         }
+
         public string Name { get; set; }
 
-        public async Task ExecuteAsync(string code, OptimizationLevel? optimizationLevel)
+        public async Task BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, bool onlyBuild = true)
         {
             await new NoContextYieldAwaitable();
 
@@ -82,7 +85,8 @@ namespace Metaseed.Script
 
                 _executeCts = executeCts;
 
-                await RunProcess(_assemblyPath, cancellationToken);
+                if (!onlyBuild)
+                    await RunProcess(_assemblyPath, cancellationToken);
             }
             finally
             {
@@ -96,6 +100,7 @@ namespace Metaseed.Script
                 }
             }
         }
+
         private void InitializeBuildPath(bool stop)
         {
             if (stop)
@@ -111,6 +116,7 @@ namespace Metaseed.Script
             CleanupBuildPath();
             CreateRuntimeConfig();
         }
+
         private void CleanupBuildPath()
         {
             StopProcess();
@@ -125,8 +131,8 @@ namespace Metaseed.Script
             {
                 Console.WriteLine(e);
             }
-            
         }
+
         private void CreateRuntimeConfig()
         {
             var config = DotNetConfigHelper.CreateNetCoreRuntimeOptions();
@@ -135,6 +141,7 @@ namespace Metaseed.Script
             var devConfig = DotNetConfigHelper.CreateNetCoreDevRuntimeOptions(_parameters.GlobalPackageFolder);
             WriteJson(Path.Combine(BuildPath, $"{Name}.runtimeconfig.dev.json"), devConfig);
         }
+
         private static void WriteJson(string path, JToken token)
         {
             using (var file = File.CreateText(path))
@@ -143,10 +150,12 @@ namespace Metaseed.Script
                 token.WriteTo(writer);
             }
         }
+
         private void StopProcess()
         {
             _executeCts?.Cancel();
         }
+
         private void SendDiagnostics(ImmutableArray<Diagnostic> diagnostics)
         {
             if (diagnostics.Length > 0)
@@ -170,24 +179,26 @@ namespace Metaseed.Script
         {
             _parameters = parameters;
             _scriptOptions = ScriptOptions.Default
-                .WithReferences(parameters.NuGetCompileReferences.Select(p => MetadataReference.CreateFromFile(p))
+                .WithReferences(parameters.NuGetRuntimeReferences.Select(p => MetadataReference.CreateFromFile(p))
                     .Concat(parameters.FrameworkReferences))
                 .WithImports(parameters.Imports)
-                .WithMetadataResolver(new NuGetMetadataReferenceResolver(parameters.WorkingDirectory));
+                .WithMetadataResolver(new NuGetMetadataReferenceResolver(parameters.WorkingDirectory))
+                .WithSourceResolver(new RemoteFileResolver(AppContext.BaseDirectory));
         }
 
         private ScriptRunner CreateScriptRunner(string code, OptimizationLevel? optimizationLevel)
         {
-            return new ScriptRunner(code: null,
-                syntaxTrees: ImmutableList.Create(InitHostSyntax, ParseCode(code)),
-                _parseOptions,
-                OutputKind.ConsoleApplication,
-                Platform.AnyCpu,
-                _scriptOptions.MetadataReferences,
-                _scriptOptions.Imports,
-                _scriptOptions.FilePath,
-                _parameters.WorkingDirectory,
-                _scriptOptions.MetadataResolver,
+            return new ScriptRunner(code:null,
+                syntaxTrees: ImmutableList.Create(InitHostSyntax, ParseCode(code: code)),
+                parseOptions: _parseOptions,
+                outputKind: OutputKind.ConsoleApplication,
+                platform: Platform.AnyCpu,
+                references: _scriptOptions.MetadataReferences,
+                usings: _scriptOptions.Imports,
+                filePath: _scriptOptions.FilePath,
+                workingDirectory: _parameters.WorkingDirectory,
+                metadataResolver: _scriptOptions.MetadataResolver,
+                sourceResolver: _scriptOptions.SourceResolver,
                 optimizationLevel: optimizationLevel ?? _parameters.OptimizationLevel,
                 checkOverflow: _parameters.CheckOverflow,
                 allowUnsafe: _parameters.AllowUnsafe);
@@ -281,7 +292,5 @@ namespace Metaseed.Script
                 }
             }
         }
-
-
     }
 }

@@ -23,7 +23,7 @@ namespace Metaseed.Script.NugetReference
         private readonly IEnumerable<string>        _configFilePaths;
         private readonly IEnumerable<PackageSource> _packageSources;
         private readonly ExceptionDispatchInfo      _initializationException;
-        private          ILogger<NugetPackage>      _logger;
+        private          ILogger      _logger;
         public           string                     GlobalPackageFolder { get; }
         public event Action<NuGetRestoreResult> RestoreCompleted;
 
