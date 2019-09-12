@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Metaseed.Script
 {
-    internal class ExecutionHostParameters
+    public class ExecutionHostParameters
     {
         public ExecutionHostParameters(
             ImmutableArray<string> compileReferences,

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using Metaseed.Input;
+using Microsoft.Win32;
 using static Metaseed.Input.Key;
 
 namespace Metaseed.MetaKeyboard
@@ -9,7 +10,6 @@ namespace Metaseed.MetaKeyboard
     public class FunctionalKeys : KeyMetaPackage
     {
         public IMetaKey CloseMetaKeys = (LWin + L).Handled().Down(null);
-
 
 
         public IMetaKey CloseMetaKey = (LCtrl + LWin + C).With(Keys.LMenu)
@@ -42,5 +42,18 @@ namespace Metaseed.MetaKeyboard
             Keyboard.ShowTip();
             e.Handled = true;
         }, null, "Show Tips");
+
+        public IMetaKey DoublePinyinSwitch = (Pipe + P).Down(e =>
+        {
+            e.Handled = true;
+            var keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
+            var valueName = "Enable Double Pinyin";
+            var k         = (int)Registry.GetValue(keyName, valueName, -1);
+            if(k == 0)
+                Registry.SetValue(keyName, valueName, 1);
+            else if(k ==1)
+                Registry.SetValue(keyName, valueName, 0);
+
+        }, null, "&Toggle Double &Pinyin(Microsoft)");
     }
 }

@@ -14,6 +14,7 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
 using NuGet.Frameworks;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Metaseed.Script.NugetReference
 {
@@ -26,7 +27,7 @@ namespace Metaseed.Script.NugetReference
         public           string                     GlobalPackageFolder { get; }
         public event Action<NuGetRestoreResult> RestoreCompleted;
 
-        public NugetPackage(ILogger<NugetPackage> logger)
+        public NugetPackage(ILogger logger)
         {
             _logger = logger;
             try

@@ -1,45 +1,40 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
 
 namespace Metaseed.Metatool.Script.Resolver
 {
-    /// <summary>
-    /// A <see cref="MetadataReferenceResolver"/> decorator that handles
-    /// references to NuGet packages in scripts.  
-    /// </summary>
-    public class NuGetMetadataReferenceResolver : MetadataReferenceResolver
+       public class NuGetMetadataReferenceResolver : MetadataReferenceResolver
     {
-        private readonly MetadataReferenceResolver _metadataReferenceResolver;
+        private readonly bool _useCache;
+        private readonly MetadataReferenceResolver _innerReferenceResolver;
+        private readonly ConcurrentDictionary<string, ImmutableArray<PortableExecutableReference>>? _cache;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NuGetMetadataReferenceResolver"/> class.
-        /// </summary>
-        /// <param name="metadataReferenceResolver">The target <see cref="MetadataReferenceResolver"/>.</param>                
-        public NuGetMetadataReferenceResolver(string workingDirectory,MetadataReferenceResolver metadataReferenceResolver=null)
+        public NuGetMetadataReferenceResolver(string workingDirectory,MetadataReferenceResolver innerReferenceResolver=null, bool useCache = false)
         {
-            _metadataReferenceResolver = metadataReferenceResolver;
-            if(_metadataReferenceResolver == null)
-                _metadataReferenceResolver = ScriptMetadataResolver.Default.WithBaseDirectory(workingDirectory);
+            _useCache = useCache;
+            _innerReferenceResolver = innerReferenceResolver ?? ScriptMetadataResolver.Default.WithBaseDirectory(workingDirectory);
+            if (useCache)
+            {
+                _cache = new ConcurrentDictionary<string, ImmutableArray<PortableExecutableReference>>();
+            }
         }
         
-        public override bool Equals(object other)
-        {
-            return _metadataReferenceResolver.Equals(other);
-        }
+        public override bool Equals(object other) => _innerReferenceResolver.Equals(other);
 
-        public override int GetHashCode()
-        {
-            return _metadataReferenceResolver.GetHashCode();
-        }
+        public override int GetHashCode() => _innerReferenceResolver.GetHashCode();
 
-        public override bool ResolveMissingAssemblies => _metadataReferenceResolver.ResolveMissingAssemblies;
+        public override bool ResolveMissingAssemblies => _innerReferenceResolver.ResolveMissingAssemblies;
 
         public override PortableExecutableReference ResolveMissingAssembly(MetadataReference definition, AssemblyIdentity referenceIdentity)
         {
-            return _metadataReferenceResolver.ResolveMissingAssembly(definition, referenceIdentity);
+            if (_cache == null) return _innerReferenceResolver.ResolveMissingAssembly(definition, referenceIdentity);
+            return _cache.GetOrAdd(referenceIdentity.ToString(),
+                _ => ImmutableArray.Create(_innerReferenceResolver.ResolveMissingAssembly(definition, referenceIdentity))).FirstOrDefault();
         }
 
 
@@ -52,8 +47,18 @@ namespace Metaseed.Metatool.Script.Resolver
                 return ImmutableArray<PortableExecutableReference>.Empty.Add(
                     MetadataReference.CreateFromFile(typeof(NuGetMetadataReferenceResolver).GetTypeInfo().Assembly.Location));
             }
-            var resolvedReference = _metadataReferenceResolver.ResolveReference(reference, baseFilePath, properties);
-            return resolvedReference;
+
+            if (_cache == null) return _innerReferenceResolver.ResolveReference(reference, baseFilePath, properties); 
+
+            if (_cache.TryGetValue(reference, out var result)) return result;
+
+            result = _innerReferenceResolver.ResolveReference(reference, baseFilePath, properties);
+            if (!result.IsDefaultOrEmpty)
+            {
+                _cache.TryAdd(reference, result);
+            }
+
+            return result;
         }
     }
 }

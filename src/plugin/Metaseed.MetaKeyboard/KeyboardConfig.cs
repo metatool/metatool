@@ -5,10 +5,12 @@ namespace Metaseed.MetaKeyboard
 {
     public class KeyboardConfig : KeyMetaPackage
     {
+        // todo: auto convert to Chord, when used in Chord.
         public IMetaKey AppsAsChord  = Apps.AsChordKey();
         public IMetaKey SpaceAsChord = Space.AsChordKey();
         public IMetaKey EnterAsChord = Enter.AsChordKey();
         public IMetaKey TabAsChord   = Tab.AsChordKey();
+        public IMetaKey PipeAsChord = Pipe.AsChordKey();
 
         /// <summary>
         /// Global key

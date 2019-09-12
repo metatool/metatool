@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NuGet.Common;
 using NuGet.Frameworks;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Metaseed.Script.NugetReference
 {
@@ -22,13 +23,12 @@ namespace Metaseed.Script.NugetReference
     {
         private bool _isRestoring;
         private bool _restoreFailed;
-        private readonly ILogger<PackageViewModel> _logger;
+        private readonly ILogger _logger;
         private IReadOnlyList<string> _restoreErrors;
         private readonly SemaphoreSlim _restoreLock;
-        private NugetPackage _nugetPackage;
+        private readonly NugetPackage _nugetPackage;
         private readonly HashSet<LibraryRef> _libraries;
         private NuGetFramework _targetFramework;
-        private CancellationTokenSource _searchCts;
         private CancellationTokenSource _restoreCts;
         private string? _frameworkVersion;
 
@@ -37,7 +37,7 @@ namespace Metaseed.Script.NugetReference
 
         public string Id { get; set; }
 
-        public string BuildPath { get; set; }
+        public string RestorePath { get; set; }
         public bool IsRestoring
         {
             get => _isRestoring;
@@ -55,7 +55,7 @@ namespace Metaseed.Script.NugetReference
             get => _restoreErrors;
             private set => SetProperty(ref _restoreErrors, value);
         }
-        public PackageViewModel(ILogger<PackageViewModel> logger, NugetPackage nugetPackage)
+        public PackageViewModel(ILogger logger, NugetPackage nugetPackage)
         {
             Id = Guid.NewGuid().ToString();
             _logger = logger;
@@ -132,7 +132,7 @@ namespace Metaseed.Script.NugetReference
         }
         private void RefreshPackages()
         {
-            if (BuildPath == null || _targetFramework == null) return;
+            if (RestorePath == null || _targetFramework == null) return;
 
             _restoreCts?.Cancel();
 
@@ -152,12 +152,12 @@ namespace Metaseed.Script.NugetReference
             {
                 var restoreParams = _nugetPackage.CreateRestoreParams();
                 restoreParams.ProjectName      = Id;
-                restoreParams.OutputPath       = BuildPath;
+                restoreParams.OutputPath       = RestorePath;
                 restoreParams.Libraries        = libraries;
                 restoreParams.TargetFramework  = _targetFramework;
                 restoreParams.FrameworkVersion = _frameworkVersion;
 
-                var lockFilePath = Path.Combine(BuildPath, "project.assets.json");
+                var lockFilePath = Path.Combine(RestorePath, "project.assets.json");
                 
                 if(File.Exists(lockFilePath)) File.Delete(lockFilePath);
                     

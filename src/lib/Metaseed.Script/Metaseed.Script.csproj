@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Metaseed.Core\Metaseed.Core.csproj" />
+    <ProjectReference Include="..\Metaseed.Script.Runtime\Metaseed.Script.Runtime.csproj" />
   </ItemGroup>
 
   <ItemGroup>
