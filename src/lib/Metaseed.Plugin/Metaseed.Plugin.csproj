@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Metaseed.Core\Metaseed.Core.csproj" />
     <ProjectReference Include="..\Metaseed.MetaPlugin\Metaseed.MetaPlugin.csproj" />
+    <ProjectReference Include="..\Metaseed.Script\Metaseed.Script.csproj" />
   </ItemGroup>
 
 </Project>

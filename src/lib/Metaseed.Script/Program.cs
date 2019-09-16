@@ -21,7 +21,7 @@ namespace Metaseed.Script
         static void Main(string[] args)
         {
             var path = Path.Combine(AppContext.BaseDirectory,"BBB", "cc.csx");
-            new ScriptHost(null).Build(path, OptimizationLevel.Debug);
+            new ScriptHost(null).Build(path);
         }
     }
 }

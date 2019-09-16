@@ -1,60 +1,20 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using Metaseed.Core;
 using Metaseed.Metaing;
+using Metaseed.MetaKeyboard;
 using Metaseed.MetaPlugin;
 using Metaseed.NotifyIcon;
+using Metaseed.Plugin;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-namespace Metaseed.MetaKeyboard
+namespace Metaseed.Metatool
 {
 
-    public class CustomLoggerProvider : ILoggerProvider
-    {
-        public void Dispose() { }
-
-        public ILogger CreateLogger(string categoryName)
-        {
-            return new CustomConsoleLogger(categoryName);
-        }
-
-        public class CustomConsoleLogger : ILogger
-        {
-            private readonly string _categoryName;
-
-            public CustomConsoleLogger(string categoryName)
-            {
-                _categoryName = categoryName;
-            }
-
-            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-            {
-                if (!IsEnabled(logLevel))
-                {
-                    return;
-                }
-
-                //Console.WriteLine($"{logLevel}: {_categoryName}[{eventId.Id}]: {formatter(state, exception)}");
-                Console.WriteLine($"{formatter(state, exception)}");
-
-            }
-
-            public bool IsEnabled(LogLevel logLevel)
-            {
-                return true;
-            }
-
-            public IDisposable BeginScope<TState>(TState state)
-            {
-                return null;
-            }
-        }
-    }
     /// <summary>
     /// Simple application. Check the XAML for comments.
     /// </summary>
@@ -67,9 +27,9 @@ namespace Metaseed.MetaKeyboard
             services.AddLogging(loggingBuilder =>
                 {
                     loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
-                    //loggingBuilder.AddConsole(o=>o.Format=ConsoleLoggerFormat.Systemd);
+                    loggingBuilder.AddConsole(o=>o.Format=ConsoleLoggerFormat.Default);
                     //loggingBuilder.AddProvider(new ConsoleLoggerProvider());
-                    loggingBuilder.AddProvider(new CustomLoggerProvider());
+                    //loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
                     loggingBuilder.AddFile(o => o.RootPath = AppContext.BaseDirectory);
                 })
 #if RELEASE
@@ -82,16 +42,20 @@ namespace Metaseed.MetaKeyboard
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var serviceCollection = new ServiceCollection();
-            var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
-            ConfigureServices(serviceCollection, configuration);
-            PluginLoad.Load(serviceCollection);
-
-
             Application.Current.MainWindow = new Settings();
             Notify.ShowMessage("MetaKeyboard started!");
 
             UI.Window.InitialConsole();
+            var serviceCollection = new ServiceCollection();
+            var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
+            ConfigureServices(serviceCollection, configuration);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var logger          = serviceProvider.GetService<ILogger<App>>();
+            PluginLoad.Load(serviceCollection, logger);
+
+            serviceProvider        = serviceCollection.BuildServiceProvider();
+            ServiceLocator.Current = serviceProvider;
+
 
 
 
@@ -110,13 +74,8 @@ namespace Metaseed.MetaKeyboard
             Notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
                 AutoStartManager.IsAutoStart);
 
-
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            ServiceLocator.Current = serviceProvider;
-            var logger          = serviceProvider.GetService<ILogger<App>>();
-
             logger.LogInformation("Log in Program.cs");
-            var plugins = serviceProvider.GetService<IEnumerable<IMetaPlugin>>();
+            var plugins = serviceProvider.GetServices<IMetaPlugin>();
             var myClass = serviceProvider.GetService<IMy>();
 
             myClass.SomeMethod();

@@ -76,11 +76,11 @@ namespace Metaseed.Script
             return GetReferencePaths(DefaultReferences).Concat(references).ToImmutableArray();
         }
 
-        public void Build(string path, OptimizationLevel optimization)
+        public void Build(string path, string assemblyName = null, OptimizationLevel optimization= OptimizationLevel.Debug)
         {
             var code         = File.ReadAllText(path: path);
             var refs         = LibRefParser.ParseReference(code: code);
-            var name         = Path.GetFileNameWithoutExtension(path: path);
+            var name         = assemblyName?? Path.GetFileNameWithoutExtension(path: path);
             var directory    = Path.GetDirectoryName(path: path);
             var nugetPackage = new NugetPackage(logger: _logger);
 
@@ -115,14 +115,22 @@ namespace Metaseed.Script
                 // executionHost.Error             += ExecutionHostOnError;
                 // executionHost.ReadInput         += ExecutionHostOnInputRequest;
                 // executionHost.CompilationErrors += ExecutionHostOnCompilationErrors;
-                executionHost.CompilationErrors += errors =>
+                executionHost.NotifyBuildResult += errors =>
                 {
-                    foreach (var error in errors)
+                    if (errors.Count > 0)
                     {
-                        ResultsInternal.Add(error);
-                    }
+                        foreach (var error in errors)
+                        {
+                            ResultsInternal.Add(error);
+                        }
 
-                    // ResultsAvailable?.Invoke();
+                        _logger.LogError(string.Join(Environment.NewLine, errors));
+                        // ResultsAvailable?.Invoke();
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"Assembly {name}: build successfully!");
+                    }
                 };
                 await executionHost.BuildAndExecuteAsync(code: code, optimizationLevel: optimization);
             };

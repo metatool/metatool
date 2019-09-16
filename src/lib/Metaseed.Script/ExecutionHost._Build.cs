@@ -32,8 +32,7 @@ namespace Metaseed.Script
         private string                                           _depsFile;
         private CancellationTokenSource                          _executeCts;
         private bool                                             _initializeBuildPathAfterRun;
-        public event Action<IList<CompilationErrorResultObject>> CompilationErrors;
-
+        public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
         public ExecutionHost(ExecutionHostParameters parameters, string buildPath, string name)
         {
@@ -158,19 +157,15 @@ namespace Metaseed.Script
 
         private void SendDiagnostics(ImmutableArray<Diagnostic> diagnostics)
         {
-            if (diagnostics.Length > 0)
-            {
-                CompilationErrors?.Invoke(diagnostics.Where(d => !_parameters.DisabledDiagnostics.Contains(d.Id))
-                    .Select(GetCompilationErrorResultObject).ToImmutableArray());
-            }
+            NotifyBuildResult?.Invoke(diagnostics.Where(d => !_parameters.DisabledDiagnostics.Contains(d.Id))
+                .Select(GetCompilationErrorResultObject).ToImmutableArray());
         }
 
         private static CompilationErrorResultObject GetCompilationErrorResultObject(Diagnostic diagnostic)
         {
             var lineSpan = diagnostic.Location.GetLineSpan();
-
             var result = CompilationErrorResultObject.Create(diagnostic.Severity.ToString(),
-                diagnostic.Id, diagnostic.GetMessage(),
+                diagnostic.Id, diagnostic.GetMessage(), lineSpan.Path,
                 lineSpan.StartLinePosition.Line, lineSpan.StartLinePosition.Character);
             return result;
         }
@@ -183,12 +178,12 @@ namespace Metaseed.Script
                     .Concat(parameters.FrameworkReferences))
                 .WithImports(parameters.Imports)
                 .WithMetadataResolver(new NuGetMetadataReferenceResolver(parameters.WorkingDirectory))
-                .WithSourceResolver(new RemoteFileResolver(AppContext.BaseDirectory));
+                .WithSourceResolver(new RemoteFileResolver(parameters.WorkingDirectory));
         }
 
         private ScriptRunner CreateScriptRunner(string code, OptimizationLevel? optimizationLevel)
         {
-            return new ScriptRunner(code:null,
+            return new ScriptRunner(code: null,
                 syntaxTrees: ImmutableList.Create(InitHostSyntax, ParseCode(code: code)),
                 parseOptions: _parseOptions,
                 outputKind: OutputKind.ConsoleApplication,

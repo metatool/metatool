@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-class bb
-{
-}
-
 void BBc()
 {
-    Console.WriteLine("BB");
+    Console.WriteLine("Hello From Local Loaded Script^&^");
 }

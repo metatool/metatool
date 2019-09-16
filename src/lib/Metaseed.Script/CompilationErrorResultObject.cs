@@ -37,20 +37,23 @@ namespace Metaseed.Script
         [DataMember(Name = "m")]
         public string Message { get; private set; }
 
-        public static CompilationErrorResultObject Create(string severity, string errorCode, string message, int line, int column)
+        public static CompilationErrorResultObject Create(string severity, string errorCode, string message, string path, int line, int column)
         {
             return new CompilationErrorResultObject
             {
                 ErrorCode = errorCode,
                 Severity  = severity,
                 Message   = message,
+                Path = path,
                 // 0 to 1-based
                 Line   = line   + 1,
                 Column = column + 1,
             };
         }
+        [DataMember(Name = "p")]
+        public string Path { get; private set; }
 
-        public override string ToString() => $"{ErrorCode}: {Message}";
+        public override string ToString() => $"{Path}@{Line}:{Column}, {Severity} {ErrorCode}: {Message}";
 
         string? IResultObject.Value => ToString();
 
