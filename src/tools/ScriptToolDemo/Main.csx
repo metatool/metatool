@@ -1,4 +1,5 @@
-﻿#r "nuget:Newtonsoft.Json/9.0.1"
+﻿#r "nuget:Metaseed.MetaPlugin"
+#r "nuget:Newtonsoft.Json/9.0.1"
 #r "nuget:Automapper,9.0.0"
 #r "LocalLib.dll"
 
@@ -9,7 +10,7 @@ using AutoMapper;
 using System;
 using System.Threading;
 using LocalLib;
-
+using Metaseed.MetaPlugin;
 Console.WriteLine(typeof(MapperConfiguration));
 Console.WriteLine("Hello, we are using Automapper nuget lib");
 
@@ -20,5 +21,7 @@ public class ClassTest {
         localLib.Hello();
     }
 }
+public class MetaScript: PluginBase {
 
+}
 new ClassTest().Hello();

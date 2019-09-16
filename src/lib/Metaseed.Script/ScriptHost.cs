@@ -17,6 +17,7 @@ namespace Metaseed.Script
         private          ILogger                _logger;
         private          MetadataReference[]    _defaultReferences;
         private readonly ImmutableArray<string> _defaultImports;
+        public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
         public ScriptHost(ILogger logger)
         {
@@ -84,11 +85,10 @@ namespace Metaseed.Script
             var directory    = Path.GetDirectoryName(path: path);
             var nugetPackage = new NugetPackage(logger: _logger);
 
-            var packageViewModel = new PackageViewModel(logger: _logger, nugetPackage: nugetPackage)
-                {Id = name, RestorePath = Path.Combine(path1: directory, path2: "nuget")};
+            var packageViewModel = new PackageViewModel(_logger, nugetPackage)
+                {Id = name, RestorePath = Path.Combine(directory, "nuget")};
 
 
-            List<CompilationErrorResultObject> ResultsInternal = new List<CompilationErrorResultObject>();
             nugetPackage.RestoreCompleted += async restoreResult =>
             {
                 var executionHostParameters = new ExecutionHostParameters(
@@ -115,23 +115,7 @@ namespace Metaseed.Script
                 // executionHost.Error             += ExecutionHostOnError;
                 // executionHost.ReadInput         += ExecutionHostOnInputRequest;
                 // executionHost.CompilationErrors += ExecutionHostOnCompilationErrors;
-                executionHost.NotifyBuildResult += errors =>
-                {
-                    if (errors.Count > 0)
-                    {
-                        foreach (var error in errors)
-                        {
-                            ResultsInternal.Add(error);
-                        }
-
-                        _logger.LogError(string.Join(Environment.NewLine, errors));
-                        // ResultsAvailable?.Invoke();
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"Assembly {name}: build successfully!");
-                    }
-                };
+                executionHost.NotifyBuildResult += e=> NotifyBuildResult?.Invoke(e);
                 await executionHost.BuildAndExecuteAsync(code: code, optimizationLevel: optimization);
             };
             if (DefaultReferences.Length > 0)

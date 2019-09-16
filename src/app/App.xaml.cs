@@ -15,9 +15,6 @@ using Microsoft.Extensions.Logging.Console;
 namespace Metaseed.Metatool
 {
 
-    /// <summary>
-    /// Simple application. Check the XAML for comments.
-    /// </summary>
     public partial class App : Application
     {
         private TaskbarIcon notifyIcon;
@@ -35,9 +32,9 @@ namespace Metaseed.Metatool
 #if RELEASE
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information)
 #endif
-                .AddTransient<IMy, MyClass>()
                 ;
         }
+
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -49,15 +46,11 @@ namespace Metaseed.Metatool
             var serviceCollection = new ServiceCollection();
             var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
             ConfigureServices(serviceCollection, configuration);
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var logger          = serviceProvider.GetService<ILogger<App>>();
+            ServiceLocator.Current = serviceCollection.BuildServiceProvider();
+            var logger          = ServiceLocator.Current.GetService<ILogger<App>>();
             PluginLoad.Load(serviceCollection, logger);
 
-            serviceProvider        = serviceCollection.BuildServiceProvider();
-            ServiceLocator.Current = serviceProvider;
-
-
-
+            ServiceLocator.Current = serviceCollection.BuildServiceProvider();
 
             Notify.AddContextMenuItem("Show Log", e =>
             {
@@ -75,11 +68,7 @@ namespace Metaseed.Metatool
                 AutoStartManager.IsAutoStart);
 
             logger.LogInformation("Log in Program.cs");
-            var plugins = serviceProvider.GetServices<IMetaPlugin>();
-            var myClass = serviceProvider.GetService<IMy>();
-
-            myClass.SomeMethod();
-
+            var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>();
             foreach (var plugin in plugins)
             {
                 plugin.Init();

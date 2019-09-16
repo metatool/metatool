@@ -56,13 +56,8 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0&#xD;&#xA;) else (&#xD;&#xA;del $(OutDir)Metaseed.Metaing.deps.json&#xD;&#xA;)&#xD;&#xA;" />
-  </Target>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="xcopy /s /y $(ProjectDir)..\tools $(OutDir)tools" />
   </Target>
 
 </Project>

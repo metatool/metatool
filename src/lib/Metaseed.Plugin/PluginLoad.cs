@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Metaseed.Core;
 using Metaseed.MetaPlugin;
 using Metaseed.Metatool.Plugin;
 using Metaseed.Script;
@@ -13,6 +14,8 @@ namespace Metaseed.Plugin
 {
     public class PluginLoad
     {
+        private static IServiceCollection _servicesCollection;
+
         private static List<PluginLoader> GetPluginLoaders(ILogger logger)
         {
             var loaders = new List<PluginLoader>();
@@ -31,7 +34,8 @@ namespace Metaseed.Plugin
                         var dllInfo    = new FileInfo(pluginDll);
                         var scriptInfo = new FileInfo(pluginScript);
 
-                        if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
+                        if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc
+                        ) // || scriptInfo.Length != dllInfo.Length)
                         {
                             // rebuild
                             // error continue
@@ -46,9 +50,7 @@ namespace Metaseed.Plugin
 
                 if (File.Exists(pluginDll))
                 {
-                    var loader = PluginLoader.CreateFromAssemblyFile(
-                        pluginDll,
-                        config => config.PreferSharedTypes = true);
+                    var loader = CreatePluginLoader(pluginDll);
                     loaders.Add(loader);
                 }
             }
@@ -56,32 +58,70 @@ namespace Metaseed.Plugin
             return loaders;
         }
 
+        private static PluginLoader CreatePluginLoader(string pluginDll)
+        {
+            var loader = PluginLoader.CreateFromAssemblyFile(
+                pluginDll,
+                config => config.PreferSharedTypes = true);
+            return loader;
+        }
+
         private static void BuildScript(string path, string assemblyName, ILogger logger)
         {
             var scriptHost = new ScriptHost(logger);
             scriptHost.Build(path, assemblyName, OptimizationLevel.Debug);
+            scriptHost.NotifyBuildResult += errors =>
+            {
+                if (errors.Count > 0)
+                {
+                    logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
+                }
+                else
+                {
+                    //todo: unload then reload
+                    // todo: file monitor
+                    logger.LogInformation($"Assembly {assemblyName}: build successfully!");
+                    var dllPath     = Path.Combine(Path.GetDirectoryName(path), $"{assemblyName}.dll");
+                    var loader      = CreatePluginLoader(dllPath);
+                    var pluginTypes = ConfigureServices(_servicesCollection, loader, false);
+                    ServiceLocator.Current = _servicesCollection.BuildServiceProvider();
+                    pluginTypes.ToList().ForEach(t =>
+                    {
+                        var plugin = ServiceLocator.Current.GetService(t) as IMetaPlugin;
+                        plugin?.Init();
+                    });
+                }
+            };
         }
 
-        private static void ConfigureServices(IServiceCollection services, List<PluginLoader> loaders)
+        private static List<Type> ConfigureServices(IServiceCollection services, PluginLoader loader,
+            bool isGeneral = true)
         {
-            foreach (var loader in loaders)
+
+            var r = new List<Type>();
+            foreach (var pluginType in loader
+                .LoadDefaultAssembly()
+                .GetTypes()
+                .Where(t => typeof(IMetaPlugin).IsAssignableFrom(t) && !t.IsAbstract))
             {
-                foreach (var pluginType in loader
-                    .LoadDefaultAssembly()
-                    .GetTypes()
-                    .Where(t => typeof(IMetaPlugin).IsAssignableFrom(t) && !t.IsAbstract))
-                {
+                if (isGeneral)
                     services.AddSingleton(typeof(IMetaPlugin), pluginType);
-                }
+                else
+                    services.AddSingleton(pluginType);
+
+                r.Add( pluginType);
             }
+            return r;
+            
         }
 
         public static void Load(IServiceCollection services, ILogger logger)
         {
+            _servicesCollection = services;
             try
             {
                 var loaders = GetPluginLoaders(logger);
-                ConfigureServices(services, loaders);
+                foreach (var loader in loaders) ConfigureServices(services, loader);
             }
             catch (Exception ex)
             {

@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\pkg\Metaseed.Input</OutputPath>
+    <OutputPath>..\..\pkg\$(MSBuildProjectName)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
