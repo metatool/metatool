@@ -57,20 +57,9 @@ namespace Metaseed.Metatool.Plugin
                 });
         }
 
-        /// <summary>
-        /// Create a plugin loader for an assembly file.
-        /// </summary>
-        /// <param name="assemblyFile">The file path to the main assembly for the plugin.</param>
-        /// <returns>A loader.</returns>
         public static PluginLoader CreateFromAssemblyFile(string assemblyFile)
             => CreateFromAssemblyFile(assemblyFile, _ => { });
 
-        /// <summary>
-        /// Create a plugin loader for an assembly file.
-        /// </summary>
-        /// <param name="assemblyFile">The file path to the main assembly for the plugin.</param>
-        /// <param name="configure">A function which can be used to configure advanced options for the plugin loader.</param>
-        /// <returns>A loader.</returns>
         public static PluginLoader CreateFromAssemblyFile(string assemblyFile, Action<PluginConfig> configure)
         {
             if (configure == null)
@@ -84,73 +73,47 @@ namespace Metaseed.Metatool.Plugin
         }
 
         private readonly PluginConfig        _config;
-        private readonly AssemblyLoadContext _context;
-        private volatile bool                _disposed;
+        private readonly WeakReference _contextWeekReference;
+        private AssemblyLoadContext Context => _contextWeekReference.Target as AssemblyLoadContext;
 
-        /// <summary>
-        /// Initialize an instance of <see cref="PluginLoader" />
-        /// </summary>
-        /// <param name="config">The configuration for the plugin.</param>
+        internal bool IsAlive => _contextWeekReference.IsAlive;
+        private volatile bool                _disposed;
+        private Assembly _mainAssembly;
+
         public PluginLoader(PluginConfig config)
         {
             _config  = config ?? throw new ArgumentNullException(nameof(config));
-            _context = CreateLoadContext(config);
+            var alc = CreateLoadContext(config);
+            _contextWeekReference = new WeakReference(alc, trackResurrection: true);
         }
 
-        /// <summary>
-        /// True when this plugin is capable of being unloaded.
-        /// </summary>
-        public bool IsUnloadable
-        {
-            get { return _context.IsCollectible; }
-        }
+        public bool IsUnloadable => Context.IsCollectible;
 
-        internal AssemblyLoadContext LoadContext => _context;
+        internal AssemblyLoadContext LoadContext => Context;
 
-        /// <summary>
-        /// Load the main assembly for the plugin.
-        /// </summary>
-        public Assembly LoadDefaultAssembly()
+        public Assembly MainAssembly => _mainAssembly ??= LoadMainAssembly();
+
+
+        public Assembly LoadMainAssembly()
         {
             EnsureNotDisposed();
-            return _context.LoadFromAssemblyPath(_config.MainAssemblyPath);
+            return Context.LoadFromAssemblyPath(_config.MainAssemblyPath);
         }
 
-        /// <summary>
-        /// Load an assembly by name.
-        /// </summary>
-        /// <param name="assemblyName">The assembly name.</param>
-        /// <returns>The assembly.</returns>
         public Assembly LoadAssembly(AssemblyName assemblyName)
         {
             EnsureNotDisposed();
-            return _context.LoadFromAssemblyName(assemblyName);
+            return Context.LoadFromAssemblyName(assemblyName);
         }
 
-        /// <summary>
-        /// Load an assembly from path.
-        /// </summary>
-        /// <param name="assemblyPath">The assembly path.</param>
-        /// <returns>The assembly.</returns>
         public Assembly LoadAssemblyFromPath(string assemblyPath)
-            => _context.LoadFromAssemblyPath(assemblyPath);
+            => Context.LoadFromAssemblyPath(assemblyPath);
 
-        /// <summary>
-        /// Load an assembly by name.
-        /// </summary>
-        /// <param name="assemblyName">The assembly name.</param>
-        /// <returns>The assembly.</returns>
         public Assembly LoadAssembly(string assemblyName)
         {
-            EnsureNotDisposed();
             return LoadAssembly(new AssemblyName(assemblyName));
         }
 
-        /// <summary>
-        /// Disposes the plugin loader. This only does something if <see cref="IsUnloadable" /> is true.
-        /// When true, this will unload assemblies which which were loaded during the lifetime
-        /// of the plugin.
-        /// </summary>
         public void Dispose()
         {
             if (_disposed)
@@ -159,10 +122,18 @@ namespace Metaseed.Metatool.Plugin
             }
 
             _disposed = true;
+            _mainAssembly = null;
 
-            if (_context.IsCollectible)
+            if (IsUnloadable)
             {
-                _context.Unload();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                Context.Unload();
+                for (var i = 0; _contextWeekReference.IsAlive && (i < 10); i++)
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
             }
         }
 

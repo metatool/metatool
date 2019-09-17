@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reactive.Linq;
 
@@ -66,18 +67,23 @@ namespace Metaseed.Reactive
             configure(Watcher);
         }
 
-        public void Start()
+        public List<IDisposable> subs = new List<IDisposable>();
+
+        public ObservableFileSystemWatcher Start()
         {
             Watcher.EnableRaisingEvents = true;
+            return this;
         }
 
-        public void Stop()
+        public ObservableFileSystemWatcher Stop()
         {
             Watcher.EnableRaisingEvents = false;
+            return this;
         }
 
         public void Dispose()
         {
+            subs.ForEach(d=>d.Dispose());
             Watcher.Dispose();
         }
     }

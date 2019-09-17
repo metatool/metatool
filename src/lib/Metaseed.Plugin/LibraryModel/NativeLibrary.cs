@@ -57,7 +57,7 @@ namespace Metaseed.Metatool.Plugin.LibraryModel
         /// <param name="packageVersion">The version of the package.</param>
         /// <param name="assetPath">The path within the NuGet package.</param>
         /// <returns></returns>
-        public static NativeLibrary CreateFromPackage(string packageId, string packageVersion, string assetPath)
+        public  NativeLibrary CreateFromPackage(string packageId, string packageVersion, string assetPath)
         {
             return new NativeLibrary(
                 Path.GetFileNameWithoutExtension(assetPath),

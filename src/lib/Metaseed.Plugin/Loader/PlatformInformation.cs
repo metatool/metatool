@@ -9,7 +9,7 @@ namespace Metaseed.Metatool.Plugin.Loader
 {
     internal class PlatformInformation
     {
-        public static readonly string[] NativeLibraryExtensions;
+        public static  readonly string[] NativeLibraryExtensions;
         public static readonly string[] NativeLibraryPrefixes;
         public static readonly string[] ManagedAssemblyExtensions = new[]
         {

@@ -48,9 +48,7 @@ namespace Metaseed.Metatool
             ConfigureServices(serviceCollection, configuration);
             ServiceLocator.Current = serviceCollection.BuildServiceProvider();
             var logger          = ServiceLocator.Current.GetService<ILogger<App>>();
-            PluginLoad.Load(serviceCollection, logger);
-
-            ServiceLocator.Current = serviceCollection.BuildServiceProvider();
+            PluginManager.Inst.InitPlugins(serviceCollection, logger);
 
             Notify.AddContextMenuItem("Show Log", e =>
             {
@@ -68,11 +66,7 @@ namespace Metaseed.Metatool
                 AutoStartManager.IsAutoStart);
 
             logger.LogInformation("Log in Program.cs");
-            var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>();
-            foreach (var plugin in plugins)
-            {
-                plugin.Init();
-            }
+            
         }
     }
 }

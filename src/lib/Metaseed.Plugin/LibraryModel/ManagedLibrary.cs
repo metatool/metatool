@@ -46,7 +46,7 @@ namespace Metaseed.Metatool.Plugin.LibraryModel
         /// <param name="packageVersion">The version of the package.</param>
         /// <param name="assetPath">The path within the NuGet package.</param>
         /// <returns></returns>
-        public static ManagedLibrary CreateFromPackage(string packageId, string packageVersion, string assetPath)
+        public  ManagedLibrary CreateFromPackage(string packageId, string packageVersion, string assetPath)
         {
             // When the asset comes from "lib/$tfm/", Microsoft.NET.Sdk will flatten this during publish based on the most compatible TFM.
             // The SDK will not flatten managed libraries found under runtimes/
