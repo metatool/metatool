@@ -16,6 +16,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Plugin
 {
+    public class PluginToken
+    {
+        public PluginLoader                Loader;
+        public ObservableFileSystemWatcher Watcher;
+    }
+
     public class PluginManager
     {
         public static PluginManager Inst = new PluginManager();
@@ -26,8 +32,7 @@ namespace Metaseed.Plugin
 
         private IServiceCollection _servicesCollection;
 
-        readonly Dictionary<string, (PluginLoader loader, ObservableFileSystemWatcher watcher)> _plugins =
-            new Dictionary<string, (PluginLoader, ObservableFileSystemWatcher)>();
+        readonly Dictionary<string, PluginToken> _plugins = new Dictionary<string, PluginToken>();
 
         public void InitPlugins(IServiceCollection services, ILogger logger)
         {
@@ -95,17 +100,14 @@ namespace Metaseed.Plugin
                         File.Move(rebuildPath + ".pdb", dllPath1       + ".pdb", true);
                     }
                 }
+
                 var plugin = _plugins[dllPath];
-                if (plugin.loader != null) // reload
+                if (plugin.Loader != null) // reload
                 {
                     try
                     {
-                        RemoveServices(_servicesCollection, plugin.loader);
-                        ServiceLocator.Current = _servicesCollection.BuildServiceProvider();
-                            plugin.watcher?.Stop().Dispose();
-                            _plugins.Remove(dllPath);
-                        plugin.loader.Dispose();
-                        if (!plugin.loader.IsAlive)
+                        Unload(dllPath);
+                        if (!plugin.Loader.IsAlive)
                         {
                             move(pluginDir, assemblyName);
                             logger.LogInformation($"{assemblyName}: plugin unloaded!");
@@ -121,7 +123,7 @@ namespace Metaseed.Plugin
                 }
                 else
                 {
-                    lastWatcher = plugin.watcher;
+                    lastWatcher = plugin.Watcher;
                     _plugins.Remove(dllPath);
                     move(pluginDir, assemblyName);
                 }
@@ -129,17 +131,24 @@ namespace Metaseed.Plugin
 
             logger.LogInformation($"{assemblyName}: Loading Plugin.");
             var loader = CreatePluginLoader(dllPath);
-            _plugins.Add(dllPath, (loader, lastWatcher));
-
+            _plugins.Add(dllPath, new PluginToken() {Loader = loader, Watcher = lastWatcher});
             var pluginTypes = ConfigureServices(_servicesCollection, loader, false);
             ServiceLocator.Current = _servicesCollection.BuildServiceProvider();
-
             // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
             pluginTypes.ToList().ForEach(t =>
             {
                 var plugin = ServiceLocator.Current.GetService(t) as IMetaPlugin;
                 plugin?.Init();
             });
+        }
+
+        private void Unload(string dllPath)
+        {
+            var plugin = _plugins[dllPath];
+            RemoveServices(_servicesCollection, plugin.Loader);
+            plugin.Watcher?.Stop().Dispose();
+            _plugins.Remove(dllPath);
+            plugin.Loader.Dispose();
         }
 
         private PluginLoader CreatePluginLoader(string pluginDll)
@@ -168,15 +177,14 @@ namespace Metaseed.Plugin
 
             if (_plugins.ContainsKey(dllPath))
             {
-                var plugin = _plugins[dllPath];
-                _plugins[dllPath] = (plugin.loader, watcher);
+                _plugins[dllPath].Watcher = watcher;
             }
             else
             {
-                _plugins.Add(dllPath, (null, watcher));
+                _plugins.Add(dllPath, new PluginToken(){ Watcher = watcher});
             }
 
-            var sub= watcher.Changed.Throttle(TimeSpan.FromSeconds(.5)).Subscribe(e =>
+            var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(.5)).Subscribe(e =>
             {
                 BuildReload(scriptPath, assemblyName, logger);
             });
@@ -214,6 +222,7 @@ namespace Metaseed.Plugin
             {
                 services.RemoveImplementation(pluginType);
             }
+            services.BuildServiceProvider();
         }
 
         private List<Type> ConfigureServices(IServiceCollection services, PluginLoader loader,
