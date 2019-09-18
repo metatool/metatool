@@ -46,9 +46,10 @@ namespace Metaseed.Metatool
             var serviceCollection = new ServiceCollection();
             var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
             ConfigureServices(serviceCollection, configuration);
-            ServiceLocator.Current = serviceCollection.BuildServiceProvider();
-            var logger          = ServiceLocator.Current.GetService<ILogger<App>>();
-            PluginManager.Inst.InitPlugins(serviceCollection, logger);
+            var provider = serviceCollection.BuildServiceProvider();
+            ServiceLocator.Current = provider;
+            var logger          = provider.GetService<ILogger<App>>();
+            var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
 
             Notify.AddContextMenuItem("Show Log", e =>
             {

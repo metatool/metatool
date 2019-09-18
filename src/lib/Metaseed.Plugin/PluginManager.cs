@@ -23,30 +23,27 @@ namespace Metaseed.Plugin
 
     public class PluginManager
     {
-        public static PluginManager Inst = new PluginManager();
+        private readonly ILogger<PluginManager> _logger;
 
-        private PluginManager()
+        public PluginManager(ILogger<PluginManager> logger, IServiceProvider services)
         {
-        }
-
-        private IServiceCollection _servicesCollection;
-
-        readonly Dictionary<string, PluginToken> _plugins = new Dictionary<string, PluginToken>();
-
-        public void InitPlugins(IServiceCollection services, ILogger logger)
-        {
-            _servicesCollection = services;
+            _services = services;
+            _logger = logger;
             try
             {
-                initPlugins(logger);
+                InitPlugins();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error while loading tools!");
+                _logger.LogError(ex, "Error while loading tools!");
             }
         }
 
-        private void initPlugins(ILogger logger)
+        private readonly IServiceProvider _services;
+
+        readonly Dictionary<string, PluginToken> _plugins = new Dictionary<string, PluginToken>();
+
+        private void InitPlugins()
         {
             var pluginsDir = Path.Combine(AppContext.BaseDirectory, "tools");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
@@ -64,26 +61,26 @@ namespace Metaseed.Plugin
 
                         if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
                         {
-                            BuildReload(scriptPath, assemblyName, logger);
+                            BuildReload(scriptPath, assemblyName);
                         }
                         else
                         {
-                            Load(scriptPath, assemblyName, logger);
+                            Load(scriptPath, assemblyName);
                         }
                     }
                     else
                     {
-                        BuildReload(scriptPath, assemblyName, logger);
+                        BuildReload(scriptPath, assemblyName);
                     }
                 }
                 else if (File.Exists(pluginDll))
                 {
-                    Load(scriptPath, assemblyName, logger, false);
+                    Load(scriptPath, assemblyName, false);
                 }
             }
         }
 
-        private void Load(string scriptPath, string assemblyName, ILogger logger, bool watch = true)
+        private void Load(string scriptPath, string assemblyName, bool watch = true)
         {
             var pluginDir = Path.GetDirectoryName(scriptPath);
             var dllPath   = Path.Combine(pluginDir, $"{assemblyName}.dll");
@@ -104,7 +101,7 @@ namespace Metaseed.Plugin
                             File.Move(rebuildPath + ".pdb", dllPath1 + ".pdb", true);
                     }
 
-                    logger1.LogInformation($"{assemblyName1}: plugin replaced with new one");
+                    logger1.LogInformation($"{assemblyName1}: replaced with new one");
                 }
 
                 var plugin = _plugins[dllPath];
@@ -112,23 +109,23 @@ namespace Metaseed.Plugin
                 {
                     try
                     {
-                        Unload(dllPath, logger);
+                        Unload(dllPath);
                         if (!plugin.Loader.IsAlive)
                         {
-                            logger.LogInformation($"{assemblyName}: unloaded!");
-                            move(pluginDir, assemblyName, logger);
+                            _logger.LogInformation($"{assemblyName}: unloaded!");
+                            move(pluginDir, assemblyName, _logger);
 
-                            Load(scriptPath, assemblyName, logger);
+                            Load(scriptPath, assemblyName);
                         }
                         else
                         {
-                            logger.LogError($"{assemblyName}: can NOT unload!");
-                            if (watch) Watch(scriptPath, assemblyName, logger);
+                            _logger.LogError($"{assemblyName}: can NOT unload!");
+                            if (watch) Watch(scriptPath, assemblyName);
                         }
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, $"Reloading {assemblyName}: Can't unload!!!");
+                        _logger.LogError(ex, $"Reloading {assemblyName}: Can't unload!!!");
                     }
 
                     return;
@@ -136,10 +133,10 @@ namespace Metaseed.Plugin
 
                 lastWatcher = plugin.Watcher;
                 _plugins.Remove(dllPath);
-                move(pluginDir, assemblyName, logger);
+                move(pluginDir, assemblyName,_logger);
             }
 
-            logger.LogInformation($"{assemblyName}: Loading Plugin.");
+            _logger.LogInformation($"{assemblyName}: Loading...");
             var loader = CreatePluginLoader(dllPath);
             var token = new PluginToken() {Loader = loader, Watcher = lastWatcher};
             _plugins.Add(dllPath,token );
@@ -148,18 +145,18 @@ namespace Metaseed.Plugin
             pluginTypes.ToList().ForEach(t =>
             {
                 var tool =
-                    ActivatorUtilities.CreateInstance(_servicesCollection.BuildServiceProvider(), t) as IMetaPlugin;
+                    ActivatorUtilities.CreateInstance(_services, t) as IMetaPlugin;
                 tool?.Init();
                 token.Tools.Add(tool);
             });
 
-            if (watch) Watch(scriptPath, assemblyName, logger);
+            if (watch) Watch(scriptPath, assemblyName);
         }
 
-        private void Unload(string dllPath, ILogger logger)
+        private void Unload(string dllPath)
         {
             var assemblyName = Path.GetFileName(dllPath);
-            logger.LogInformation($"{assemblyName}: start unloading...");
+            _logger.LogInformation($"{assemblyName}: start unloading...");
             //RemoveServices(_servicesCollection, plugin.Loader);
             var plugin = _plugins[dllPath];
             _plugins.Remove(dllPath);
@@ -182,7 +179,7 @@ namespace Metaseed.Plugin
             return loader;
         }
 
-        private void Watch(string scriptPath, string assemblyName, ILogger logger)
+        private void Watch(string scriptPath, string assemblyName)
         {
             var pluginDir = Path.GetDirectoryName(scriptPath);
             var dllPath   = Path.Combine(pluginDir, $"{assemblyName}.dll");
@@ -205,43 +202,43 @@ namespace Metaseed.Plugin
 
             var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(e =>
             {
-                logger.LogInformation($"Source file changed: {e.Name}");
+                _logger.LogInformation($"Source file changed: {e.Name}");
                 watcher.Stop().Dispose();
-                logger.LogInformation($"{assemblyName}: Stop watching source files");
-                BuildReload(scriptPath, assemblyName, logger);
+                _logger.LogInformation($"{assemblyName}: Stop watching source files");
+                BuildReload(scriptPath, assemblyName);
             });
             watcher.subs.Add(sub);
             watcher.Start();
-            logger.LogInformation($"{assemblyName}: watching modification of *.csx");
+            _logger.LogInformation($"{assemblyName}: watching modification of *.csx");
         }
 
         private static string AssemblyRebuildName(string assemblyName) => assemblyName + "_build";
 
-        private void BuildReload(string scriptPath, string assemblyName, ILogger logger)
+        private void BuildReload(string scriptPath, string assemblyName)
         {
-            logger.LogInformation($"start to build assembly: {assemblyName}...");
+            _logger.LogInformation($"start to build assembly: {assemblyName}...");
             try
             {
-                var scriptHost = new ScriptHost(logger);
+                var scriptHost = new ScriptHost(_logger);
                 scriptHost.Build(scriptPath, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
                 scriptHost.NotifyBuildResult += errors =>
                 {
                     if (errors.Count > 0)
                     {
-                        logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
-                        Watch(scriptPath, assemblyName, logger);
+                        _logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
+                        Watch(scriptPath, assemblyName);
                     }
                     else
                     {
-                        logger.LogInformation($"Assembly {assemblyName}: build successfully!");
-                        Load(scriptPath, assemblyName, logger);
+                        _logger.LogInformation($"Assembly {assemblyName}: build successfully!");
+                        Load(scriptPath, assemblyName);
                     }
                 };
             }
             catch (Exception e)
             {
-                logger.LogError(e,$"Assembly {assemblyName}: build errors!");
-                Watch(scriptPath, assemblyName, logger);
+                _logger.LogError(e,$"Assembly {assemblyName}: build errors!");
+                Watch(scriptPath, assemblyName);
             }
         }
 
