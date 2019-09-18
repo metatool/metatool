@@ -12,6 +12,8 @@ namespace Metaseed.MetaPlugin
             _logger                  =  logger;
         }
 
+        protected ILogger Log => _logger;
+
         private void OnPluginUnloadingRequested(AssemblyLoadContext obj)
         {
             this.OnUnloading();
@@ -28,4 +30,5 @@ namespace Metaseed.MetaPlugin
             _logger.LogInformation($"{this.GetType().Name} start unloading, make sure resources get released here");
         }
     }
+
 }
