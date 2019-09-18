@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -57,10 +58,11 @@ namespace Metaseed.Script
             ParseOptions = (parseOptions ?? new CSharpParseOptions())
                 .WithKind(SourceCodeKind.Script)
                 .WithPreprocessorSymbols(PreprocessorSymbols);
-            References       = references?.AsImmutable() ?? ImmutableArray<MetadataReference>.Empty;
-            Usings           = usings?.AsImmutable()     ?? ImmutableArray<string>.Empty;
-            FilePath         = filePath                  ?? string.Empty;
-                MetadataResolver = metadataResolver          ?? ScriptMetadataResolver.Default.WithBaseDirectory(workingDirectory);
+            References = references?.AsImmutable() ?? ImmutableArray<MetadataReference>.Empty;
+            Usings     = usings?.AsImmutable()     ?? ImmutableArray<string>.Empty;
+            FilePath   = filePath                  ?? string.Empty;
+            MetadataResolver = metadataResolver ??
+                               ScriptMetadataResolver.Default.WithBaseDirectory(workingDirectory);
             SourceResolver = sourceResolver ??
                              (workingDirectory != null
                                  ? new SourceFileResolver(ImmutableArray<string>.Empty, workingDirectory)
@@ -183,11 +185,12 @@ namespace Metaseed.Script
             {
                 peStream.Position  = 0;
                 pdbStream.Position = 0;
-
+                if (!Debugger.IsAttached)
+                    await CopyToFileAsync(Path.ChangeExtension(assemblyPath, "pdb"), pdbStream).ConfigureAwait(false);
                 await CopyToFileAsync(assemblyPath, peStream).ConfigureAwait(false);
-                await CopyToFileAsync(Path.ChangeExtension(assemblyPath, "pdb"), pdbStream).ConfigureAwait(false);
             }
         }
+
 
         private static async Task CopyToFileAsync(string path, Stream stream)
         {

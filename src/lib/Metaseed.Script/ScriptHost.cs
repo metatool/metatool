@@ -14,9 +14,9 @@ namespace Metaseed.Script
 {
     public class ScriptHost
     {
-        private          ILogger                _logger;
-        private          MetadataReference[]    _defaultReferences;
-        private readonly ImmutableArray<string> _defaultImports;
+        private          ILogger                                 _logger;
+        private          MetadataReference[]                     _defaultReferences;
+        private readonly ImmutableArray<string>                  _defaultImports;
         public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
         public ScriptHost(ILogger logger)
@@ -77,13 +77,14 @@ namespace Metaseed.Script
             return GetReferencePaths(DefaultReferences).Concat(references).ToImmutableArray();
         }
 
-        public void Build(string path, string assemblyName = null, OptimizationLevel optimization= OptimizationLevel.Debug)
+        public void Build(string path, string assemblyName = null,
+            OptimizationLevel optimization = OptimizationLevel.Debug)
         {
-            var code         = File.ReadAllText(path: path);
-            var refs         = LibRefParser.ParseReference(code: code);
-            var name         = assemblyName?? Path.GetFileNameWithoutExtension(path: path);
-            var directory    = Path.GetDirectoryName(path: path);
-            var nugetPackage = new NugetPackage(logger: _logger);
+            var code         = File.ReadAllText( path);
+            var refs         = LibRefParser.ParseReference(code);
+            var name         = assemblyName ?? Path.GetFileNameWithoutExtension( path);
+            var directory    = Path.GetDirectoryName(path);
+            var nugetPackage = new NugetPackage(_logger);
 
             var packageViewModel = new PackageViewModel(_logger, nugetPackage)
                 {Id = name, RestorePath = Path.Combine(directory, "nuget")};
@@ -92,7 +93,7 @@ namespace Metaseed.Script
             nugetPackage.RestoreCompleted += async restoreResult =>
             {
                 var executionHostParameters = new ExecutionHostParameters(
-                    compileReferences: ImmutableArray<string>.Empty, 
+                    compileReferences: ImmutableArray<string>.Empty,
                     runtimeReferences: ImmutableArray<string>.Empty,
                     directReferences: ImmutableArray<string>.Empty,
                     frameworkReferences: FrameworkReferences,
@@ -110,20 +111,20 @@ namespace Metaseed.Script
                 executionHostParameters.DirectReferences = packageViewModel.LocalLibraryPaths;
 
                 var executionHost =
-                    new ExecutionHost(parameters: executionHostParameters, buildPath: directory, name: name);
+                    new ExecutionHost(executionHostParameters,  directory, name);
                 // executionHost.Dumped            += AddResult;
                 // executionHost.Error             += ExecutionHostOnError;
                 // executionHost.ReadInput         += ExecutionHostOnInputRequest;
                 // executionHost.CompilationErrors += ExecutionHostOnCompilationErrors;
-                executionHost.NotifyBuildResult += e=> NotifyBuildResult?.Invoke(e);
-                await executionHost.BuildAndExecuteAsync(code: code, optimizationLevel: optimization);
+                executionHost.NotifyBuildResult += e => NotifyBuildResult?.Invoke(e);
+                await executionHost.BuildAndExecuteAsync(code, optimization);
             };
             if (DefaultReferences.Length > 0)
             {
-              
                 refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
             }
-            packageViewModel.UpdateLibraries(libraries: refs);
+
+            packageViewModel.UpdateLibraries(refs);
         }
 
         // private void AddResult(IResultObject o)

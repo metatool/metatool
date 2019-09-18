@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -49,41 +50,40 @@ namespace Metaseed.Plugin
             var pluginsDir = Path.Combine(AppContext.BaseDirectory, "tools");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
-                var dirName      = Path.GetFileName(dir);
-                var pluginDll    = Path.Combine(dir, dirName + ".dll");
-                var pluginScript = Path.Combine(dir, "main.csx");
+                var assemblyName = Path.GetFileName(dir);
+                var pluginDll    = Path.Combine(dir, assemblyName + ".dll");
+                var scriptPath = Path.Combine(dir, "main.csx");
 
-                if (File.Exists(pluginScript))
+                if (File.Exists(scriptPath))
                 {
                     if (File.Exists(pluginDll))
                     {
                         var dllInfo    = new FileInfo(pluginDll);
-                        var scriptInfo = new FileInfo(pluginScript);
+                        var scriptInfo = new FileInfo(scriptPath);
 
                         if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
                         {
-                            BuildReload(pluginScript, dirName, logger);
+                            BuildReload(scriptPath, assemblyName, logger);
                         }
                         else
                         {
-                            Load(pluginScript, dirName, logger);
+                            Load(scriptPath, assemblyName, logger);
                         }
                     }
                     else
                     {
-                        BuildReload(pluginScript, dirName, logger);
+                        BuildReload(scriptPath, assemblyName, logger);
                     }
 
-                    Watch(pluginScript, dirName, logger);
                 }
                 else if (File.Exists(pluginDll))
                 {
-                    Load(pluginScript, dirName, logger);
+                    Load(scriptPath, assemblyName, logger, false);
                 }
             }
         }
 
-        private void Load(string scriptPath, string assemblyName, ILogger logger)
+        private void Load(string scriptPath, string assemblyName, ILogger logger, bool watch = true)
         {
             var pluginDir = Path.GetDirectoryName(scriptPath);
             var dllPath   = Path.Combine(pluginDir, $"{assemblyName}.dll");
@@ -95,18 +95,13 @@ namespace Metaseed.Plugin
                 {
                     var rebuildPath = Path.Combine(pluginDir1, AssemblyRebuildName(assemblyName1));
                     var dllPath1    = Path.Combine(pluginDir1, assemblyName1);
-                    var dllPathOld = Path.Combine(pluginDir1, assemblyName1+"_old");
 
                     if (File.Exists(rebuildPath + ".dll"))
                     {
-
-                        File.Move(dllPath1 + ".dll", dllPathOld + ".dll", true);
-                        File.Move(dllPath1 + ".deps.json", dllPathOld + ".deps.json", true);
-                        File.Move(dllPath1 + ".pdb", dllPathOld + ".pdb", true);
-
                         File.Move(rebuildPath + ".dll", dllPath1       + ".dll", true);
                         File.Move(rebuildPath + ".deps.json", dllPath1 + ".deps.json", true);
-                        File.Move(rebuildPath + ".pdb", dllPath1       + ".pdb", true);
+                        if (!Debugger.IsAttached)
+                            File.Move(rebuildPath + ".pdb", dllPath1       + ".pdb", true);
                     }
                     logger1.LogInformation($"{assemblyName1}: plugin replaced with new one");
                 }
@@ -153,6 +148,8 @@ namespace Metaseed.Plugin
                     ActivatorUtilities.CreateInstance(_servicesCollection.BuildServiceProvider(), t) as IMetaPlugin;
                 plugin?.Init();
             });
+
+            if(watch)Watch(scriptPath, assemblyName, logger);
         }
 
         private void Unload(string dllPath,ILogger logger)
