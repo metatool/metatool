@@ -5,6 +5,7 @@ using ConsoleApp1;
 using Metaseed.Input;
 using Metaseed.MetaKeyboard;
 using Metaseed.MetaPlugin;
+using Microsoft.Extensions.Logging;
 using Mouse = Metaseed.MetaKeyboard.Mouse;
 
 namespace Metaseed.ScreenHint
@@ -24,6 +25,10 @@ namespace Metaseed.ScreenHint
             var software = new Software();
             Keyboard.Hook();
             return base.Init();
+        }
+
+        public KeyboardPlugin(ILogger<KeyboardPlugin> logger) : base(logger)
+        {
         }
     }
 }

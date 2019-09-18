@@ -10,9 +10,8 @@ namespace Metaseed.ScreenHint
     {
         private ScreenHint _screenHint;
 
-        public ScreenHintPlugin(ILogger<ScreenHintPlugin> logger)
+        public ScreenHintPlugin(ILogger<ScreenHintPlugin> logger) : base(logger)
         {
-            logger.LogInformation("Hello!!!!!!!!!!");
         }
 
         public override bool Init()
