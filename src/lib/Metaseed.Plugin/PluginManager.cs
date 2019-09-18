@@ -18,6 +18,7 @@ namespace Metaseed.Plugin
     {
         public PluginLoader                Loader;
         public ObservableFileSystemWatcher Watcher;
+        public List<IMetaPlugin> Tools = new List<IMetaPlugin>();
     }
 
     public class PluginManager
@@ -41,7 +42,7 @@ namespace Metaseed.Plugin
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                logger.LogError(ex, "Error while loading tools!");
             }
         }
 
@@ -52,7 +53,7 @@ namespace Metaseed.Plugin
             {
                 var assemblyName = Path.GetFileName(dir);
                 var pluginDll    = Path.Combine(dir, assemblyName + ".dll");
-                var scriptPath = Path.Combine(dir, "main.csx");
+                var scriptPath   = Path.Combine(dir, "main.csx");
 
                 if (File.Exists(scriptPath))
                 {
@@ -74,7 +75,6 @@ namespace Metaseed.Plugin
                     {
                         BuildReload(scriptPath, assemblyName, logger);
                     }
-
                 }
                 else if (File.Exists(pluginDll))
                 {
@@ -101,8 +101,9 @@ namespace Metaseed.Plugin
                         File.Move(rebuildPath + ".dll", dllPath1       + ".dll", true);
                         File.Move(rebuildPath + ".deps.json", dllPath1 + ".deps.json", true);
                         if (!Debugger.IsAttached)
-                            File.Move(rebuildPath + ".pdb", dllPath1       + ".pdb", true);
+                            File.Move(rebuildPath + ".pdb", dllPath1 + ".pdb", true);
                     }
+
                     logger1.LogInformation($"{assemblyName1}: plugin replaced with new one");
                 }
 
@@ -115,13 +116,14 @@ namespace Metaseed.Plugin
                         if (!plugin.Loader.IsAlive)
                         {
                             logger.LogInformation($"{assemblyName}: unloaded!");
-                            move(pluginDir, assemblyName,logger);
-                            
+                            move(pluginDir, assemblyName, logger);
+
                             Load(scriptPath, assemblyName, logger);
                         }
                         else
                         {
                             logger.LogError($"{assemblyName}: can NOT unload!");
+                            if (watch) Watch(scriptPath, assemblyName, logger);
                         }
                     }
                     catch (Exception ex)
@@ -134,33 +136,37 @@ namespace Metaseed.Plugin
 
                 lastWatcher = plugin.Watcher;
                 _plugins.Remove(dllPath);
-                move(pluginDir, assemblyName,logger);
+                move(pluginDir, assemblyName, logger);
             }
 
             logger.LogInformation($"{assemblyName}: Loading Plugin.");
             var loader = CreatePluginLoader(dllPath);
-            _plugins.Add(dllPath, new PluginToken() {Loader = loader, Watcher = lastWatcher});
+            var token = new PluginToken() {Loader = loader, Watcher = lastWatcher};
+            _plugins.Add(dllPath,token );
             var pluginTypes = GetPluginTypes(loader);
             // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
             pluginTypes.ToList().ForEach(t =>
             {
-                var plugin =
+                var tool =
                     ActivatorUtilities.CreateInstance(_servicesCollection.BuildServiceProvider(), t) as IMetaPlugin;
-                plugin?.Init();
+                tool?.Init();
+                token.Tools.Add(tool);
             });
 
-            if(watch)Watch(scriptPath, assemblyName, logger);
+            if (watch) Watch(scriptPath, assemblyName, logger);
         }
 
-        private void Unload(string dllPath,ILogger logger)
+        private void Unload(string dllPath, ILogger logger)
         {
             var assemblyName = Path.GetFileName(dllPath);
             logger.LogInformation($"{assemblyName}: start unloading...");
             //RemoveServices(_servicesCollection, plugin.Loader);
             var plugin = _plugins[dllPath];
             _plugins.Remove(dllPath);
+            var tools = plugin.Tools;
+            tools.ForEach(tool=> tool.OnUnloading());
+            tools.Clear();
             var loader = plugin.Loader;
-            plugin.Watcher?.Stop().Dispose();
             loader?.Dispose();
         }
 
@@ -201,6 +207,7 @@ namespace Metaseed.Plugin
             {
                 logger.LogInformation($"Source file changed: {e.Name}");
                 watcher.Stop().Dispose();
+                logger.LogInformation($"{assemblyName}: Stop watching source files");
                 BuildReload(scriptPath, assemblyName, logger);
             });
             watcher.subs.Add(sub);
@@ -213,20 +220,29 @@ namespace Metaseed.Plugin
         private void BuildReload(string scriptPath, string assemblyName, ILogger logger)
         {
             logger.LogInformation($"start to build assembly: {assemblyName}...");
-            var scriptHost = new ScriptHost(logger);
-            scriptHost.Build(scriptPath, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
-            scriptHost.NotifyBuildResult += errors =>
+            try
             {
-                if (errors.Count > 0)
+                var scriptHost = new ScriptHost(logger);
+                scriptHost.Build(scriptPath, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
+                scriptHost.NotifyBuildResult += errors =>
                 {
-                    logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
-                }
-                else
-                {
-                    logger.LogInformation($"Assembly {assemblyName}: build successfully!");
-                    Load(scriptPath, assemblyName, logger);
-                }
-            };
+                    if (errors.Count > 0)
+                    {
+                        logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
+                        Watch(scriptPath, assemblyName, logger);
+                    }
+                    else
+                    {
+                        logger.LogInformation($"Assembly {assemblyName}: build successfully!");
+                        Load(scriptPath, assemblyName, logger);
+                    }
+                };
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e,$"Assembly {assemblyName}: build errors!");
+                Watch(scriptPath, assemblyName, logger);
+            }
         }
 
         private void RemoveServices(IServiceCollection services, PluginLoader loader)

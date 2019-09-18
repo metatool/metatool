@@ -5,5 +5,6 @@ namespace Metaseed.MetaPlugin
     public interface IMetaPlugin
     {
         bool Init();
+        void OnUnloading();
     }
 }
