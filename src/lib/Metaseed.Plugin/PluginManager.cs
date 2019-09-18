@@ -36,45 +36,50 @@ namespace Metaseed.Plugin
             _servicesCollection = services;
             try
             {
-                var pluginsDir = Path.Combine(AppContext.BaseDirectory, "tools");
-                foreach (var dir in Directory.GetDirectories(pluginsDir))
-                {
-                    var dirName      = Path.GetFileName(dir);
-                    var pluginDll    = Path.Combine(dir, dirName + ".dll");
-                    var pluginScript = Path.Combine(dir, "main.csx");
-
-                    if (File.Exists(pluginScript))
-                    {
-                        if (File.Exists(pluginDll))
-                        {
-                            var dllInfo    = new FileInfo(pluginDll);
-                            var scriptInfo = new FileInfo(pluginScript);
-
-                            if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
-                            {
-                                BuildReload(pluginScript, dirName, logger);
-                            }
-                            else
-                            {
-                                Load(pluginScript, dirName, logger);
-                            }
-                        }
-                        else
-                        {
-                            BuildReload(pluginScript, dirName, logger);
-                        }
-
-                        Watch(pluginScript, dirName, logger);
-                    }
-                    else if (File.Exists(pluginDll))
-                    {
-                        Load(pluginScript, dirName, logger);
-                    }
-                }
+                initPlugins(logger);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+            }
+        }
+
+        private void initPlugins(ILogger logger)
+        {
+            var pluginsDir = Path.Combine(AppContext.BaseDirectory, "tools");
+            foreach (var dir in Directory.GetDirectories(pluginsDir))
+            {
+                var dirName      = Path.GetFileName(dir);
+                var pluginDll    = Path.Combine(dir, dirName + ".dll");
+                var pluginScript = Path.Combine(dir, "main.csx");
+
+                if (File.Exists(pluginScript))
+                {
+                    if (File.Exists(pluginDll))
+                    {
+                        var dllInfo    = new FileInfo(pluginDll);
+                        var scriptInfo = new FileInfo(pluginScript);
+
+                        if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
+                        {
+                            BuildReload(pluginScript, dirName, logger);
+                        }
+                        else
+                        {
+                            Load(pluginScript, dirName, logger);
+                        }
+                    }
+                    else
+                    {
+                        BuildReload(pluginScript, dirName, logger);
+                    }
+
+                    Watch(pluginScript, dirName, logger);
+                }
+                else if (File.Exists(pluginDll))
+                {
+                    Load(pluginScript, dirName, logger);
+                }
             }
         }
 
@@ -86,16 +91,24 @@ namespace Metaseed.Plugin
             ObservableFileSystemWatcher lastWatcher = null;
             if (_plugins.ContainsKey(dllPath))
             {
-                static void move(string pluginDir1, string assemblyName1)
+                static void move(string pluginDir1, string assemblyName1, ILogger logger1)
                 {
                     var rebuildPath = Path.Combine(pluginDir1, AssemblyRebuildName(assemblyName1));
                     var dllPath1    = Path.Combine(pluginDir1, assemblyName1);
+                    var dllPathOld = Path.Combine(pluginDir1, assemblyName1+"_old");
+
                     if (File.Exists(rebuildPath + ".dll"))
                     {
+
+                        File.Move(dllPath1 + ".dll", dllPathOld + ".dll", true);
+                        File.Move(dllPath1 + ".deps.json", dllPathOld + ".deps.json", true);
+                        File.Move(dllPath1 + ".pdb", dllPathOld + ".pdb", true);
+
                         File.Move(rebuildPath + ".dll", dllPath1       + ".dll", true);
                         File.Move(rebuildPath + ".deps.json", dllPath1 + ".deps.json", true);
                         File.Move(rebuildPath + ".pdb", dllPath1       + ".pdb", true);
                     }
+                    logger1.LogInformation($"{assemblyName1}: plugin replaced with new one");
                 }
 
                 var plugin = _plugins[dllPath];
@@ -103,12 +116,17 @@ namespace Metaseed.Plugin
                 {
                     try
                     {
-                        Unload(dllPath);
+                        Unload(dllPath, logger);
                         if (!plugin.Loader.IsAlive)
                         {
-                            move(pluginDir, assemblyName);
-                            logger.LogInformation($"{assemblyName}: plugin unloaded!");
+                            logger.LogInformation($"{assemblyName}: unloaded!");
+                            move(pluginDir, assemblyName,logger);
+                            
                             Load(scriptPath, assemblyName, logger);
+                        }
+                        else
+                        {
+                            logger.LogError($"{assemblyName}: can NOT unload!");
                         }
                     }
                     catch (Exception ex)
@@ -118,12 +136,10 @@ namespace Metaseed.Plugin
 
                     return;
                 }
-                else
-                {
-                    lastWatcher = plugin.Watcher;
-                    _plugins.Remove(dllPath);
-                    move(pluginDir, assemblyName);
-                }
+
+                lastWatcher = plugin.Watcher;
+                _plugins.Remove(dllPath);
+                move(pluginDir, assemblyName,logger);
             }
 
             logger.LogInformation($"{assemblyName}: Loading Plugin.");
@@ -139,10 +155,12 @@ namespace Metaseed.Plugin
             });
         }
 
-        private void Unload(string dllPath)
+        private void Unload(string dllPath,ILogger logger)
         {
-            var plugin = _plugins[dllPath];
+            var assemblyName = Path.GetFileName(dllPath);
+            logger.LogInformation($"{assemblyName}: start unloading...");
             //RemoveServices(_servicesCollection, plugin.Loader);
+            var plugin = _plugins[dllPath];
             _plugins.Remove(dllPath);
             var loader = plugin.Loader;
             plugin.Watcher?.Stop().Dispose();
@@ -184,6 +202,8 @@ namespace Metaseed.Plugin
 
             var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(e =>
             {
+                logger.LogInformation($"Source file changed: {e.Name}");
+                watcher.Stop().Dispose();
                 BuildReload(scriptPath, assemblyName, logger);
             });
             watcher.subs.Add(sub);
@@ -195,6 +215,7 @@ namespace Metaseed.Plugin
 
         private void BuildReload(string scriptPath, string assemblyName, ILogger logger)
         {
+            logger.LogInformation($"start to build assembly: {assemblyName}...");
             var scriptHost = new ScriptHost(logger);
             scriptHost.Build(scriptPath, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
             scriptHost.NotifyBuildResult += errors =>

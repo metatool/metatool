@@ -40,7 +40,7 @@ namespace Metaseed.Metatool
         {
             base.OnStartup(e);
             Application.Current.MainWindow = new Settings();
-            Notify.ShowMessage("MetaKeyboard started!");
+            Notify.ShowMessage("Metatool starting...");
 
             UI.Window.InitialConsole();
             var serviceCollection = new ServiceCollection();
@@ -65,8 +65,8 @@ namespace Metaseed.Metatool
             Notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
                 AutoStartManager.IsAutoStart);
 
-            logger.LogInformation("Log in Program.cs");
-            
+            logger.LogInformation("Metatool started!");
+            Notify.ShowMessage("Metatool started!");
         }
     }
 }

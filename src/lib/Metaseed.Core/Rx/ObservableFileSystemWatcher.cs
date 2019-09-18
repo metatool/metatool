@@ -84,6 +84,7 @@ namespace Metaseed.Reactive
         public void Dispose()
         {
             subs.ForEach(d=>d.Dispose());
+            subs.Clear();
             Watcher.Dispose();
         }
     }
