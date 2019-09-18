@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using Metaseed.Core;
 using Metaseed.MetaPlugin;
 using Metaseed.Metatool.Plugin;
 using Metaseed.Reactive;
 using Metaseed.Script;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -132,12 +129,12 @@ namespace Metaseed.Plugin
             logger.LogInformation($"{assemblyName}: Loading Plugin.");
             var loader = CreatePluginLoader(dllPath);
             _plugins.Add(dllPath, new PluginToken() {Loader = loader, Watcher = lastWatcher});
-            var pluginTypes = ConfigureServices(_servicesCollection, loader, false);
-            ServiceLocator.Current = _servicesCollection.BuildServiceProvider();
+            var pluginTypes = GetPluginTypes(loader);
             // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
             pluginTypes.ToList().ForEach(t =>
             {
-                var plugin = ServiceLocator.Current.GetService(t) as IMetaPlugin;
+                var plugin =
+                    ActivatorUtilities.CreateInstance(_servicesCollection.BuildServiceProvider(), t) as IMetaPlugin;
                 plugin?.Init();
             });
         }
@@ -145,10 +142,11 @@ namespace Metaseed.Plugin
         private void Unload(string dllPath)
         {
             var plugin = _plugins[dllPath];
-            RemoveServices(_servicesCollection, plugin.Loader);
-            plugin.Watcher?.Stop().Dispose();
+            //RemoveServices(_servicesCollection, plugin.Loader);
             _plugins.Remove(dllPath);
-            plugin.Loader.Dispose();
+            var loader = plugin.Loader;
+            plugin.Watcher?.Stop().Dispose();
+            loader?.Dispose();
         }
 
         private PluginLoader CreatePluginLoader(string pluginDll)
@@ -181,10 +179,10 @@ namespace Metaseed.Plugin
             }
             else
             {
-                _plugins.Add(dllPath, new PluginToken(){ Watcher = watcher});
+                _plugins.Add(dllPath, new PluginToken() {Watcher = watcher});
             }
 
-            var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(.5)).Subscribe(e =>
+            var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(e =>
             {
                 BuildReload(scriptPath, assemblyName, logger);
             });
@@ -222,28 +220,16 @@ namespace Metaseed.Plugin
             {
                 services.RemoveImplementation(pluginType);
             }
-            services.BuildServiceProvider();
+
+            // services.BuildServiceProvider();
         }
 
-        private List<Type> ConfigureServices(IServiceCollection services, PluginLoader loader,
-            bool isGeneral = true)
+        private List<Type> GetPluginTypes(PluginLoader loader)
+
         {
-            var r = new List<Type>();
-            foreach (var pluginType in loader
-                .MainAssembly
-                .GetTypes()
-                .Where(t => typeof(IMetaPlugin).IsAssignableFrom(t) && !t.IsAbstract))
-            {
-                services.RemoveImplementation(pluginType);
-                if (isGeneral)
-                    services.AddSingleton(typeof(IMetaPlugin), pluginType);
-                else
-                    services.AddSingleton(pluginType);
-
-                r.Add(pluginType);
-            }
-
-            return r;
+            return loader.MainAssembly.GetTypes()
+                .Where(t => typeof(IMetaPlugin).IsAssignableFrom(t) && !t.IsAbstract)
+                .ToList();
         }
     }
 

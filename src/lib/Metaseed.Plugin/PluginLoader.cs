@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Windows.Threading;
 using Metaseed.Metatool.Plugin.Loader;
 
 namespace Metaseed.Metatool.Plugin
@@ -73,16 +74,17 @@ namespace Metaseed.Metatool.Plugin
         }
 
         private readonly PluginConfig        _config;
-        private readonly WeakReference _contextWeekReference;
-        private AssemblyLoadContext Context => _contextWeekReference.Target as AssemblyLoadContext;
-
-        internal bool IsAlive => _contextWeekReference.IsAlive;
-        private volatile bool                _disposed;
-        private Assembly _mainAssembly;
+        private readonly WeakReference       _contextWeekReference;
+        private          AssemblyLoadContext Context => _contextWeekReference.Target as AssemblyLoadContext;
+        internal         bool       IsAlive => _contextWeekReference.IsAlive;
+        private volatile bool       _disposed;
+        private          Assembly   _mainAssembly;
+        private static   Dispatcher _dispatcher;
 
         public PluginLoader(PluginConfig config)
         {
-            _config  = config ?? throw new ArgumentNullException(nameof(config));
+            _dispatcher = Dispatcher.CurrentDispatcher;
+            _config = config ?? throw new ArgumentNullException(nameof(config));
             var alc = CreateLoadContext(config);
             _contextWeekReference = new WeakReference(alc, trackResurrection: true);
         }
@@ -116,19 +118,17 @@ namespace Metaseed.Metatool.Plugin
 
         public void Dispose()
         {
+            _mainAssembly = null;
             if (_disposed)
             {
                 return;
             }
-
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             _disposed = true;
-            _mainAssembly = null;
-
             if (IsUnloadable)
             {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                Context.Unload();
+                _dispatcher.BeginInvoke(() => Context?.Unload());
                 for (var i = 0; _contextWeekReference.IsAlive && (i < 10); i++)
                 {
                     GC.Collect();
