@@ -11,10 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.TraceSource;
-using Win=Metatool.UI.Window;
+using Win = Metatool.UI.Window;
+
 namespace Metaseed.Metatool
 {
-    public partial class App:Application
+    public partial class App : Application
     {
         private TaskbarIcon notifyIcon;
 
@@ -25,7 +26,7 @@ namespace Metaseed.Metatool
                     loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
                     loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
                     loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
-                        new SourceSwitch("sourceSwitch", "Logging Sample"){Level = SourceLevels.All},
+                        new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                         new TextWriterTraceListener(writer: Console.Out)));
                     //loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
                     loggingBuilder.AddFile(o => o.RootPath = AppContext.BaseDirectory);
@@ -40,9 +41,8 @@ namespace Metaseed.Metatool
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Current.MainWindow = new Settings();
             Notify.ShowMessage("Metatool starting...");
-
+            Current.MainWindow = new MainWindow();
             Win.InitialConsole();
             var serviceCollection = new ServiceCollection();
             var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
@@ -65,7 +65,6 @@ namespace Metaseed.Metatool
 
             logger.LogInformation("Metatool started!");
             Notify.ShowMessage("Metatool started!");
-
         }
     }
 }

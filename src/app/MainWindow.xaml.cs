@@ -1,13 +1,13 @@
 ﻿using System.Windows;
 
-namespace Metatool.Metaing
+namespace Metaseed.Metatool
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Settings : Window
+    public partial class MainWindow : Window
     {
-        public Settings()
+        public MainWindow()
         {
             InitializeComponent();
         }

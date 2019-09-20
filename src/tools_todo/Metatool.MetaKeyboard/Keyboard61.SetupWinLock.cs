@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using Accessibility;
 using Metatool.Input;
 using Microsoft.Win32;
 
@@ -10,14 +12,13 @@ namespace ConsoleApp1
         {
             static void EnableWinLock()
             {
-                Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")
+                Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")?
                     .SetValue("DisableLockWorkstation", 0, RegistryValueKind.DWord);
             }
 
             static void DisableWinLock()
             {
-                Console.WriteLine("WinLock disabled!");
-                Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")
+                Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")?
                     .SetValue("DisableLockWorkstation", 1, RegistryValueKind.DWord);
             }
 
@@ -39,12 +40,17 @@ namespace ConsoleApp1
                     // disable again, so when unlocked, *+Win+L would not trigger screen locking
                     DisableWinLock();
                 });
+                Application.Current.DispatcherUnhandledException += (_,__) => EnableWinLock();
+                AppDomain.CurrentDomain.UnhandledException += (_, __) => EnableWinLock();
+                Application.Current.Exit += (_, __) => EnableWinLock();
+                Console.WriteLine("WinLock disabled!");
+                
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                // Console.WriteLine(e.Message);
                 Console.WriteLine("Could not disable WinLock(Win+L), so *+Win+L would trigger ScreenLock, press LCtrl+LWin+LAlt+X to restart with Admin rights.");
             }
+
         }
     }
 }
