@@ -29,25 +29,26 @@ namespace Metatool.MetaKeyboard
 
     public class Notify
     {
-        private static TaskbarIcon trayIcon;
+        private static readonly TaskbarIcon TrayIcon;
 
         static Notify()
         {
             var resource = new Uri("pack://application:,,,/Metatool.UI;component/Notify/NotifyIconResources.xaml",
                 UriKind.RelativeOrAbsolute);
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() {Source = resource});
-            trayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
+            TrayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
         }
 
-        public static MenuItem AddContextMenuItem(string header, Action<MenuItem> excute,
-            Func<MenuItem, bool> canExcute = null, bool isCheckable = false, bool? initialState = null)
+        public static MenuItem AddContextMenuItem(string header, Action<MenuItem> execute,
+            Func<MenuItem, bool> canExecute = null, bool isCheckable = false, bool? isChecked = null)
         {
             var item                                  = new MenuItem() {Header = header, IsCheckable = isCheckable};
-            if (initialState.HasValue) item.IsChecked = initialState.Value;
+            if (isChecked.HasValue)
+                item.IsChecked = isChecked.Value;
             item.Command = new DelegateCommand<MenuItem>()
-                {CanExecuteFunc = canExcute, CommandAction = excute};
+                {CanExecuteFunc = canExecute, CommandAction = execute};
             item.CommandParameter = item;
-            trayIcon.ContextMenu.Items.Insert(0, item);
+            TrayIcon.ContextMenu?.Items.Insert(0, item);
 
             return item;
         }
@@ -55,13 +56,13 @@ namespace Metatool.MetaKeyboard
         public static void ShowMessage(string msg)
         {
             if (msg == "") return;
-            trayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
+            TrayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
 
         public class MessageToken<T>
         {
             private readonly Popup           _popup;
-            internal         DispatcherTimer _timer;
+            internal         DispatcherTimer Timer;
             public           bool            IsClosed;
 
             internal MessageToken(Popup popup)
@@ -75,7 +76,7 @@ namespace Metatool.MetaKeyboard
                 var dataContext = _popup.DataContext as ObservableCollection<T>;
                 dataContext.Clear();
                 _popup.IsOpen = false;
-                _timer?.Stop();
+                Timer?.Stop();
                 IsClosed = true;
             }
 
@@ -83,13 +84,13 @@ namespace Metatool.MetaKeyboard
             {
                 IsClosed      = false;
                 _popup.IsOpen = true;
-                _timer?.Stop();
-                _timer?.Start();
+                Timer?.Stop();
+                Timer?.Start();
             }
         }
 
         private static ObservableCollection<TipItem> selectActions;
-        public static  MessageToken<TipItem>                  SelectionToken;
+        public static  MessageToken<TipItem>         SelectionToken;
 
         public static MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips)
         {
@@ -133,7 +134,8 @@ namespace Metatool.MetaKeyboard
             if (!dispatcher.CheckAccess())
             {
                 return dispatcher.Invoke(DispatcherPriority.Normal,
-                        (Func<MessageToken<TipItem>>) (() => ShowMessage(balloon, data, timeout, position, animation))) as
+                        (Func<MessageToken<TipItem>>) (() =>
+                            ShowMessage(balloon, data, timeout, position, animation))) as
                     MessageToken<TipItem>;
             }
 
@@ -159,7 +161,7 @@ namespace Metatool.MetaKeyboard
             popup.PopupAnimation     = animation;
             popup.Placement          = PlacementMode.AbsolutePoint;
             popup.StaysOpen          = true;
-            popup.DataContext      = data;
+            popup.DataContext        = data;
 
             Point point;
             switch (position)
@@ -244,15 +246,15 @@ namespace Metatool.MetaKeyboard
 
             void TimerTick(object sender, EventArgs e)
             {
-                r._timer.Tick -= TimerTick;
+                r.Timer.Tick -= TimerTick;
                 r.Close();
             }
 
             if (timeout.HasValue)
             {
-                r._timer      =  new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(timeout.Value)};
-                r._timer.Tick += TimerTick;
-                r._timer.Start();
+                r.Timer      =  new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(timeout.Value)};
+                r.Timer.Tick += TimerTick;
+                r.Timer.Start();
             }
 
             return r;
@@ -282,7 +284,7 @@ namespace Metatool.MetaKeyboard
                         var screen = Screen.FromHandle(UI.Window.CurrentWindowHandle);
                         if (screen.Equals(Screen.PrimaryScreen))
                         {
-                            return trayIcon.GetPopupTrayPosition();
+                            return TrayIcon.GetPopupTrayPosition();
                         }
 
                         var bounds = screen.Bounds;
@@ -299,8 +301,8 @@ namespace Metatool.MetaKeyboard
                     throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
             }
 
-            trayIcon.CustomPopupPosition = func;
-            return trayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
+            TrayIcon.CustomPopupPosition = func;
+            return TrayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
         }
 
         static Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> tipDictionary =
@@ -341,7 +343,7 @@ namespace Metatool.MetaKeyboard
 
         public static void CloseKeysTip()
         {
-            trayIcon.CloseBalloon();
+            TrayIcon.CloseBalloon();
         }
 
         public static void ShowKeysTip1(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)

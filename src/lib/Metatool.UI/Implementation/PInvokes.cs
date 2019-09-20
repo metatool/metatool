@@ -47,7 +47,6 @@ namespace Metatool.UI.Implementation
         [DllImport("user32.dll")]
         public static extern bool ClientToScreen(IntPtr hWnd, out Point position);
         [DllImport("kernel32.dll", SetLastError = true)]
-
         public static extern bool AllocConsole();
 
         [DllImport("kernel32.dll")]

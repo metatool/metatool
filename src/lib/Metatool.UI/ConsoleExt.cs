@@ -20,7 +20,6 @@ namespace Metatool.UI
                 case CtrlType.CTRL_LOGOFF_EVENT:
                 case CtrlType.CTRL_SHUTDOWN_EVENT:
                 case CtrlType.CTRL_CLOSE_EVENT:
-                    System.Console.WriteLine("Closing");
                     Exit?.Invoke();
                     Environment.Exit(0);
                     return false;
@@ -37,10 +36,22 @@ namespace Metatool.UI
             CTRL_LOGOFF_EVENT   = 5,
             CTRL_SHUTDOWN_EVENT = 6
         }
+        private const int MF_BYCOMMAND = 0x00000000;
+        public const  int SC_CLOSE     = 0xF060;
+
+        [DllImport("user32.dll")]
+        public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+        private static extern IntPtr GetConsoleWindow();
+
 
         public static event Action Exit;
 
-        public static void InitialConsole()
+        public static void InitialConsole(bool disableCloseButton = false)
         {
             PInvokes.AllocConsole();
             var handle = PInvokes.GetConsoleWindow();
@@ -48,8 +59,11 @@ namespace Metatool.UI
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
 #endif
             SetConsoleCtrlHandler(Handler, true);
-
+            if(disableCloseButton)  DisableCloseButton();
         }
+
+        public static void DisableCloseButton() =>
+            DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
 
         public static void ShowConsole()
         {
