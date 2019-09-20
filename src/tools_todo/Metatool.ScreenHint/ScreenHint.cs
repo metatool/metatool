@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Metatool.Input;
 using Metatool.ScreenPoint;
 using Keyboard = Metatool.Input.Keyboard;
 using Point = System.Drawing.Point;
 using static Metatool.Input.Key;
+using Application = System.Windows.Application;
 
 namespace Metatool.ScreenHint
 {
@@ -79,34 +82,51 @@ namespace Metatool.ScreenHint
                 {
                     var v = _positions.rects[key];
                     HintUI.Inst.HideHints();
-                    HintUI.Inst.HighLight( v);
+                    HintUI.Inst.HighLight(v);
                     await Task.Run(()=> action((_positions.windowRect, v)));
                     return;
                 }
             }
         }
+
+        static public void DoEvents()
+        {
+            DispatcherFrame frame = new DispatcherFrame();
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+                new DispatcherOperationCallback(ExitFrame), frame);
+            Dispatcher.PushFrame(frame);
+        }
+
+        static public object ExitFrame(object f)
+        {
+            ((DispatcherFrame) f).Continue = false;
+
+            return null;
+        }
+
         static void MouseLeftClick((Rect winRect, Rect clientRect) position)
         {
             var rect    = position.clientRect;
             var winRect = position.winRect;
             rect.X = winRect.X + rect.X;
             rect.Y = winRect.Y + rect.Y;
-            var p = new Point((int)(rect.X + rect.Width / 2), (int)(rect.Y + rect.Height / 2));
+            var p = new Point((int) (rect.X + rect.Width / 2), (int) (rect.Y + rect.Height / 2));
             Input.Mouse.Simu.Position = p;
             Input.Mouse.Simu.LeftClick();
         }
 
-        public IMetaKey MouseClick = (Ctrl+Alt + X).Down(e =>
+        public IMetaKey MouseClick = (Ctrl + Alt + X).Down(e =>
         {
             e.Handled = true;
             e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick));
         });
 
-        public IMetaKey MouseClickLast = (Ctrl+Alt+Z).Down(e =>
+        public IMetaKey MouseClickLast = (Ctrl + Alt + Z).Down(e =>
         {
             e.Handled = true;
             e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick, false));
         });
+
         public void Hook()
         {
             Keyboard.Hook();

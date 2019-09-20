@@ -85,6 +85,10 @@ namespace Metatool.UI.Implementation
         public static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool attach);
+
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
 
         //returns the id of the thread that created the target window. When you don't want the ProcessId, use this overload and pass IntPtr.Zero for the second parameter

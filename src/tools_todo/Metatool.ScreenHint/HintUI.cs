@@ -49,6 +49,9 @@ namespace Metatool.ScreenHint
         {
              _window._Canvas.Visibility = System.Windows.Visibility.Hidden;
         }
+
+        public bool IsHintsVisible => _window._Canvas.Visibility == System.Windows.Visibility.Visible;
+
         List<TextBlock> markedHints = new List<TextBlock>();
 
         public void MarkHit(string key, int len)

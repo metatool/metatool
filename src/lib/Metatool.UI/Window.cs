@@ -10,17 +10,16 @@ namespace Metatool.UI
 {
     public class Window
     {
-
-        static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
 
         public static void Dispatch(Delegate action)
         {
-            _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+            Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
         }
 
         public static async Task<T> Dispatch<T>(Func<T> action)
         {
-            var o = _dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+            var o = Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
             await o;
             return (T) (o.Result);
         }
