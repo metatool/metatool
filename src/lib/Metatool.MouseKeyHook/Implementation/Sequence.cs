@@ -15,7 +15,7 @@ namespace Metatool.Input.MouseKeyHook
     {
 
 
-        private static char Comma = '��';
+        private static char Comma = '，';
 
         internal Sequence(params ICombination[] combinations) : base(combinations)
         {

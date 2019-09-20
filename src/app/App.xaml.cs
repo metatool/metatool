@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-namespace Metatool.Metatool
+namespace Metaseed.Metatool
 {
 
     public partial class App : Application
