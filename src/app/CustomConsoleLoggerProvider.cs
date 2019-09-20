@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
-namespace Metaseed.Metatool
+namespace Metatool.Metatool
 {
     public class CustomConsoleLoggerProvider : ILoggerProvider
     {

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Metaseed.Metaing
+namespace Metatool.Metaing
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

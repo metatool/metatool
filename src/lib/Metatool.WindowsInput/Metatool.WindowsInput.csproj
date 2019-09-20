@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>netcoreapp3.0;net48</TargetFrameworks>
+       <RootNamespace>Metatool.WindowsInput</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\..\pkg\Metatool.WindowsInput</OutputPath>
+    <DocumentationFile>..\..\..\pkg\Metatool.WindowsInput\Metatool.WindowsInput.xml</DocumentationFile>
+  </PropertyGroup>
+
+</Project>

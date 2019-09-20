@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <UseWPF>true</UseWPF>
+    <OutputType>WinExe</OutputType>
+    <ApplicationIcon>Metatool.ico</ApplicationIcon>
+    <DisableFody Condition="'$(Configuration)' == 'Debug'">true</DisableFody>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <LangVersion>preview</LangVersion>
+    <!-- <RuntimeIdentifier>win10-x64</RuntimeIdentifier> -->
+    <!-- <PublishSingleFile>true</PublishSingleFile> -->
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>$(SolutionDir)..\exe\debug</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>$(SolutionDir)..\exe\release</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="4.1.0" />
+    <PackageReference Include="Fody" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.0.0-rc1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview9.19423.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview9.19423.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0-preview9.19423.4" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
+    <ProjectReference Include="..\lib\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\lib\Metatool.InputHook\Metatool.Input.csproj" />
+    <ProjectReference Include="..\lib\Metatool.MetaPlugin\Metatool.MetaPlugin.csproj" />
+    <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
+    <ProjectReference Include="..\lib\Metatool.Script\Metatool.Script.csproj" />
+    <ProjectReference Include="..\lib\Metatool.UI\Metatool.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Settings.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0&#xD;&#xA;) else (&#xD;&#xA;del $(OutDir)Metatool.Metaing.deps.json&#xD;&#xA;)&#xD;&#xA;" />
+  </Target>
+
+</Project>

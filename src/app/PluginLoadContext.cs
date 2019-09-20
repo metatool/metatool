@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace Metaseed.Metaing
+namespace Metatool.Metaing
 {
     class PluginLoadContext : AssemblyLoadContext
     {

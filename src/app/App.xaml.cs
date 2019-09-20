@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using Metaseed.Core;
-using Metaseed.Metaing;
-using Metaseed.MetaKeyboard;
-using Metaseed.MetaPlugin;
-using Metaseed.NotifyIcon;
-using Metaseed.Plugin;
+using Metatool.Core;
+using Metatool.Metaing;
+using Metatool.MetaKeyboard;
+using Metatool.MetaPlugin;
+using Metatool.NotifyIcon;
+using Metatool.Plugin;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-namespace Metaseed.Metatool
+namespace Metatool.Metatool
 {
 
     public partial class App : Application

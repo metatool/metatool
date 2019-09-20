@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+       <RootNamespace>Metatool.Input</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\pkg\$(MSBuildProjectName)</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Keyboard\Implementation\**" />
+    <EmbeddedResource Remove="Keyboard\Implementation\**" />
+    <None Remove="Keyboard\Implementation\**" />
+    <Page Remove="Keyboard\Implementation\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\Metatool.WindowsInput\Metatool.WindowsInput.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mouse\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+</Project>
