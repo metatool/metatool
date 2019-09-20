@@ -74,33 +74,6 @@ namespace Metatool.UI
             return new Rect(new System.Windows.Point(){X = rect.Left, Y = rect.Top}, new System.Windows.Point() { X = rect.Right, Y = rect.Bottom });
         }
 
-        public static void InitialConsole()
-        {
-            PInvokes.AllocConsole();
-            var handle = PInvokes.GetConsoleWindow();
-#if !DEBUG
-            PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
-#endif
-        }
-
-        public static void ShowConsole()
-        {
-            var handle = PInvokes.GetConsoleWindow();
-            if (handle == IntPtr.Zero)
-            {
-                PInvokes.AllocConsole();
-                return;
-            }
-
-            PInvokes.ShowWindowAsync(handle, PInvokes.SW.Show);
-        }
-
-        public static void HideConsole()
-        {
-            var handle = PInvokes.GetConsoleWindow();
-            PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
-        }
-
         public static bool IsExplorerOrOpenSaveDialog
         {
             get

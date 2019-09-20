@@ -2,6 +2,7 @@
 using System.Windows;
 using Accessibility;
 using Metatool.Input;
+using Metatool.UI;
 using Microsoft.Win32;
 
 namespace ConsoleApp1
@@ -43,6 +44,9 @@ namespace ConsoleApp1
                 Application.Current.DispatcherUnhandledException += (_,__) => EnableWinLock();
                 AppDomain.CurrentDomain.UnhandledException += (_, __) => EnableWinLock();
                 Application.Current.Exit += (_, __) => EnableWinLock();
+                Console.CancelKeyPress += (_, __) => EnableWinLock();
+                ConsoleExt.Exit += EnableWinLock;
+
                 Console.WriteLine("WinLock disabled!");
                 
             }
