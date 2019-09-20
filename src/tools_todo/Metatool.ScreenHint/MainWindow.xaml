@@ -8,7 +8,7 @@
 >
     <Grid>
         <Border BorderThickness="2" BorderBrush="Red">
-            <Canvas x:Name="_Canvas" Background="Transparent">
+            <Canvas x:Name="_Canvas" Background="Transparent" IsVisibleChanged="_Canvas_OnIsVisibleChanged">
 
             </Canvas>
             

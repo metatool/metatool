@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -83,25 +84,15 @@ namespace Metatool.ScreenHint
                     var v = _positions.rects[key];
                     HintUI.Inst.HideHints();
                     HintUI.Inst.HighLight(v);
-                    await Task.Run(()=> action((_positions.windowRect, v)));
+
+                    await Task.Run(()=>
+                    {
+                        Thread.Sleep(100);
+                        action((_positions.windowRect, v));
+                    });
                     return;
                 }
             }
-        }
-
-        static public void DoEvents()
-        {
-            DispatcherFrame frame = new DispatcherFrame();
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
-                new DispatcherOperationCallback(ExitFrame), frame);
-            Dispatcher.PushFrame(frame);
-        }
-
-        static public object ExitFrame(object f)
-        {
-            ((DispatcherFrame) f).Continue = false;
-
-            return null;
         }
 
         static void MouseLeftClick((Rect winRect, Rect clientRect) position)

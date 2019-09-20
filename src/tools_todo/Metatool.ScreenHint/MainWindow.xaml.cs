@@ -36,5 +36,10 @@ namespace Metatool.ScreenHint
                 }, Dispatcher.CurrentDispatcher);
             timer.Start();
         }
+
+        private void _Canvas_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
     }
 }

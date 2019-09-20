@@ -7,8 +7,8 @@ using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace Metatool.ScreenHint
-{
-    public class HintUI
+    {
+        public class HintUI
     {
         public static HintUI Inst = new HintUI();
 
@@ -121,10 +121,13 @@ namespace Metatool.ScreenHint
                 }
                 else
                 {
+                    var y = Colors.Yellow;
+                    y.A = 0xaa;
                     r = new TextBlock()
                     {
+                        IsHitTestVisible = false,
                         Foreground = Brushes.Red,
-                        Background = Brushes.Yellow,
+                        Background = new SolidColorBrush(y),
                         FontWeight = FontWeights.Bold,
                     };
                     Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
