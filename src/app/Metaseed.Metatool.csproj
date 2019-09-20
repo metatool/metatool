@@ -8,6 +8,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>preview</LangVersion>
+    <AssemblyName>Metatool</AssemblyName>
     <!-- <RuntimeIdentifier>win10-x64</RuntimeIdentifier> -->
     <!-- <PublishSingleFile>true</PublishSingleFile> -->
   </PropertyGroup>

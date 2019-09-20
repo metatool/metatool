@@ -58,7 +58,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MetaKeyboard", "to
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.ScreenHint", "tools_todo\Metatool.ScreenHint\Metatool.ScreenHint.csproj", "{5DBF6B36-1863-483A-AAC6-E6E892248D97}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool", "app\Metatool.csproj", "{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool.csproj", "{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

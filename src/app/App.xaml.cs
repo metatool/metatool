@@ -6,14 +6,13 @@ using Metatool.Metaing;
 using Metatool.MetaKeyboard;
 using Metatool.NotifyIcon;
 using Metatool.Plugin;
-using Metatool;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.TraceSource;
 using Win=Metatool.UI.Window;
-namespace Metatseed
+namespace Metaseed.Metatool
 {
     public partial class App:Application
     {
@@ -67,7 +66,6 @@ namespace Metatseed
             logger.LogInformation("Metatool started!");
             Notify.ShowMessage("Metatool started!");
 
-            Trace.WriteLineIf(true,"sssss");
         }
     }
 }
