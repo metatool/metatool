@@ -17,9 +17,9 @@ namespace Metatool.Core
         static ValueOf()
         {
             var              ctor    = typeof(TThis).GetTypeInfo().DeclaredConstructors.First();
-            Expression[]     argsExp = new Expression[0];
-            NewExpression    newExp  = Expression.New(ctor, argsExp);
-            LambdaExpression lambda  = Expression.Lambda(typeof(Func<TThis>), newExp);
+            var     argsExp = new Expression[0];
+            var    newExp  = Expression.New(ctor, argsExp);
+            var lambda  = Expression.Lambda(typeof(Func<TThis>), newExp);
             Factory = (Func<TThis>) lambda.Compile();
         }
 
