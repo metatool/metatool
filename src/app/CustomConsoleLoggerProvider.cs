@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Metatool
 {
     public class CustomConsoleLoggerProvider : ILoggerProvider
     {
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
 
         public ILogger CreateLogger(string categoryName)
         {
@@ -23,16 +23,13 @@ namespace Metatool.Metatool
                 _categoryName = categoryName;
             }
 
-            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+                Func<TState, Exception, string> formatter)
             {
-                if (!IsEnabled(logLevel))
-                {
-                    return;
-                }
+                if (!IsEnabled(logLevel)) return;
 
                 //Console.WriteLine($"{logLevel}: {_categoryName}[{eventId.Id}]: {formatter(state, exception)}");
                 Console.WriteLine($"{formatter(state, exception)}");
-
             }
 
             public bool IsEnabled(LogLevel logLevel)

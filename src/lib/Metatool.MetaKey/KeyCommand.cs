@@ -24,7 +24,7 @@ namespace Metatool.Input
         public KeyEvent KeyEvent { get; set; }
     }
 
-    public class CommandsPackage<T> : ICommandsPackage
+    public class CommandsPackage<T>
     {
         protected IEnumerable<(FieldInfo, Command<T>)> GetCommands()
         {

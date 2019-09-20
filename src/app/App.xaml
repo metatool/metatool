@@ -1,4 +1,4 @@
-﻿<Application x:Class="Metatool.Metatool.App"
+﻿<Application x:Class="Metatool.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              ShutdownMode="OnExplicitShutdown">
@@ -8,8 +8,8 @@
             Note that this application does not have a StartupUri declared, so no Window is automatically loaded.
             Also, the ShutdownMode was set to explicit, so we have to close the application programmatically
         -->
-        
-        
+
+
         <!-- merge NotifyIcon and related stuff into the application -->
         <!-- <ResourceDictionary> -->
         <!--     <ResourceDictionary.MergedDictionaries> -->

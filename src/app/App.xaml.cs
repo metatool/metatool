@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using Metatool.Core;
 using Metatool.Metaing;
 using Metatool.MetaKeyboard;
-using Metatool.MetaPlugin;
 using Metatool.NotifyIcon;
 using Metatool.Plugin;
 using Microsoft.Extensions.Configuration;
@@ -12,10 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-namespace Metaseed.Metatool
+namespace Metatool
 {
-
-    public partial class App : Application
+    public class App : Application
     {
         private TaskbarIcon notifyIcon;
 
@@ -24,7 +21,7 @@ namespace Metaseed.Metatool
             services.AddLogging(loggingBuilder =>
                 {
                     loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
-                    loggingBuilder.AddConsole(o=>o.Format=ConsoleLoggerFormat.Default);
+                    loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
                     //loggingBuilder.AddProvider(new ConsoleLoggerProvider());
                     //loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
                     loggingBuilder.AddFile(o => o.RootPath = AppContext.BaseDirectory);
@@ -48,19 +45,15 @@ namespace Metaseed.Metatool
             ConfigureServices(serviceCollection, configuration);
             var provider = serviceCollection.BuildServiceProvider();
             ServiceLocator.Current = provider;
-            var logger          = provider.GetService<ILogger<App>>();
+            var logger        = provider.GetService<ILogger<App>>();
             var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
 
             Notify.AddContextMenuItem("Show Log", e =>
             {
                 if (e.IsChecked)
-                {
                     UI.Window.ShowConsole();
-                }
                 else
-                {
                     UI.Window.HideConsole();
-                }
             }, null, true);
 
             Notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,

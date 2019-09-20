@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj" />
     <ProjectReference Include="..\Metatool.WindowsInput\Metatool.WindowsInput.csproj" />
   </ItemGroup>
 

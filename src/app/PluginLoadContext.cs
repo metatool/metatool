@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
 namespace Metatool.Metaing
 {
-    class PluginLoadContext : AssemblyLoadContext
+    internal class PluginLoadContext : AssemblyLoadContext
     {
-        private  AssemblyDependencyResolver _resolver;
-        readonly Assembly[]                 _assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        private readonly Assembly[]                 _assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        private readonly AssemblyDependencyResolver _resolver;
 
         public PluginLoadContext(string pluginPath)
         {
@@ -24,10 +23,7 @@ namespace Metatool.Metaing
                 var ab = LoadFromAssemblyPath(assemblyPath);
                 // solve problem of ILogger loaded from different location, i.e. global assembly cache and packages folder
                 var assembly = _assemblies.FirstOrDefault(a => a.FullName.Equals(ab.FullName));
-                if (assembly != null)
-                {
-                    return assembly;
-                }
+                if (assembly != null) return assembly;
 
                 return ab;
             }
@@ -39,10 +35,7 @@ namespace Metatool.Metaing
         protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
         {
             var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-            if (libraryPath != null)
-            {
-                return LoadUnmanagedDllFromPath(libraryPath);
-            }
+            if (libraryPath != null) return LoadUnmanagedDllFromPath(libraryPath);
 
             return IntPtr.Zero;
         }

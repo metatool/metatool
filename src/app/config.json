@@ -27,7 +27,8 @@
           // second-level filters
           "MinLevel": {
             "MyApp.SomeClass": "Warning",
-            "Default": "Trace" // this has no effect as second-level filters can only be more restrictive than first-level filters!
+            "Default":
+              "Trace" // this has no effect as second-level filters can only be more restrictive than first-level filters!
           },
           "CounterFormat": "00"
         }

@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using WindowsInput;
-using WindowsInput.Native;
+using Metatool.WindowsInput;
+using Metatool.WindowsInput.Native;
 
 namespace Metatool.MetaKey
 {
