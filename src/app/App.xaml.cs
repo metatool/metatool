@@ -1,18 +1,21 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using Metatool.Core;
 using Metatool.Metaing;
 using Metatool.MetaKeyboard;
 using Metatool.NotifyIcon;
 using Metatool.Plugin;
+using Metatool;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-
-namespace Metatool
+using Microsoft.Extensions.Logging.TraceSource;
+using Win=Metatool.UI.Window;
+namespace Metatseed
 {
-    public class App : Application
+    public partial class App:Application
     {
         private TaskbarIcon notifyIcon;
 
@@ -22,7 +25,9 @@ namespace Metatool
                 {
                     loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
                     loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
-                    //loggingBuilder.AddProvider(new ConsoleLoggerProvider());
+                    loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
+                        new SourceSwitch("sourceSwitch", "Logging Sample"){Level = SourceLevels.All},
+                        new TextWriterTraceListener(writer: Console.Out)));
                     //loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
                     loggingBuilder.AddFile(o => o.RootPath = AppContext.BaseDirectory);
                 })
@@ -39,7 +44,7 @@ namespace Metatool
             Current.MainWindow = new Settings();
             Notify.ShowMessage("Metatool starting...");
 
-            UI.Window.InitialConsole();
+            Win.InitialConsole();
             var serviceCollection = new ServiceCollection();
             var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
             ConfigureServices(serviceCollection, configuration);
@@ -51,9 +56,9 @@ namespace Metatool
             Notify.AddContextMenuItem("Show Log", e =>
             {
                 if (e.IsChecked)
-                    UI.Window.ShowConsole();
+                    Win.ShowConsole();
                 else
-                    UI.Window.HideConsole();
+                    Win.HideConsole();
             }, null, true);
 
             Notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
@@ -61,6 +66,8 @@ namespace Metatool
 
             logger.LogInformation("Metatool started!");
             Notify.ShowMessage("Metatool started!");
+
+            Trace.WriteLineIf(true,"sssss");
         }
     }
 }

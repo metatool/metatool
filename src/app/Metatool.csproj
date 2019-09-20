@@ -20,9 +20,6 @@
     <OutputPath>$(SolutionDir)..\exe\release</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
     <None Update="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -38,6 +35,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview9.19423.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview9.19423.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.0-preview9.19423.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="3.0.0-preview9.19423.4" />
 
   </ItemGroup>
 
@@ -57,8 +55,7 @@
     </Page>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec
-      Command="if $(ConfigurationName) == Debug (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0&#xD;&#xA;) else (&#xD;&#xA;del $(OutDir)Metatool.Metaing.deps.json&#xD;&#xA;)&#xD;&#xA;" />
+    <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0&#xD;&#xA;) else (&#xD;&#xA;del $(OutDir)Metatool.Metaing.deps.json&#xD;&#xA;)&#xD;&#xA;" />
   </Target>
 
 </Project>
