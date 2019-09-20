@@ -39,7 +39,7 @@ namespace Metaseed.Metatool
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Application.Current.MainWindow = new Settings();
+            Current.MainWindow = new Settings();
             Notify.ShowMessage("Metatool starting...");
 
             UI.Window.InitialConsole();
