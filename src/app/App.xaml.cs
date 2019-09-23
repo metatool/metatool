@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using Metatool.Core;
 using Metatool.MetaKeyboard;
+using Metatool.Metatool;
 using Metatool.Plugin;
 using Metatool.UI;
 using Microsoft.Extensions.Configuration;
@@ -28,11 +29,11 @@ namespace Metaseed.Metatool
             services.AddLogging(loggingBuilder =>
                 {
                     loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
-                    loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
-                    loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
-                        new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
-                        new TextWriterTraceListener(writer: Console.Out)));
-                    //loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
+                    //loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
+                    // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
+                    //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
+                    //     new TextWriterTraceListener(writer: Console.Out)));
+                    loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
                     loggingBuilder.AddFile(o => o.RootPath = AppContext.BaseDirectory);
                 })
                 .Configure<LoggerFilterOptions>(options =>

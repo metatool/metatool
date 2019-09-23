@@ -29,7 +29,24 @@ namespace Metatool.Metatool
                 if (!IsEnabled(logLevel)) return;
 
                 //Console.WriteLine($"{logLevel}: {_categoryName}[{eventId.Id}]: {formatter(state, exception)}");
-                Console.WriteLine($"{formatter(state, exception)}");
+                if (logLevel == LogLevel.Warning)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"{formatter(state, exception)}");
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                } else if (logLevel > LogLevel.Error)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"{formatter(state, exception)}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.WriteLine($"{formatter(state, exception)}");
+
+                }
+
             }
 
             public bool IsEnabled(LogLevel logLevel)

@@ -61,7 +61,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         {
             var eDownUp = GetDownUpEventArgs(data);
 
-            _logger.LogInformation(new String('\t', _indentCounter++) + "��" + eDownUp.ToString());
+            _logger.LogInformation(new String('\t', _indentCounter++) + "→" + eDownUp.ToString());
 
             InvokeKeyDown(eDownUp);
 
@@ -73,7 +73,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             }
 
             InvokeKeyUp(eDownUp);
-            _logger.LogInformation(new String('\t', --_indentCounter) + "��" + eDownUp.ToString());
+            _logger.LogInformation(new String('\t', --_indentCounter) + "←" + eDownUp.ToString());
             //Console.Write(Environment.NewLine);
 
             return !eDownUp.Handled;
