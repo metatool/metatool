@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using Metatool.MetaPlugin;
 using Metatool.Metatool.Plugin;
 using Metatool.Reactive;
 using Metatool.Script;

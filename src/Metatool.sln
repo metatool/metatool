@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.UI", "lib\Metatool
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.WindowsInput", "lib\Metatool.WindowsInput\Metatool.WindowsInput.csproj", "{AC6A8257-5B31-4E52-BE83-BAC199C1CEC4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MetaPlugin", "lib\Metatool.MetaPlugin\Metatool.MetaPlugin.csproj", "{9274D2A0-13C2-4629-A677-6A778B20BDE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin", "lib\Metatool.MetaPlugin\Metatool.Plugin.csproj", "{9274D2A0-13C2-4629-A677-6A778B20BDE3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.NotifyIcon", "lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj", "{C90A8CB9-F367-4A82-B941-E2E373B370AF}"
 EndProject
@@ -48,7 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "install", "install", "{F08B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Script", "lib\Metatool.Script\Metatool.Script.csproj", "{08D3C886-FB48-4089-A2CB-596E851EB008}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin", "lib\Metatool.Plugin\Metatool.Plugin.csproj", "{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugins", "lib\Metatool.Plugin\Metatool.Plugins.csproj", "{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Script.Runtime", "lib\Metatool.Script.Runtime\Metatool.Script.Runtime.csproj", "{782049B6-1C4F-4CD3-937A-6A8117C3B933}"
 EndProject

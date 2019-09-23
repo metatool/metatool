@@ -41,18 +41,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
     <ProjectReference Include="..\lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
     <ProjectReference Include="..\lib\Metatool.Core\Metatool.Core.csproj" />
     <ProjectReference Include="..\lib\Metatool.InputHook\Metatool.Input.csproj" />
-    <ProjectReference Include="..\lib\Metatool.MetaPlugin\Metatool.MetaPlugin.csproj" />
-    <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
+    <ProjectReference Include="..\lib\Metatool.Plugins\Metatool.Plugins.csproj" />
     <ProjectReference Include="..\lib\Metatool.Script\Metatool.Script.csproj" />
     <ProjectReference Include="..\lib\Metatool.UI\Metatool.UI.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec
-      Command="if $(ConfigurationName) == Debug (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0&#xD;&#xA;) else (&#xD;&#xA;del $(OutDir)Metatool.Metaing.deps.json&#xD;&#xA;)&#xD;&#xA;" />
+    <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0&#xD;&#xA;) else (&#xD;&#xA;del $(OutDir)Metatool.Metaing.deps.json&#xD;&#xA;)&#xD;&#xA;" />
   </Target>
 
 </Project>

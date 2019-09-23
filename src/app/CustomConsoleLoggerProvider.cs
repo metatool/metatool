@@ -35,7 +35,7 @@ namespace Metatool.Metatool
                     Console.WriteLine($"{formatter(state, exception)}");
                     Console.ForegroundColor = ConsoleColor.White;
 
-                } else if (logLevel > LogLevel.Error)
+                } else if (logLevel >= LogLevel.Error)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"{formatter(state, exception)}");

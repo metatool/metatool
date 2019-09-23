@@ -1,9 +1,9 @@
 ﻿using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
 
-namespace Metatool.MetaPlugin
+namespace Metatool.Plugin
 {
-    public abstract class PluginBase : IMetaPlugin
+    public abstract class PluginBase : IPlugin
     {
         private readonly ILogger _logger;
 

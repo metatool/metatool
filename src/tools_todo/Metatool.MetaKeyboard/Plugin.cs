@@ -4,7 +4,7 @@ using System.Text;
 using ConsoleApp1;
 using Metatool.Input;
 using Metatool.MetaKeyboard;
-using Metatool.MetaPlugin;
+using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 using Mouse = Metatool.MetaKeyboard.Mouse;
 

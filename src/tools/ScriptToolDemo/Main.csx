@@ -1,4 +1,4 @@
-﻿#r "nuget:Metatool.MetaPlugin,1.1.0"
+﻿#r "nuget:Metatool.Plugin,1.2.0"
 #r "nuget:Newtonsoft.Json/9.0.1"
 #r "nuget:Automapper,9.0.0"
 #r "nuget:Microsoft.Extensions.Logging.Abstractions,3.0.0-preview8.19405.4"
@@ -10,7 +10,7 @@ using AutoMapper;
 using System;
 using System.Threading;
 using LocalLib;
-using Metatool.MetaPlugin;
+using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 
 public class ClassTest
