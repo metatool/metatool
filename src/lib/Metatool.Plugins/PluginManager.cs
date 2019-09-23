@@ -17,7 +17,7 @@ namespace Metatool.Plugin
     {
         public PluginLoader                Loader;
         public ObservableFileSystemWatcher Watcher;
-        public List<IMetaPlugin>           Tools = new List<IMetaPlugin>();
+        public List<IPlugin>           Tools = new List<IPlugin>();
     }
 
     public class PluginManager
@@ -148,7 +148,7 @@ namespace Metatool.Plugin
             types.ForEach(t =>
             {
                 var tool =
-                    ActivatorUtilities.CreateInstance(_services, t) as IMetaPlugin;
+                    ActivatorUtilities.CreateInstance(_services, t) as IPlugin;
                 tool?.Init();
                 token.Tools.Add(tool);
             });
@@ -250,7 +250,7 @@ namespace Metatool.Plugin
             foreach (var pluginType in loader
                 .MainAssembly
                 .GetTypes()
-                .Where(t => typeof(IMetaPlugin).IsAssignableFrom(t) && !t.IsAbstract))
+                .Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract))
             {
                 services.RemoveImplementation(pluginType);
             }
@@ -262,7 +262,7 @@ namespace Metatool.Plugin
 
         {
             return loader.MainAssembly.GetTypes()
-                .Where(t => typeof(IMetaPlugin).IsAssignableFrom(t) && !t.IsAbstract)
+                .Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract)
                 .ToList();
         }
     }

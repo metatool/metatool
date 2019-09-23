@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.UI", "lib\Metatool
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.WindowsInput", "lib\Metatool.WindowsInput\Metatool.WindowsInput.csproj", "{AC6A8257-5B31-4E52-BE83-BAC199C1CEC4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin", "lib\Metatool.MetaPlugin\Metatool.Plugin.csproj", "{9274D2A0-13C2-4629-A677-6A778B20BDE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin", "lib\Metatool.Plugin\Metatool.Plugin.csproj", "{9274D2A0-13C2-4629-A677-6A778B20BDE3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.NotifyIcon", "lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj", "{C90A8CB9-F367-4A82-B941-E2E373B370AF}"
 EndProject
@@ -48,8 +48,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "install", "install", "{F08B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Script", "lib\Metatool.Script\Metatool.Script.csproj", "{08D3C886-FB48-4089-A2CB-596E851EB008}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugins", "lib\Metatool.Plugin\Metatool.Plugins.csproj", "{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Script.Runtime", "lib\Metatool.Script.Runtime\Metatool.Script.Runtime.csproj", "{782049B6-1C4F-4CD3-937A-6A8117C3B933}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MetaKeyboard", "tools_todo\Metatool.MetaKeyboard\Metatool.MetaKeyboard.csproj", "{E45A7DF5-A235-4454-BFD7-11E49D1B9DA6}"
@@ -57,6 +55,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.ScreenHint", "tools_todo\Metatool.ScreenHint\Metatool.ScreenHint.csproj", "{5DBF6B36-1863-483A-AAC6-E6E892248D97}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool.csproj", "{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugins", "lib\Metatool.Plugins\Metatool.Plugins.csproj", "{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -176,18 +176,6 @@ Global
 		{08D3C886-FB48-4089-A2CB-596E851EB008}.Release|x64.Build.0 = Release|Any CPU
 		{08D3C886-FB48-4089-A2CB-596E851EB008}.Release|x86.ActiveCfg = Release|Any CPU
 		{08D3C886-FB48-4089-A2CB-596E851EB008}.Release|x86.Build.0 = Release|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Debug|x64.Build.0 = Debug|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Debug|x86.Build.0 = Debug|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Release|x64.ActiveCfg = Release|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Release|x64.Build.0 = Release|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Release|x86.ActiveCfg = Release|Any CPU
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9}.Release|x86.Build.0 = Release|Any CPU
 		{782049B6-1C4F-4CD3-937A-6A8117C3B933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{782049B6-1C4F-4CD3-937A-6A8117C3B933}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{782049B6-1C4F-4CD3-937A-6A8117C3B933}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -236,6 +224,18 @@ Global
 		{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}.Release|x64.Build.0 = Release|Any CPU
 		{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}.Release|x86.ActiveCfg = Release|Any CPU
 		{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}.Release|x86.Build.0 = Release|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Debug|x64.Build.0 = Debug|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Debug|x86.Build.0 = Debug|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Release|x64.ActiveCfg = Release|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Release|x64.Build.0 = Release|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Release|x86.ActiveCfg = Release|Any CPU
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -250,11 +250,11 @@ Global
 		{9274D2A0-13C2-4629-A677-6A778B20BDE3} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{C90A8CB9-F367-4A82-B941-E2E373B370AF} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{08D3C886-FB48-4089-A2CB-596E851EB008} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
-		{2D4CE51D-B3CB-44AD-8C1A-F9DE81774ED9} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{782049B6-1C4F-4CD3-937A-6A8117C3B933} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{E45A7DF5-A235-4454-BFD7-11E49D1B9DA6} = {0C2683F4-FE4F-42F8-81CD-C4A8F205250D}
 		{5DBF6B36-1863-483A-AAC6-E6E892248D97} = {0C2683F4-FE4F-42F8-81CD-C4A8F205250D}
 		{96CB1362-47B4-4082-BFF1-AB706A2DAB9C} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
+		{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}
