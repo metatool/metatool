@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Metatool.MetaPlugin\Metatool.Plugin.csproj" />
     <ProjectReference Include="..\..\lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj">
       <Private>false</Private>
     </ProjectReference>
@@ -38,6 +37,7 @@
     <ProjectReference Include="..\..\lib\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj">
       <Private>false</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
     <ProjectReference Include="..\..\lib\Metatool.UI\Metatool.UI.csproj">
       <Private>false</Private>
     </ProjectReference>

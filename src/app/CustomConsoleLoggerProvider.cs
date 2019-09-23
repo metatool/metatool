@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Metatool.Metatool
 {
@@ -38,7 +39,7 @@ namespace Metatool.Metatool
                 } else if (logLevel >= LogLevel.Error)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"{formatter(state, exception)}");
+                    Console.WriteLine($"{formatter(state, exception)} \n {exception?.ToString()}");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
                 else

@@ -17,7 +17,7 @@ namespace Metatool.Plugin
     {
         public PluginLoader                Loader;
         public ObservableFileSystemWatcher Watcher;
-        public List<IPlugin>           Tools = new List<IPlugin>();
+        public List<IPlugin>               Tools = new List<IPlugin>();
     }
 
     public class PluginManager
@@ -28,14 +28,7 @@ namespace Metatool.Plugin
         {
             _services = services;
             _logger   = logger;
-            try
-            {
-                InitPlugins();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error while loading tools!");
-            }
+            InitPlugins();
         }
 
         private readonly IServiceProvider _services;
@@ -48,33 +41,40 @@ namespace Metatool.Plugin
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
                 var assemblyName = Path.GetFileName(dir);
-                var pluginDll    = Path.Combine(dir, assemblyName + ".dll");
-                var scriptPath   = Path.Combine(dir, "main.csx");
-
-                if (File.Exists(scriptPath))
+                try
                 {
-                    if (File.Exists(pluginDll))
-                    {
-                        var dllInfo    = new FileInfo(pluginDll);
-                        var scriptInfo = new FileInfo(scriptPath);
+                    var pluginDll  = Path.Combine(dir, assemblyName + ".dll");
+                    var scriptPath = Path.Combine(dir, "main.csx");
 
-                        if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
+                    if (File.Exists(scriptPath))
+                    {
+                        if (File.Exists(pluginDll))
                         {
-                            BuildReload(scriptPath, assemblyName);
+                            var dllInfo    = new FileInfo(pluginDll);
+                            var scriptInfo = new FileInfo(scriptPath);
+
+                            if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
+                            {
+                                BuildReload(scriptPath, assemblyName);
+                            }
+                            else
+                            {
+                                Load(scriptPath, assemblyName);
+                            }
                         }
                         else
                         {
-                            Load(scriptPath, assemblyName);
+                            BuildReload(scriptPath, assemblyName);
                         }
                     }
-                    else
+                    else if (File.Exists(pluginDll))
                     {
-                        BuildReload(scriptPath, assemblyName);
+                        Load(scriptPath, assemblyName, false);
                     }
                 }
-                else if (File.Exists(pluginDll))
+                catch (Exception ex)
                 {
-                    Load(scriptPath, assemblyName, false);
+                    _logger.LogError(ex, $"{assemblyName}: Error while loading tool!");
                 }
             }
         }
