@@ -172,12 +172,9 @@ namespace Metatool.Script
         private static async Task SaveAssembly(string assemblyPath, Compilation compilation, DiagnosticBag diagnostics,
             CancellationToken cancellationToken)
         {
-            using var peStream  = new MemoryStream();
-            using var pdbStream = new MemoryStream();
-            var emitResult = compilation.Emit(
-                peStream: peStream,
-                pdbStream: pdbStream,
-                cancellationToken: cancellationToken);
+            await using var peStream  = new MemoryStream();
+            await using var pdbStream = new MemoryStream();
+            var emitResult = compilation.Emit(peStream, pdbStream, cancellationToken:cancellationToken);
 
             diagnostics.AddRange(emitResult.Diagnostics);
 

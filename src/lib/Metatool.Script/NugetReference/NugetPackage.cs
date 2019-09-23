@@ -25,7 +25,7 @@ namespace Metatool.Script.NugetReference
         private readonly ExceptionDispatchInfo      _initializationException;
         private          ILogger      _logger;
         public           string                     GlobalPackageFolder { get; }
-        public event Action<NuGetRestoreResult> RestoreCompleted;
+        public event Action<NuGetRestoreResult> RestoreResult;
 
         public NugetPackage(ILogger logger)
         {
@@ -106,7 +106,7 @@ namespace Metatool.Script.NugetReference
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            RestoreCompleted?.Invoke(new NuGetRestoreResult(compile, runtime, analyzers));
+            RestoreResult?.Invoke(new NuGetRestoreResult(compile, runtime, analyzers));
         }
 
         private void TransformLockFileToDepsFile(JObject obj, string targetFramework, HashSet<LibraryRef> _libraries)

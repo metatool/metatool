@@ -18,7 +18,7 @@ namespace Metatool.Plugin
     {
         public PluginLoader                Loader;
         public ObservableFileSystemWatcher Watcher;
-        public List<IMetaPlugin> Tools = new List<IMetaPlugin>();
+        public List<IMetaPlugin>           Tools = new List<IMetaPlugin>();
     }
 
     public class PluginManager
@@ -28,7 +28,7 @@ namespace Metatool.Plugin
         public PluginManager(ILogger<PluginManager> logger, IServiceProvider services)
         {
             _services = services;
-            _logger = logger;
+            _logger   = logger;
             try
             {
                 InitPlugins();
@@ -133,16 +133,20 @@ namespace Metatool.Plugin
 
                 lastWatcher = plugin.Watcher;
                 _plugins.Remove(dllPath);
-                move(pluginDir, assemblyName,_logger);
+                move(pluginDir, assemblyName, _logger);
             }
 
             _logger.LogInformation($"{assemblyName}: Loading...");
             var loader = CreatePluginLoader(dllPath);
-            var token = new PluginToken() {Loader = loader, Watcher = lastWatcher};
-            _plugins.Add(dllPath,token );
+            var token  = new PluginToken() {Loader = loader, Watcher = lastWatcher};
+            _plugins.Add(dllPath, token);
             var pluginTypes = GetPluginTypes(loader);
+
             // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
-            pluginTypes.ToList().ForEach(t =>
+            var types = pluginTypes.ToList();
+            if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
+
+            types.ForEach(t =>
             {
                 var tool =
                     ActivatorUtilities.CreateInstance(_services, t) as IMetaPlugin;
@@ -161,7 +165,7 @@ namespace Metatool.Plugin
             var plugin = _plugins[dllPath];
             _plugins.Remove(dllPath);
             var tools = plugin.Tools;
-            tools.ForEach(tool=> tool.OnUnloading());
+            tools.ForEach(tool => tool.OnUnloading());
             tools.Clear();
             var loader = plugin.Loader;
             loader?.Dispose();
@@ -237,7 +241,7 @@ namespace Metatool.Plugin
             }
             catch (Exception e)
             {
-                _logger.LogError(e,$"Assembly {assemblyName}: build errors!");
+                _logger.LogError(e, $"Assembly {assemblyName}: build errors!");
                 Watch(scriptPath, assemblyName);
             }
         }

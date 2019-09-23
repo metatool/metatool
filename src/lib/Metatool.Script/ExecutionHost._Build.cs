@@ -63,18 +63,17 @@ namespace Metatool.Script
             try
             {
                 _running = true;
-
                 using var executeCts        = new CancellationTokenSource();
                 var       cancellationToken = executeCts.Token;
 
-                var script = CreateScriptRunner(code, optimizationLevel);
+                var scriptRunner = CreateScriptRunner(code, optimizationLevel);
 
                 _assemblyPath = Path.Combine(BuildPath, $"{Name}.dll");
                 _depsFile     = Path.ChangeExtension(_assemblyPath, ".deps.json");
 
                 CopyDependencies();
 
-                var diagnostics = await script.SaveAssembly(_assemblyPath, cancellationToken).ConfigureAwait(false);
+                var diagnostics = await scriptRunner.SaveAssembly(_assemblyPath, cancellationToken).ConfigureAwait(false);
                 SendDiagnostics(diagnostics);
 
                 if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))

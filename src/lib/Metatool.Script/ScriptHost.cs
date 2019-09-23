@@ -90,7 +90,7 @@ namespace Metatool.Script
                 {Id = name, RestorePath = Path.Combine(directory, "nuget")};
 
 
-            nugetPackage.RestoreCompleted += async restoreResult =>
+            nugetPackage.RestoreResult += async restoreResult =>
             {
                 var executionHostParameters = new ExecutionHostParameters(
                     compileReferences: ImmutableArray<string>.Empty,
@@ -124,7 +124,9 @@ namespace Metatool.Script
                 refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
             }
 
+            packageViewModel.RestoreError += r => { NotifyBuildResult?.Invoke(r.ToList().Select(er=>CompilationErrorResultObject.Create("","",er, "", -1,-1)).ToList()); };
             packageViewModel.UpdateLibraries(refs);
+
         }
 
         // private void AddResult(IResultObject o)

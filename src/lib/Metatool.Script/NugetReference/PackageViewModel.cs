@@ -55,6 +55,8 @@ namespace Metatool.Script.NugetReference
             get => _restoreErrors;
             private set => SetProperty(ref _restoreErrors, value);
         }
+        public event Action<IReadOnlyList<string>> RestoreError;
+
         public PackageViewModel(ILogger logger, NugetPackage nugetPackage)
         {
             Id = Guid.NewGuid().ToString();
@@ -81,6 +83,7 @@ namespace Metatool.Script.NugetReference
         }
         public void UpdateLibraries(IReadOnlyList<LibraryRef> libraries)
         {
+            _logger.LogInformation("start updating lib refs...");
             var changed = false;
 
             if (_libraries.Count > 0 && (libraries == null || libraries.Count == 0))
@@ -148,7 +151,7 @@ namespace Metatool.Script.NugetReference
         {
             await _restoreLock.WaitAsync(cancellationToken).ConfigureAwait(false);
             IsRestoring = true;
-            // try
+            try
             {
                 var restoreParams = _nugetPackage.CreateRestoreParams();
                 restoreParams.ProjectName      = Id;
@@ -167,6 +170,7 @@ namespace Metatool.Script.NugetReference
                 {
                     RestoreFailed = true;
                     RestoreErrors = result.Errors;
+                    RestoreError?.Invoke(result.Errors);
                     return;
                 }
 
@@ -183,16 +187,16 @@ namespace Metatool.Script.NugetReference
                 _nugetPackage.ParseLockFile(lockFilePath, cancellationToken, _targetFramework, _frameworkVersion, _libraries);
 
             }
-            // catch (Exception e) when (!(e is OperationCanceledException))
-            // {
-            //     _logger?.LogError(e.Message + e.StackTrace);
-            //
-            // }
-            // finally
-            // {
-            //     _restoreLock.Release();
-            //     IsRestoring = false;
-            // }
+            catch (Exception e) when (!(e is OperationCanceledException))
+            {
+                _logger?.LogError(e.Message + e.StackTrace);
+            
+            }
+            finally
+            {
+                _restoreLock.Release();
+                IsRestoring = false;
+            }
         }
 
 
