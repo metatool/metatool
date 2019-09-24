@@ -35,8 +35,4 @@
     <ProjectReference Include="..\Metatool.UI\Metatool.UI.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>
