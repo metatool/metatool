@@ -5,7 +5,7 @@ namespace Metatool.MetaKeyboard
 {
     public class ProcessEx
     {
-        static string BuildCmd(string cmd, params string[] args)
+        private static string BuildCmd(string cmd, params string[] args)
         {
             var a = string.Join(" ", args.ToList().Select(arg => arg.Any(char.IsWhiteSpace)? $"\"{arg}\"": arg));
             return $"\"\"{cmd}\" {a}\"";
