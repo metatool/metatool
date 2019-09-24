@@ -29,18 +29,19 @@ namespace Metatool.Metatool
             {
                 if (!IsEnabled(logLevel)) return;
 
+                var foregroundColor = Console.ForegroundColor;
                 //Console.WriteLine($"{logLevel}: {_categoryName}[{eventId.Id}]: {formatter(state, exception)}");
                 if (logLevel == LogLevel.Warning)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"{formatter(state, exception)}");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = foregroundColor;
 
                 } else if (logLevel >= LogLevel.Error)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"{formatter(state, exception)} \n {exception?.ToString()}");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = foregroundColor;
                 }
                 else
                 {

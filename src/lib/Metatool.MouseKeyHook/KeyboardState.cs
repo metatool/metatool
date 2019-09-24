@@ -1,6 +1,6 @@
-﻿// This code is distributed under MIT license. 
-// Copyright (c) 2015 George Mamaladze
-// See license.txt or https://mit-license.org/
+﻿
+
+
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
     ///     This class is basically a managed wrapper of GetKeyboardState API function
     ///     http://msdn.microsoft.com/en-us/library/ms646299
     /// </remarks>
-    public class KeyboardState
+    public class KeyboardState: IKeyboardState
     {
         private static MemoryMappedViewAccessor accessor;
 

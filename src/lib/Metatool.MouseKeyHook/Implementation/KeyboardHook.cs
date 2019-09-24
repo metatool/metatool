@@ -12,7 +12,7 @@ namespace Metatool.Input.MouseKeyHook
 {
     using Hotkey = OneOf<ISequenceUnit, ISequence>;
 
-    public delegate void KeyEventHandler(object sender, KeyEventArgsExt e);
+    public delegate void KeyEventHandler(object sender, IKeyEventArgs e);
 
     public class KeyboardHook
     {
@@ -84,7 +84,7 @@ namespace Metatool.Input.MouseKeyHook
 
             var selectTrees = new List<KeyStateTree.SelectionResult>();
 
-            void ClimbTree(KeyEvent eventType, KeyEventArgsExt args)
+            void ClimbTree(KeyEvent eventType, IKeyEventArgs args)
             {
                 // if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed
                 // if machine_1 has A and machine_2 has A, both should be processed.
@@ -159,7 +159,7 @@ namespace Metatool.Input.MouseKeyHook
             };
         }
 
-        private List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, KeyEventArgsExt args)
+        private List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, IKeyEventArgs args)
         {
             var selectedNodes = new List<KeyStateTree.SelectionResult>();
             //all on root, find current trees

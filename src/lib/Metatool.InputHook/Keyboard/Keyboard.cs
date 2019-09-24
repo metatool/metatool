@@ -63,7 +63,7 @@ namespace Metatool.Input
         }
 
         internal static IMetaKey HardMap(ICombination source, ICombination target,
-            Predicate<KeyEventArgsExt> predicate = null)
+            Predicate<IKeyEventArgs> predicate = null)
         {
             var handled = false;
             return new MetaKeys()
@@ -106,7 +106,7 @@ namespace Metatool.Input
             };
         }
 
-        internal static IMetaKey Map(string source, string target, Predicate<KeyEventArgsExt> predicate = null)
+        internal static IMetaKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
@@ -131,7 +131,7 @@ namespace Metatool.Input
 
 
         internal static IMetaKey Map(ICombination source, ICombination target,
-            Predicate<KeyEventArgsExt> predicate = null, int repeat = 1)
+            Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
         {
             var handled = false;
             return new MetaKeys()
@@ -180,12 +180,12 @@ namespace Metatool.Input
         }
 
         internal static IMetaKey MapOnHit(ICombination source, ICombination target,
-            Predicate<KeyEventArgsExt> predicate = null, bool allUp = true)
+            Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
         {
             var             handling     = false;
-            KeyEventArgsExt keyDownEvent = null;
+            IKeyEventArgs keyDownEvent = null;
 
-            void AsyncCall(KeyEventArgsExt e)
+            void AsyncCall(IKeyEventArgs e)
             {
                 e.Handled = true;
                 e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
@@ -194,7 +194,7 @@ namespace Metatool.Input
             }
 
             // if not: A+B -> C become A+C
-            bool KeyUpPredicate(KeyEventArgsExt e)
+            bool KeyUpPredicate(IKeyEventArgs e)
             {
                 if (!handling)
                 {
@@ -243,10 +243,10 @@ namespace Metatool.Input
         /// <param name="markHandled"></param>
         /// <returns></returns>
         internal static IMetaKey Hit(ICombination combination, KeyCommand keyCommand,
-            Predicate<KeyEventArgsExt> canExecute = null, bool markHandled = true)
+            Predicate<IKeyEventArgs> canExecute = null, bool markHandled = true)
         {
             var             handling     = false;
-            KeyEventArgsExt keyDownEvent = null;
+            IKeyEventArgs keyDownEvent = null;
             var token = new MetaKeys()
             {
                 combination.Down(e =>
@@ -305,9 +305,9 @@ namespace Metatool.Input
             remove => _Hook.KeyDown -= value;
         }
 
-        public static async Task<KeyEventArgsExt> KeyDownAsync(bool handled = false)
+        public static async Task<IKeyEventArgs> KeyDownAsync(bool handled = false)
         {
-            return await TaskExt.FromEvent<KeyEventArgsExt>(e =>
+            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
                 {
                     if (handled)
                         e.Handled = true;
@@ -316,9 +316,9 @@ namespace Metatool.Input
                 .Start(h => KeyDown += h, h => KeyDown -= h, CancellationToken.None);
         }
 
-        public static async Task<KeyEventArgsExt> KeyUpAsync(bool handled = false)
+        public static async Task<IKeyEventArgs> KeyUpAsync(bool handled = false)
         {
-            return await TaskExt.FromEvent<KeyEventArgsExt>(e=>{
+            return await TaskExt.FromEvent<IKeyEventArgs>(e=>{
                     if (handled)
                         e.Handled = true;
                 })

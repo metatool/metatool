@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\Metatool.Input.IMouseKeyHook\Metatool.Input.IMouseKeyHook.csproj" />
     <ProjectReference Include="..\Metatool.UI\Metatool.UI.csproj" />
   </ItemGroup>
 

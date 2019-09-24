@@ -1,6 +1,6 @@
-﻿// This code is distributed under MIT license. 
-// Copyright (c) 2015 George Mamaladze
-// See license.txt or https://mit-license.org/
+﻿
+
+
 
 using System;
 using System.Runtime.InteropServices;
@@ -16,10 +16,10 @@ namespace Metatool.Input
     ///     Provides extended argument data for the <see cref='KeyListener.KeyDown' /> or
     ///     <see cref='KeyListener.KeyUp' /> event.
     /// </summary>
-    public class KeyEventArgsExt : KeyEventArgs
+    public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="KeyEventArgsExt" /> class.
+        ///     Initializes a new instance of the <see cref="IKeyEventArgs" /> class.
         /// </summary>
         /// <param name="keyData"></param>
         public KeyEventArgsExt(Keys keyData)
@@ -50,14 +50,14 @@ namespace Metatool.Input
 
         static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
-        public IKeyPath PathToGo;
+        public IKeyPath PathToGo { get; internal set; }
 
         public void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send)
         {
             _dispatcher.BeginInvoke(priority, action);
         }
 
-        public void BeginInvoke(Action<KeyEventArgsExt> action, DispatcherPriority priority = DispatcherPriority.Send)
+        public void BeginInvoke(Action<IKeyEventArgs> action, DispatcherPriority priority = DispatcherPriority.Send)
         {
             _dispatcher.BeginInvoke(priority, action, this);
         }
@@ -100,11 +100,11 @@ namespace Metatool.Input
         /// </summary>
         public bool IsKeyDown { get; }
 
-        public KeyEventArgsExt LastKeyDownEvent { get; private set; }
-        public KeyEventArgsExt LastKeyEvent     { get; private set; }
+        public IKeyEventArgs LastKeyDownEvent { get; private set; }
+        public IKeyEventArgs LastKeyEvent     { get; private set; }
 
-        public KeyEventArgsExt LastKeyDownEvent_NoneVirtual { get; private set; }
-        public KeyEventArgsExt LastKeyEvent_NoneVirtual     { get; private set; }
+        public IKeyEventArgs LastKeyDownEvent_NoneVirtual { get; private set; }
+        public IKeyEventArgs LastKeyEvent_NoneVirtual     { get; private set; }
 
 
         /// <summary>
@@ -117,14 +117,14 @@ namespace Metatool.Input
         /// </summary>
         public bool IsExtendedKey { get; }
 
-        public KeyEvent KeyEvent;
+        public KeyEvent KeyEvent { get; internal set; }
 
         public new bool Handled
         {
             get => base.Handled;
             set
             {
-                if (IsKeyDown && value) KeyboardState.HandledDownKeys.SetKeyDown(KeyCode);
+                if (IsKeyDown && value) MouseKeyHook.Implementation.KeyboardState.HandledDownKeys.SetKeyDown(KeyCode);
 
                 base.Handled = value;
             }
@@ -132,7 +132,7 @@ namespace Metatool.Input
 
         public bool NoFurtherProcess { get; set; }
 
-        public KeyboardState KeyboardState { get; }
+        public IKeyboardState KeyboardState { get; }
 
         public override string ToString()
         {
@@ -143,10 +143,10 @@ namespace Metatool.Input
                 $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}  With: {KeyboardState}";
         }
 
-        private static KeyEventArgsExt lastKeyEventGloable = new KeyEventArgsExt(Keys.None);
-        private static KeyEventArgsExt lastKeyEventApp     = new KeyEventArgsExt(Keys.None);
+        private static KeyEventArgsExt _lastKeyEventGloable = new KeyEventArgsExt(Keys.None);
+        private static KeyEventArgsExt _lastKeyEventApp     = new KeyEventArgsExt(Keys.None);
 
-        internal static KeyEventArgsExt FromRawDataApp(CallbackData data)
+        internal static IKeyEventArgs FromRawDataApp(CallbackData data)
         {
             var wParam = data.WParam;
             var lParam = data.LParam;
@@ -178,14 +178,14 @@ namespace Metatool.Input
             var isKeyUp   = wasKeyDown && isKeyReleased;
 
             var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,
-                lastKeyEventApp,
-                KeyboardState.GetCurrent());
-            lastKeyEventApp = r;
-            if (isKeyDown) lastKeyEventApp.LastKeyDownEvent = r;
+                _lastKeyEventApp,
+                MouseKeyHook.Implementation.KeyboardState.GetCurrent());
+            _lastKeyEventApp = r;
+            if (isKeyDown) _lastKeyEventApp.LastKeyDownEvent = r;
             return r;
         }
 
-        internal static KeyEventArgsExt FromRawDataGlobal(CallbackData data)
+        internal static IKeyEventArgs FromRawDataGlobal(CallbackData data)
         {
             var wParam = data.WParam;
             var lParam = data.LParam;
@@ -203,11 +203,11 @@ namespace Metatool.Input
             var        isExtendedKey   = (keyboardHookStruct.Flags & maskExtendedKey) > 0;
 
             var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
-                isKeyUp, isExtendedKey, lastKeyEventGloable, KeyboardState.GetCurrent());
-            lastKeyEventGloable = r;
-            if (isKeyDown) lastKeyEventGloable.LastKeyDownEvent = r;
-            if (!isVirtual) lastKeyEventGloable.LastKeyEvent_NoneVirtual = r;
-            if (isKeyDown && !isVirtual) lastKeyEventGloable.LastKeyDownEvent_NoneVirtual = r;
+                isKeyUp, isExtendedKey, _lastKeyEventGloable, MouseKeyHook.Implementation.KeyboardState.GetCurrent());
+            _lastKeyEventGloable = r;
+            if (isKeyDown) _lastKeyEventGloable.LastKeyDownEvent = r;
+            if (!isVirtual) _lastKeyEventGloable.LastKeyEvent_NoneVirtual = r;
+            if (isKeyDown && !isVirtual) _lastKeyEventGloable.LastKeyDownEvent_NoneVirtual = r;
 
             r.IsVirtual = isVirtual;
             return r;

@@ -27,7 +27,6 @@ namespace Metatool.Input
                 && Chord.Equals(other.Chord);
         }
 
-        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -36,7 +35,6 @@ namespace Metatool.Input
             return Equals((Combination)obj);
         }
 
-        /// <inheritdoc />
         public override int GetHashCode()
         {
             return Chord.GetHashCode() ^ TriggerKey.GetHashCode();

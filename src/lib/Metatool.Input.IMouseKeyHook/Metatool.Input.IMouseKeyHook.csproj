@@ -1,0 +1,14 @@
+﻿  <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+
+  </PropertyGroup>
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>Metatool.MouseKeyHook</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+</Project>

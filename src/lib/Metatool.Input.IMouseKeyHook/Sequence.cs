@@ -1,23 +1,16 @@
-﻿// This code is distributed under MIT license. 
-// Copyright (c) 2010-2018 George Mamaladze
-// See license.txt or https://mit-license.org/
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 
-namespace Metatool.Input.MouseKeyHook
-{
+namespace Metatool.Input{
     /// <summary>
     ///     Describes key or key combination sequences. e.g. Control+Z,Z
     /// </summary>
-    public partial class Sequence : SequenceBase<ICombination>, ISequence 
+    public partial class Sequence : SequenceBase<ICombination>, ISequence
     {
-
-
         private static char Comma = '，';
 
-        internal Sequence(params ICombination[] combinations) : base(combinations)
+        public Sequence(params ICombination[] combinations) : base(combinations)
         {
         }
 
@@ -35,23 +28,14 @@ namespace Metatool.Input.MouseKeyHook
 
         static string PreProcess(string keys)
         {
-            var query                                        = new StringBuilder(keys).Replace(" ", ""); // remove space
+            var query  = new StringBuilder(keys).Replace(" ", ""); // remove space
             if (query[0] == ',' && query[1] == ',') query[0] = Comma;
             query.Replace(",,,", $",{Comma},")
                 .Replace("+,", $"+{Comma}")
                 .Replace(",+", $"{Comma}+");
             return query.ToString();
         }
-        //        /// <summary>
-        //        ///     Creates an instance of sequence object from parameters representing keys or key combinations.
-        //        /// </summary>
-        //        /// <param name="combinations"></param>
-        //        /// <returns></returns>
-        //        public static Sequence Of(params Combination[] combinations)
-        //        {
-        //            return new Sequence(combinations);
-        //        }
-
+     
         /// <summary>
         ///     Creates an instance of sequnce object from string.
         ///     The string must contain comma ',' delimited list of strings describing keys or key combinations.

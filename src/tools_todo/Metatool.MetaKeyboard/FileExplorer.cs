@@ -13,13 +13,13 @@ namespace Metatool.MetaKeyboard
 {
     public class FileExplorer
     {
-        static bool IsExplorerOrDialog(KeyEventArgsExt e)
+        static bool IsExplorerOrDialog(IKeyEventArgs e)
         {
             var c = UI.Window.CurrentWindowClass;
             return "CabinetWClass" == c || "#32770" == c;
         }
 
-        static bool IsExplorer(KeyEventArgsExt e)
+        static bool IsExplorer(IKeyEventArgs e)
         {
             var c = UI.Window.CurrentWindowClass;
             return "CabinetWClass" == c;

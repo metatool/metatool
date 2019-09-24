@@ -72,12 +72,12 @@ namespace Metatool.Input
 
         public bool IsEquals(Key key)
         {
-            return Codes.Contains(AnyKeyCode) || Codes.IsSupersetOf(key.Codes);
+            return /*Codes.Contains(AnyKeyCode) ||*/ Codes.IsSupersetOf(key.Codes);
         }
 
         public bool Equals(Keys key)
         {
-            return Codes.Contains(AnyKeyCode) || Codes.Contains(key);
+            return /*Codes.Contains(AnyKeyCode) || */Codes.Contains(key);
         }
 
         public bool Equals(Key obj)

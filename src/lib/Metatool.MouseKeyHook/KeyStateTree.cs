@@ -128,7 +128,7 @@ namespace Metatool.Input
             internal bool                                    DownInChord;
         }
 
-        internal SelectionResult TrySelect(KeyEvent eventType, KeyEventArgsExt args)
+        internal SelectionResult TrySelect(KeyEvent eventType, IKeyEventArgs args)
         {
             // to handle A+B+C(B is down in Chord)
             var downInChord = false;
@@ -149,8 +149,10 @@ namespace Metatool.Input
             return new SelectionResult(this, candidateNode, downInChord);
         }
 
-        internal KeyProcessState Climb(KeyEvent eventType, KeyEventArgsExt args, TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
+        internal KeyProcessState Climb(KeyEvent eventType, IKeyEventArgs iargs, TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
         {
+            var args = iargs as KeyEventArgsExt;
+            Debug.Assert(args != null, nameof(args) + " != null");
             if (args.NoFurtherProcess) return ProcessState = KeyProcessState.NoFurtherProcess;
 
             // no match

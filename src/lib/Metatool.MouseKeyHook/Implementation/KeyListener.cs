@@ -1,6 +1,6 @@
-﻿// This code is distributed under MIT license. 
-// Copyright (c) 2015 George Mamaladze
-// See license.txt or https://mit-license.org/
+﻿
+
+
 
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         public event KeyPressEventHandler KeyPress;
         public event KeyEventHandler      KeyUp;
 
-        public void InvokeKeyDown(KeyEventArgsExt e)
+        public void InvokeKeyDown(IKeyEventArgs e)
         {
             var handler = KeyDown;
             if (handler == null || e.Handled || !e.IsKeyDown)
@@ -42,7 +42,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             _logger.LogInformation(new String('\t', _indentCounter) + e.ToString());
         }
 
-        public void InvokeKeyUp(KeyEventArgsExt e)
+        public void InvokeKeyUp(IKeyEventArgs e)
         {
             var handler = KeyUp;
             if (handler == null || e.Handled || !e.IsKeyUp)
@@ -80,6 +80,6 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         }
 
         protected abstract IEnumerable<KeyPressEventArgsExt> GetPressEventArgs(CallbackData data);
-        protected abstract KeyEventArgsExt GetDownUpEventArgs(CallbackData data);
+        protected abstract IKeyEventArgs GetDownUpEventArgs(CallbackData data);
     }
 }

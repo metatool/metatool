@@ -1,8 +1,4 @@
-﻿// This code is distributed under MIT license. 
-// Copyright (c) 2010-2018 George Mamaladze
-// See license.txt or https://mit-license.org/
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +10,13 @@ namespace Metatool.Input.MouseKeyHook.Implementation
     {
         private readonly Key[] _keys;
 
-        internal Chord(IEnumerable<Key> additionalKeys)
+        internal Chord(IEnumerable<Key> chordKeys)
         {
-            _keys = additionalKeys.OrderBy(k => k).ToArray();
+            _keys = chordKeys.OrderBy(k => k).ToArray();
         }
-        internal Chord(IEnumerable<Keys> additionalKeys)
+
+        internal Chord(IEnumerable<Keys> chordKeys) : this(chordKeys.Select(k => new Key(k)))
         {
-            _keys = additionalKeys.OrderBy(k => k).Select(k=>new Key(k)).ToArray();
         }
 
         public int Count => _keys.Length;
@@ -67,7 +63,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         public override int GetHashCode()
         {
             var hash = 0;
-            var hc = _keys.Length;
+            var hc   = _keys.Length;
             foreach (var t in _keys)
             {
                 hc = (int) unchecked(hc * 314159 + t.GetHashCode());

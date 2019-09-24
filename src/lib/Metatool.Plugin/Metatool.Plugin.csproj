@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <Version>1.3.0</Version>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -9,6 +9,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0-preview8.19405.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Metatool.Input.IMouseKeyHook\Metatool.Input.IMouseKeyHook.csproj" />
   </ItemGroup>
 
 </Project>

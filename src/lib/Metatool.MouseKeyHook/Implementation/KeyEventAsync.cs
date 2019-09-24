@@ -6,8 +6,8 @@ namespace Metatool.Input
 {
     public interface IKeyEventAsync
     {
-        void OnEvent(KeyEventArgsExt arg);
-        Task<KeyEventArgsExt> WaitAsync(int timeout);
+        void OnEvent(IKeyEventArgs arg);
+        Task<IKeyEventArgs> WaitAsync(int timeout);
     }
 
     public class KeyEventAsync : IKeyEventAsync
@@ -19,13 +19,13 @@ namespace Metatool.Input
             _keyEvent = keyEvent;
         }
         private SemaphoreSlim   _semaphore;
-        private KeyEventArgsExt _eventArgsExt;
+        private IKeyEventArgs _eventArgsExt;
         /// <summary>
         ///  if timeout return null
         /// </summary>
         /// <param name="timeout"></param>
         /// <returns></returns>
-        public async Task<KeyEventArgsExt> WaitAsync(int timeout = -1)
+        public async Task<IKeyEventArgs> WaitAsync(int timeout = -1)
         {
             _eventArgsExt = null;
             if (_semaphore == null) _semaphore = new SemaphoreSlim(0);
@@ -33,7 +33,7 @@ namespace Metatool.Input
             return _eventArgsExt;
         }
 
-        public void OnEvent(KeyEventArgsExt arg)
+        public void OnEvent(IKeyEventArgs arg)
         {
             if (_semaphore != null && arg.KeyEvent == _keyEvent)
             {

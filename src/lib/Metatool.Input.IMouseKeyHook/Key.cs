@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -27,32 +26,29 @@ namespace Metatool.Input
         public Key(params Keys[] keyCodes)
         {
             Codes = new SortedSet<Keys>(keyCodes);
-            if (Codes.Contains(AnyKeyCode))
-            {
-                Codes.Clear();
-                Codes.Add(AnyKeyCode);
-            }
+            // if (Codes.Contains(AnyKeyCode))
+            // {
+            //     Codes.Clear();
+            //     Codes.Add(AnyKeyCode);
+            // }
 
         }
         public Key(params Key[] keys)
         {
             Codes = new SortedSet<Keys>(keys.SelectMany(k=>k.Codes));
-            if (Codes.Contains(AnyKeyCode))
-            {
-                Codes.Clear();
-                Codes.Add(AnyKeyCode);
-            }
+            // if (Codes.Contains(AnyKeyCode))
+            // {
+            //     Codes.Clear();
+            //     Codes.Add(AnyKeyCode);
+            // }
         }
 
 
 
         public override string ToString()
         {
-            if (Codes.Count == 1)
-                return $"{Codes.First()}";
-            return $"({string.Join("|", Codes)})";
+            return  $"({string.Join("|", Codes)})";
         }
-
 
     }
 }

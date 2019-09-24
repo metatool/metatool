@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using System.Windows.Forms;
 
-namespace Metatool.Input.MouseKeyHook
-{
+namespace Metatool.Input{
     public partial class Sequence
     {
         public ISequence Then(Keys key)

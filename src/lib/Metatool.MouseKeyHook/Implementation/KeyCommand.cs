@@ -2,9 +2,9 @@
 
 namespace Metatool.Input.MouseKeyHook.Implementation
 {
-    public class KeyCommand : Command<KeyEventArgsExt>
+    public class KeyCommand : Command<IKeyEventArgs>
     {
-        public KeyCommand(Action<KeyEventArgsExt> action)
+        public KeyCommand(Action<IKeyEventArgs> action)
         {
             Execute = action;
         }
