@@ -240,20 +240,20 @@ namespace Metatool.Input
             {
 #endif
             var oneExecuted = false;
-            foreach (var keyEventAction in actionList[eventType])
+            foreach (var keyCommand in actionList[eventType])
             {
 
-                if (keyEventAction.CanExecute != null && !keyEventAction.CanExecute(args))
+                if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
                 {
-                    Console.WriteLine($"\t/!{eventType}\t{keyEventAction.Id}\t{keyEventAction.Description}");
+                    Console.WriteLine($"\t/!{eventType}\t{keyCommand.Name}\t{keyCommand.Description}");
                     continue;
                 }
 
                 oneExecuted = true;
-                var exe     = keyEventAction.Execute;
+                var exe     = keyCommand.Execute;
                 var isAsync = exe?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
                 Console.WriteLine(
-                    $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyEventAction.Id}\t{keyEventAction.Description}");
+                    $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Name}\t{keyCommand.Description}");
                 exe?.Invoke(args);
             }
 

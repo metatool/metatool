@@ -41,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\lib\Metatool.CommandManager\Metatool.Command.csproj" />
     <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
     <ProjectReference Include="..\lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
     <ProjectReference Include="..\lib\Metatool.Core\Metatool.Core.csproj" />

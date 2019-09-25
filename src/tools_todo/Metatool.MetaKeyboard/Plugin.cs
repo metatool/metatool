@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 using ConsoleApp1;
+using Metatool.Command;
 using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 using Mouse = Metatool.MetaKeyboard.Mouse;
-
+using static Metatool.Input.Key;
 namespace Metatool.ScreenHint
 {
     public class KeyboardPlugin :PluginBase
@@ -27,8 +29,13 @@ namespace Metatool.ScreenHint
             return base.Init();
         }
 
-        public KeyboardPlugin(ILogger<KeyboardPlugin> logger) : base(logger)
+        public KeyboardPlugin(ILogger<KeyboardPlugin> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
         {
+            commandManager.Add(keyboard.Down(Caps + A), e =>
+            {
+                
+                logger.LogInformation("ssssss_______________");
+            });
         }
     }
 }

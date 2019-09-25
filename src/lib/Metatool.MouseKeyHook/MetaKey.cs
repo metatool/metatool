@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Metatool.Command;
+using Metatool.Core;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using OneOf;
@@ -13,7 +15,7 @@ namespace Metatool.Input
 
     public interface IMeta
     {
-        string Id      { get; set; }
+        string Name      { get; set; }
         bool   Disable { get; set; }
     }
 
@@ -28,34 +30,40 @@ namespace Metatool.Input
     {
         Hotkey Hotkey { get; set; }
         IMetaKey ChangeHotkey(Hotkey hotkey);
+        void ChangeDescription(string description);
     }
 
-    public class HotkeyToken : IRemoveChangeable<Hotkey>
+    public class HotkeyToken : IChangeRemove<Hotkey>
     {
         private readonly  ITrie<ICombination, KeyEventCommand> _trie;
         internal readonly IList<ICombination>                  _hotkey;
-        internal readonly KeyEventCommand                      Command;
+        internal readonly KeyEventCommand                      EventCommand;
 
         public HotkeyToken(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> hotkey,
-            KeyEventCommand command)
+            KeyEventCommand eventCommand)
         {
             _trie   = trie;
             _hotkey = hotkey;
-            Command = command;
+            EventCommand = eventCommand;
         }
 
         public void Remove()
         {
-            var r = _trie.Remove(_hotkey, action => action.Equals(Command));
+            var r = _trie.Remove(_hotkey, eventCommand => eventCommand.Equals(EventCommand));
             Console.WriteLine(r);
         }
 
         public bool Change(Hotkey key)
         {
             ((IRemove) this).Remove();
-            key.Switch(k => _trie.Add(k.ToCombination(), Command),
-                s => _trie.Add(s.ToList(), Command));
+            key.Switch(k => _trie.Add(k.ToCombination(), EventCommand),
+                s => _trie.Add(s.ToList(), EventCommand));
             return true;
+        }
+
+        public void ChangeDescription(string description)
+        {
+            EventCommand.Command.Description = description;
         }
     }
 
@@ -87,15 +95,19 @@ namespace Metatool.Input
             _token.Remove();
         }
 
-        internal KeyEvent KeyEvent => _token.Command.KeyEvent;
+        internal KeyEvent KeyEvent => _token.EventCommand.KeyEvent;
 
         public MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> combinations,
             KeyEventCommand command)
         {
             _token = new HotkeyToken(trie, combinations, command);
         }
+        public void ChangeDescription(string description)
+        {
+            _token.ChangeDescription(description);
+        }
 
-        public string Id { get; set; }
+        public string Name { get; set; }
 
         public bool Disable
         {
@@ -106,15 +118,15 @@ namespace Metatool.Input
 
     public class MetaKeys : List<IMetaKey>, IMetaKey
     {
-        public string Id
+        public string Name
         {
-            get => this.Aggregate("", (a, c) => a + c.Id);
+            get => this.Aggregate("", (a, c) => a + c.Name);
             set
             {
                 for (var i = 0; i < this.Count; i++)
                 {
                     var k = (MetaKey) this[i];
-                    k.Id = $"{value}_{i}-{k.KeyEvent}";
+                    k.Name = $"{value}_{i}-{k.KeyEvent}";
                 }
             }
         }
@@ -135,6 +147,11 @@ namespace Metatool.Input
         {
             Hotkey = hotkey;
             return this;
+        }
+
+        public void ChangeDescription(string description)
+        {
+            this.ForEach(k =>k.ChangeDescription(description));
         }
 
         public void Remove()
@@ -158,11 +175,11 @@ namespace Metatool.Input
             GetMetas().ToList().ForEach(c =>
             {
                 var (fi, metaKey) = c;
-                if (string.IsNullOrEmpty(metaKey.Id))
-                    metaKey.Id = GetType().FullName + "." + fi.Name;
+                if (string.IsNullOrEmpty(metaKey.Name))
+                    metaKey.Name = GetType().FullName + "." + fi.Name;
                 else
                 {
-                    metaKey.Id = metaKey.Id;
+                    metaKey.Name = metaKey.Name;
                 }
             });
         }
@@ -182,8 +199,8 @@ namespace Metatool.Input
             {
                 void setId(IMetaKey meta)
                 {
-                    if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token.Command.Command.Id))
-                        metaKey._token.Command.Command.Id = metaKey.Id;
+                    if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token.EventCommand.Command.Name))
+                        metaKey._token.EventCommand.Command.Name = metaKey.Name;
                 }
 
                 var (_, key) = c;

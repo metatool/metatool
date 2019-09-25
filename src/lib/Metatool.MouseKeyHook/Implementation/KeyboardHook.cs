@@ -17,8 +17,8 @@ namespace Metatool.Input.MouseKeyHook
     public class KeyboardHook
     {
         private readonly ILogger<KeyboardHook> _logger;
-        private readonly IKeyboardMouseEvents _eventSource;
-        public bool IsRuning { get; set; }
+        private readonly IKeyboardMouseEvents  _eventSource;
+        public           bool                  IsRuning { get; set; }
 
 
         private readonly List<KeyStateTree> _stateTrees = new List<KeyStateTree>()
@@ -26,7 +26,7 @@ namespace Metatool.Input.MouseKeyHook
 
         public KeyboardHook(ILogger<KeyboardHook> logger)
         {
-            _logger = logger;
+            _logger      = logger;
             _eventSource = Hook.GlobalEvents();
         }
 
@@ -107,12 +107,13 @@ namespace Metatool.Input.MouseKeyHook
 
                     foreach (var c in selectTrees.GetRange(0, selectTrees.Count))
                     {
-                        var selectResult = c;
+                        var selectResult = c; // should not remove this line
                         if (!onGround)
                         {
-                            var r = selectResult.Tree.TrySelect(eventType, args);
-                            selectTrees[selectTrees.IndexOf(selectResult)] = r;
-                            selectResult                                   = r;
+                            var r   = selectResult.Tree.TrySelect(eventType, args);
+                            var ind = selectTrees.IndexOf(selectResult);
+                            selectTrees[ind] = r;
+                            selectResult     = r;
                         }
 
                         var rt = selectResult.Tree.Climb(eventType, args, selectResult.CandidateNode,
@@ -184,7 +185,7 @@ namespace Metatool.Input.MouseKeyHook
             }
 
             if (selectedNodes.Count > 0)
-               _logger.LogInformation(
+                _logger.LogInformation(
                     $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
             return selectedNodes;
         }

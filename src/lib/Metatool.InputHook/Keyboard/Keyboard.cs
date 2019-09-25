@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using Metatool.Command;
 using Metatool.Core;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
@@ -18,7 +19,7 @@ namespace Metatool.Input
 {
     using Hotkey = OneOf<ISequenceUnit, ISequence>;
 
-    public class Keyboard : IKeyboard
+    public partial class Keyboard : IKeyboard
     {
         private readonly ILogger<Keyboard> _logger;
         private static Keyboard _default;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using Metatool.Command;
 using Metatool.Core;
 using Metatool.Input;
 using Metatool.MetaKeyboard;
@@ -39,7 +40,8 @@ namespace Metaseed.Metatool
                 })
                 .Configure<LoggerFilterOptions>(options =>
                     options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)
-                .AddSingleton<IKeyboard,Keyboard>();
+                .AddSingleton<IKeyboard, Keyboard>()
+                .AddSingleton<ICommandManager, CommandManager>();
         }
 
         private static void ConfigNotify()
