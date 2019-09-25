@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Windows.Threading;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Metatool.WindowsInput.Native;
 
 namespace Metatool.Input

@@ -78,7 +78,7 @@ namespace Metatool.MetaKeyboard
             var file = File.Create(fullPath + "\\" + fileName);
             file.Close();
             Explorer.Select(handle, new[] { fileName });
-            Keyboard.Type(Keys.F2);
+            Keyboard.Default.Type(Keys.F2);
         }, IsExplorer, "&New File");
 
         public IMetaKey ShowDesktopFolder = (LWin + D).Down(e =>

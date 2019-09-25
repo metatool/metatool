@@ -23,7 +23,7 @@ namespace Metatool.ScreenHint
             var hotstrings   = new HostStrings();
             var windowKeys   = new WindowKeys();
             var software = new Software();
-            Keyboard.Hook();
+            Keyboard.Default.Hook();
             return base.Init();
         }
 

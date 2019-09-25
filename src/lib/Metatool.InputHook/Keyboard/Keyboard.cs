@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Metatool.Input.MouseKeyHook;
-using Metatool.Input.MouseKeyHook.Implementation;
 using System.Windows.Threading;
 using Metatool.Core;
+using Metatool.Input.MouseKeyHook;
+using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.MetaKeyboard;
 using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
@@ -18,34 +18,46 @@ namespace Metatool.Input
 {
     using Hotkey = OneOf<ISequenceUnit, ISequence>;
 
-    public static class Keyboard
+    public class Keyboard : IKeyboard
     {
-        public static   IKeyPath     Root        = null;
-        static readonly KeyboardHook _Hook       = new KeyboardHook(ServiceLocator.Current.GetService(typeof(ILogger<KeyboardHook>)) as ILogger<KeyboardHook>);
-        static          Dispatcher   _dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly ILogger<Keyboard> _logger;
+        private static Keyboard _default;
+        public static Keyboard Default => _default ??= (ServiceLocator.Current.GetService(typeof(IKeyboard)) as Keyboard);
 
-        internal static IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,
+        public Keyboard(ILogger<Keyboard> logger)
+        {
+            _logger = logger;
+        }
+
+        public IKeyPath Root = null;
+
+        readonly KeyboardHook _hook =
+            new KeyboardHook(ServiceLocator.Current.GetService(typeof(ILogger<KeyboardHook>)) as ILogger<KeyboardHook>);
+
+        readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+
+        internal IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,
             KeyStateTree stateTree = null)
         {
-            return Add(new List<ICombination>() {combination}, keyEvent, command, stateTree);
+            return Add(new List<ICombination> {combination}, keyEvent, command, stateTree);
         }
 
-        internal static IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
+        internal IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
             KeyStateTree stateTree = null)
         {
-            return _Hook.Add(combinations, new KeyEventCommand(keyEvent, command), stateTree);
+            return _hook.Add(combinations, new KeyEventCommand(keyEvent, command), stateTree);
         }
 
-        public static void ShowTip()
+        public void ShowTip()
         {
-            _Hook.ShowTip();
+            _hook.ShowTip();
         }
 
-        public static void Hit(Keys key, IEnumerable<Keys> modifierKeys = null, bool isAsync = false)
+        public void Hit(Keys key, IEnumerable<Keys> modifierKeys = null, bool isAsync = false)
         {
             if (isAsync)
             {
-                Async(() => Hit(key, modifierKeys, false));
+                Async(() => Hit(key, modifierKeys));
                 return;
             }
 
@@ -54,7 +66,7 @@ namespace Metatool.Input
                 (VirtualKeyCode) key);
         }
 
-        private static Action Repeat(int repeat, Action action)
+        private Action Repeat(int repeat, Action action)
         {
             return () =>
             {
@@ -62,11 +74,11 @@ namespace Metatool.Input
             };
         }
 
-        internal static IMetaKey HardMap(ICombination source, ICombination target,
+        internal IMetaKey HardMap(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             var handled = false;
-            return new MetaKeys()
+            return new MetaKeys
             {
                 source.Down(e =>
                 {
@@ -106,7 +118,7 @@ namespace Metatool.Input
             };
         }
 
-        internal static IMetaKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
+        internal IMetaKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
@@ -130,11 +142,11 @@ namespace Metatool.Input
         }
 
 
-        internal static IMetaKey Map(ICombination source, ICombination target,
+        internal IMetaKey Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
         {
             var handled = false;
-            return new MetaKeys()
+            return new MetaKeys
             {
                 source.Down(e =>
                 {
@@ -167,7 +179,8 @@ namespace Metatool.Input
                         Async(() => InputSimu.Inst.Mouse.LeftUp());
                         return;
                     }
-                    else if (target.TriggerKey == Keys.RButton)
+
+                    if (target.TriggerKey == Keys.RButton)
                     {
                         Async(() => InputSimu.Inst.Mouse.RightUp());
                         return;
@@ -179,10 +192,10 @@ namespace Metatool.Input
             };
         }
 
-        internal static IMetaKey MapOnHit(ICombination source, ICombination target,
+        internal IMetaKey MapOnHit(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
         {
-            var             handling     = false;
+            var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
 
             void AsyncCall(IKeyEventArgs e)
@@ -220,7 +233,7 @@ namespace Metatool.Input
                 return true;
             }
 
-            return new MetaKeys()
+            return new MetaKeys
             {
                 source.Down(e =>
                 {
@@ -242,12 +255,12 @@ namespace Metatool.Input
         /// <param name="canExecute"></param>
         /// <param name="markHandled"></param>
         /// <returns></returns>
-        internal static IMetaKey Hit(ICombination combination, KeyCommand keyCommand,
+        internal IMetaKey Hit(ICombination combination, KeyCommand keyCommand,
             Predicate<IKeyEventArgs> canExecute = null, bool markHandled = true)
         {
-            var             handling     = false;
+            var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
-            var token = new MetaKeys()
+            var token = new MetaKeys
             {
                 combination.Down(e =>
                 {
@@ -293,50 +306,51 @@ namespace Metatool.Input
             return token;
         }
 
-        public static event KeyPressEventHandler KeyPress
+        public event KeyPressEventHandler KeyPress
         {
-            add => _Hook.KeyPress += value;
-            remove => _Hook.KeyPress -= value;
+            add => _hook.KeyPress += value;
+            remove => _hook.KeyPress -= value;
         }
 
-        public static event KeyEventHandler KeyDown
+        public event KeyEventHandler KeyDown
         {
-            add => _Hook.KeyDown += value;
-            remove => _Hook.KeyDown -= value;
+            add => _hook.KeyDown += value;
+            remove => _hook.KeyDown -= value;
         }
 
-        public static async Task<IKeyEventArgs> KeyDownAsync(bool handled = false)
+        public async Task<IKeyEventArgs> KeyDownAsync(bool handled = false)
         {
             return await TaskExt.FromEvent<IKeyEventArgs>(e =>
                 {
                     if (handled)
                         e.Handled = true;
                 })
-                .HandlerConversion<KeyEventHandler>(h => new KeyEventHandler(h))
+                .HandlerConversion(h => new KeyEventHandler(h))
                 .Start(h => KeyDown += h, h => KeyDown -= h, CancellationToken.None);
         }
 
-        public static async Task<IKeyEventArgs> KeyUpAsync(bool handled = false)
+        public async Task<IKeyEventArgs> KeyUpAsync(bool handled = false)
         {
-            return await TaskExt.FromEvent<IKeyEventArgs>(e=>{
+            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
+                {
                     if (handled)
                         e.Handled = true;
                 })
-                .HandlerConversion<KeyEventHandler>(h => new KeyEventHandler(h))
+                .HandlerConversion(h => new KeyEventHandler(h))
                 .Start(h => KeyUp += h, h => KeyUp -= h, CancellationToken.None);
         }
 
-        public static event KeyEventHandler KeyUp
+        public event KeyEventHandler KeyUp
         {
-            add => _Hook.KeyUp += value;
-            remove => _Hook.KeyUp -= value;
+            add => _hook.KeyUp += value;
+            remove => _hook.KeyUp -= value;
         }
 
-        public static void HotKey(this string keys, string description, Action action)
+        internal void HotKey(string keys, string description, Action action)
         {
             if (keys.Contains(','))
             {
-                var sequence = Sequence.FromString(keys).ToList<ICombination>();
+                var sequence = Sequence.FromString(keys).ToList();
                 Add(sequence, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
             }
 
@@ -344,29 +358,29 @@ namespace Metatool.Input
             Add(combination, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
         }
 
-        private static void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
+        private void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
         {
             _dispatcher.BeginInvoke(priority, action);
         }
 
-        public static void Type(Keys key, bool IsAsync)
+        public void Type(Keys key, bool IsAsync)
         {
             if (IsAsync)
                 Async(() => InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key));
             InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
         }
 
-        public static void Type(Keys[] keys) => InputSimu.Inst.Keyboard.KeyPress(keys.Cast<VirtualKeyCode>().ToArray());
+        public void Type(Keys[] keys) => InputSimu.Inst.Keyboard.KeyPress(keys.Cast<VirtualKeyCode>().ToArray());
 
-        public static void Type(Keys key) => InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
+        public void Type(Keys key) => InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
 
-        public static void Type(char character) => InputSimu.Inst.Keyboard.Type(character);
+        public void Type(char character) => InputSimu.Inst.Keyboard.Type(character);
 
-        public static void Type(string text) => InputSimu.Inst.Keyboard.Type(text);
+        public void Type(string text) => InputSimu.Inst.Keyboard.Type(text);
 
-        public static void Hook()
+        public void Hook()
         {
-            _Hook.Run();
+            _hook.Run();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using Metatool.Core;
+using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Plugin;
@@ -37,7 +38,8 @@ namespace Metaseed.Metatool
                     loggingBuilder.AddFile(o => o.RootPath = AppContext.BaseDirectory);
                 })
                 .Configure<LoggerFilterOptions>(options =>
-                    options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information);
+                    options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)
+                .AddSingleton<IKeyboard,Keyboard>();
         }
 
         private static void ConfigNotify()

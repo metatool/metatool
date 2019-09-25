@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using Metatool.Input;
 using Metatool.ScreenPoint;
-using Keyboard = Metatool.Input.Keyboard;
 using Point = System.Drawing.Point;
 using static Metatool.Input.Key;
 using Application = System.Windows.Application;
@@ -40,12 +39,12 @@ namespace Metatool.ScreenHint
             var hits = new StringBuilder();
             while (true)
             {
-                var downArg = await Keyboard.KeyDownAsync(true);
+                var downArg = await Keyboard.Default.KeyDownAsync(true);
 
                 if (downArg.KeyCode == Keys.LShiftKey)
                 {
                     HintUI.Inst.HideHints();
-                    var upArg = await Keyboard.KeyUpAsync();
+                    var upArg = await Keyboard.Default.KeyUpAsync();
                     HintUI.Inst.ShowHints();
                     continue;
                 }
@@ -120,7 +119,7 @@ namespace Metatool.ScreenHint
 
         public void Hook()
         {
-            Keyboard.Hook();
+            Keyboard.Default.Hook();
         }
     }
 }

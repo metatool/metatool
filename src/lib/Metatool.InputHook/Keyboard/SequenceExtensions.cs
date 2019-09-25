@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 
 namespace Metatool.Input
@@ -43,7 +42,7 @@ namespace Metatool.Input
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
-            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Down,
+            return Keyboard.Default.Add(seq.ToList(), KeyEvent.Down,
                 new KeyCommand(action) {CanExecute = canExecute, Description = description}, stateTree);
         }
 
@@ -80,7 +79,7 @@ namespace Metatool.Input
         {
             var seq = sequence as Sequence;
             Debug.Assert(seq != null, nameof(sequence) + " != null");
-            return Keyboard.Add(seq.ToList<ICombination>(), KeyEvent.Up,
+            return Keyboard.Default.Add(seq.ToList(), KeyEvent.Up,
                 new KeyCommand(action) {CanExecute = canExecute, Description = description}, stateTree);
         }
 

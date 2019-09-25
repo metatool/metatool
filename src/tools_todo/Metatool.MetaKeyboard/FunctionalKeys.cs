@@ -39,7 +39,7 @@ namespace Metatool.MetaKeyboard
 
         public IMetaKey ShowTips = (Caps + Question).Down(e =>
         {
-            Keyboard.ShowTip();
+            Keyboard.Default.ShowTip();
             e.Handled = true;
         }, null, "Show Tips");
 
