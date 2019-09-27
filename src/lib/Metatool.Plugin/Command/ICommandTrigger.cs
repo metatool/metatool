@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Metatool.Command
 {
-    public interface ICommandTrigger<TArgs>
+    public interface ICommandTrigger<out TArgs>
     {
-        void Execute(TArgs args);
-        bool CanExecute(TArgs args);
-        ICommand<TArgs> Command { get; set; }
-        void OnRemove();
+        event Action<TArgs> Execute;
+        event Predicate<TArgs> CanExecute;
+        void OnAdd(ICommand<TArgs> command);
+        void OnRemove(ICommand<TArgs> command);
     }
 }

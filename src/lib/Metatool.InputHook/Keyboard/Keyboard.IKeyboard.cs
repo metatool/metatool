@@ -5,23 +5,18 @@ namespace Metatool.Input
 {
     public class KeyboardCommandTrigger : CommandTrigger<IKeyEventArgs>
     {
-        internal  MetaKey _metaKey;
-        private ICommand<IKeyEventArgs> _command;
+        internal MetaKey _metaKey;
 
-        public override ICommand<IKeyEventArgs> Command
+        public override void OnAdd(ICommand<IKeyEventArgs> command)
         {
-            get => _command;
-            set
-            {
-                _command = value;
-               _metaKey.ChangeDescription( _command.Description);
-            }
+            _metaKey.ChangeDescription(command.Description);
+            base.OnAdd(command);
         }
 
-        public override void OnRemove()
+        public override void OnRemove(ICommand<IKeyEventArgs> command)
         {
             _metaKey.Remove();
-            base.OnRemove();
+            base.OnRemove(command);
         }
     }
 
@@ -40,9 +35,9 @@ namespace Metatool.Input
         private ICommandTrigger<IKeyEventArgs> Event(ISequenceUnit sequenceUnit, KeyEvent keyEvent)
         {
             var combination = sequenceUnit.ToCombination();
-            var trigger = new KeyboardCommandTrigger();
+            var trigger     = new KeyboardCommandTrigger();
             var metaKey = Add(combination, keyEvent,
-                new KeyCommand(trigger.Execute) { CanExecute = trigger.CanExecute }) as MetaKey;
+                new KeyCommand(trigger.OnExecute) {CanExecute = trigger.OnCanExecute}) as MetaKey;
             trigger._metaKey = metaKey;
             return trigger;
         }

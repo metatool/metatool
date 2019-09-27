@@ -7,3 +7,4 @@ public event EventHandler<MyEventArgs> MyEvent
 }
  _myEventSource.Invoke(this, e);
 ```
+https://github.com/thomaslevesque/WeakEvent

@@ -4,22 +4,19 @@ using System.Text;
 
 namespace Metatool.Command
 {
-    public class CommandTrigger<TArgs>:ICommandTrigger<TArgs>
+    public class CommandTrigger<TArgs> : ICommandTrigger<TArgs>
     {
-        public virtual ICommand<TArgs> Command { get; set; }
+        public event Action<TArgs>    Execute;
+        public event Predicate<TArgs> CanExecute;
+        public virtual void OnExecute(TArgs args) => Execute?.Invoke(args);
 
-        public void Execute(TArgs args)
+        public virtual bool OnCanExecute(TArgs args) => CanExecute?.Invoke(args)??true;
+        public virtual void OnAdd(ICommand<TArgs> command)
         {
-            Command?.Execute(args);
-        }
 
-        public bool CanExecute(TArgs args)
+        }
+        public virtual void OnRemove(ICommand<TArgs> command)
         {
-            var c=Command?.CanExecute;
-            return c == null || c(args);
         }
-        
-        public virtual void OnRemove() { }
-
     }
 }

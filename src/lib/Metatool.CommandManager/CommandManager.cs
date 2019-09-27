@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Metatool.Command
 {
@@ -11,7 +12,9 @@ namespace Metatool.Command
             Predicate<TArgs> canExecute = null, string description = "")
         {
             var command = new Command<TArgs>(){Execute = execute, CanExecute = canExecute, Description = description};
-            trigger.Command = command;
+            trigger.CanExecute += command.CanExecute;
+            trigger.Execute += command.Execute;
+            trigger.OnAdd(command);
             var token = new CommandToken<TArgs>(trigger, this);
             _commands.Add(trigger, command);
             return token;
@@ -29,9 +32,12 @@ namespace Metatool.Command
 
         public void Remove<T>(ICommandTrigger<T> trigger)
         {
+            var command = _commands[trigger] as ICommand<T>;
             _commands.Remove(trigger);
-            trigger.Command = null;
-
+            Debug.Assert(command != null, nameof(command) + " != null");
+            trigger.CanExecute -= command.CanExecute;
+            trigger.Execute -= command.Execute;
+            trigger.OnRemove(command);
         }
 
     }
