@@ -30,7 +30,7 @@ namespace Metatool.Command
             return _commands[token].Enabled;
         }
 
-        public void Remove<T>(ICommandTrigger<T> trigger)
+        internal void Remove<T>(ICommandTrigger<T> trigger)
         {
             var command = _commands[trigger] as Command<T>;
             _commands.Remove(trigger);

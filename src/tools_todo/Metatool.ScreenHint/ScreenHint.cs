@@ -117,9 +117,5 @@ namespace Metatool.ScreenHint
             e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick, false));
         });
 
-        public void Hook()
-        {
-            Keyboard.Default.Hook();
-        }
     }
 }

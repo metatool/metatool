@@ -17,7 +17,6 @@ namespace Metatool.ScreenHint
         public override bool OnLoaded()
         {
             _screenHint = new ScreenHint();
-            _screenHint.Hook();
             return base.OnLoaded();
         }
     }

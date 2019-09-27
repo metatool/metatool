@@ -28,10 +28,11 @@ public class ClassTest
 public class MetaScript : PluginBase
 {
     ICommandManager _commandManager;
+    IRemove token;
     public MetaScript(ILogger<MetaScript> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
     {
         _commandManager = commandManager;
-        commandManager.Add(keyboard.Down(Caps + A), e =>
+        token=commandManager.Add(keyboard.Down(Caps + A), e =>
         {
 
             logger.LogInformation("AAAAAAAA_______________");
@@ -48,6 +49,7 @@ public class MetaScript : PluginBase
     }
     public override void OnUnloading()
     {
+        token.Remove();
         base.OnUnloading();
     }
 }

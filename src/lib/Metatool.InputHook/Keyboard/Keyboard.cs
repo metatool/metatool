@@ -28,6 +28,7 @@ namespace Metatool.Input
         public Keyboard(ILogger<Keyboard> logger)
         {
             _logger = logger;
+            Hook();
         }
 
         public IKeyPath Root = null;
@@ -379,7 +380,7 @@ namespace Metatool.Input
 
         public void Type(string text) => InputSimu.Inst.Keyboard.Type(text);
 
-        public void Hook()
+        private void Hook()
         {
             _hook.Run();
         }

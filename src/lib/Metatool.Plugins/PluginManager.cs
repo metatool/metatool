@@ -85,24 +85,24 @@ namespace Metatool.Plugin
             var dllPath   = Path.Combine(pluginDir, $"{assemblyName}.dll");
 
             ObservableFileSystemWatcher lastWatcher = null;
-            if (_plugins.ContainsKey(dllPath))
+
+            static void move(string pluginDir1, string assemblyName1, ILogger logger1)
             {
-                static void move(string pluginDir1, string assemblyName1, ILogger logger1)
+                var rebuildPath = Path.Combine(pluginDir1, AssemblyRebuildName(assemblyName1));
+                var dllPath1    = Path.Combine(pluginDir1, assemblyName1);
+
+                if (File.Exists(rebuildPath + ".dll"))
                 {
-                    var rebuildPath = Path.Combine(pluginDir1, AssemblyRebuildName(assemblyName1));
-                    var dllPath1    = Path.Combine(pluginDir1, assemblyName1);
-
-                    if (File.Exists(rebuildPath + ".dll"))
-                    {
-                        File.Move(rebuildPath + ".dll", dllPath1       + ".dll", true);
-                        File.Move(rebuildPath + ".deps.json", dllPath1 + ".deps.json", true);
-                        if (!Debugger.IsAttached)
-                            File.Move(rebuildPath + ".pdb", dllPath1 + ".pdb", true);
-                    }
-
+                    File.Move(rebuildPath + ".dll", dllPath1       + ".dll", true);
+                    File.Move(rebuildPath + ".deps.json", dllPath1 + ".deps.json", true);
+                    if (!Debugger.IsAttached)
+                        File.Move(rebuildPath + ".pdb", dllPath1 + ".pdb", true);
                     logger1.LogInformation($"{assemblyName1}: replaced with new one");
                 }
+            }
 
+            if (_plugins.ContainsKey(dllPath))
+            {
                 var plugin = _plugins[dllPath];
                 if (plugin.Loader != null) // reload
                 {
@@ -132,8 +132,9 @@ namespace Metatool.Plugin
 
                 lastWatcher = plugin.Watcher;
                 _plugins.Remove(dllPath);
-                move(pluginDir, assemblyName, _logger);
             }
+
+            move(pluginDir, assemblyName, _logger);
 
             _logger.LogInformation($"{assemblyName}: Loading...");
             var loader = CreatePluginLoader(dllPath);
