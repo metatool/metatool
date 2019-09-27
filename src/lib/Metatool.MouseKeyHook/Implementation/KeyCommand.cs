@@ -1,5 +1,6 @@
 ﻿using System;
-using Metatool.Command;
+using Metatool.Input.MouseKeyHook.Implementation.Command;
+
 namespace Metatool.Input.MouseKeyHook.Implementation
 {
     public class KeyCommand : Command<IKeyEventArgs>

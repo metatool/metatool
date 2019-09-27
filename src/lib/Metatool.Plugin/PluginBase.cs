@@ -19,7 +19,7 @@ namespace Metatool.Plugin
             this.OnUnloading();
         }
 
-        public virtual bool Init()
+        public virtual bool OnLoaded()
         {
             _logger.LogInformation($"{this.GetType().Name} loaded.");
             return true;

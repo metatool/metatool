@@ -149,7 +149,7 @@ namespace Metatool.Plugin
             {
                 var tool =
                     ActivatorUtilities.CreateInstance(_services, t) as IPlugin;
-                tool?.Init();
+                tool?.OnLoaded();
                 token.Tools.Add(tool);
             });
 

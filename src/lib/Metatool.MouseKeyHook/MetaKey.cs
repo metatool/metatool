@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Metatool.Command;
 using Metatool.Core;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.Input.MouseKeyHook.Implementation.Command;
 using OneOf;
 
 namespace Metatool.Input

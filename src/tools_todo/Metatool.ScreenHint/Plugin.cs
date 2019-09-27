@@ -14,11 +14,11 @@ namespace Metatool.ScreenHint
         {
         }
 
-        public override bool Init()
+        public override bool OnLoaded()
         {
             _screenHint = new ScreenHint();
             _screenHint.Hook();
-            return base.Init();
+            return base.OnLoaded();
         }
     }
 }

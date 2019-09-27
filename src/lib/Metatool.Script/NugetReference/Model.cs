@@ -28,7 +28,7 @@ namespace Metatool.Script.NugetReference
             VersionRange = versionRange;
         }
 
-        public LibraryRef(string path) : this(string.Empty, VersionRange.All)
+        public LibraryRef(string path) : this(string.Empty, VersionRange.AllFloating)
         {
             Path = path;
             AssemblyName = System.IO.Path.GetFileNameWithoutExtension(path);

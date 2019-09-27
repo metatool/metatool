@@ -2,7 +2,7 @@
 {
     public interface IPlugin
     {
-        bool Init();
+        bool OnLoaded();
         void OnUnloading();
     }
 }

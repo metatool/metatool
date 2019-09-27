@@ -32,11 +32,13 @@ namespace Metatool.Command
 
         public void Remove<T>(ICommandTrigger<T> trigger)
         {
-            var command = _commands[trigger] as ICommand<T>;
+            var command = _commands[trigger] as Command<T>;
             _commands.Remove(trigger);
             Debug.Assert(command != null, nameof(command) + " != null");
             trigger.CanExecute -= command.CanExecute;
+            command.CanExecute = null;
             trigger.Execute -= command.Execute;
+            command.Execute = null;
             trigger.OnRemove(command);
         }
 

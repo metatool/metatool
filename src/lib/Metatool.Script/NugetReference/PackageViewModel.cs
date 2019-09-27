@@ -174,6 +174,11 @@ namespace Metatool.Script.NugetReference
                     return;
                 }
 
+                foreach (var error in result.Errors)
+                {
+                    _logger.LogWarning(error);
+                }
+
                 RestoreFailed = false;
                 RestoreErrors = Array.Empty<string>();
 

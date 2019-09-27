@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Metatool.Command;
 using Metatool.Core;
+using Metatool.Input.MouseKeyHook.Implementation.Command;
 using OneOf;
 
 namespace Metatool.Input

@@ -124,7 +124,7 @@ namespace Metatool.Script
                 refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
             }
 
-            packageViewModel.RestoreError += r => { NotifyBuildResult?.Invoke(r.ToList().Select(er=>CompilationErrorResultObject.Create("","",er, "", -1,-1)).ToList()); };
+            packageViewModel.RestoreError += r => { NotifyBuildResult?.Invoke(r.ToList().Select(er=>CompilationErrorResultObject.Create("","","PackageRestoreError:: "+er, "", -1,-1)).ToList()); };
             packageViewModel.UpdateLibraries(refs);
 
         }

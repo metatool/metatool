@@ -1,7 +1,8 @@
-﻿#r "nuget:Metatool.Plugin,1.3.0"
+﻿#r "nuget:Metatool.Plugin,*"
+#r "nuget:Metatool.Input.IMouseKeyHook,*"
+#r "nuget:Microsoft.Extensions.Logging.Abstractions,*"
 #r "nuget:Newtonsoft.Json/9.0.1"
 #r "nuget:Automapper,9.0.0"
-#r "nuget:Microsoft.Extensions.Logging.Abstractions,3.0.0-preview8.19405.4"
 #r "LocalLib.dll"
 #load "LocalScript.csx"
 #load "https://gist.githubusercontent.com/metasong/418dde5c695ff087c59cf54255897fd2/raw/0ca795cd567d88818efd857d61ddd9643d4d3049/RemoteCSharpScriptTest.csx"
@@ -12,7 +13,9 @@ using System.Threading;
 using LocalLib;
 using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
-
+using Metatool.Command;
+using Metatool.Input;
+using static Metatool.Input.Key;
 public class ClassTest
 {
     public void Hello()
@@ -24,21 +27,27 @@ public class ClassTest
 }
 public class MetaScript : PluginBase
 {
-    public MetaScript(ILogger<MetaScript> logger) : base(logger)
+    ICommandManager _commandManager;
+    public MetaScript(ILogger<MetaScript> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
     {
+        _commandManager = commandManager;
+        commandManager.Add(keyboard.Down(Caps + A), e =>
+        {
 
+            logger.LogInformation("AAAAAAAA_______________");
+        });
     }
-    public override bool Init()
+
+    public override bool OnLoaded()
     {
         Log.LogInformation($"we are using {typeof(MapperConfiguration)} nuget lib.");
         new ClassInGist().Hello();
         new ClassTest().Hello();
-        return base.Init();
+        return base.OnLoaded();
 
     }
     public override void OnUnloading()
     {
         base.OnUnloading();
-
     }
 }

@@ -15,7 +15,7 @@ namespace Metatool.ScreenHint
     public class KeyboardPlugin :PluginBase
     {
 
-        public override bool Init()
+        public override bool OnLoaded()
         {
             var keyConfig    = new KeyboardConfig();
             var keyboard61   = new Keyboard61();
@@ -26,16 +26,16 @@ namespace Metatool.ScreenHint
             var windowKeys   = new WindowKeys();
             var software = new Software();
             Keyboard.Default.Hook();
-            return base.Init();
+            return base.OnLoaded();
         }
 
         public KeyboardPlugin(ILogger<KeyboardPlugin> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
         {
-            commandManager.Add(keyboard.Down(Caps + A), e =>
-            {
-                
-                logger.LogInformation("ssssss_______________");
-            });
+            // commandManager.Add(keyboard.Down(Caps + A), e =>
+            // {
+            //     
+            //     logger.LogInformation("ssssss_______________");
+            // });
         }
     }
 }
