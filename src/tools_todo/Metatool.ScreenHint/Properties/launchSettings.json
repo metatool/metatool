@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Metatool.ScreenHint": {
+      "commandName": "Executable",
+      "executablePath": "$(MetatoolDir)\\Metatool.exe",
+      "commandLineArgs": "$(TargetPath)"
+    }
+  }
+}

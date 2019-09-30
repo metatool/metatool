@@ -14,7 +14,7 @@ namespace Metatool.Tools
         public ToolDemo(ILogger<ToolDemo> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
         {
             token = commandManager.Add(keyboard.Down(Caps + A),
-                e => { logger.LogInformation("Caps+A triggered!!!!!!!"); });
+                e => { logger.LogInformation($"{nameof(ToolDemo)}: Caps+A triggered!!!!!!!"); });
         }
 
         public override bool OnLoaded()
