@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Metatool.ToolDemo": {
+      "commandName": "Executable",
+      "executablePath": "M:\\Workspace\\metatool\\exe\\debug\\Metatool.exe",
+      "commandLineArgs": "$(TargetPath)"
+    }
+  }
+}

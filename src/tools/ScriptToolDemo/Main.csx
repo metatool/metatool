@@ -1,5 +1,5 @@
 ﻿#r "nuget:Metatool.Plugin,*"
-#r "nuget:Metatool.Input.IMouseKeyHook,*"
+//#r "nuget:Metatool.Input.IMouseKeyHook,*"
 #r "nuget:Microsoft.Extensions.Logging.Abstractions,*"
 #r "nuget:Newtonsoft.Json/9.0.1"
 #r "nuget:Automapper,9.0.0"

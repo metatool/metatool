@@ -28,14 +28,13 @@ namespace Metatool.Plugin
         {
             _services = services;
             _logger   = logger;
-            InitPlugins();
         }
 
         private readonly IServiceProvider _services;
 
         readonly Dictionary<string, PluginToken> _plugins = new Dictionary<string, PluginToken>();
 
-        private void InitPlugins()
+        public void InitPlugins()
         {
             var pluginsDir = Path.Combine(AppContext.BaseDirectory, "tools");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
@@ -137,24 +136,37 @@ namespace Metatool.Plugin
             move(pluginDir, assemblyName, _logger);
 
             _logger.LogInformation($"{assemblyName}: Loading...");
-            var loader = CreatePluginLoader(dllPath);
-            var token  = new PluginToken() {Loader = loader, Watcher = lastWatcher};
-            _plugins.Add(dllPath, token);
-            var pluginTypes = GetPluginTypes(loader);
-
-            // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
-            var types = pluginTypes.ToList();
-            if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
-
-            types.ForEach(t =>
-            {
-                var tool =
-                    ActivatorUtilities.CreateInstance(_services, t) as IPlugin;
-                tool?.OnLoaded();
-                token.Tools.Add(tool);
-            });
+            LoadDll(dllPath, lastWatcher);
 
             if (watch) Watch(scriptPath, assemblyName);
+        }
+
+        public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
+        {
+            var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
+            try
+            {
+                var loader = CreatePluginLoader(dllPath);
+                var token  = new PluginToken() {Loader = loader, Watcher = lastWatcher};
+                _plugins.Add(dllPath, token);
+                var pluginTypes = GetPluginTypes(loader);
+
+                // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
+                var types = pluginTypes.ToList();
+                if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
+
+                types.ForEach(t =>
+                {
+                    var tool =
+                        ActivatorUtilities.CreateInstance(_services, t) as IPlugin;
+                    tool?.OnLoaded();
+                    token.Tools.Add(tool);
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{assemblyName}: Error while loading tool!");
+            }
         }
 
         private void Unload(string dllPath)

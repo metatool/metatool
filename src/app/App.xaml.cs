@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using Metatool.Command;
 using Metatool.Core;
@@ -23,8 +24,6 @@ namespace Metaseed.Metatool
 #else
         private static bool IsDebug = false;
 #endif
-
-        private PluginManager _pluginManager;
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -62,6 +61,7 @@ namespace Metaseed.Metatool
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
             Notify.ShowMessage("Metatool starting...");
             Current.MainWindow = new MainWindow();
             ConsoleExt.InitialConsole(true);
@@ -71,7 +71,19 @@ namespace Metaseed.Metatool
             ConfigureServices(serviceCollection, configuration);
             var provider = serviceCollection.BuildServiceProvider();
             ServiceLocator.Current = provider;
-            _pluginManager         = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
+            var firstArg = e.Args.FirstOrDefault();
+            var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
+            if (firstArg != null)
+            {
+                if (firstArg.EndsWith(".dll"))
+                {
+                    pluginManager.LoadDll(firstArg);
+                }
+            }
+            else
+            {
+                pluginManager.InitPlugins();
+            }
             ConfigNotify();
             var logger = provider.GetService<ILogger<App>>();
             logger.LogInformation("Metatool started!");
