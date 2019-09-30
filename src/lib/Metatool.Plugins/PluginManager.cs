@@ -144,8 +144,6 @@ namespace Metatool.Plugin
         public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
         {
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
-            try
-            {
                 var loader = CreatePluginLoader(dllPath);
                 var token  = new PluginToken() {Loader = loader, Watcher = lastWatcher};
                 _plugins.Add(dllPath, token);
@@ -162,11 +160,7 @@ namespace Metatool.Plugin
                     tool?.OnLoaded();
                     token.Tools.Add(tool);
                 });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{assemblyName}: Error while loading tool!");
-            }
+
         }
 
         private void Unload(string dllPath)
