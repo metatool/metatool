@@ -34,7 +34,6 @@ public class MetaScript : PluginBase
         _commandManager = commandManager;
         token=commandManager.Add(keyboard.Down(Caps + A), e =>
         {
-
             logger.LogInformation("AAAAAAAA_______________");
         });
     }
@@ -45,7 +44,6 @@ public class MetaScript : PluginBase
         new ClassInGist().Hello();
         new ClassTest().Hello();
         return base.OnLoaded();
-
     }
     public override void OnUnloading()
     {

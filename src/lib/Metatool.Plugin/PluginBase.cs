@@ -14,11 +14,6 @@ namespace Metatool.Plugin
 
         protected ILogger Log => _logger;
 
-        private void OnPluginUnloadingRequested(AssemblyLoadContext obj)
-        {
-            this.OnUnloading();
-        }
-
         public virtual bool OnLoaded()
         {
             _logger.LogInformation($"{this.GetType().Name} loaded.");
