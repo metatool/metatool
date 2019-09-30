@@ -291,7 +291,7 @@ namespace Metatool.Script
             var compilationOptions = new CSharpCompilationOptions(
                 OutputKind,
                 mainTypeName: null,
-                scriptClassName: "Program",
+                scriptClassName: "MetatoolScript",
                 usings: Usings,
                 optimizationLevel: _optimizationLevel,
                 checkOverflow: _checkOverflow,

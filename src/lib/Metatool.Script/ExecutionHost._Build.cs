@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RoslynPad.Hosting;
@@ -32,12 +33,13 @@ namespace Metatool.Script
         private string                                           _depsFile;
         private CancellationTokenSource                          _executeCts;
         private bool                                             _initializeBuildPathAfterRun;
+        private ILogger _logger;
         public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
-        public ExecutionHost(ExecutionHostParameters parameters, string buildPath, string name)
+        public ExecutionHost(ExecutionHostParameters parameters, string name, ILogger logger)
         {
+            _logger = logger;
             _parameters = parameters;
-            BuildPath   = buildPath;
             Name        = name;
 
             Initialize(parameters);
@@ -176,7 +178,7 @@ namespace Metatool.Script
                 .WithReferences(parameters.NuGetRuntimeReferences.Select(p => MetadataReference.CreateFromFile(p))
                     .Concat(parameters.FrameworkReferences))
                 .WithImports(parameters.Imports)
-                .WithMetadataResolver(new NuGetMetadataReferenceResolver(parameters.WorkingDirectory))
+                .WithMetadataResolver(new NuGetMetadataReferenceResolver(parameters.OutputDirectory))
                 .WithSourceResolver(new RemoteFileResolver(parameters.WorkingDirectory));
         }
 
@@ -190,7 +192,7 @@ namespace Metatool.Script
                 references: _scriptOptions.MetadataReferences,
                 usings: _scriptOptions.Imports,
                 filePath: _scriptOptions.FilePath,
-                workingDirectory: _parameters.WorkingDirectory,
+                workingDirectory: _parameters.OutputDirectory,
                 metadataResolver: _scriptOptions.MetadataResolver,
                 sourceResolver: _scriptOptions.SourceResolver,
                 optimizationLevel: optimizationLevel ?? _parameters.OptimizationLevel,
@@ -253,7 +255,7 @@ namespace Metatool.Script
             }
         }
 
-        public string BuildPath { get; set; }
+        public string BuildPath => _parameters.OutputDirectory;
 
         private static bool CopyIfNewer(string source, string destination)
         {

@@ -1,5 +1,4 @@
 ﻿#r "nuget:Metatool.Plugin,*"
-//#r "nuget:Metatool.Input.IMouseKeyHook,*"
 #r "nuget:Microsoft.Extensions.Logging.Abstractions,*"
 #r "nuget:Newtonsoft.Json/9.0.1"
 #r "nuget:Automapper,9.0.0"
@@ -27,15 +26,14 @@ public class ClassTest
 }
 public class MetaScript : PluginBase
 {
-    ICommandManager _commandManager;
     IRemove token;
     public MetaScript(ILogger<MetaScript> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
     {
-        _commandManager = commandManager;
-        token=commandManager.Add(keyboard.Down(Caps + A), e =>
-        {
-            logger.LogInformation("AAAAAAAA_______________");
-        });
+        logger.LogInformation("Demo script created");
+        token = commandManager.Add(keyboard.Down(Caps + A), e =>
+          {
+              logger.LogInformation("AAAAAAAA_______________");
+          });
     }
 
     public override bool OnLoaded()

@@ -11,11 +11,12 @@ namespace Metatool.Script
 {
     public static class LibRefParser
     {
-        public static List<LibraryRef> ParseReference(string code)
+        public static List<LibraryRef> ParseReference(string code, string dir)
         {
             var compilation = SyntaxFactory.ParseCompilationUnit(code);
             var libraries   = new List<LibraryRef>();
             var matcher     = NuGetSourceReferenceResolver.PackageNameVersionMatcher;
+
             bool IsLocalReference(string path)
             {
                 switch (Path.GetExtension(path)?.ToLowerInvariant())
@@ -41,8 +42,13 @@ namespace Metatool.Script
                     var versionRange = version == "" ? VersionRange.All : VersionRange.Parse(version);
                     libraries.Add(new LibraryRef(name, versionRange));
                 }
-                else if(IsLocalReference(path))
+                else if (IsLocalReference(path))
                 {
+                    if (!Path.IsPathRooted(path))
+                    {
+                        path = Path.Combine(dir, path);
+                    }
+
                     libraries.Add(new LibraryRef(path));
                 }
             }

@@ -382,6 +382,7 @@ namespace Metatool.Input
 
         private void Hook()
         {
+            _logger.LogInformation("Keyboard hook is running...");
             _hook.Run();
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -77,21 +78,24 @@ namespace Metatool.Script
             return GetReferencePaths(DefaultReferences).Concat(references).ToImmutableArray();
         }
 
-        public void Build(string path, string assemblyName = null,
+        public void Build(string path, string outputDir, string assemblyName = null,
             OptimizationLevel optimization = OptimizationLevel.Debug)
         {
             var code         = File.ReadAllText( path);
-            var refs         = LibRefParser.ParseReference(code);
+            var codeDir = Path.GetDirectoryName(path);
+            var refs         = LibRefParser.ParseReference(code,codeDir);
             var name         = assemblyName ?? Path.GetFileNameWithoutExtension( path);
-            var directory    = Path.GetDirectoryName(path);
             var nugetPackage = new NugetPackage(_logger);
 
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             var packageViewModel = new PackageViewModel(_logger, nugetPackage)
-                {Id = name, RestorePath = Path.Combine(directory, "nuget")};
+                {Id = name, RestorePath = Path.Combine(outputDir, "nuget")};
 
 
             nugetPackage.RestoreResult += async restoreResult =>
             {
+                _logger.LogInformation($"{assemblyName}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
                 var executionHostParameters = new ExecutionHostParameters(
                     compileReferences: ImmutableArray<string>.Empty,
                     runtimeReferences: ImmutableArray<string>.Empty,
@@ -99,7 +103,8 @@ namespace Metatool.Script
                     frameworkReferences: FrameworkReferences,
                     imports: DefaultImports,
                     disabledDiagnostics: DisabledDiagnostics,
-                    workingDirectory: directory,
+                    outputDirectory: outputDir,
+                    workingDirectory: codeDir,
                     globalPackageFolder: nugetPackage.GlobalPackageFolder);
                 executionHostParameters.NuGetCompileReferences =
                     GetReferences(references: restoreResult.CompileReferences);
@@ -111,13 +116,17 @@ namespace Metatool.Script
                 executionHostParameters.DirectReferences = packageViewModel.LocalLibraryPaths;
 
                 var executionHost =
-                    new ExecutionHost(executionHostParameters,  directory, name);
+                    new ExecutionHost(executionHostParameters, name,_logger);
                 // executionHost.Dumped            += AddResult;
                 // executionHost.Error             += ExecutionHostOnError;
                 // executionHost.ReadInput         += ExecutionHostOnInputRequest;
                 // executionHost.CompilationErrors += ExecutionHostOnCompilationErrors;
                 executionHost.NotifyBuildResult += e => NotifyBuildResult?.Invoke(e);
-                await executionHost.BuildAndExecuteAsync(code, optimization);
+                stopWatch.Restart();
+                _logger.LogInformation($"{assemblyName}: Start to build...");
+               await executionHost.BuildAndExecuteAsync(code, optimization);
+               _logger.LogInformation($"{assemblyName}: Build successfully, time: {stopWatch.ElapsedMilliseconds}ms");
+
             };
             if (DefaultReferences.Length > 0)
             {

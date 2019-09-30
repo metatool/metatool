@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Debug": {
+      "commandName": "Executable",
+      "executablePath": "$(MetatoolDir)\\Metatool.exe",
+      "commandLineArgs": "$(ProjectDir)main.csx"
+    }
+  }
+}

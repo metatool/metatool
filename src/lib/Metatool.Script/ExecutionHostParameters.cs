@@ -12,6 +12,7 @@ namespace Metatool.Script
             ImmutableArray<MetadataReference> frameworkReferences,
             ImmutableArray<string> imports,
             ImmutableArray<string> disabledDiagnostics,
+            string outputDirectory,
             string workingDirectory,
             string globalPackageFolder,
             OptimizationLevel optimizationLevel = OptimizationLevel.Debug,
@@ -24,6 +25,7 @@ namespace Metatool.Script
             FrameworkReferences = frameworkReferences;
             Imports = imports;
             DisabledDiagnostics = disabledDiagnostics;
+            OutputDirectory = outputDirectory;
             WorkingDirectory = workingDirectory;
             OptimizationLevel = optimizationLevel;
             CheckOverflow = checkOverflow;
@@ -37,6 +39,7 @@ namespace Metatool.Script
         public ImmutableArray<MetadataReference> FrameworkReferences { get; set; }
         public ImmutableArray<string> Imports { get; set; }
         public ImmutableArray<string> DisabledDiagnostics { get; }
+        public string OutputDirectory { get; }
         public string WorkingDirectory { get; }
         public OptimizationLevel OptimizationLevel { get; }
         public bool CheckOverflow { get; }

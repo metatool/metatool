@@ -64,7 +64,7 @@ namespace Metatool.Script
             {
                 FileName = dotnetExe,
                 Arguments = $"\"{assemblyPath}\" --pid {CurrentPid.Value}",
-                WorkingDirectory = _parameters.WorkingDirectory,
+                WorkingDirectory = _parameters.OutputDirectory,
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,

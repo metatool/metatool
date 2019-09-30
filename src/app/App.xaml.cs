@@ -97,6 +97,9 @@ namespace Metaseed.Metatool
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            var currentDir = Directory.GetCurrentDirectory();
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+
             Notify.ShowMessage("Metatool starting...");
             Current.MainWindow = new MainWindow();
             ConsoleExt.InitialConsole(true);
@@ -113,16 +116,24 @@ namespace Metaseed.Metatool
             var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
             if (firstArg != null)
             {
+                var fullPath = Path.GetFullPath(Path.Combine(currentDir,firstArg));
                 if (firstArg.EndsWith(".dll"))
                 {
                     try
                     {
-                        pluginManager.LoadDll(firstArg);
+                        pluginManager.LoadDll(fullPath);
                     }
                     catch (Exception ex)
                     {
                         logger.LogError(ex, $"Error while loading tool{firstArg}! No tools loaded! Please fix it then restart!");
                     }
+                }
+                else if(firstArg.EndsWith(".csx"))
+                {
+                    var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
+                    logger.LogInformation($"{fullPath}, {assemblyName}");
+
+                    pluginManager.BuildReload(fullPath, assemblyName, false);
                 }
             }
             else

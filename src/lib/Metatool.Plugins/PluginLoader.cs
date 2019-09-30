@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Windows;
 using System.Windows.Threading;
 using Metatool.Metatool.Plugin.Loader;
 
@@ -70,7 +72,8 @@ namespace Metatool.Metatool.Plugin
 
             var config = new PluginConfig(assemblyFile);
             configure(config);
-            return new PluginLoader(config);
+            Debug.Assert(Application.Current.Dispatcher != null, "Application.Current.Dispatcher != null");
+            return Application.Current.Dispatcher.Invoke(() => new PluginLoader(config));
         }
 
         private readonly PluginConfig        _config;

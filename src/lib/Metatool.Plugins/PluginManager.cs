@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows;
 using Metatool.Metatool.Plugin;
 using Metatool.Reactive;
 using Metatool.Script;
@@ -22,6 +23,7 @@ namespace Metatool.Plugin
 
     public class PluginManager
     {
+        const            string                 ScriptBin = "bin";
         private readonly ILogger<PluginManager> _logger;
 
         public PluginManager(ILogger<PluginManager> logger, IServiceProvider services)
@@ -42,11 +44,11 @@ namespace Metatool.Plugin
                 var assemblyName = Path.GetFileName(dir);
                 try
                 {
-                    var pluginDll  = Path.Combine(dir, assemblyName + ".dll");
                     var scriptPath = Path.Combine(dir, "main.csx");
-
+                    var pluginDll = Path.Combine(dir, assemblyName + ".dll");
                     if (File.Exists(scriptPath))
                     {
+                        pluginDll = Path.Combine(dir, ScriptBin, assemblyName + ".dll");
                         if (File.Exists(pluginDll))
                         {
                             var dllInfo    = new FileInfo(pluginDll);
@@ -81,14 +83,14 @@ namespace Metatool.Plugin
         private void Load(string scriptPath, string assemblyName, bool watch = true)
         {
             var pluginDir = Path.GetDirectoryName(scriptPath);
-            var dllPath   = Path.Combine(pluginDir, $"{assemblyName}.dll");
+            var dllPath   = Path.Combine(pluginDir, ScriptBin, $"{assemblyName}.dll");
 
             ObservableFileSystemWatcher lastWatcher = null;
 
             static void move(string pluginDir1, string assemblyName1, ILogger logger1)
             {
-                var rebuildPath = Path.Combine(pluginDir1, AssemblyRebuildName(assemblyName1));
-                var dllPath1    = Path.Combine(pluginDir1, assemblyName1);
+                var rebuildPath = Path.Combine(pluginDir1, ScriptBin, AssemblyRebuildName(assemblyName1));
+                var dllPath1    = Path.Combine(pluginDir1, ScriptBin, assemblyName1);
 
                 if (File.Exists(rebuildPath + ".dll"))
                 {
@@ -143,24 +145,31 @@ namespace Metatool.Plugin
 
         public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
         {
+            Debug.Assert(Application.Current.Dispatcher != null, "Application.Current.Dispatcher != null");
+            var access = Application.Current.Dispatcher.CheckAccess();
+            if (!access)
+            {
+                Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
+                return;
+            }
+
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
-                var loader = CreatePluginLoader(dllPath);
-                var token  = new PluginToken() {Loader = loader, Watcher = lastWatcher};
-                _plugins.Add(dllPath, token);
-                var pluginTypes = GetPluginTypes(loader);
+            var loader       = CreatePluginLoader(dllPath);
+            var token        = new PluginToken() {Loader = loader, Watcher = lastWatcher};
+            _plugins.Add(dllPath, token);
+            var pluginTypes = GetPluginTypes(loader);
 
-                // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
-                var types = pluginTypes.ToList();
-                if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
+            // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
+            var types = pluginTypes.ToList();
+            if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
 
-                types.ForEach(t =>
-                {
-                    var tool =
-                        ActivatorUtilities.CreateInstance(_services, t) as IPlugin;
-                    tool?.OnLoaded();
-                    token.Tools.Add(tool);
-                });
-
+            types.ForEach(t =>
+            {
+                var tool =
+                    ActivatorUtilities.CreateInstance(_services, t) as IPlugin;
+                tool?.OnLoaded();
+                token.Tools.Add(tool);
+            });
         }
 
         private void Unload(string dllPath)
@@ -224,31 +233,32 @@ namespace Metatool.Plugin
 
         private static string AssemblyRebuildName(string assemblyName) => assemblyName + "_build";
 
-        private void BuildReload(string scriptPath, string assemblyName)
+        public void BuildReload(string scriptPath, string assemblyName, bool watch = true)
         {
             _logger.LogInformation($"start to build assembly: {assemblyName}...");
             try
             {
                 var scriptHost = new ScriptHost(_logger);
-                scriptHost.Build(scriptPath, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
+                var outputDir  = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
+                scriptHost.Build(scriptPath, outputDir, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
                 scriptHost.NotifyBuildResult += errors =>
                 {
                     if (errors.Count > 0)
                     {
                         _logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
-                        Watch(scriptPath, assemblyName);
+                        if (watch) Watch(scriptPath, assemblyName);
                     }
                     else
                     {
                         _logger.LogInformation($"Assembly {assemblyName}: build successfully!");
-                        Load(scriptPath, assemblyName);
+                        Load(scriptPath, assemblyName, watch);
                     }
                 };
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"Assembly {assemblyName}: build errors!");
-                Watch(scriptPath, assemblyName);
+                if (watch) Watch(scriptPath, assemblyName);
             }
         }
 
