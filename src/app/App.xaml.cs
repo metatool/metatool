@@ -58,10 +58,19 @@ namespace Metaseed.Metatool
             Notify.ShowMessage("Metatool started!");
         }
 
+        void SetupEnvVar()
+        {
+            var value = Environment.GetEnvironmentVariable("MetatoolDir");
+            if (value == null)
+            {
+                Environment.SetEnvironmentVariable("MetatoolDir", AppContext.BaseDirectory, EnvironmentVariableTarget.User);
+            }
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
+            SetupEnvVar();
             Notify.ShowMessage("Metatool starting...");
             Current.MainWindow = new MainWindow();
             ConsoleExt.InitialConsole(true);
@@ -86,6 +95,7 @@ namespace Metaseed.Metatool
             }
             ConfigNotify();
             var logger = provider.GetService<ILogger<App>>();
+            logger.LogInformation($"MetatoolDir: { Environment.GetEnvironmentVariable("MetatoolPath")}");
             logger.LogInformation("Metatool started!");
         }
     }
