@@ -1,6 +1,5 @@
 ﻿#r "nuget:Metatool.Plugin,*"
 #r "nuget:Microsoft.Extensions.Logging.Abstractions,*"
-#r "nuget:Newtonsoft.Json/9.0.1"
 #r "nuget:Automapper,9.0.0"
 #r "LocalLib.dll"
 #load "LocalScript.csx"
@@ -32,7 +31,7 @@ public class MetaScript : PluginBase
         logger.LogInformation("Demo script created");
         token = commandManager.Add(keyboard.Down(Caps + A), e =>
           {
-              logger.LogInformation("AAAAAAAA_______________");
+              logger.LogInformation("Caps+A is triggered!!!!!");
           });
     }
 

@@ -57,9 +57,9 @@ namespace Metatool.UI
             var handle = PInvokes.GetConsoleWindow();
 #if !DEBUG
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
+            if(disableCloseButton)  DisableCloseButton();
 #endif
             SetConsoleCtrlHandler(Handler, true);
-            if(disableCloseButton)  DisableCloseButton();
         }
 
         public static void DisableCloseButton() =>

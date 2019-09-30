@@ -60,7 +60,7 @@ namespace Metatool.Plugin
                             }
                             else
                             {
-                                Load(scriptPath, assemblyName);
+                                Load(scriptPath, pluginDll, assemblyName);
                             }
                         }
                         else
@@ -70,7 +70,7 @@ namespace Metatool.Plugin
                     }
                     else if (File.Exists(pluginDll))
                     {
-                        Load(scriptPath, assemblyName, false);
+                        Load(scriptPath, pluginDll, assemblyName, false);
                     }
                 }
                 catch (Exception ex)
@@ -80,10 +80,9 @@ namespace Metatool.Plugin
             }
         }
 
-        private void Load(string scriptPath, string assemblyName, bool watch = true)
+        private void Load(string scriptPath, string dllPath, string assemblyName, bool watch = true)
         {
             var pluginDir = Path.GetDirectoryName(scriptPath);
-            var dllPath   = Path.Combine(pluginDir, ScriptBin, $"{assemblyName}.dll");
 
             ObservableFileSystemWatcher lastWatcher = null;
 
@@ -115,7 +114,7 @@ namespace Metatool.Plugin
                             _logger.LogInformation($"{assemblyName}: unloaded!");
                             move(pluginDir, assemblyName, _logger);
 
-                            Load(scriptPath, assemblyName);
+                            Load(scriptPath, dllPath, assemblyName);
                         }
                         else
                         {
@@ -240,6 +239,8 @@ namespace Metatool.Plugin
             {
                 var scriptHost = new ScriptHost(_logger);
                 var outputDir  = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
+                var pluginDll = Path.Combine(outputDir, assemblyName + ".dll");
+
                 scriptHost.Build(scriptPath, outputDir, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
                 scriptHost.NotifyBuildResult += errors =>
                 {
@@ -251,7 +252,7 @@ namespace Metatool.Plugin
                     else
                     {
                         _logger.LogInformation($"Assembly {assemblyName}: build successfully!");
-                        Load(scriptPath, assemblyName, watch);
+                        Load(scriptPath, pluginDll, assemblyName, watch);
                     }
                 };
             }
