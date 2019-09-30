@@ -66,6 +66,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectToolDemo", "ProjectT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.ToolDemo", "tools\ProjectToolDemo\Metatool.ToolDemo.csproj", "{A72BAE55-A366-46B2-A61D-CA7AF15D939A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScriptToolDemo", "ScriptToolDemo", "{C4133B76-D388-4263-AE8C-831A94AE4F7B}"
+	ProjectSection(SolutionItems) = preProject
+		tools\ScriptToolDemo\LocalScript.csx = tools\ScriptToolDemo\LocalScript.csx
+		tools\ScriptToolDemo\Main.csx = tools\ScriptToolDemo\Main.csx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -291,6 +297,7 @@ Global
 		{D11FFB35-8D2A-4A5B-89E4-B7F844CDD196} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{3AA980B4-2DE9-4067-BA64-8D130155C8A4} = {0C2683F4-FE4F-42F8-81CD-C4A8F205250D}
 		{A72BAE55-A366-46B2-A61D-CA7AF15D939A} = {3AA980B4-2DE9-4067-BA64-8D130155C8A4}
+		{C4133B76-D388-4263-AE8C-831A94AE4F7B} = {0C2683F4-FE4F-42F8-81CD-C4A8F205250D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}

@@ -59,36 +59,44 @@ namespace Metaseed.Metatool
             Notify.ShowMessage("Metatool started!");
         }
 
-        void SetupEnvVar()
+        void SetupEnvVar(ILogger logger)
         {
             var value = Environment.GetEnvironmentVariable("MetatoolDir");
             if (value == null)
             {
                 Environment.SetEnvironmentVariable("MetatoolDir", AppContext.BaseDirectory,
                     EnvironmentVariableTarget.User);
+                logger.LogInformation($"Set User Environment Var: MetatoolDir");
             }
 
-            var pathval = System.Environment.GetEnvironmentVariable("PATH");
-            var paths   = pathval.Split(Path.PathSeparator);
-            if (!paths.Contains(AppContext.BaseDirectory, StringComparer.InvariantCultureIgnoreCase))
+            static string AddToPath(ILogger log, EnvironmentVariableTarget target)
             {
-                pathval = $"{AppContext.BaseDirectory}{Path.PathSeparator}{pathval}";
-                System.Environment.SetEnvironmentVariable("PATH", pathval, EnvironmentVariableTarget.User);
-                try
+                var s     = System.Environment.GetEnvironmentVariable("PATH",target);
+                var paths = s.Split(Path.PathSeparator);
+                if (!paths.Contains(AppContext.BaseDirectory, StringComparer.InvariantCultureIgnoreCase))
                 {
-                    System.Environment.SetEnvironmentVariable("PATH", pathval, EnvironmentVariableTarget.Machine);
+                    s = $"{AppContext.BaseDirectory}{Path.PathSeparator}{s}";
+                    System.Environment.SetEnvironmentVariable("PATH", s, target);
+                    log.LogInformation($"Add to {target} PATH Environment Var.");
                 }
-                catch
-                {
-                    // ignored
-                }
+
+                return s;
+            }
+
+            var pathval = AddToPath(logger, EnvironmentVariableTarget.User);
+            try
+            {
+                AddToPath(logger, EnvironmentVariableTarget.Machine);
+            }
+            catch
+            {
+                logger.LogWarning("Could not add to Machine scale Path environment variable!");
             }
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            SetupEnvVar();
             Notify.ShowMessage("Metatool starting...");
             Current.MainWindow = new MainWindow();
             ConsoleExt.InitialConsole(true);
@@ -99,6 +107,8 @@ namespace Metaseed.Metatool
             var provider = serviceCollection.BuildServiceProvider();
             ServiceLocator.Current = provider;
             var logger = provider.GetService<ILogger<App>>();
+            SetupEnvVar(logger);
+
             var firstArg      = e.Args.FirstOrDefault();
             var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
             if (firstArg != null)
