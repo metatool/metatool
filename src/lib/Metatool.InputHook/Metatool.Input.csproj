@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Metatool.CommandManager\Metatool.Command.csproj" />
     <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\Metatool.ICommand\Metatool.ICommand.csproj" />
     <ProjectReference Include="..\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj" />
     <ProjectReference Include="..\Metatool.Plugin\Metatool.Plugin.csproj" />
     <ProjectReference Include="..\Metatool.WindowsInput\Metatool.WindowsInput.csproj" />
