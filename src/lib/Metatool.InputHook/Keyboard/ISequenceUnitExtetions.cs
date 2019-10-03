@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metatool.Command;
-using Metatool.Core;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Plugin;
 

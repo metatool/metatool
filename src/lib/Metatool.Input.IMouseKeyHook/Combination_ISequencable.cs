@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using Metatool.Input.MouseKeyHook;
 
 namespace Metatool.Input
 {

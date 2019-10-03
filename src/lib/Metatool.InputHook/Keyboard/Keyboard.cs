@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Metatool.Command;
-using Metatool.Core;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.MetaKeyboard;

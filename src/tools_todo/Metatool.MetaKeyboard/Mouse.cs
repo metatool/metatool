@@ -2,7 +2,6 @@
 using FlaUI.UIA3;
 using Metatool.Command;
 using Metatool.Input;
-using Metatool.ScreenHint;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Input.Key;
 using Window = Metatool.UI.Window;

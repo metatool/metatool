@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Threading;
 using Metatool.Command;
 using Metatool.Input;
 using Metatool.ScreenPoint;
 using Point = System.Drawing.Point;
 using static Metatool.Input.Key;
-using Application = System.Windows.Application;
 
 namespace Metatool.ScreenHint
 {

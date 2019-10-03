@@ -1,5 +1,4 @@
-﻿using System;
-using Metatool.Command;
+﻿using Metatool.Command;
 using Metatool.Input;
 using Metatool.Plugin;
 using Microsoft.Extensions.Logging;

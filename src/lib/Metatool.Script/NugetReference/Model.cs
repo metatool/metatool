@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Versioning;

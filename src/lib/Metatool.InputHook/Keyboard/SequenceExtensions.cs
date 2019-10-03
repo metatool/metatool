@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Metatool.Command;
-using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Plugin;
 
 namespace Metatool.Input

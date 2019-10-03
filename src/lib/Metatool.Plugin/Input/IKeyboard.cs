@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using Metatool.Command;
+﻿using Metatool.Command;
 
 namespace Metatool.Input
 {

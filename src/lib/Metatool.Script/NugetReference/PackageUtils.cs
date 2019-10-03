@@ -13,7 +13,6 @@ using NuGet.Configuration;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
-using NuGet.Versioning;
 
 namespace Metatool.Script.NugetReference
 {

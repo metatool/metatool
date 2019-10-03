@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Accessibility;
 using Metatool.Input;
 using Metatool.UI;
 using Microsoft.Win32;

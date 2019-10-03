@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Metatool.Plugin;
+﻿using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.ScreenHint

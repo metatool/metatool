@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using ConsoleApp1;
+﻿using ConsoleApp1;
 using Metatool.Command;
 using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 using Mouse = Metatool.MetaKeyboard.Mouse;
-using static Metatool.Input.Key;
+
 namespace Metatool.ScreenHint
 {
     public class KeyboardPlugin :PluginBase

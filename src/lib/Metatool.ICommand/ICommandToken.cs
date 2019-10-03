@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Metatool.Command
+﻿namespace Metatool.Command
 {
     public interface ICommandToken<in T> : IChangeRemove<ICommandTrigger<T>> 
     {
