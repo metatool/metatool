@@ -2,7 +2,7 @@
 
 namespace Metatool.Input
 {
-    public interface ISequence : IEnumerable<ICombination>, ISequencable, IKeyPath
+    public interface ISequence : IEnumerable<ICombination>, IHotkey, IKeyPath
     {
     }
 }

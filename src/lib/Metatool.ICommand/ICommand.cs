@@ -5,7 +5,7 @@ namespace Metatool.Command
     public interface ICommand
     {
         string Description { get; set; }
-        bool   Enabled     { get; set; }
+        bool   Disabled     { get; set; }
     }
 
     public interface ICommand<in T> : ICommand

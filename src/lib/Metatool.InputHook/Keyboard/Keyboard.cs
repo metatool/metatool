@@ -10,15 +10,13 @@ using Metatool.Core;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.MetaKeyboard;
+using Metatool.Plugin;
 using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
-using OneOf;
 using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
 
 namespace Metatool.Input
 {
-    using Hotkey = OneOf<ISequenceUnit, ISequence>;
-
     public partial class Keyboard : IKeyboard
     {
         private readonly ILogger<Keyboard> _logger;
@@ -70,17 +68,18 @@ namespace Metatool.Input
 
         private Action Repeat(int repeat, Action action)
         {
+            //todo: rename to Disabled
             return () =>
             {
                 while (repeat-- > 0) action();
             };
         }
 
-        internal IMetaKey HardMap(ICombination source, ICombination target,
+        internal IKeyboardCommandToken HardMap(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             var handled = false;
-            return new MetaKeys
+            return new KeyboardCommandTokens()
             {
                 source.Down(e =>
                 {
@@ -120,7 +119,7 @@ namespace Metatool.Input
             };
         }
 
-        internal IMetaKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
+        internal IKeyboardCommandToken Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
@@ -144,11 +143,11 @@ namespace Metatool.Input
         }
 
 
-        internal IMetaKey Map(ICombination source, ICombination target,
+        internal IKeyboardCommandToken Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
         {
             var handled = false;
-            return new MetaKeys
+            return new KeyboardCommandTokens()
             {
                 source.Down(e =>
                 {
@@ -194,7 +193,7 @@ namespace Metatool.Input
             };
         }
 
-        internal IMetaKey MapOnHit(ICombination source, ICombination target,
+        internal IKeyboardCommandToken MapOnHit(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
         {
             var           handling     = false;
@@ -235,7 +234,7 @@ namespace Metatool.Input
                 return true;
             }
 
-            return new MetaKeys
+            return new KeyboardCommandTokens()
             {
                 source.Down(e =>
                 {
@@ -257,12 +256,12 @@ namespace Metatool.Input
         /// <param name="canExecute"></param>
         /// <param name="markHandled"></param>
         /// <returns></returns>
-        internal IMetaKey Hit(ICombination combination, KeyCommand keyCommand,
+        internal IKeyboardCommandToken Hit(ICombination combination, KeyCommand keyCommand,
             Predicate<IKeyEventArgs> canExecute = null, bool markHandled = true)
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
-            var token = new MetaKeys
+            var token = new KeyboardCommandTokens
             {
                 combination.Down(e =>
                 {

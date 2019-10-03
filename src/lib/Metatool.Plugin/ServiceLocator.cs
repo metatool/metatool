@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Metatool.Core
+namespace Metatool.Plugin
 {
     public static class ServiceLocator
     {

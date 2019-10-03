@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using FlaUI.UIA3;
+using Metatool.Command;
 using Metatool.Input;
 using Metatool.ScreenHint;
 using static Metatool.MetaKeyboard.KeyboardConfig;
@@ -12,8 +13,8 @@ namespace Metatool.MetaKeyboard
     {
         // static readonly Hint Hint= new Hint();
         // LButton & RButton
-        public IMetaKey MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
-        public IMetaKey MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
+        public IKeyboardCommandToken  MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
+        public IKeyboardCommandToken  MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
         static void MoveCursorToActiveControl()
         {
             using var automation = new UIA3Automation();
@@ -32,15 +33,15 @@ namespace Metatool.MetaKeyboard
         }
 
         // Scroll up/down (reading, one hand)
-        public IMetaKey MouseToFocus = (GK + F).Handled().Down(e => { e.BeginInvoke(MoveCursorToActiveControl); });
+        public IKeyboardCommandToken  MouseToFocus = (GK + F).Handled().Down(e => { e.BeginInvoke(MoveCursorToActiveControl); });
 
         // Scroll up/down (reading, one hand)
-        public IMetaKey MouseScrollUp = (GK + W).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(1); });
+        public IKeyboardCommandToken  MouseScrollUp = (GK + W).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(1); });
 
-        public IMetaKey MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(-1); });
+        public IKeyboardCommandToken  MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(-1); });
 
-        // public IMetaKey MouseLeftClick = Hint.MouseClick.ChangeHotkey(GK+C);
-        // public IMetaKey MouseLeftClick_Last = Hint.MouseClickLast.ChangeHotkey(GK+LShift+C);
+        // public IKeyboardCommandToken  MouseLeftClick = Hint.MouseClick.ChangeHotkey(GK+C);
+        // public IKeyboardCommandToken  MouseLeftClick_Last = Hint.MouseClickLast.ChangeHotkey(GK+LShift+C);
 
     }
 }

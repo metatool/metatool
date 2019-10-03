@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Metatool.Command
 {
-    public interface ICommandToken<in T> : IChangeRemove<T>
+    public interface ICommandToken<in T> : IChangeRemove<ICommandTrigger<T>> 
     {
 
     }

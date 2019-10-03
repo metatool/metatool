@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Metatool.ICommand\Metatool.ICommand.csproj" />
     <ProjectReference Include="..\Metatool.Input.IMouseKeyHook\Metatool.Input.IMouseKeyHook.csproj" />
   </ItemGroup>
 

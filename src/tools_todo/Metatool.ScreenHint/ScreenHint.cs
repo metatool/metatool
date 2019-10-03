@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using Metatool.Command;
 using Metatool.Input;
 using Metatool.ScreenPoint;
 using Point = System.Drawing.Point;
@@ -105,13 +106,13 @@ namespace Metatool.ScreenHint
             Input.Mouse.Simu.LeftClick();
         }
 
-        public IMetaKey MouseClick = (Ctrl + Alt + X).Down(e =>
+        public IKeyboardCommandToken  MouseClick = (Ctrl + Alt + X).Down(e =>
         {
             e.Handled = true;
             e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick));
         });
 
-        public IMetaKey MouseClickLast = (Ctrl + Alt + Z).Down(e =>
+        public IKeyboardCommandToken  MouseClickLast = (Ctrl + Alt + Z).Down(e =>
         {
             e.Handled = true;
             e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick, false));

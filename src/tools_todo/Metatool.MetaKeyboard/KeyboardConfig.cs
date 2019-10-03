@@ -1,4 +1,5 @@
-﻿using Metatool.Input;
+﻿using Metatool.Command;
+using Metatool.Input;
 using static Metatool.Input.Key;
 
 namespace Metatool.MetaKeyboard
@@ -6,11 +7,11 @@ namespace Metatool.MetaKeyboard
     public class KeyboardConfig : KeyMetaPackage
     {
         // todo: auto convert to Chord, when used in Chord.
-        public IMetaKey AppsAsChord  = Apps.AsChordKey();
-        public IMetaKey SpaceAsChord = Space.AsChordKey();
-        public IMetaKey EnterAsChord = Enter.AsChordKey();
-        public IMetaKey TabAsChord   = Tab.AsChordKey();
-        public IMetaKey PipeAsChord = Pipe.AsChordKey();
+        public IKeyboardCommandToken  AppsAsChord  = Apps.AsChordKey();
+        public IKeyboardCommandToken  SpaceAsChord = Space.AsChordKey();
+        public IKeyboardCommandToken  EnterAsChord = Enter.AsChordKey();
+        public IKeyboardCommandToken  TabAsChord   = Tab.AsChordKey();
+        public IKeyboardCommandToken  PipeAsChord = Pipe.AsChordKey();
 
         /// <summary>
         /// Global key

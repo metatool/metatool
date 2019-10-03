@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Metatool.Input
 {
-    public interface ISequenceUnit: IHotkey
+    public interface  IHotkey: ISequencable
     {
-        ICombination ToCombination();
     }
 }

@@ -9,9 +9,12 @@ namespace Metatool.Command
         void Remove();
     }
 
-    public interface IChangeRemove<in T> : IRemove
+    public interface IChange<in T>
     {
         bool Change(T key);
+    }
+    public interface IChangeRemove<in T> : IRemove, IChange<T>
+    {
     }
     public class Removable : IRemove
     {

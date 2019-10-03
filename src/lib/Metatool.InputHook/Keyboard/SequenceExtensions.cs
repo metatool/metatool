@@ -2,25 +2,37 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.Plugin;
 
 namespace Metatool.Input
 {
     public static class SequenceExtensions
     {
-        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
+        private static Keyboard _default;
+
+        private static Keyboard Default =>
+            _default ??= (ServiceLocator.Current.GetService(typeof(IKeyboard)) as Keyboard);
+
+        private static ICommandManager _commandManager;
+
+        private static ICommandManager CommandManager =>
+            _commandManager ??= (ServiceLocator.Current.GetService(typeof(ICommandManager)) as ICommandManager);
+
+        public static IKeyboardCommandToken  Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
             return sequence.Item1.Then(sequence.Item2).Down(action, canExecute, description);
         }
 
-        public static IMetaKey Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyboardCommandToken  Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action, canExecute, description);
         }
 
-        public static IMetaKey Down(
+        public static IKeyboardCommandToken  Down(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
@@ -28,7 +40,7 @@ namespace Metatool.Input
                 .Down(action, canExecute, description);
         }
 
-        public static IMetaKey Down(
+        public static IKeyboardCommandToken  Down(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
@@ -36,36 +48,36 @@ namespace Metatool.Input
                 .Down(action, canExecute, description);
         }
 
-        public static IMetaKey Down(this ISequence sequence,
-            Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "",
+        public static IKeyboardCommandToken  Down(this ISequence sequence,
+            Action<IKeyEventArgs> execute, Predicate<IKeyEventArgs> canExecute=null, string description = "",
             KeyStateTree stateTree = null)
         {
-            var seq = sequence as Sequence;
-            Debug.Assert(seq != null, nameof(sequence) + " != null");
-            return Keyboard.Default.Add(seq.ToList(), KeyEvent.Down,
-                new KeyCommand(action) {CanExecute = canExecute, Description = description}, stateTree);
+            Debug.Assert(sequence != null, nameof(sequence) + " != null");
+            var trigger = Default.Down(sequence); 
+            var token = CommandManager.Add(trigger, execute, canExecute, description);
+            return new KeyboardCommandToken(token,trigger);
         }
 
-        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyboardCommandToken  Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
             return sequence.Item1.Then(sequence.Item2).Up(action, canExecute, description);
         }
 
-        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyboardCommandToken  Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action, canExecute, description);
         }
 
-        public static IMetaKey Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyboardCommandToken  Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4)
                 .Up(action, canExecute, description);
         }
 
-        public static IMetaKey Up(
+        public static IKeyboardCommandToken  Up(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "")
         {
@@ -73,14 +85,14 @@ namespace Metatool.Input
                 .Up(action, canExecute, description);
         }
 
-        public static IMetaKey Up(this ISequence sequence, Action<IKeyEventArgs> action,
+        public static IKeyboardCommandToken  Up(this ISequence sequence, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute=null,
             string description = "", KeyStateTree stateTree = null)
         {
-            var seq = sequence as Sequence;
-            Debug.Assert(seq != null, nameof(sequence) + " != null");
-            return Keyboard.Default.Add(seq.ToList(), KeyEvent.Up,
-                new KeyCommand(action) {CanExecute = canExecute, Description = description}, stateTree);
+            Debug.Assert(sequence != null, nameof(sequence) + " != null");
+            var trigger = Default.Up(sequence);
+            var token   = CommandManager.Add(trigger, execute, canExecute, description);
+            return new KeyboardCommandToken(token, trigger);
         }
 
         public static Task<IKeyEventArgs> DownAsync(this ISequence sequence, int timeout = 8888)

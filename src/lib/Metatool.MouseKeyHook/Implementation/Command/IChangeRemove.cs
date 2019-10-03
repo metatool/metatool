@@ -10,7 +10,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation.Command
 
     public interface IChangeRemove<in T> : IRemove
     {
-        bool Change(T key);
+        bool Change(T keyProperty);
     }
     public class Removable : IRemove
     {
@@ -42,9 +42,9 @@ namespace Metatool.Input.MouseKeyHook.Implementation.Command
             ForEach(d => d.Remove());
         }
 
-        public bool Change(T key)
+        public bool Change(T keyProperty)
         {
-            ForEach(d => d.Change(key));
+            ForEach(d => d.Change(keyProperty));
             return true;
         }
     }

@@ -7,33 +7,10 @@ using Metatool.Core;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Command;
-using OneOf;
 
 namespace Metatool.Input
 {
-    using Hotkey = OneOf<ISequenceUnit, ISequence>;
-
-    public interface IMeta
-    {
-        string Name      { get; set; }
-        bool   Disable { get; set; }
-    }
-
-    public class Meta
-    {
-        public string Id      { get; set; }
-        public bool   Disable { get; set; }
-    }
-
-
-    public interface IMetaKey : IMeta, IRemove
-    {
-        Hotkey Hotkey { get; set; }
-        IMetaKey ChangeHotkey(Hotkey hotkey);
-        void ChangeDescription(string description);
-    }
-
-    public class HotkeyToken : IChangeRemove<Hotkey>
+    public class HotkeyToken : IChangeRemove<IHotkey>
     {
         private readonly  ITrie<ICombination, KeyEventCommand> _trie;
         internal readonly IList<ICombination>                  _hotkey;
@@ -53,11 +30,19 @@ namespace Metatool.Input
             Console.WriteLine(r);
         }
 
-        public bool Change(Hotkey key)
+        public bool Change(IHotkey keyProperty)
         {
             ((IRemove) this).Remove();
-            key.Switch(k => _trie.Add(k.ToCombination(), EventCommand),
-                s => _trie.Add(s.ToList(), EventCommand));
+            switch(keyProperty)
+            {
+                case ISequenceUnit k:
+                    _trie.Add(k.ToCombination(), EventCommand);
+                    break;
+                case ISequence s:
+                    _trie.Add(s.ToList(), EventCommand);
+                    break;
+                default:throw new Exception("not supported!");
+            }
             return true;
         }
 
@@ -71,7 +56,7 @@ namespace Metatool.Input
     {
         internal readonly HotkeyToken _token;
 
-        public Hotkey Hotkey
+        public IHotkey Hotkey
         {
             get
             {
@@ -84,7 +69,7 @@ namespace Metatool.Input
             set => _token.Change(value);
         }
 
-        public IMetaKey ChangeHotkey(Hotkey hotkey)
+        public IMetaKey ChangeHotkey(IHotkey hotkey)
         {
             Hotkey = hotkey;
             return this;
@@ -137,13 +122,13 @@ namespace Metatool.Input
             set => this.ForEach(k => k.Disable = value);
         }
 
-        public Hotkey Hotkey
+        public IHotkey Hotkey
         {
             get => this.First().Hotkey;
             set => this.ForEach(k => k.Hotkey = value);
         }
 
-        public IMetaKey ChangeHotkey(Hotkey hotkey)
+        public IMetaKey ChangeHotkey(IHotkey hotkey)
         {
             Hotkey = hotkey;
             return this;

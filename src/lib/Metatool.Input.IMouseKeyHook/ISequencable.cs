@@ -6,7 +6,6 @@ namespace Metatool.Input
     {
         ISequence Then(Keys key);
         ISequence Then(ISequenceUnit sequencable);
-
     }
 
 }

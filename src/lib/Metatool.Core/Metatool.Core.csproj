@@ -14,4 +14,8 @@
     <PackageReference Include="System.Reactive.Linq" Version="4.2.0-preview.625" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Metatool.Plugin\Metatool.Plugin.csproj" />
+  </ItemGroup>
+
 </Project>

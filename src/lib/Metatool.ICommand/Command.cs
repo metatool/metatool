@@ -11,7 +11,7 @@ namespace Metatool.Command
         
         public Action<T> Execute     { get; set; }
         public string    Description { get; set; }
-        public bool      Enabled     { get; set; }
+        public bool      Disabled     { get; set; }
 
         public override string ToString()
         {

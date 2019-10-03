@@ -6,12 +6,9 @@ using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.MetaKeyboard;
 using Microsoft.Extensions.Logging;
-using OneOf;
 
 namespace Metatool.Input.MouseKeyHook
 {
-    using Hotkey = OneOf<ISequenceUnit, ISequence>;
-
     public delegate void KeyEventHandler(object sender, IKeyEventArgs e);
 
     public class KeyboardHook

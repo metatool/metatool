@@ -4,43 +4,69 @@ using System.Diagnostics;
 
 namespace Metatool.Command
 {
-    public class CommandManager:ICommandManager
+    public class CommandManager : ICommandManager
     {
-        readonly Dictionary<object,ICommand> _commands = new Dictionary<object, ICommand>();
+        private class Entry
+        {
+            public object   Trigger { get; }
+            public ICommand Command { get; }
+
+            public Entry(object trigger, ICommand command)
+            {
+                Trigger = trigger;
+                Command = command;
+            }
+        }
+
+        readonly Dictionary<object, Entry> _commands = new Dictionary<object, Entry>();
+
+        private ICommandToken<TArgs> Add<TArgs>(ICommandTrigger<TArgs> trigger, ICommand<TArgs> command, ICommandToken<TArgs> token=null)
+        {
+            trigger.CanExecute += command.CanExecute;
+            trigger.Execute    += command.Execute;
+            trigger.OnAdd(command);
+            token ??= new CommandToken<TArgs>(this);
+            _commands.Add(token, new Entry(trigger, command));
+            return token;
+        }
 
         public ICommandToken<TArgs> Add<TArgs>(ICommandTrigger<TArgs> trigger, Action<TArgs> execute,
             Predicate<TArgs> canExecute = null, string description = "")
         {
-            var command = new Command<TArgs>(){Execute = execute, CanExecute = canExecute, Description = description};
-            trigger.CanExecute += command.CanExecute;
-            trigger.Execute += command.Execute;
-            trigger.OnAdd(command);
-            var token = new CommandToken<TArgs>(trigger, this);
-            _commands.Add(trigger, command);
-            return token;
+            var command = new Command<TArgs>() {Execute = execute, CanExecute = canExecute, Description = description};
+            return Add(trigger, command);
         }
 
-        public void EnableDisable<T>(ICommandTrigger<T> token, bool enable)
+        public void DisableEnable<T>(ICommandToken<T> token, bool disable)
         {
-            _commands[token].Enabled = enable;
+            _commands[token].Command.Disabled = disable;
         }
 
-        public bool IsEnabled<T>(ICommandTrigger<T> token)
+        public bool IsDisabled<T>(ICommandToken<T> token)
         {
-            return _commands[token].Enabled;
+            return _commands[token].Command.Disabled;
         }
 
-        internal void Remove<T>(ICommandTrigger<T> trigger)
+        public bool Change<T>(ICommandToken<T> token, ICommandTrigger<T> trigger)
         {
-            var command = _commands[trigger] as Command<T>;
-            _commands.Remove(trigger);
+            var command = _commands[token].Command as ICommand<T>;
+            Remove(token);
+            Add(trigger, command, token);
+            return true;
+        }
+
+        internal void Remove<T>(ICommandToken<T> token)
+        {
+            var command = _commands[token].Command as Command<T>;
+            var trigger = _commands[token].Trigger as ICommandTrigger<T>;
+            _commands.Remove(token);
             Debug.Assert(command != null, nameof(command) + " != null");
+            Debug.Assert(trigger != null, nameof(trigger) + " != null");
             trigger.CanExecute -= command.CanExecute;
-            command.CanExecute = null;
-            trigger.Execute -= command.Execute;
-            command.Execute = null;
+            command.CanExecute =  null;
+            trigger.Execute    -= command.Execute;
+            command.Execute    =  null;
             trigger.OnRemove(command);
         }
-
     }
 }

@@ -9,12 +9,9 @@ using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Trie;
 using Metatool.MetaKeyboard;
-using OneOf;
 
 namespace Metatool.Input
 {
-    using HotKey = OneOf<ISequenceUnit, ISequence>;
-
     public enum KeyProcessState
     {
         /// <summary>

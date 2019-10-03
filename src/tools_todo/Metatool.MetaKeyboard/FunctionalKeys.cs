@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Metatool.Command;
 using Metatool.Input;
 using Microsoft.Win32;
 using static Metatool.Input.Key;
@@ -9,17 +10,17 @@ namespace Metatool.MetaKeyboard
 {
     public class FunctionalKeys : KeyMetaPackage
     {
-        public IMetaKey CloseMetaKeys = (LWin + L).Handled().Down(null);
+        public IKeyboardCommandToken  CloseMetaKeys = (LWin + L).Handled().Down(null);
 
 
-        public IMetaKey CloseMetaKey = (LCtrl + LWin + C).With(Keys.LMenu)
+        public IKeyboardCommandToken  CloseMetaKey = (LCtrl + LWin + C).With(Keys.LMenu)
             .Down(e =>
             {
                 Notify.ShowMessage("MetaKeyBoard Closing...");
                 Environment.Exit(0);
             }, null, "Close");
 
-        public IMetaKey RestartMetakeyAdmin = (LCtrl + LWin + LAlt + X).Down(e =>
+        public IKeyboardCommandToken  RestartMetakeyAdmin = (LCtrl + LWin + LAlt + X).Down(e =>
         {
             Notify.ShowMessage("MetaKeyBoard Restarting...");
             var p    = Application.ExecutablePath;
@@ -37,13 +38,13 @@ namespace Metatool.MetaKeyboard
             Environment.Exit(0);
         }, null, "Restart(Admin)");
 
-        public IMetaKey ShowTips = (Caps + Question).Down(e =>
+        public IKeyboardCommandToken  ShowTips = (Caps + Question).Down(e =>
         {
             Keyboard.Default.ShowTip();
             e.Handled = true;
         }, null, "Show Tips");
 
-        public IMetaKey DoublePinyinSwitch = (Pipe + P).Down(e =>
+        public IKeyboardCommandToken  DoublePinyinSwitch = (Pipe + P).Down(e =>
         {
             e.Handled = true;
             var keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";

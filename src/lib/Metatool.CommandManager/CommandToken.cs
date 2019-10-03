@@ -7,29 +7,42 @@ namespace Metatool.Command
 
     public class CommandToken<T>: ICommandToken<T>
     {
-        private readonly ICommandTrigger<T> _trigger;
-        private readonly CommandManager _manager;
+        internal readonly CommandManager Manager;
 
-        public CommandToken(ICommandTrigger<T> trigger, ICommandManager manager)
+        public CommandToken( ICommandManager manager)
         {
-            _trigger = trigger;
-            _manager = manager as CommandManager;
+            Manager = manager as CommandManager;
         }
 
-        public bool Enabled
+        public bool IsDisabled
         {
-            set => _manager.EnableDisable(_trigger, value);
-            get => _manager.IsEnabled(_trigger);
+            set => Manager.DisableEnable(this, value);
+            get => Manager.IsDisabled(this);
         }
 
-        public bool Change(T key)
+        public bool Change(ICommandTrigger<T> trigger)
         {
-            throw new NotImplementedException();
+            return Manager.Change(this, trigger);
         }
 
         public void Remove()
         {
-            _manager.Remove(_trigger);
+            Manager.Remove(this);
+        }
+    }
+
+    public class CommandTokens<T,TArg> :List<T>, ICommandToken<TArg> where T: ICommandToken<TArg>
+    {
+        public bool Change(ICommandTrigger<TArg> trigger)
+        {
+            this.ForEach(t => t.Change(trigger));
+            return true;
+        }
+
+        public void Remove()
+        {
+            this.ForEach(t=>t.Remove());
+            this.Clear();
         }
     }
 }

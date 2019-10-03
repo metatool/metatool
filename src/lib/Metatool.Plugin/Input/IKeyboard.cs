@@ -7,8 +7,11 @@ namespace Metatool.Input
 {
     public interface IKeyboard
     {
-        ICommandTrigger<IKeyEventArgs> Down(ISequenceUnit sequenceUnit);
-        ICommandTrigger<IKeyEventArgs> Up(ISequenceUnit sequenceUnit);
-
+       IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit);
+       IKeyboardCommandTrigger Up(ISequenceUnit sequenceUnit);
+       IKeyboardCommandTrigger AllUp(ISequenceUnit sequenceUnit);
+       IKeyboardCommandTrigger Down(ISequence sequenceUnit);
+       IKeyboardCommandTrigger Up(ISequence sequenceUnit);
+       IKeyboardCommandTrigger AllUp(ISequence sequenceUnit);
     }
 }

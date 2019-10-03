@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using Metatool.Command;
 
 namespace Metatool.Input
 {
@@ -16,7 +17,7 @@ namespace Metatool.Input
         }
 
 
-        public static IMetaKey AsChordKey(this Key key)
+        public static IKeyboardCommandToken  AsChordKey(this Key key)
         {
             return key.MapOnHit(key.ToCombination(), e => !e.IsVirtual , false);
         }

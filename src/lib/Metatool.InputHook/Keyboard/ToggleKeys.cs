@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using Metatool.Command;
 using Metatool.WindowsInput.Native;
 
 namespace Metatool.Input
@@ -20,8 +21,8 @@ namespace Metatool.Input
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
         private bool _valid;
-        private IMetaKey _keyDownActionToken;
-        private IMetaKey _keyUpActionToken;
+        private IKeyboardCommandToken _keyDownActionToken;
+        private IKeyboardCommandToken _keyUpActionToken;
         private ToggleKeys(Key key)
         {
             _key = key;

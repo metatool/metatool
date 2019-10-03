@@ -1,12 +1,9 @@
-﻿
-
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Metatool.Core;
 using Metatool.Input.MouseKeyHook.WinApi;
+using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input.MouseKeyHook.Implementation
