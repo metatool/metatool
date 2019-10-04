@@ -16,11 +16,13 @@ using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
 
 namespace Metatool.Input
 {
-    public partial class Keyboard : IKeyboard
+    public partial class Keyboard : IKeyboard, IKeyboardInternal
     {
         private readonly ILogger<Keyboard> _logger;
-        private static Keyboard _default;
-        public static Keyboard Default => _default ??= (ServiceLocator.Current.GetService(typeof(IKeyboard)) as Keyboard);
+        private static   Keyboard          _default;
+
+        public static Keyboard Default =>
+            _default ??= (ServiceLocator.Current.GetService(typeof(IKeyboard)) as Keyboard);
 
         public Keyboard(ILogger<Keyboard> logger)
         {
@@ -36,13 +38,14 @@ namespace Metatool.Input
         readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
         internal IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,
-            KeyStateTree stateTree = null)
+            KeyStateTrees stateTree = KeyStateTrees.Default)
         {
             return Add(new List<ICombination> {combination}, keyEvent, command, stateTree);
         }
 
+
         internal IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
-            KeyStateTree stateTree = null)
+            KeyStateTrees stateTree = KeyStateTrees.Default)
         {
             return _hook.Add(combinations, new KeyEventCommand(keyEvent, command), stateTree);
         }
@@ -50,6 +53,47 @@ namespace Metatool.Input
         public void ShowTip()
         {
             _hook.ShowTip();
+        }
+
+        //todo: move logic to engine
+        /// <summary>
+        /// down up happened successively
+        /// </summary>
+        internal IKeyboardCommandToken Hit(ICombination combination, Action<IKeyEventArgs> execute,
+            Predicate<IKeyEventArgs> canExecute = null, string description = "", KeyStateTrees stateTree = KeyStateTrees.Default)
+        {
+            var           handling     = false;
+            IKeyEventArgs keyDownEvent = null;
+            var token = new KeyboardCommandTokens
+            {
+                combination.Down(e =>
+                {
+                    handling     = true;
+                    keyDownEvent = e;
+                }, canExecute, description,stateTree),
+
+                combination.Up(e =>
+                {
+                    if (!handling)
+                    {
+                        Console.WriteLine($"\t{combination}_Hit Down CanExecute:false");
+                        return;
+                    }
+
+                    handling = false;
+
+                    if (keyDownEvent == e.LastKeyDownEvent)
+                    {
+                        e.BeginInvoke(() => execute(e));
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\t{combination}_Hit: last down event is not from me, Not Execute!");
+                    }
+                }, canExecute, description,stateTree)
+            };
+
+            return token;
         }
 
         public void Hit(Keys key, IEnumerable<Keys> modifierKeys = null, bool isAsync = false)
@@ -67,244 +111,13 @@ namespace Metatool.Input
 
         private Action Repeat(int repeat, Action action)
         {
-            //todo: rename to Disabled
             return () =>
             {
                 while (repeat-- > 0) action();
             };
         }
 
-        internal IKeyboardCommandToken HardMap(ICombination source, ICombination target,
-            Predicate<IKeyEventArgs> predicate = null)
-        {
-            var handled = false;
-            return new KeyboardCommandTokens()
-            {
-                source.Down(e =>
-                {
-                    handled            = true;
-                    e.Handled          = true;
-                    e.NoFurtherProcess = true;
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                        target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, predicate, "", KeyStateTree.HardMap),
-                source.Up(e =>
-                {
-                    handled = false;
-
-                    e.Handled          = true;
-                    e.NoFurtherProcess = true;
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, e =>
-                {
-                    if (!handled)
-                    {
-                        Console.WriteLine("\t/!Handling:false");
-                        return false;
-                    }
-
-                    if (predicate != null && !predicate(e))
-                    {
-                        Console.WriteLine("\t/!predicate(e):false");
-                        return false;
-                    }
-
-                    return true;
-                }, "", KeyStateTree.HardMap)
-            };
-        }
-
-        internal IKeyboardCommandToken Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
-        {
-            var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
-            var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
-            return sequence.Up(e =>
-            {
-                e.BeginInvoke(() =>
-                    {
-                        Notify.ShowSelectionAction(new[]
-                        {
-                            (target,
-                                (Action) (() =>
-                                    {
-                                        InputSimu.Inst.Keyboard.KeyPress(send.ToArray());
-                                        InputSimu.Inst.Keyboard.Type(target);
-                                    }
-                                ))
-                        });
-                    }
-                );
-            }, predicate, "", KeyStateTree.HotString);
-        }
-
-
-        internal IKeyboardCommandToken Map(ICombination source, ICombination target,
-            Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
-        {
-            var handled = false;
-            return new KeyboardCommandTokens()
-            {
-                source.Down(e =>
-                {
-                    handled   = true;
-                    e.Handled = true;
-
-                    if (target.TriggerKey == Keys.LButton)
-                    {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftDown()));
-                    }
-                    else if (target.TriggerKey == Keys.RButton)
-                    {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightDown()));
-                    }
-                    else
-                    {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                            target.Chord.Cast<VirtualKeyCode>(),
-                            (VirtualKeyCode) (Keys) target.TriggerKey)
-                        ));
-                    }
-                }, predicate, "", KeyStateTree.Map),
-                source.Up(e =>
-                {
-                    if (!handled) return;
-                    handled   = false;
-                    e.Handled = true;
-                    if (target.TriggerKey == Keys.LButton)
-                    {
-                        Async(() => InputSimu.Inst.Mouse.LeftUp());
-                        return;
-                    }
-
-                    if (target.TriggerKey == Keys.RButton)
-                    {
-                        Async(() => InputSimu.Inst.Mouse.RightUp());
-                        return;
-                    }
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, predicate, "", KeyStateTree.Map)
-            };
-        }
-
-        internal IKeyboardCommandToken MapOnHit(ICombination source, ICombination target,
-            Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
-        {
-            var           handling     = false;
-            IKeyEventArgs keyDownEvent = null;
-
-            void AsyncCall(IKeyEventArgs e)
-            {
-                e.Handled = true;
-                e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                    target.Chord.Select(k => (VirtualKeyCode) (Keys) k),
-                    (VirtualKeyCode) (Keys) target.TriggerKey));
-            }
-
-            // if not: A+B -> C become A+C
-            bool KeyUpPredicate(IKeyEventArgs e)
-            {
-                if (!handling)
-                {
-                    Console.WriteLine("\t/!Handling:false");
-                    return false;
-                }
-
-                handling = false;
-
-                if (!allUp && keyDownEvent != e.LastKeyDownEvent
-                ) // should not use LastKeyEvent for 2 fast key strokes, a_down b_down a_up b_up, then the a_keyAsChord would not fire 
-                {
-                    Console.WriteLine("\t/!up: keyDownEvent != e.LastKeyDownEvent");
-                    return false;
-                }
-
-                if (allUp && keyDownEvent != e.LastKeyDownEvent)
-                {
-                    Console.WriteLine("\t/!allUp: keyDownEvent != e.LastKeyDownEvent");
-                    return false;
-                }
-
-                return true;
-            }
-
-            return new KeyboardCommandTokens()
-            {
-                source.Down(e =>
-                {
-                    handling     = true;
-                    keyDownEvent = e;
-                    e.Handled    = true;
-                }, predicate, "", KeyStateTree.Map),
-                allUp
-                    ? source.AllUp(AsyncCall, KeyUpPredicate, "", KeyStateTree.Map)
-                    : source.Up(AsyncCall, KeyUpPredicate, "", KeyStateTree.Map)
-            };
-        }
-
-        /// <summary>
-        /// down up happened successively
-        /// </summary>
-        /// <param name="combination"></param>
-        /// <param name="keyCommand"></param>
-        /// <param name="canExecute"></param>
-        /// <param name="markHandled"></param>
-        /// <returns></returns>
-        internal IKeyboardCommandToken Hit(ICombination combination, KeyCommand keyCommand,
-            Predicate<IKeyEventArgs> canExecute = null, bool markHandled = true)
-        {
-            var           handling     = false;
-            IKeyEventArgs keyDownEvent = null;
-            var token = new KeyboardCommandTokens
-            {
-                combination.Down(e =>
-                {
-                    if (canExecute == null || canExecute(e))
-                    {
-                        handling     = true;
-                        keyDownEvent = e;
-
-                        if (!markHandled) return;
-                        e.Handled = true;
-                        return;
-                    }
-
-                    Console.WriteLine("\tCanExecute:false");
-                    handling = false;
-                }),
-
-                combination.Up(e =>
-                {
-                    if (!handling)
-                    {
-                        Console.WriteLine("\tHandling:false");
-                        return;
-                    }
-
-                    handling = false;
-                    if (markHandled)
-                    {
-                        e.Handled = true;
-                    }
-
-                    if (keyDownEvent == e.LastKeyDownEvent && (canExecute == null || canExecute(e)))
-                    {
-                        e.BeginInvoke(() => keyCommand?.Execute(e));
-                    }
-                    else
-                    {
-                        Console.WriteLine("\tCondition not meet, Not Execute!");
-                    }
-                }, null, keyCommand.Description)
-            };
-
-            return token;
-        }
+      
 
         public event KeyPressEventHandler KeyPress
         {
@@ -383,5 +196,8 @@ namespace Metatool.Input
             _logger.LogInformation("Keyboard hook is running...");
             _hook.Run();
         }
+
+        public IKeyboardCommandToken GetToken(ICommandToken<IKeyEventArgs> commandToken,
+            IKeyboardCommandTrigger trigger) => new KeyboardCommandToken(commandToken, trigger);
     }
 }

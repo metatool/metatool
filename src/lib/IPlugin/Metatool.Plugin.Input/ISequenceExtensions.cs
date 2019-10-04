@@ -7,12 +7,12 @@ using Metatool.Plugin;
 
 namespace Metatool.Input
 {
-    public static class SequenceExtensions
+    public static class ISequenceExtensions
     {
-        private static Keyboard _default;
+        private static IKeyboard _default;
 
-        private static Keyboard Default =>
-            _default ??= (ServiceLocator.Current.GetService(typeof(IKeyboard)) as Keyboard);
+        private static IKeyboard Default =>
+            _default ??= (ServiceLocator.Current.GetService(typeof(IKeyboard)) as IKeyboard);
 
         private static ICommandManager _commandManager;
 
@@ -49,12 +49,13 @@ namespace Metatool.Input
 
         public static IKeyboardCommandToken  Down(this ISequence sequence,
             Action<IKeyEventArgs> execute, Predicate<IKeyEventArgs> canExecute=null, string description = "",
-            KeyStateTree stateTree = null)
+            KeyStateTrees stateTree = KeyStateTrees.Default)
         {
             Debug.Assert(sequence != null, nameof(sequence) + " != null");
             var trigger = Default.Down(sequence); 
             var token = CommandManager.Add(trigger, execute, canExecute, description);
-            return new KeyboardCommandToken(token,trigger);
+            var keyboardInternal = (IKeyboardInternal)Default;
+            return keyboardInternal.GetToken(token, trigger);
         }
 
         public static IKeyboardCommandToken  Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
@@ -86,12 +87,13 @@ namespace Metatool.Input
 
         public static IKeyboardCommandToken  Up(this ISequence sequence, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute=null,
-            string description = "", KeyStateTree stateTree = null)
+            string description = "", KeyStateTrees stateTree = KeyStateTrees.Default)
         {
             Debug.Assert(sequence != null, nameof(sequence) + " != null");
             var trigger = Default.Up(sequence);
-            var token   = CommandManager.Add(trigger, execute, canExecute, description);
-            return new KeyboardCommandToken(token, trigger);
+            var token   = CommandManager.Add(trigger, execute, canExecute, description); 
+            var keyboardInternal = (IKeyboardInternal)Default;
+            return keyboardInternal.GetToken(token, trigger);
         }
 
         public static Task<IKeyEventArgs> DownAsync(this ISequence sequence, int timeout = 8888)

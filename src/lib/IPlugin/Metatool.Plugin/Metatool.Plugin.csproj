@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <Import Project="..\common.props" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Metatool.ICommand\Metatool.Plugin.Command.csproj" />
+    <ProjectReference Include="..\Metatool.Input.IMouseKeyHook\Metatool.Plugin.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
+    <ProjectReference Include="..\Metatool.Plugin.Input\Metatool.Plugin.Input.csproj" />
+  </ItemGroup>
+
+</Project>

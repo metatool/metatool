@@ -1,7 +1,4 @@
-﻿
-
-
-
+﻿
 using System.Collections.Generic;
 using Metatool.Input.MouseKeyHook.WinApi;
 

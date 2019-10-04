@@ -195,6 +195,7 @@ namespace Metatool.MetaKeyboard
 
         public IKeyboardCommandToken  OpenCodeEditor = (AK + C).Hit(async e =>
         {
+            e.Handled = true;
             if (!Window.IsExplorerOrOpenSaveDialog)
             {
                 ProcessEx.Start(Config.Current.Tools.Code);
@@ -215,6 +216,6 @@ namespace Metatool.MetaKeyboard
                 var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true, Arguments = path};
                 Process.Start(info);
             }
-        }, null, "Open &Code Editor", true);
+        }, null, "Open &Code Editor" );
     }
 }

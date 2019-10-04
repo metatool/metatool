@@ -3,11 +3,9 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
-       <RootNamespace>Metatool.Input.MouseKeyHook</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,9 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Input\**" />
-    <EmbeddedResource Remove="Input\**" />
-    <None Remove="Input\**" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Metatool.Input</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
   <ItemGroup>
@@ -29,8 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IPlugin\Metatool.Input.IMouseKeyHook\Metatool.Plugin.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\IPlugin\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
     <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
-    <ProjectReference Include="..\Metatool.Input.IMouseKeyHook\Metatool.Input.IMouseKeyHook.csproj" />
     <ProjectReference Include="..\Metatool.UI\Metatool.UI.csproj" />
   </ItemGroup>
 

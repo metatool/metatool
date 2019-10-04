@@ -1,7 +1,4 @@
-﻿// This code is distributed under MIT license.
-
-
-
+﻿// This code is distributed under MIT license.
 using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;

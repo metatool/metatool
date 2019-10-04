@@ -101,6 +101,9 @@ namespace Metatool.Input
 
     public class MetaKeys : List<IMetaKey>, IMetaKey
     {
+        public MetaKeys(List<IMetaKey> keys):base(keys)
+        {
+        }
         public string Name
         {
             get => this.Aggregate("", (a, c) => a + c.Name);

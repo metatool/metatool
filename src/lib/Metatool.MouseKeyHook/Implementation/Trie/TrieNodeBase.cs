@@ -24,10 +24,7 @@ namespace Metatool.DataStructures
         protected abstract IEnumerable<TrieNodeBase<TKey, TValue>> Children();
 
         protected abstract void RemoveChild(TKey key);
-        protected internal abstract int ChildrenCount { get; }
-
-
-
+        protected internal abstract int ChildrenCount { get; }
         protected abstract void AddValue(TValue value);
         protected abstract bool RemoveValue(Predicate<TValue> predicate);
 

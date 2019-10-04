@@ -45,8 +45,17 @@ namespace Metatool.Input
         public static readonly   KeyStateTree HardMap = new KeyStateTree("HardMap");
         internal static readonly KeyStateTree Default = new KeyStateTree("Default");
         public static readonly   KeyStateTree Map     = new KeyStateTree("Map");
-        public static readonly KeyStateTree HotString = new KeyStateTree("Hotsting");
+        public static readonly KeyStateTree HotString = new KeyStateTree("HotString");
 
+        static Dictionary<KeyStateTrees, KeyStateTree> stateTrees= new Dictionary<KeyStateTrees, KeyStateTree>()
+        {
+            { KeyStateTrees.Default, Default},
+            {KeyStateTrees.HardMap, HardMap },
+            {KeyStateTrees.Map, Map },
+            {KeyStateTrees.HotString, HotString }
+        };
+
+        public static KeyStateTree GetStateTree(KeyStateTrees stateTree) => stateTrees[stateTree];
 
         private readonly Trie<ICombination, KeyEventCommand>       _trie = new Trie<ICombination, KeyEventCommand>();
         private readonly TrieWalker<ICombination, KeyEventCommand> _treeWalker;

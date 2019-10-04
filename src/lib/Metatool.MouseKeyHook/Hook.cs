@@ -1,7 +1,4 @@
-﻿
-
-
-
+﻿
 using Metatool.Input.MouseKeyHook.Implementation;
 
 namespace Metatool.Input.MouseKeyHook

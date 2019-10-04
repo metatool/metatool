@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Metatool.Command;
 
 namespace Metatool.Input
@@ -28,6 +29,8 @@ namespace Metatool.Input
         {
             return _internalCommandToken.Change(key);
         }
+
+        internal IMetaKey metaKey => _trigger.MetaKey;
     }
 
     public class KeyboardCommandTokens: List<IKeyboardCommandToken>, IKeyboardCommandToken
@@ -50,5 +53,6 @@ namespace Metatool.Input
             this.ForEach(t => t.Change(key));
             return true;
         }
+        internal IMetaKey metaKey => new MetaKeys(this.Cast<KeyboardCommandToken>().Select(t=>t.metaKey).ToList());
     }
 }

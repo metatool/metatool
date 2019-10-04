@@ -1,7 +1,4 @@
-﻿
-
-
-
+﻿
 namespace Metatool.Input.MouseKeyHook.Implementation
 {
     internal class AppEventFacade : EventFacade

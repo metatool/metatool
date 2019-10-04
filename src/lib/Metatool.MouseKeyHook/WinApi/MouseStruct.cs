@@ -1,7 +1,4 @@
-﻿
-
-
-
+﻿
 using System.Runtime.InteropServices;
 
 namespace Metatool.Input.MouseKeyHook.WinApi

@@ -30,7 +30,6 @@
     <ProjectReference Include="..\..\lib\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj">
       <Private>false</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
     <ProjectReference Include="..\..\lib\Metatool.UI\Metatool.UI.csproj">
       <Private>false</Private>
     </ProjectReference>

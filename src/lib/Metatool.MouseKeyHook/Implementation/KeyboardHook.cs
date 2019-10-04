@@ -28,9 +28,9 @@ namespace Metatool.Input.MouseKeyHook
         }
 
         public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command,
-            KeyStateTree keyStateTree = null)
+            KeyStateTrees stateTree = KeyStateTrees.Default)
         {
-            var stateMachine = keyStateTree ?? KeyStateTree.Default;
+            var stateMachine = KeyStateTree.GetStateTree(stateTree);
             if (!_stateTrees.Contains(stateMachine)) _stateTrees.Add(stateMachine);
             return stateMachine.Add(combinations, command);
         }
