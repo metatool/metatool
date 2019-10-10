@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.MetaKeyboard;
 using Metatool.WindowsInput.Native;
+using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
 
 namespace Metatool.Input
 {
@@ -260,6 +263,27 @@ namespace Metatool.Input
                     ? source.AllUp(AsyncCall, KeyUpPredicate, "", KeyStateTrees.Map)
                     : source.Up(AsyncCall, KeyUpPredicate, "", KeyStateTrees.Map)
             };
+        }
+        public async Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default)
+        {
+            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
+                {
+                    if (handled)
+                        e.Handled = true;
+                })
+                .HandlerConversion(h => new MouseKeyHook.KeyEventHandler(h))
+                .Start(h => KeyDown += h, h => KeyDown -= h, token == default ? CancellationToken.None : token);
+        }
+
+        public async Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default)
+        {
+            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
+                {
+                    if (handled)
+                        e.Handled = true;
+                })
+                .HandlerConversion(h => new KeyEventHandler(h))
+                .Start(h => KeyUp += h, h => KeyUp -= h, token == default ? CancellationToken.None : token);
         }
 
     }

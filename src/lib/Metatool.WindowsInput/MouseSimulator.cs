@@ -130,25 +130,25 @@ namespace Metatool.WindowsInput
         /// </summary>
         /// <param name="deltaX">The delta for the x-axis</param>
         /// <param name="deltaY">The delta for the y-axis</param>
-        public IMouseSimulator MoveByWithTrace(int deltaX, int deltaY)
+        public IMouseSimulator MoveByLikeUser(int deltaX, int deltaY)
         {
             var currPos = Position;
-            return MoveToWithTrace(currPos.X + deltaX, currPos.Y + deltaY);
+            return MoveToLikeUser(currPos.X + deltaX, currPos.Y + deltaY);
         }
         /// <summary>
         /// Moves the mouse to a new position
         /// </summary>
         /// <param name="newPosition">The new position for the mouse</param>
-        public IMouseSimulator MoveToWithTrace(Point newPosition)
+        public IMouseSimulator MoveToLikeUser(Point newPosition)
         {
-            return MoveToWithTrace(newPosition.X, newPosition.Y);
+            return MoveToLikeUser(newPosition.X, newPosition.Y);
         }
         /// <summary>
         /// Moves the mouse to a new position
         /// </summary>
         /// <param name="newX">The new position on the x-axis</param>
         /// <param name="newY">The new position on the y-axis</param>
-        public IMouseSimulator MoveToWithTrace(int newX, int newY)
+        public IMouseSimulator MoveToLikeUser(int newX, int newY)
         {
             // Get starting position
             var startPos = Position;

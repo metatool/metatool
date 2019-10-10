@@ -31,9 +31,9 @@ namespace Metatool.WindowsInput
         IMouseSimulator MoveTo(double absoluteX, double absoluteY);
 
         bool AreButtonsSwapped { get; }
-        IMouseSimulator MoveByWithTrace(int deltaX, int deltaY);
-        IMouseSimulator MoveToWithTrace(Point newPosition);
-        IMouseSimulator MoveToWithTrace(int newX, int newY);
+        IMouseSimulator MoveByLikeUser(int deltaX, int deltaY);
+        IMouseSimulator MoveToLikeUser(Point newPosition);
+        IMouseSimulator MoveToLikeUser(int newX, int newY);
         /// <summary>
         /// Current position of the mouse cursor
         /// </summary>

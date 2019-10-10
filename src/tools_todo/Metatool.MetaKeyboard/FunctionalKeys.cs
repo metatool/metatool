@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input;
+using Metatool.Plugin;
 using Microsoft.Win32;
 using static Metatool.Input.Key;
 
@@ -40,7 +41,9 @@ namespace Metatool.MetaKeyboard
 
         public IKeyboardCommandToken  ShowTips = (Caps + Question).Down(e =>
         {
-            Keyboard.Default.ShowTip();
+            var keyboard = ServiceLocator.GetService<IKeyboard>();
+
+            //Keyboard.Default.ShowTip();
             e.Handled = true;
         }, null, "Show Tips");
 

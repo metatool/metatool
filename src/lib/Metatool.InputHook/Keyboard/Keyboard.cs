@@ -22,7 +22,7 @@ namespace Metatool.Input
         private static   Keyboard          _default;
 
         public static Keyboard Default =>
-            _default ??= (ServiceLocator.Current.GetService(typeof(IKeyboard)) as Keyboard);
+            _default ??= ServiceLocator.GetService<IKeyboard, Keyboard>();
 
         public Keyboard(ILogger<Keyboard> logger)
         {
@@ -33,7 +33,7 @@ namespace Metatool.Input
         public IKeyPath Root = null;
 
         readonly KeyboardHook _hook =
-            new KeyboardHook(ServiceLocator.Current.GetService(typeof(ILogger<KeyboardHook>)) as ILogger<KeyboardHook>);
+            new KeyboardHook(ServiceLocator.GetService<ILogger<KeyboardHook>>());
 
         readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
@@ -131,28 +131,6 @@ namespace Metatool.Input
             remove => _hook.KeyDown -= value;
         }
 
-        public async Task<IKeyEventArgs> KeyDownAsync(bool handled = false)
-        {
-            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
-                {
-                    if (handled)
-                        e.Handled = true;
-                })
-                .HandlerConversion(h => new KeyEventHandler(h))
-                .Start(h => KeyDown += h, h => KeyDown -= h, CancellationToken.None);
-        }
-
-        public async Task<IKeyEventArgs> KeyUpAsync(bool handled = false)
-        {
-            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
-                {
-                    if (handled)
-                        e.Handled = true;
-                })
-                .HandlerConversion(h => new KeyEventHandler(h))
-                .Start(h => KeyUp += h, h => KeyUp -= h, CancellationToken.None);
-        }
-
         public event KeyEventHandler KeyUp
         {
             add => _hook.KeyUp += value;
@@ -176,20 +154,7 @@ namespace Metatool.Input
             _dispatcher.BeginInvoke(priority, action);
         }
 
-        public void Type(Keys key, bool IsAsync)
-        {
-            if (IsAsync)
-                Async(() => InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key));
-            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
-        }
 
-        public void Type(Keys[] keys) => InputSimu.Inst.Keyboard.KeyPress(keys.Cast<VirtualKeyCode>().ToArray());
-
-        public void Type(Keys key) => InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
-
-        public void Type(char character) => InputSimu.Inst.Keyboard.Type(character);
-
-        public void Type(string text) => InputSimu.Inst.Keyboard.Type(text);
 
         private void Hook()
         {
@@ -197,7 +162,6 @@ namespace Metatool.Input
             _hook.Run();
         }
 
-        public IKeyboardCommandToken GetToken(ICommandToken<IKeyEventArgs> commandToken,
-            IKeyboardCommandTrigger trigger) => new KeyboardCommandToken(commandToken, trigger);
+       
     }
 }

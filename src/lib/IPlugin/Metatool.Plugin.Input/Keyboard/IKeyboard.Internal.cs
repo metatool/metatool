@@ -9,5 +9,7 @@ namespace Metatool.Input
     {
         IKeyboardCommandToken GetToken(ICommandToken<IKeyEventArgs> commandToken,
             IKeyboardCommandTrigger trigger);
+
+        IToggleKey GeToggleKey(Key key);
     }
 }

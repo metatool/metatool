@@ -7,6 +7,7 @@ using FlaUI.Core.AutomationElements;
 using FlaUI.UIA3;
 using Metatool.Command;
 using Metatool.Input;
+using Metatool.Plugin;
 using Metatool.UI;
 using static Metatool.Input.Key;
 
@@ -78,8 +79,9 @@ namespace Metatool.MetaKeyboard
 
             var file = File.Create(fullPath + "\\" + fileName);
             file.Close();
+            var keyboard = ServiceLocator.GetService<IKeyboard>();
             Explorer.Select(handle, new[] { fileName });
-            Keyboard.Default.Type(Keys.F2);
+            keyboard.Type(Keys.F2);
         }, IsExplorer, "&New File");
 
         public IKeyboardCommandToken  ShowDesktopFolder = (LWin + D).Down(e =>

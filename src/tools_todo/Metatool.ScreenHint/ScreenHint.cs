@@ -14,11 +14,32 @@ using static Metatool.Input.Key;
 
 namespace Metatool.ScreenHint
 {
-    public class ScreenHint
+    public sealed class ScreenHint
     {
+        private readonly IKeyboard _keyboard;
+        private readonly IMouse _mouse;
+
+        public ScreenHint(IKeyboard keyboard, IMouse mouse)
+        {
+            _keyboard = keyboard;
+            _mouse = mouse;
+
+            MouseClick = (Ctrl + Alt + X).Down(e =>
+            {
+                e.Handled = true;
+                e.BeginInvoke(() => Show(MouseLeftClick));
+            });
+
+            MouseClickLast = (Ctrl + Alt + Z).Down(e =>
+            {
+                e.Handled = true;
+                e.BeginInvoke(() => Show(MouseLeftClick, false));
+            });
+
+        }
         static (Rect windowRect, Dictionary<string, Rect> rects) _positions;
 
-        public static async void Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true)
+        public  async void Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true)
         {
             buildHints = buildHints || _positions.Equals(default);
             if (buildHints)
@@ -37,12 +58,12 @@ namespace Metatool.ScreenHint
             var hits = new StringBuilder();
             while (true)
             {
-                var downArg = await Keyboard.Default.KeyDownAsync(true);
+                var downArg = await _keyboard.KeyDownAsync(true);
 
                 if (downArg.KeyCode == Keys.LShiftKey)
                 {
                     HintUI.Inst.HideHints();
-                    var upArg = await Keyboard.Default.KeyUpAsync();
+                    var upArg = await _keyboard.KeyUpAsync();
                     HintUI.Inst.ShowHints();
                     continue;
                 }
@@ -92,28 +113,18 @@ namespace Metatool.ScreenHint
             }
         }
 
-        static void MouseLeftClick((Rect winRect, Rect clientRect) position)
+        void MouseLeftClick((Rect winRect, Rect clientRect) position)
         {
             var rect    = position.clientRect;
             var winRect = position.winRect;
             rect.X = winRect.X + rect.X;
             rect.Y = winRect.Y + rect.Y;
             var p = new Point((int) (rect.X + rect.Width / 2), (int) (rect.Y + rect.Height / 2));
-            Input.Mouse.Simu.Position = p;
-            Input.Mouse.Simu.LeftClick();
+            _mouse.Position = p;
+            _mouse.LeftClick();
         }
 
-        public IKeyboardCommandToken  MouseClick = (Ctrl + Alt + X).Down(e =>
-        {
-            e.Handled = true;
-            e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick));
-        });
-
-        public IKeyboardCommandToken  MouseClickLast = (Ctrl + Alt + Z).Down(e =>
-        {
-            e.Handled = true;
-            e.BeginInvoke(() => ScreenHint.Show(MouseLeftClick, false));
-        });
-
+        public IKeyboardCommandToken  MouseClick;
+        public IKeyboardCommandToken MouseClickLast;
     }
 }

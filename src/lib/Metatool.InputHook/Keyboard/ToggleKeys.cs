@@ -6,24 +6,16 @@ using Metatool.WindowsInput.Native;
 
 namespace Metatool.Input
 {
-    public enum ToggleKeyState
-    {
-        On, Off, AlwaysOn, AlwaysOff
-    }
-    public class ToggleKeys
-    {
-        public static ToggleKeys NumLock = new ToggleKeys(Key.Num);
-        public static ToggleKeys CapsLock = new ToggleKeys(Key.Caps);
-        public static ToggleKeys ScrollLock = new ToggleKeys(Key.Scroll);
-        public static ToggleKeys Insert = new ToggleKeys(Key.Ins);
 
+    public class ToggleKey : IToggleKey
+    {
         private readonly Key _key;
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
         private bool _valid;
         private IKeyboardCommandToken _keyDownActionToken;
         private IKeyboardCommandToken _keyUpActionToken;
-        private ToggleKeys(Key key)
+        internal ToggleKey(Key key)
         {
             _key = key;
         }

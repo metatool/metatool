@@ -5,6 +5,7 @@ using Metatool.Input;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Input.Key;
 using Window = Metatool.UI.Window;
+using Metatool.Plugin;
 
 namespace Metatool.MetaKeyboard
 {
@@ -12,8 +13,9 @@ namespace Metatool.MetaKeyboard
     {
         // static readonly Hint Hint= new Hint();
         // LButton & RButton
-        public IKeyboardCommandToken  MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
-        public IKeyboardCommandToken  MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
+        public IKeyboardCommandToken MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
+        public IKeyboardCommandToken MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
+
         static void MoveCursorToActiveControl()
         {
             using var automation = new UIA3Automation();
@@ -25,22 +27,34 @@ namespace Metatool.MetaKeyboard
             if (x == 0 && y == 0)
             {
                 var r = Window.GetCurrentWindowRect();
-                x = (int)(r.X + r.Width  / 2);
-                y = (int)(r.Y + r.Height / 2);
+                x = (int) (r.X + r.Width  / 2);
+                y = (int) (r.Y + r.Height / 2);
             }
-            Input.Mouse.Simu.MoveToWithTrace(x, y);
+
+            var mouse = ServiceLocator.GetService<IMouse>();
+            mouse.MoveToLikeUser(x, y);
         }
 
         // Scroll up/down (reading, one hand)
-        public IKeyboardCommandToken  MouseToFocus = (GK + F).Handled().Down(e => { e.BeginInvoke(MoveCursorToActiveControl); });
+        public IKeyboardCommandToken MouseToFocus = (GK + F).Handled().Down(e =>
+        {
+            e.BeginInvoke(MoveCursorToActiveControl);
+        });
 
         // Scroll up/down (reading, one hand)
-        public IKeyboardCommandToken  MouseScrollUp = (GK + W).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(1); });
+        public IKeyboardCommandToken MouseScrollUp = (GK + W).Handled().Down(e =>
+        {
+            var mouse = ServiceLocator.GetService<IMouse>();
+            mouse.VerticalScroll(1);
+        });
 
-        public IKeyboardCommandToken  MouseScrollDown = (GK + S).Handled().Down(e => { Input.Mouse.Simu.VerticalScroll(-1); });
+        public IKeyboardCommandToken MouseScrollDown = (GK + S).Handled().Down(e =>
+        {
+            var mouse = ServiceLocator.GetService<IMouse>();
+            mouse.VerticalScroll(-1);
+        });
 
         // public IKeyboardCommandToken  MouseLeftClick = Hint.MouseClick.ChangeHotkey(GK+C);
         // public IKeyboardCommandToken  MouseLeftClick_Last = Hint.MouseClickLast.ChangeHotkey(GK+LShift+C);
-
     }
 }

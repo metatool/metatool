@@ -38,6 +38,7 @@ namespace Metaseed.Metatool
                 .Configure<LoggerFilterOptions>(options =>
                     options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)
                 .AddSingleton<IKeyboard, Keyboard>()
+                .AddSingleton<IMouse, Mouse>()
                 .AddSingleton<ICommandManager, CommandManager>();
         }
 

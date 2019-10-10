@@ -1,9 +1,18 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Metatool.Command;
 
 namespace Metatool.Input
 {
-    public interface IKeyboard
+    public interface IKeyboardVirtual
+    {
+        void Type(Key key);
+        void Type(Key[] keys);
+        void Type(string text);
+        void Type(char character);
+    }
+    public interface IKeyboard : IKeyboardVirtual
     {
         IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger Up(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
@@ -24,6 +33,9 @@ namespace Metatool.Input
 
         IKeyboardCommandToken MapOnHit(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true);
+
+        Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);
+        Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default);
 
     }
 }

@@ -14,16 +14,12 @@ namespace Metatool.Input
 
     public class KeyEventAsync : IKeyEventAsync
     {
-        public KeyEventAsync()
-        {
-        }
         private SemaphoreSlim _semaphore;
         private IKeyEventArgs _eventArgsExt;
+
         /// <summary>
         ///  if timeout return null
         /// </summary>
-        /// <param name="timeout"></param>
-        /// <returns></returns>
         public async Task<IKeyEventArgs> WaitAsync(int timeout = -1)
         {
             _eventArgsExt = null;
@@ -34,12 +30,10 @@ namespace Metatool.Input
 
         public void OnEvent(IKeyEventArgs arg)
         {
-            if (_semaphore != null)
-            {
-                _eventArgsExt = arg;
-                _semaphore.Release();
-            }
-        }
+            if (_semaphore == null) return;
 
+            _eventArgsExt = arg;
+            _semaphore.Release();
+        }
     }
 }
