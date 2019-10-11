@@ -30,11 +30,11 @@ namespace Metatool.MetaKeyboard
             if ("CabinetWClass" == c)
             {
                 var path = await Explorer.Path(Window.CurrentWindowHandle);
-                ProcessEx.Run(Config.Current.Tools.EveryThing, arg, "-path", path);
+                ProcessEx.Run(Config.Current.Tools.Everything, arg, "-path", path);
                 return;
             }
 
-            ProcessEx.Run(Config.Current.Tools.EveryThing, arg);
+            ProcessEx.Run(Config.Current.Tools.Everything, arg);
         }, null, "&Find With Everything");
 
         public IKey  OpenTerminal = (AK + T).Down(async e =>

@@ -1,33 +1,34 @@
 ﻿using System;
 using System.IO;
-using Newtonsoft.Json;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
 namespace Metatool.MetaKeyboard
 {
     public class Settings
     {
-        public string RemoteDesktopEnable;
+        public bool RemoteDesktopEnable { get; set; }
     }
 
     public class Registers
     {
-        public string WorkDir;
+        public string WorkDir { get; set; }
     }
 
     public class Tools
     {
-        public string EveryThing;
-        public string GifTool;
-        public string SearchEngine;
-        public string SearchEngineSecondary;
-        public string Code;
-        public string Editor;
-        public string Cmd;
-        public string Ruler;
-        public string VisualStudio;
-        public string ProcessExplorer;
-        public string VisualMachineManager;
-        public string Inspect;
+        public string Everything { get; set; }
+        public string GifTool { get; set; }
+        public string SearchEngine { get; set; }
+        public string SearchEngineSecondary { get; set; }
+        public string Code { get; set; }
+        public string Editor { get; set; }
+        public string Cmd { get; set; }
+        public string Ruler { get; set; }
+        public string VisualStudio { get; set; }
+        public string ProcessExplorer { get; set; }
+        public string VisualMachineManager { get; set; }
+
+        public string Inspect { get; set; }
     }
 
     public class Config
@@ -42,7 +43,8 @@ namespace Metatool.MetaKeyboard
 
                 if (_config != null) return _config;
                 var configPath = Path.Combine(Path.GetDirectoryName(typeof(Config).Assembly.Location), @".\config.json");
-                _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(configPath));
+                var config = File.ReadAllText(configPath);
+                _config = JsonSerializer.Deserialize<Config>(config, new JsonSerializerOptions(){ReadCommentHandling = JsonCommentHandling.Skip});
                 var tools = _config.Tools;
 
                 foreach (var info in tools.GetType().GetFields())
@@ -58,8 +60,8 @@ namespace Metatool.MetaKeyboard
             }
         }
 
-        public Settings  Settings;
-        public Tools     Tools;
-        public Registers Registers;
+        public Settings Settings { get; set; }
+        public Tools Tools { get; set; }
+        public Registers Registers { get; set; }
     }
 }

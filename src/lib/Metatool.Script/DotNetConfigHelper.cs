@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 
-namespace RoslynPad.Hosting
+namespace Metatool.Script
 {
     internal static class DotNetConfigHelper
     {

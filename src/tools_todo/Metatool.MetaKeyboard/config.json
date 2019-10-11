@@ -1,7 +1,7 @@
 ﻿{
   "Settings": {
     "RemoteDesktopEnable": false 
-  }, 
+  },
   "Tools": {
     // set alt+shift+f as toggle window hotkey, ctrl+alt+shift+f as new window hotkey
     "Everything": ".\\software\\everything\\Everything.exe",
@@ -18,7 +18,7 @@
     "VisualStudio": ".\\software\\Visual Studio 2019.lnk",
     "ProcessExplorer": ".\\software\\procexp64.exe",
     "VirtualMachineManager": ".\\software\\Hyper-V Manager.lnk",
-    "Inspect": ".\\software\\inspect.lnk" 
+    "Inspect": ".\\software\\inspect.lnk"
   },
   "Registers": {
     "WorkDir": "M:\\Workspace" 
