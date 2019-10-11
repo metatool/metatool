@@ -240,9 +240,9 @@ namespace Metatool.Input
 
         public static readonly Key[] CommonChordKeys = new Key[] {LCtrl, RCtrl, CtrlKey, LShift, RShift, ShiftKey, LMenu, RMenu, Menu, LWin, RWin, Win };
 
-        public static bool IsCommonChordKey(Key key)
+        public bool IsCommonChordKey()
         {
-            return CommonChordKeys.Any(chord => key == chord);
+            return CommonChordKeys.Any(chord => this == chord);
         }
     }
 }

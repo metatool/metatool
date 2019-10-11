@@ -18,9 +18,6 @@ namespace Metatool.Input.MouseKeyHook
         public           bool                  IsRuning { get; set; }
 
 
-        private readonly List<KeyStateTree> _stateTrees = new List<KeyStateTree>()
-            {KeyStateTree.HardMap, KeyStateTree.Default, KeyStateTree.Map, KeyStateTree.HotString};
-
         public KeyboardHook(ILogger<KeyboardHook> logger)
         {
             _logger      = logger;
@@ -28,11 +25,10 @@ namespace Metatool.Input.MouseKeyHook
         }
 
         public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command,
-            KeyStateTrees stateTree = KeyStateTrees.Default)
+            string stateTree = KeyStateTrees.Default)
         {
-            var stateMachine = KeyStateTree.GetStateTree(stateTree);
-            if (!_stateTrees.Contains(stateMachine)) _stateTrees.Add(stateMachine);
-            return stateMachine.Add(combinations, command);
+            var keyStateTree = KeyStateTree.GetOrCreateStateTree(stateTree);
+            return keyStateTree.Add(combinations, command);
         }
 
         private readonly List<KeyEventHandler> _keyUpHandlers = new List<KeyEventHandler>();
@@ -61,7 +57,7 @@ namespace Metatool.Input.MouseKeyHook
 
         public void ShowTip(bool ifRootThenEmpty = false)
         {
-            var tips = _stateTrees.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
+            var tips = KeyStateTree.StateTrees.Values.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
             if (tips.Length > 0)
                 Notify.ShowKeysTip(tips);
             else
@@ -77,7 +73,7 @@ namespace Metatool.Input.MouseKeyHook
             if (IsRuning) return;
             IsRuning = true;
 
-            _stateTrees.ForEach(m => m.Reset());
+            foreach (var stateTree in KeyStateTree.StateTrees.Values) stateTree.Reset();
 
             var selectTrees = new List<KeyStateTree.SelectionResult>();
 
@@ -142,7 +138,7 @@ namespace Metatool.Input.MouseKeyHook
                          reprocess              && hasSelectedNodes /*Yield or Reprocess*/);
 
                 @return:
-                _stateTrees.ForEach(t => t.MarkDoneIfYield());
+                foreach (var stateTree in KeyStateTree.StateTrees.Values) stateTree.MarkDoneIfYield();
             }
 
             _eventSource.KeyDown += (sender, args) =>
@@ -161,7 +157,7 @@ namespace Metatool.Input.MouseKeyHook
         {
             var selectedNodes = new List<KeyStateTree.SelectionResult>();
             //all on root, find current trees
-            foreach (var stateTree in _stateTrees)
+            foreach (var stateTree in KeyStateTree.StateTrees.Values)
             {
                 Debug.Assert(stateTree.IsOnRoot);
                 if (stateTree.ProcessState == KeyProcessState.Yield) continue;

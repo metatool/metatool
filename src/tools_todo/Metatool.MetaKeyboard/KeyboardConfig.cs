@@ -6,13 +6,6 @@ namespace Metatool.MetaKeyboard
 {
     public class KeyboardConfig : KeyMetaPackage
     {
-        // todo: auto convert to Chord, when used in Chord.
-        public IKeyboardCommandToken  AppsAsChord  = Apps.AsChordKey();
-        public IKeyboardCommandToken  SpaceAsChord = Space.AsChordKey();
-        public IKeyboardCommandToken  EnterAsChord = Enter.AsChordKey();
-        public IKeyboardCommandToken  TabAsChord   = Tab.AsChordKey();
-        public IKeyboardCommandToken  PipeAsChord = Pipe.AsChordKey();
-
         /// <summary>
         /// Global key
         /// </summary>

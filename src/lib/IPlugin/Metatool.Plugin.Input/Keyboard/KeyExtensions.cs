@@ -16,10 +16,5 @@ namespace Metatool.Input
             return new Combination(triggerKey, chordsKeys);
         }
 
-
-        public static IKeyboardCommandToken  AsChordKey(this Key key)
-        {
-            return key.MapOnHit(key.ToCombination(), e => !e.IsVirtual , false);
-        }
     }
 }

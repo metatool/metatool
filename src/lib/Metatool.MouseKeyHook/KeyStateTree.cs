@@ -42,20 +42,26 @@ namespace Metatool.Input
     [DebuggerDisplay("${Name}")]
     public class KeyStateTree
     {
-        public static readonly   KeyStateTree HardMap = new KeyStateTree("HardMap");
-        internal static readonly KeyStateTree Default = new KeyStateTree("Default");
-        public static readonly   KeyStateTree Map     = new KeyStateTree("Map");
-        public static readonly KeyStateTree HotString = new KeyStateTree("HotString");
-
-        static Dictionary<KeyStateTrees, KeyStateTree> stateTrees= new Dictionary<KeyStateTrees, KeyStateTree>()
+        internal static Dictionary<string, KeyStateTree> StateTrees = new Dictionary<string, KeyStateTree>()
         {
-            { KeyStateTrees.Default, Default},
-            {KeyStateTrees.HardMap, HardMap },
-            {KeyStateTrees.Map, Map },
-            {KeyStateTrees.HotString, HotString }
+            // keep the order
+            {KeyStateTrees.HardMap, new KeyStateTree("HardMap") },
+            {KeyStateTrees.ChordMap, new KeyStateTree("Chord") },
+            { KeyStateTrees.Default, new KeyStateTree("Default")},
+            {KeyStateTrees.Map,  new KeyStateTree("Map") },
+            {KeyStateTrees.HotString, new KeyStateTree("HotString") }
         };
+        public static KeyStateTree GetOrCreateStateTree(string stateTree)
+        {
+            if (StateTrees.TryGetValue(stateTree, out var keyStateTree))
+            {
+                return keyStateTree;
+            }
 
-        public static KeyStateTree GetStateTree(KeyStateTrees stateTree) => stateTrees[stateTree];
+            keyStateTree = new KeyStateTree(stateTree);
+            StateTrees.Add(stateTree, keyStateTree);
+            return keyStateTree;
+        }
 
         private readonly Trie<ICombination, KeyEventCommand>       _trie = new Trie<ICombination, KeyEventCommand>();
         private readonly TrieWalker<ICombination, KeyEventCommand> _treeWalker;
@@ -84,6 +90,23 @@ namespace Metatool.Input
 
             Notify.CloseKeysTip(Name);
             _treeWalker.GoToRoot();
+        }
+
+        internal bool Contains(IHotkey hotKey)
+        {
+            IEnumerable<KeyEventCommand> values = null;
+            switch (hotKey)
+            {
+                case ISequenceUnit k:
+                    values = _trie.Get(new List<ICombination>(k.ToCombination()));
+                    break;
+                case ISequence s:
+                    values = _trie.Get(s.ToList());
+                    break;
+                default: throw new Exception("not supported!");
+            }
+
+            return values.Any();
         }
 
         internal void MarkDoneIfYield()

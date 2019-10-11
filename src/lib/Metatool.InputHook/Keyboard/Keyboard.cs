@@ -38,22 +38,33 @@ namespace Metatool.Input
         readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
         internal IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,
-            KeyStateTrees stateTree = KeyStateTrees.Default)
+            string stateTree = KeyStateTrees.Default)
         {
             return Add(new List<ICombination> {combination}, keyEvent, command, stateTree);
         }
 
 
         internal IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
-            KeyStateTrees stateTree = KeyStateTrees.Default)
+            string stateTree = KeyStateTrees.Default)
         {
             foreach (var combination in combinations)
             {
-                foreach (var key in combination.Chord)
+                foreach (var keyInChord in combination.Chord)
                 {
-                    key.Then()
+                    foreach (var code in keyInChord.Codes)
+                    {
+                        var key = (Key) code;
+                        if (!key.IsCommonChordKey())
+                        {
+                            var keyStateTree = KeyStateTree.GetOrCreateStateTree(KeyStateTrees.ChordMap);
+                            if(!keyStateTree.Contains(key))
+                                MapOnHit(key.ToCombination(),key.ToCombination(), e => !e.IsVirtual, false);
+                        }
+                    }
+                   
                 }
             }
+
             return _hook.Add(combinations, new KeyEventCommand(keyEvent, command), stateTree);
         }
 
@@ -66,7 +77,7 @@ namespace Metatool.Input
         /// down up happened successively
         /// </summary>
         internal IKeyboardCommandToken Hit(ICombination combination, Action<IKeyEventArgs> execute,
-            Predicate<IKeyEventArgs> canExecute = null, string description = "", KeyStateTrees stateTree = KeyStateTrees.Default)
+            Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;

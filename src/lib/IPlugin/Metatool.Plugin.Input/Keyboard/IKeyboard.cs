@@ -14,14 +14,14 @@ namespace Metatool.Input
     }
     public interface IKeyboard : IKeyboardVirtual
     {
-        IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger Up(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger AllUp(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger Hit(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Up(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger AllUp(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Hit(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
 
-        IKeyboardCommandTrigger Down(ISequence sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger Up(ISequence sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger AllUp(ISequence sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Down(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Up(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger AllUp(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
 
         IKeyboardCommandToken Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1);

@@ -16,7 +16,7 @@ namespace Metatool.Input
             _commandManager ??= ServiceLocator.GetService<ICommandManager>();
 
         public static IKeyboardCommandToken Down(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
-            Predicate<IKeyEventArgs> canExecute = null, string description = "", KeyStateTrees stateTree = KeyStateTrees.Default)
+            Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
             var trigger = Keyboard.Down(combination, stateTree);
@@ -26,7 +26,7 @@ namespace Metatool.Input
         }
 
         public static IKeyboardCommandToken  Up(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
-            Predicate<IKeyEventArgs> canExecute = null, string description = "", KeyStateTrees stateTree= KeyStateTrees.Default)
+            Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree= KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
             var trigger = Keyboard.Up(combination, stateTree);
@@ -38,7 +38,7 @@ namespace Metatool.Input
         /// register the key to the state tree, and wait the down event;
         /// timeout: return null
         /// </summary>
-        public static Task<IKeyEventArgs> DownAsync(this ISequenceUnit sequenceUnit, int timeout = -1, string description  ="", KeyStateTrees stateTree = KeyStateTrees.Default)
+        public static Task<IKeyEventArgs> DownAsync(this ISequenceUnit sequenceUnit, int timeout = -1, string description  ="", string stateTree = KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
             var command = new KeyEventAsync();
@@ -47,7 +47,7 @@ namespace Metatool.Input
             return command.WaitAsync(timeout);
         }
 
-        public static Task<IKeyEventArgs> UpAsync(this ISequenceUnit sequenceUnit, int timeout = -1, string description = "", KeyStateTrees stateTree = KeyStateTrees.Default)
+        public static Task<IKeyEventArgs> UpAsync(this ISequenceUnit sequenceUnit, int timeout = -1, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
             var command     = new KeyEventAsync();
@@ -57,7 +57,7 @@ namespace Metatool.Input
         }
 
         public static IKeyboardCommandToken  AllUp(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
-            Predicate<IKeyEventArgs> canExecute = null, string description = "", KeyStateTrees stateTree = KeyStateTrees.Default)
+            Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             if (sequenceUnit is Key) throw new Exception("AllUp event could only be used on Key, please use Up event!");
             var combination = sequenceUnit.ToCombination();
@@ -68,7 +68,7 @@ namespace Metatool.Input
         }
 
         public static IKeyboardCommandToken  Hit(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
-            Predicate<IKeyEventArgs> canExecute, string description, KeyStateTrees stateTree = KeyStateTrees.Default)
+            Predicate<IKeyEventArgs> canExecute, string description, string stateTree = KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
             var trigger     = Keyboard.Hit(combination,stateTree);
