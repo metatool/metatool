@@ -23,15 +23,15 @@ namespace Metatool.Input
         IKeyboardCommandTrigger Up(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger AllUp(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
 
-        IKeyToken Map(ICombination source, ICombination target,
+        IKey Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1);
 
-        IKeyToken Map(string source, string target, Predicate<IKeyEventArgs> predicate = null);
+        IKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null);
 
-        IKeyToken HardMap(ICombination source, ICombination target,
+        IKey HardMap(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null);
 
-        IKeyToken MapOnHit(ICombination source, ICombination target,
+        IKey MapOnHit(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true);
 
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);

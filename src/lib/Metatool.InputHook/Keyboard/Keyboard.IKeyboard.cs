@@ -94,7 +94,7 @@ namespace Metatool.Input
             return trigger;
         }
 
-        public IKeyToken HardMap(ICombination source, ICombination target,
+        public IKey HardMap(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             var handled = false;
@@ -138,7 +138,7 @@ namespace Metatool.Input
             };
         }
 
-        public IKeyToken Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
+        public IKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
@@ -162,7 +162,7 @@ namespace Metatool.Input
         }
 
 
-        public IKeyToken Map(ICombination source, ICombination target,
+        public IKey Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
         {
             var handled = false;
@@ -212,7 +212,7 @@ namespace Metatool.Input
             };
         }
 
-        public IKeyToken MapOnHit(ICombination source, ICombination target,
+        public IKey MapOnHit(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
         {
             var           handling     = false;

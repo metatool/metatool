@@ -27,7 +27,7 @@ namespace Metatool.MetaKeyboard
             return "CabinetWClass" == c;
         }
 
-        public IKeyToken  FocusFileItemsView = (LWin + F).Down(e =>
+        public IKey  FocusFileItemsView = (LWin + F).Down(e =>
         {
             using (var automation = new UIA3Automation())
             {
@@ -42,7 +42,7 @@ namespace Metatool.MetaKeyboard
         }, IsExplorerOrDialog, "Focus &File Items View");
 
 
-        public IKeyToken  FocusNavigationTreeView = (LWin + N).Down(e =>
+        public IKey  FocusNavigationTreeView = (LWin + N).Down(e =>
         {
             using (var automation = new UIA3Automation())
             {
@@ -55,7 +55,7 @@ namespace Metatool.MetaKeyboard
             e.Handled = true;
         }, IsExplorerOrDialog, "Focus &Navigation Tree View");
 
-        public IKeyToken  CopySelectedPath = (Caps + Pipe).Down(async e =>
+        public IKey  CopySelectedPath = (Caps + Pipe).Down(async e =>
         {
             var handle = UI.Window.CurrentWindowHandle;
             var paths = await Explorer.GetSelectedPath(handle);
@@ -65,7 +65,7 @@ namespace Metatool.MetaKeyboard
         }, IsExplorerOrDialog, "Copy Selected Files Path");
 
 
-        public IKeyToken  NewFile = (Ctrl + Alt + N).Hit(async e =>
+        public IKey  NewFile = (Ctrl + Alt + N).Hit(async e =>
         {
             const string newFileName = "NewFile";
             var handle = UI.Window.CurrentWindowHandle;
@@ -79,12 +79,12 @@ namespace Metatool.MetaKeyboard
 
             var file = File.Create(fullPath + "\\" + fileName);
             file.Close();
-            var keyboard = ServiceLocator.GetService<IKeyboard>();
+            var keyboard = Services.Get<IKeyboard>();
             Explorer.Select(handle, new[] { fileName });
             keyboard.Type(Keys.F2);
         }, IsExplorer, "&New File");
 
-        public IKeyToken  ShowDesktopFolder = (LWin + D).Down(e =>
+        public IKey  ShowDesktopFolder = (LWin + D).Down(e =>
             {
                 Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 e.Handled = true;

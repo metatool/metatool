@@ -9,13 +9,13 @@ namespace Metatool.Input
     {
         private static IKeyboard _keyboard;
         private static IKeyboard Keyboard =>
-            _keyboard ??= ServiceLocator.GetService<IKeyboard>();
+            _keyboard ??= Services.Get<IKeyboard>();
 
         private static ICommandManager _commandManager;
         private static ICommandManager CommandManager =>
-            _commandManager ??= ServiceLocator.GetService<ICommandManager>();
+            _commandManager ??= Services.Get<ICommandManager>();
 
-        public static IKeyToken Down(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
+        public static IKey Down(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
@@ -25,7 +25,7 @@ namespace Metatool.Input
             return keyboardInternal.GetToken(token, trigger);
         }
 
-        public static IKeyToken  Up(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
+        public static IKey  Up(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree= KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
@@ -56,7 +56,7 @@ namespace Metatool.Input
             return command.WaitAsync(timeout);
         }
 
-        public static IKeyToken  AllUp(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
+        public static IKey  AllUp(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             if (sequenceUnit is Key) throw new Exception("AllUp event could only be used on Key, please use Up event!");
@@ -67,7 +67,7 @@ namespace Metatool.Input
             return keyboardInternal.GetToken(token, trigger);
         }
 
-        public static IKeyToken  Hit(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
+        public static IKey  Hit(this ISequenceUnit sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute, string description, string stateTree = KeyStateTrees.Default)
         {
             var combination = sequenceUnit.ToCombination();
@@ -78,29 +78,29 @@ namespace Metatool.Input
         }
 
 
-        public static IKeyToken  Map(this ISequenceUnit key, Key target, Predicate<IKeyEventArgs> canExecute = null,
+        public static IKey  Map(this ISequenceUnit key, Key target, Predicate<IKeyEventArgs> canExecute = null,
             int repeat = 1)
         {
             return Keyboard.Map(key.ToCombination(), new Combination(target), canExecute, repeat);
         }
 
-        public static IKeyToken  Map(this ISequenceUnit key, ICombination target,
+        public static IKey  Map(this ISequenceUnit key, ICombination target,
             Predicate<IKeyEventArgs> canExecute = null, int repeat = 1)
         {
             return Keyboard.Map(key.ToCombination(), target, canExecute, repeat);
         }
-        public static IKeyToken HardMap(this ISequenceUnit key, Key target, Predicate<IKeyEventArgs> canExecute = null)
+        public static IKey HardMap(this ISequenceUnit key, Key target, Predicate<IKeyEventArgs> canExecute = null)
         {
             return Keyboard.HardMap(key.ToCombination(), new Combination(target), canExecute);
         }
 
-        public static IKeyToken  MapOnHit(this ISequenceUnit key, Key target,
+        public static IKey  MapOnHit(this ISequenceUnit key, Key target,
             Predicate<IKeyEventArgs> canExecute = null, bool allUp = true)
         {
             return Keyboard.MapOnHit(key.ToCombination(), new Combination(target), canExecute, allUp);
         }
 
-        public static IKeyToken  MapOnHit(this ISequenceUnit key, ICombination target,
+        public static IKey  MapOnHit(this ISequenceUnit key, ICombination target,
             Predicate<IKeyEventArgs> canExecute = null, bool allUp = true)
         {
             return Keyboard.MapOnHit(key.ToCombination(), target, canExecute, allUp);

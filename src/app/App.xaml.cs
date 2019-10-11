@@ -106,7 +106,7 @@ namespace Metaseed.Metatool
             var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
             ConfigureServices(serviceCollection, configuration);
             var provider = serviceCollection.BuildServiceProvider();
-            ServiceLocator.Current = provider;
+            Services.Provider = provider;
             var logger = provider.GetService<ILogger<App>>();
             SetupEnvVar(logger);
 

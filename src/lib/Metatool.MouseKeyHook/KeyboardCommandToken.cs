@@ -4,7 +4,7 @@ using Metatool.Command;
 
 namespace Metatool.Input
 {
-    public class KeyToken : IKeyToken
+    public class KeyToken : IKey
     {
         private readonly ICommandToken<IKeyEventArgs> _internalCommandToken;
         private readonly IKeyboardCommandTrigger _trigger;
@@ -33,7 +33,7 @@ namespace Metatool.Input
         internal IMetaKey metaKey => _trigger.MetaKey;
     }
 
-    public class KeyTokens: List<IKeyToken>, IKeyToken
+    public class KeyTokens: List<IKey>, IKey
     {
        
         public void Remove()

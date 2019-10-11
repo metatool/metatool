@@ -14,7 +14,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         protected KeyListener(Subscribe subscribe)
             : base(subscribe)
         {
-            _logger = ServiceLocator.GetService<ILogger<KeyListener>>();
+            _logger = Services.Get<ILogger<KeyListener>>();
         }
 
         public event KeyEventHandler      KeyDown;

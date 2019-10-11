@@ -22,7 +22,7 @@ namespace Metatool.Input
         private static   Keyboard          _default;
 
         public static Keyboard Default =>
-            _default ??= ServiceLocator.GetService<IKeyboard, Keyboard>();
+            _default ??= Services.Get<IKeyboard, Keyboard>();
 
         public Keyboard(ILogger<Keyboard> logger)
         {
@@ -33,7 +33,7 @@ namespace Metatool.Input
         public IKeyPath Root = null;
 
         readonly KeyboardHook _hook =
-            new KeyboardHook(ServiceLocator.GetService<ILogger<KeyboardHook>>());
+            new KeyboardHook(Services.Get<ILogger<KeyboardHook>>());
 
         readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
@@ -76,7 +76,7 @@ namespace Metatool.Input
         /// <summary>
         /// down up happened successively
         /// </summary>
-        internal IKeyToken Hit(ICombination combination, Action<IKeyEventArgs> execute,
+        internal IKey Hit(ICombination combination, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var           handling     = false;

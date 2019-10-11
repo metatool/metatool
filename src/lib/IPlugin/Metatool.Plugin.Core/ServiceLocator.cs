@@ -3,23 +3,23 @@ using System.Runtime;
 
 namespace Metatool.Plugin
 {
-    public class ServiceLocator   
+    public class Services   
     {
-        internal static IServiceProvider Current;
+        internal static IServiceProvider Provider;
 
-        public static object GetService(Type serviceType)
+        public static object Get(Type serviceType)
         {
-            return Current.GetService(serviceType);
+            return Provider.GetService(serviceType);
         }
 
-        public static T GetService<T>()
+        public static T Get<T>()
         {
-            return (T)Current.GetService(typeof(T));
+            return (T)Provider.GetService(typeof(T));
         }
 
-        public static TOut GetService<T, TOut>() 
+        public static TOut Get<T, TOut>() 
         {
-            return (TOut)Current.GetService(typeof(T));
+            return (TOut)Provider.GetService(typeof(T));
         }
     }
 }
