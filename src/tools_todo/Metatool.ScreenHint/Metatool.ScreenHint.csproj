@@ -22,9 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" />
-    <ProjectReference Include="..\..\lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj">
-      <Private>false</Private>
-    </ProjectReference>
   </ItemGroup>
 
 </Project>
