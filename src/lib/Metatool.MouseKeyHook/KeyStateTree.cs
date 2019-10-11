@@ -45,12 +45,13 @@ namespace Metatool.Input
         internal static Dictionary<string, KeyStateTree> StateTrees = new Dictionary<string, KeyStateTree>()
         {
             // keep the order
-            {KeyStateTrees.HardMap, new KeyStateTree("HardMap") },
-            {KeyStateTrees.ChordMap, new KeyStateTree("Chord") },
-            { KeyStateTrees.Default, new KeyStateTree("Default")},
-            {KeyStateTrees.Map,  new KeyStateTree("Map") },
-            {KeyStateTrees.HotString, new KeyStateTree("HotString") }
+            {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap)},
+            {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap)},
+            {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default)},
+            {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map)},
+            {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString)}
         };
+
         public static KeyStateTree GetOrCreateStateTree(string stateTree)
         {
             if (StateTrees.TryGetValue(stateTree, out var keyStateTree))
@@ -177,7 +178,8 @@ namespace Metatool.Input
             return new SelectionResult(this, candidateNode, downInChord);
         }
 
-        internal KeyProcessState Climb(KeyEvent eventType, IKeyEventArgs iargs, TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
+        internal KeyProcessState Climb(KeyEvent eventType, IKeyEventArgs iargs,
+            TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
         {
             var args = iargs as KeyEventArgsExt;
             Debug.Assert(args != null, nameof(args) + " != null");
@@ -195,6 +197,7 @@ namespace Metatool.Input
                         _lastKeyDownNodeForAllUp = null;
                         return ProcessState = KeyProcessState.Yield;
                     }
+
                     //  KeyInChord_down:C+D, A+B A_down
                     if (downInChord)
                         return ProcessState = KeyProcessState.Continue; // waiting for trigger key
@@ -227,6 +230,7 @@ namespace Metatool.Input
                         _lastKeyDownNodeForAllUp = null;
                         return ProcessState = KeyProcessState.Yield;
                     }
+
                     // on path, up 
                     if (_treeWalker.ChildrenCount == 0)
                     {
@@ -240,7 +244,8 @@ namespace Metatool.Input
                     // HaveChild & KeyInChord_up: A+B, C when A_up continue wait C
                     if (_treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
                     {
-                        Console.WriteLine(" would never been here:treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode)");
+                        Console.WriteLine(
+                            " would never been here:treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode)");
                         Debugger.Break();
                         return ProcessState = KeyProcessState.Continue;
                     }
@@ -270,7 +275,6 @@ namespace Metatool.Input
             var oneExecuted = false;
             foreach (var keyCommand in actionList[eventType])
             {
-
                 if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
                 {
                     Console.WriteLine($"\t/!{eventType}\t{keyCommand.Name}\t{keyCommand.Description}");
