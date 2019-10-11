@@ -76,12 +76,12 @@ namespace Metatool.Input
         /// <summary>
         /// down up happened successively
         /// </summary>
-        internal IKeyboardCommandToken Hit(ICombination combination, Action<IKeyEventArgs> execute,
+        internal IKeyToken Hit(ICombination combination, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
-            var token = new KeyboardCommandTokens
+            var token = new KeyTokens
             {
                 combination.Down(e =>
                 {

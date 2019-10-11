@@ -13,8 +13,8 @@ namespace Metatool.MetaKeyboard
     {
         // static readonly Hint Hint= new Hint();
         // LButton & RButton
-        public IKeyboardCommandToken MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
-        public IKeyboardCommandToken MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
+        public IKeyToken MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
+        public IKeyToken MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
 
         static void MoveCursorToActiveControl()
         {
@@ -36,19 +36,19 @@ namespace Metatool.MetaKeyboard
         }
 
         // Scroll up/down (reading, one hand)
-        public IKeyboardCommandToken MouseToFocus = (GK + F).Handled().Down(e =>
+        public IKeyToken MouseToFocus = (GK + F).Handled().Down(e =>
         {
             e.BeginInvoke(MoveCursorToActiveControl);
         });
 
         // Scroll up/down (reading, one hand)
-        public IKeyboardCommandToken MouseScrollUp = (GK + W).Handled().Down(e =>
+        public IKeyToken MouseScrollUp = (GK + W).Handled().Down(e =>
         {
             var mouse = ServiceLocator.GetService<IMouse>();
             mouse.VerticalScroll(1);
         });
 
-        public IKeyboardCommandToken MouseScrollDown = (GK + S).Handled().Down(e =>
+        public IKeyToken MouseScrollDown = (GK + S).Handled().Down(e =>
         {
             var mouse = ServiceLocator.GetService<IMouse>();
             mouse.VerticalScroll(-1);

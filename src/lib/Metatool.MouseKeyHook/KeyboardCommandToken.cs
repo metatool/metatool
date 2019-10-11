@@ -4,12 +4,12 @@ using Metatool.Command;
 
 namespace Metatool.Input
 {
-    public class KeyboardCommandToken : IKeyboardCommandToken
+    public class KeyToken : IKeyToken
     {
         private readonly ICommandToken<IKeyEventArgs> _internalCommandToken;
         private readonly IKeyboardCommandTrigger _trigger;
 
-        public KeyboardCommandToken(ICommandToken<IKeyEventArgs> internalCommandToken, IKeyboardCommandTrigger trigger)
+        public KeyToken(ICommandToken<IKeyEventArgs> internalCommandToken, IKeyboardCommandTrigger trigger)
         {
             _internalCommandToken = internalCommandToken;
             _trigger = trigger;
@@ -33,7 +33,7 @@ namespace Metatool.Input
         internal IMetaKey metaKey => _trigger.MetaKey;
     }
 
-    public class KeyboardCommandTokens: List<IKeyboardCommandToken>, IKeyboardCommandToken
+    public class KeyTokens: List<IKeyToken>, IKeyToken
     {
        
         public void Remove()
@@ -53,6 +53,6 @@ namespace Metatool.Input
             this.ForEach(t => t.Change(key));
             return true;
         }
-        internal IMetaKey metaKey => new MetaKeys(this.Cast<KeyboardCommandToken>().Select(t=>t.metaKey).ToList());
+        internal IMetaKey metaKey => new MetaKeys(this.Cast<KeyToken>().Select(t=>t.metaKey).ToList());
     }
 }

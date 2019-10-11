@@ -27,7 +27,7 @@ namespace Metatool.MetaKeyboard
             return "CabinetWClass" == c;
         }
 
-        public IKeyboardCommandToken  FocusFileItemsView = (LWin + F).Down(e =>
+        public IKeyToken  FocusFileItemsView = (LWin + F).Down(e =>
         {
             using (var automation = new UIA3Automation())
             {
@@ -42,7 +42,7 @@ namespace Metatool.MetaKeyboard
         }, IsExplorerOrDialog, "Focus &File Items View");
 
 
-        public IKeyboardCommandToken  FocusNavigationTreeView = (LWin + N).Down(e =>
+        public IKeyToken  FocusNavigationTreeView = (LWin + N).Down(e =>
         {
             using (var automation = new UIA3Automation())
             {
@@ -55,7 +55,7 @@ namespace Metatool.MetaKeyboard
             e.Handled = true;
         }, IsExplorerOrDialog, "Focus &Navigation Tree View");
 
-        public IKeyboardCommandToken  CopySelectedPath = (Caps + Pipe).Down(async e =>
+        public IKeyToken  CopySelectedPath = (Caps + Pipe).Down(async e =>
         {
             var handle = UI.Window.CurrentWindowHandle;
             var paths = await Explorer.GetSelectedPath(handle);
@@ -65,7 +65,7 @@ namespace Metatool.MetaKeyboard
         }, IsExplorerOrDialog, "Copy Selected Files Path");
 
 
-        public IKeyboardCommandToken  NewFile = (Ctrl + Alt + N).Hit(async e =>
+        public IKeyToken  NewFile = (Ctrl + Alt + N).Hit(async e =>
         {
             const string newFileName = "NewFile";
             var handle = UI.Window.CurrentWindowHandle;
@@ -84,7 +84,7 @@ namespace Metatool.MetaKeyboard
             keyboard.Type(Keys.F2);
         }, IsExplorer, "&New File");
 
-        public IKeyboardCommandToken  ShowDesktopFolder = (LWin + D).Down(e =>
+        public IKeyToken  ShowDesktopFolder = (LWin + D).Down(e =>
             {
                 Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 e.Handled = true;

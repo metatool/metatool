@@ -14,9 +14,9 @@ namespace Metatool.MetaKeyboard
 {
     public class Software : KeyMetaPackage
     {
-        public IKeyboardCommandToken  ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
+        public IKeyToken  ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
 
-        public IKeyboardCommandToken  Find = (AK + F).Down(async e =>
+        public IKeyToken  Find = (AK + F).Down(async e =>
         {
             e.Handled = true;
             var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
@@ -36,7 +36,7 @@ namespace Metatool.MetaKeyboard
             ProcessEx.Run(Config.Current.Tools.EveryThing, arg);
         }, null, "&Find With Everything");
 
-        public IKeyboardCommandToken  OpenTerminal = (AK + T).Down(async e =>
+        public IKeyToken  OpenTerminal = (AK + T).Down(async e =>
         {
             string path;
             e.Handled = true;
@@ -52,7 +52,7 @@ namespace Metatool.MetaKeyboard
                 ProcessEx.Run(Config.Current.Tools.Cmd, "/start", path);
         }, null, "Open &Terminal");
 
-        public IKeyboardCommandToken  WebSearch = (AK + W).Down(async e =>
+        public IKeyToken  WebSearch = (AK + W).Down(async e =>
         {
             e.Handled = true;
 
@@ -108,28 +108,28 @@ namespace Metatool.MetaKeyboard
 
         private static readonly ICombination softwareTrigger = (AK + Space).Handled();
 
-        public IKeyboardCommandToken  OpenScreenRuler = (softwareTrigger, R).Down(
+        public IKeyToken  OpenScreenRuler = (softwareTrigger, R).Down(
             e =>
             {
                 e.Handled = true;
                 ProcessEx.Run(Config.Current.Tools.Ruler);
             }, null, "Screen &Ruler");
 
-        public IKeyboardCommandToken  StartTaskExplorer = (softwareTrigger, T).Down(
+        public IKeyToken  StartTaskExplorer = (softwareTrigger, T).Down(
             e =>
             {
                 e.Handled = true;
                 ProcessEx.Run(Config.Current.Tools.ProcessExplorer);
             }, null, "&Task Explorer ");
 
-        public IKeyboardCommandToken  StartGifRecord = (softwareTrigger, G).Down(
+        public IKeyToken  StartGifRecord = (softwareTrigger, G).Down(
             e =>
             {
                 e.Handled = true;
                 ProcessEx.Run(Config.Current.Tools.GifTool);
             }, null, "&Gif Record ");
 
-        public IKeyboardCommandToken  StartNotepad = (softwareTrigger, N).Down(async e =>
+        public IKeyToken  StartNotepad = (softwareTrigger, N).Down(async e =>
         {
             e.Handled = true;
             var exeName = "Notepad";
@@ -152,7 +152,7 @@ namespace Metatool.MetaKeyboard
             ProcessEx.Run("Notepad");
         }, null, "&Notepad");
 
-        public IKeyboardCommandToken  StartVisualStudio = (softwareTrigger, V).Down(async e =>
+        public IKeyToken  StartVisualStudio = (softwareTrigger, V).Down(async e =>
         {
             if (!Window.IsExplorerOrOpenSaveDialog) return;
 
@@ -172,7 +172,7 @@ namespace Metatool.MetaKeyboard
             });
         }, null, "&VisualStudio");
 
-        public IKeyboardCommandToken  StartInspect = (softwareTrigger, I).Down(async e =>
+        public IKeyToken  StartInspect = (softwareTrigger, I).Down(async e =>
         {
             var exeName = "Inspect";
 
@@ -193,7 +193,7 @@ namespace Metatool.MetaKeyboard
             ProcessEx.Start(Config.Current.Tools.Inspect);
         }, null, "&Inspect");
 
-        public IKeyboardCommandToken  OpenCodeEditor = (AK + C).Hit(async e =>
+        public IKeyToken  OpenCodeEditor = (AK + C).Hit(async e =>
         {
             e.Handled = true;
             if (!Window.IsExplorerOrOpenSaveDialog)

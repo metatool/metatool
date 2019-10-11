@@ -124,7 +124,7 @@ namespace Metatool.ScreenHint
             _mouse.LeftClick();
         }
 
-        public IKeyboardCommandToken  MouseClick;
-        public IKeyboardCommandToken MouseClickLast;
+        public IKeyToken  MouseClick;
+        public IKeyToken MouseClickLast;
     }
 }

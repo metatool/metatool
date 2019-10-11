@@ -7,7 +7,7 @@ namespace Metatool.Input
 {
     public interface IKeyboardInternal
     {
-        IKeyboardCommandToken GetToken(ICommandToken<IKeyEventArgs> commandToken,
+        IKeyToken GetToken(ICommandToken<IKeyEventArgs> commandToken,
             IKeyboardCommandTrigger trigger);
 
         IToggleKey GeToggleKey(Key key);

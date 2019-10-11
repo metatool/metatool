@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -8,7 +9,7 @@ namespace Metatool.Input
     /// https://www.w3.org/TR/uievents-key/
     /// </summary>
     // [DebuggerDisplay("{this}")]
-    public partial class Key : IKey
+    public partial class Key : IComparable, IComparable<Key>, ISequenceUnit, ISequencable
     {
         private SortedSet<Keys> _codes;
         private int             _val;

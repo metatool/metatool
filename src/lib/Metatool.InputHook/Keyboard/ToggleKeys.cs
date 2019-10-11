@@ -13,8 +13,8 @@ namespace Metatool.Input
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
         private bool _valid;
-        private IKeyboardCommandToken _keyDownActionToken;
-        private IKeyboardCommandToken _keyUpActionToken;
+        private IKeyToken _keyDownActionToken;
+        private IKeyToken _keyUpActionToken;
         internal ToggleKey(Key key)
         {
             _key = key;
