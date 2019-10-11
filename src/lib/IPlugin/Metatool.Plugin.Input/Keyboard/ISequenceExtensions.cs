@@ -88,6 +88,9 @@ namespace Metatool.Input
                 .Up(action, canExecute, description, stateTree);
         }
 
+
+
+
         public static IKeyboardCommandToken Down(this ISequence sequence,
             Action<IKeyEventArgs> execute, Predicate<IKeyEventArgs> canExecute = null, string description = "",
             KeyStateTrees stateTree = KeyStateTrees.Default)

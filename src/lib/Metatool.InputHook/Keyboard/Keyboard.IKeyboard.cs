@@ -34,17 +34,17 @@ namespace Metatool.Input
     {
         public IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default)
         {
-            return Event(sequenceUnit, KeyEvent.Down);
+            return Event(sequenceUnit, KeyEvent.Down, stateTree);
         }
 
         public IKeyboardCommandTrigger Up(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default)
         {
-            return Event(sequenceUnit, KeyEvent.Up);
+            return Event(sequenceUnit, KeyEvent.Up, stateTree);
         }
 
         public IKeyboardCommandTrigger AllUp(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default)
         {
-            return Event(sequenceUnit, KeyEvent.AllUp);
+            return Event(sequenceUnit, KeyEvent.AllUp, stateTree);
         }
 
         public IKeyboardCommandTrigger Hit(ISequenceUnit sequenceUnit, KeyStateTrees stateTree = KeyStateTrees.Default)
@@ -59,17 +59,17 @@ namespace Metatool.Input
 
         public IKeyboardCommandTrigger Down(ISequence sequence, KeyStateTrees stateTree = KeyStateTrees.Default)
         {
-            return Event(sequence, KeyEvent.Down);
+            return Event(sequence, KeyEvent.Down, stateTree);
         }
 
         public IKeyboardCommandTrigger Up(ISequence sequence, KeyStateTrees stateTree = KeyStateTrees.Default)
         {
-            return Event(sequence, KeyEvent.Up);
+            return Event(sequence, KeyEvent.Up, stateTree);
         }
 
         public IKeyboardCommandTrigger AllUp(ISequence sequence, KeyStateTrees stateTree = KeyStateTrees.Default)
         {
-            return Event(sequence, KeyEvent.AllUp);
+            return Event(sequence, KeyEvent.AllUp, stateTree);
         }
 
         private IKeyboardCommandTrigger Event(ISequence sequence, KeyEvent keyEvent, KeyStateTrees stateTree = KeyStateTrees.Default)

@@ -22,9 +22,9 @@ namespace Metatool.Reactive
         public readonly FileSystemWatcher Watcher;
 
         public IObservable<FileSystemEventArgs> Changed { get; private set; }
-        public IObservable<RenamedEventArgs> Renamed { get; private set; }
+        public IObservable<RenamedEventArgs>    Renamed { get; private set; }
         public IObservable<FileSystemEventArgs> Deleted { get; private set; }
-        public IObservable<ErrorEventArgs> Errors { get; private set; }
+        public IObservable<ErrorEventArgs>      Errors  { get; private set; }
         public IObservable<FileSystemEventArgs> Created { get; private set; }
 
         /// <summary>
@@ -37,15 +37,18 @@ namespace Metatool.Reactive
             Watcher = watcher;
 
             Changed = Observable
-                .FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(h => Watcher.Changed += h, h => Watcher.Changed -= h)
+                .FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(h => Watcher.Changed += h,
+                    h => Watcher.Changed                                                            -= h)
                 .Select(x => x.EventArgs);
 
             Renamed = Observable
-                .FromEventPattern<RenamedEventHandler, RenamedEventArgs>(h => Watcher.Renamed += h, h => Watcher.Renamed -= h)
+                .FromEventPattern<RenamedEventHandler, RenamedEventArgs>(h => Watcher.Renamed += h,
+                    h => Watcher.Renamed                                                      -= h)
                 .Select(x => x.EventArgs);
 
             Deleted = Observable
-                .FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(h => Watcher.Deleted += h, h => Watcher.Deleted -= h)
+                .FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(h => Watcher.Deleted += h,
+                    h => Watcher.Deleted                                                            -= h)
                 .Select(x => x.EventArgs);
 
             Errors = Observable
@@ -53,7 +56,8 @@ namespace Metatool.Reactive
                 .Select(x => x.EventArgs);
 
             Created = Observable
-                .FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(h => Watcher.Created += h, h => Watcher.Created -= h)
+                .FromEventPattern<FileSystemEventHandler, FileSystemEventArgs>(h => Watcher.Created += h,
+                    h => Watcher.Created                                                            -= h)
                 .Select(x => x.EventArgs);
         }
 
@@ -83,7 +87,7 @@ namespace Metatool.Reactive
 
         public void Dispose()
         {
-            subs.ForEach(d=>d.Dispose());
+            subs.ForEach(d => d.Dispose());
             subs.Clear();
             Watcher.Dispose();
         }

@@ -47,6 +47,13 @@ namespace Metatool.Input
         internal IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
             KeyStateTrees stateTree = KeyStateTrees.Default)
         {
+            foreach (var combination in combinations)
+            {
+                foreach (var key in combination.Chord)
+                {
+                    key.Then()
+                }
+            }
             return _hook.Add(combinations, new KeyEventCommand(keyEvent, command), stateTree);
         }
 
@@ -55,7 +62,6 @@ namespace Metatool.Input
             _hook.ShowTip();
         }
 
-        //todo: move logic to engine
         /// <summary>
         /// down up happened successively
         /// </summary>

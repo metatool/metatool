@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Linq;
+using System.Windows.Forms;
 
 namespace Metatool.Input
 {
@@ -236,5 +237,12 @@ namespace Metatool.Input
         public static readonly Key IMENonconvert = new Key(Keys.IMENonconvert);
         public static readonly Key IMEAccept     = new Key(Keys.IMEAccept);
         public static readonly Key IMEModeChange = new Key(Keys.IMEModeChange);
+
+        public static readonly Key[] CommonChordKeys = new Key[] {LCtrl, RCtrl, CtrlKey, LShift, RShift, ShiftKey, LMenu, RMenu, Menu, LWin, RWin, Win };
+
+        public static bool IsCommonChordKey(Key key)
+        {
+            return CommonChordKeys.Any(chord => key == chord);
+        }
     }
 }
