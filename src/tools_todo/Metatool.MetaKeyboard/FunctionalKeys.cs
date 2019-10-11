@@ -9,7 +9,7 @@ using static Metatool.Input.Key;
 
 namespace Metatool.MetaKeyboard
 {
-    public class FunctionalKeys : KeyMetaPackage
+    public class FunctionalKeys : CommandPackage
     {
         public IKey  CloseMetaKeys = (LWin + L).Handled().Down(null);
 

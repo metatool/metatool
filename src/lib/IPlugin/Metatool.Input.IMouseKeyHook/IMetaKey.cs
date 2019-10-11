@@ -3,7 +3,7 @@
 namespace Metatool.Input{
     public interface IMeta
     {
-        string Name    { get; set; }
+        string Id    { get; set; }
         bool   Disable { get; set; }
     }
 

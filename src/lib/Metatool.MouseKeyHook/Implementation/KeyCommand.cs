@@ -5,7 +5,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
 {
     public class KeyCommand : Command<IKeyEventArgs>
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
 
         public KeyCommand(Action<IKeyEventArgs> action)
         {

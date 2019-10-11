@@ -2,12 +2,13 @@
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input;
+using Metatool.Plugin;
 using static Metatool.Input.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 
 namespace ConsoleApp1
 {
-    partial class Keyboard61 : KeyMetaPackage
+    partial class Keyboard61 : CommandPackage
     {
         public Keyboard61()
         {

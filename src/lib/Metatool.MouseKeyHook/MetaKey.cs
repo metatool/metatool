@@ -90,7 +90,11 @@ namespace Metatool.Input
             _token.ChangeDescription(description);
         }
 
-        public string Name { get; set; }
+        public string Id
+        {
+            get => _token.EventCommand.Command.Id;
+            set => _token.EventCommand.Command.Id = value;
+        }
 
         public bool Disable
         {
@@ -104,15 +108,15 @@ namespace Metatool.Input
         public MetaKeys(List<IMetaKey> keys):base(keys)
         {
         }
-        public string Name
+        public string Id
         {
-            get => this.Aggregate("", (a, c) => a + c.Name);
+            get => this.Aggregate("", (a, c) => a + c.Id);
             set
             {
                 for (var i = 0; i < this.Count; i++)
                 {
                     var k = (MetaKey) this[i];
-                    k.Name = $"{value}_{i}-{k.KeyEvent}";
+                    k.Id = value; //$"{value}_{i}-{k.KeyEvent}"
                 }
             }
         }
@@ -146,60 +150,7 @@ namespace Metatool.Input
         }
     }
 
-    public abstract class MetaPackage : IMetaPackage
-    {
-        protected IEnumerable<(FieldInfo, IMeta)> GetMetas()
-        {
-            var commands = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
-                .Where(f => typeof(IMeta).IsAssignableFrom(f.FieldType))
-                .Select(fi => (fi, fi.GetValue(this) as IMeta));
-            return commands;
-        }
+  
 
-        public virtual void Start()
-        {
-            GetMetas().ToList().ForEach(c =>
-            {
-                var (fi, metaKey) = c;
-                if (string.IsNullOrEmpty(metaKey.Name))
-                    metaKey.Name = GetType().FullName + "." + fi.Name;
-                else
-                {
-                    metaKey.Name = metaKey.Name;
-                }
-            });
-        }
-    }
-
-    public class KeyMetaPackage : MetaPackage
-    {
-        public KeyMetaPackage()
-        {
-            Start();
-        }
-
-        public sealed override void Start()
-        {
-            base.Start();
-            GetMetas().ToList().ForEach(c =>
-            {
-                void setId(IMetaKey meta)
-                {
-                    if (meta is MetaKey metaKey && string.IsNullOrEmpty(metaKey._token.EventCommand.Command.Name))
-                        metaKey._token.EventCommand.Command.Name = metaKey.Name;
-                }
-
-                var (_, key) = c;
-                switch (key)
-                {
-                    case MetaKey m:
-                        setId(m);
-                        break;
-                    case System.Collections.Generic.List<IMetaKey> metaKeys:
-                        metaKeys.ForEach(setId);
-                        break;
-                }
-            });
-        }
-    }
+   
 }

@@ -7,12 +7,13 @@ using System.Linq;
 using System.Security.Principal;
 using System.Windows.Forms;
 using Metatool.Command;
+using Metatool.Plugin;
 using static Metatool.Input.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 
 namespace Metatool.MetaKeyboard
 {
-    public class Software : KeyMetaPackage
+    public class Software : CommandPackage
     {
         public IKey  ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
 

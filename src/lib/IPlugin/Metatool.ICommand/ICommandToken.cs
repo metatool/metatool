@@ -1,7 +1,11 @@
 ﻿namespace Metatool.Command
 {
-    public interface ICommandToken<in T> : IChangeRemove<ICommandTrigger<T>> 
+    public interface ICommandToken
     {
+        string Id { get; set; }
+    }
 
+    public interface ICommandToken<in T> : ICommandToken, IChangeRemove<ICommandTrigger<T>> 
+    {
     }
 }

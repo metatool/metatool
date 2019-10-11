@@ -1,10 +1,11 @@
 ﻿using Metatool.Command;
 using Metatool.Input;
+using Metatool.Plugin;
 using static Metatool.Input.Key;
 
 namespace Metatool.MetaKeyboard
 {
-    public class KeyboardConfig : KeyMetaPackage
+    public class KeyboardConfig : CommandPackage
     {
         /// <summary>
         /// Global key

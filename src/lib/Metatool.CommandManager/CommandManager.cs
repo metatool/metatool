@@ -18,7 +18,7 @@ namespace Metatool.Command
             }
         }
 
-        readonly Dictionary<object, Entry> _commands = new Dictionary<object, Entry>();
+        readonly Dictionary<ICommandToken, Entry> _commands = new Dictionary<ICommandToken, Entry>();
 
         private ICommandToken<TArgs> Add<TArgs>(ICommandTrigger<TArgs> trigger, ICommand<TArgs> command, ICommandToken<TArgs> token=null)
         {

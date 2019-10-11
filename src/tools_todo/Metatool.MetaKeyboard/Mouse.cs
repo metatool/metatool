@@ -9,7 +9,7 @@ using Metatool.Plugin;
 
 namespace Metatool.MetaKeyboard
 {
-    public class Mouse : KeyMetaPackage
+    public class Mouse : CommandPackage
     {
         // static readonly Hint Hint= new Hint();
         // LButton & RButton

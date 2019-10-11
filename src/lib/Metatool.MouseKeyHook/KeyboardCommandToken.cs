@@ -7,17 +7,23 @@ namespace Metatool.Input
     public class KeyToken : IKey
     {
         private readonly ICommandToken<IKeyEventArgs> _internalCommandToken;
-        private readonly IKeyboardCommandTrigger _trigger;
+        private readonly IKeyboardCommandTrigger      _trigger;
 
         public KeyToken(ICommandToken<IKeyEventArgs> internalCommandToken, IKeyboardCommandTrigger trigger)
         {
             _internalCommandToken = internalCommandToken;
-            _trigger = trigger;
+            _trigger              = trigger;
+        }
+
+        public string Id
+        {
+            get => _trigger.MetaKey.Id;
+            set => _trigger.MetaKey.Id = value;
         }
 
         public bool Change(IHotkey key)
         {
-            return _trigger.MetaKey.ChangeHotkey(key)!=null;
+            return _trigger.MetaKey.ChangeHotkey(key) != null;
         }
 
         public void Remove()
@@ -33,9 +39,21 @@ namespace Metatool.Input
         internal IMetaKey metaKey => _trigger.MetaKey;
     }
 
-    public class KeyTokens: List<IKey>, IKey
+    public class KeyTokens : List<IKey>, IKey
     {
-       
+        public string Id
+        {
+            get => this.Aggregate("", (a, c) => a + c.Id);
+            set
+            {
+                for (var i = 0; i < this.Count; i++)
+                {
+                    var k = this[i];
+                    k.Id = value;
+                }
+            }
+        }
+
         public void Remove()
         {
             this.ForEach(t => t.Remove());
@@ -53,6 +71,7 @@ namespace Metatool.Input
             this.ForEach(t => t.Change(key));
             return true;
         }
-        internal IMetaKey metaKey => new MetaKeys(this.Cast<KeyToken>().Select(t=>t.metaKey).ToList());
+
+        internal IMetaKey metaKey => new MetaKeys(this.Cast<KeyToken>().Select(t => t.metaKey).ToList());
     }
 }

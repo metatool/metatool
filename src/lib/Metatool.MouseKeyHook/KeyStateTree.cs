@@ -277,7 +277,7 @@ namespace Metatool.Input
             {
                 if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
                 {
-                    Console.WriteLine($"\t/!{eventType}\t{keyCommand.Name}\t{keyCommand.Description}");
+                    Console.WriteLine($"\t/!{eventType}\t{keyCommand.Id}\t{keyCommand.Description}");
                     continue;
                 }
 
@@ -285,7 +285,7 @@ namespace Metatool.Input
                 var exe     = keyCommand.Execute;
                 var isAsync = exe?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
                 Console.WriteLine(
-                    $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Name}\t{keyCommand.Description}");
+                    $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
                 exe?.Invoke(args);
             }
 
