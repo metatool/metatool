@@ -13,24 +13,7 @@ using Point = Metatool.NotifyIcon.Interop.Point;
 
 namespace Metatool.NotifyIcon
 {
-    public class CloseToken
-    {
-        internal Popup Popup;
-
-        public CloseToken(Popup popup = null)
-        {
-            Popup = popup;
-        }
-
-        public void Close()
-        {
-            Popup.IsOpen = false;
-            Popup.Child = null;
-
-        }
-    }
-
-     public partial class TaskbarIcon : FrameworkElement, IDisposable
+    public partial class TaskbarIcon : FrameworkElement, IDisposable
     {
         #region Members
 
@@ -96,8 +79,8 @@ namespace Metatool.NotifyIcon
                 var menu    = ContextMenu;
                 var balloon = CustomBalloon;
 
-                return popup != null && popup.IsOpen ||
-                       menu != null && menu.IsOpen ||
+                return popup   != null && popup.IsOpen ||
+                       menu    != null && menu.IsOpen  ||
                        balloon != null && balloon.IsOpen;
             }
         }
@@ -162,12 +145,14 @@ namespace Metatool.NotifyIcon
         /// </param>
         /// <exception cref="ArgumentNullException">If <paramref name="balloon"/>
         /// is a null reference.</exception>
-        public CloseToken ShowCustomBalloon(UIElement balloon, PopupAnimation animation, int? timeout = null, bool onlyCloseByToken = false)
+        public NotifyToken ShowCustomBalloon(UIElement balloon, PopupAnimation animation, int? timeout = null,
+            bool onlyCloseByToken = false)
         {
             var dispatcher = this.GetDispatcher();
             if (!dispatcher.CheckAccess())
             {
-                return dispatcher.Invoke(DispatcherPriority.Normal, (Func<CloseToken>)(() => ShowCustomBalloon(balloon, animation, timeout))) as CloseToken;
+                return dispatcher.Invoke(DispatcherPriority.Normal,
+                    (Func<NotifyToken>) (() => ShowCustomBalloon(balloon, animation, timeout))) as NotifyToken;
             }
 
             if (balloon == null) throw new ArgumentNullException("balloon");
@@ -249,7 +234,7 @@ namespace Metatool.NotifyIcon
                 balloonCloseTimer.Change(timeout.Value, Timeout.Infinite);
             }
 
-            return new CloseToken(popup);
+            return new NotifyToken(popup);
         }
 
 
@@ -824,7 +809,7 @@ namespace Metatool.NotifyIcon
             EnsureNotDisposed();
 
             iconData.BalloonText  = message ?? String.Empty;
-            iconData.BalloonTitle = title ?? String.Empty;
+            iconData.BalloonTitle = title   ?? String.Empty;
 
             iconData.BalloonFlags            = flags;
             iconData.CustomBalloonIconHandle = balloonIconHandle;

@@ -9,25 +9,17 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using Metatool.UI.Notify;
+using Metatool.Utils.Notify;
 using Application = System.Windows.Application;
-using MenuItem = System.Windows.Controls.MenuItem;
 using System.Windows.Threading;
 using Metatool.NotifyIcon.Interop;
-using Metatool.UI.Implementation;
+using Metatool.Utils.Implementation;
 using Point = System.Windows.Point;
+using Metatool.UI;
 
 namespace Metatool.MetaKeyboard
 {
-    public enum NotifyPosition
-    {
-        Default,
-        ActiveScreen,
-        ActiveWindowCenter,
-        Caret
-    }
-
-    public class Notify
+    public partial class Notify: INotify
     {
         private static readonly TaskbarIcon TrayIcon;
 
@@ -37,93 +29,6 @@ namespace Metatool.MetaKeyboard
                 UriKind.RelativeOrAbsolute);
             Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() {Source = resource});
             TrayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
-        }
-
-        public static MenuItem AddContextMenuItem(string header, Action<MenuItem> execute,
-            Func<MenuItem, bool> canExecute = null, bool isCheckable = false, bool? isChecked = null)
-        {
-            var item                                  = new MenuItem() {Header = header, IsCheckable = isCheckable};
-            if (isChecked.HasValue)
-                item.IsChecked = isChecked.Value;
-            item.Command = new DelegateCommand<MenuItem>()
-                {CanExecuteFunc = canExecute, CommandAction = execute};
-            item.CommandParameter = item;
-            TrayIcon.ContextMenu?.Items.Insert(0, item);
-
-            return item;
-        }
-
-        public static void ShowMessage(string msg)
-        {
-            if (msg == "") return;
-            TrayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
-        }
-
-        public class MessageToken<T>
-        {
-            private readonly Popup           _popup;
-            internal         DispatcherTimer Timer;
-            public           bool            IsClosed;
-
-            internal MessageToken(Popup popup)
-            {
-                _popup = popup;
-            }
-
-            public void Close()
-            {
-                if (IsClosed) return;
-                var dataContext = _popup.DataContext as ObservableCollection<T>;
-                dataContext.Clear();
-                _popup.IsOpen = false;
-                Timer?.Stop();
-                IsClosed = true;
-            }
-
-            public void Refresh()
-            {
-                IsClosed      = false;
-                _popup.IsOpen = true;
-                Timer?.Stop();
-                Timer?.Start();
-            }
-        }
-
-        private static ObservableCollection<TipItem> selectActions;
-        public static  MessageToken<TipItem>         SelectionToken;
-
-        public static MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips)
-        {
-            var valueTuples = tips.ToArray();
-            var description =
-                valueTuples.Select((d, i) =>
-                {
-                    i = selectActions?.Count ?? 0 + i;
-                    string key;
-                    if (i < 9)
-                    {
-                        key = i.ToString();
-                    }
-                    else
-                    {
-                        key = (Key.D0 + i).ToString();
-                    }
-
-                    return new TipItem()
-                        {Key = key, DescriptionInfo = d.des, Action = d.action};
-                });
-            if (selectActions == null || (SelectionToken != null && SelectionToken.IsClosed))
-            {
-                selectActions = new ObservableCollection<TipItem>(description);
-                var b = new SelectableMessage();
-                return SelectionToken = ShowMessage(b, selectActions, 8888, NotifyPosition.Caret);
-            }
-            else
-            {
-                description.ToList().ForEach(tt => selectActions.Add(tt));
-                SelectionToken.Refresh();
-                return SelectionToken;
-            }
         }
 
         public static MessageToken<TipItem> ShowMessage(System.Windows.FrameworkElement balloon,
@@ -168,7 +73,7 @@ namespace Metatool.MetaKeyboard
             {
                 case NotifyPosition.Caret:
                 {
-                    var rect = UI.Window.GetCurrentWindowCaretPosition();
+                    var rect = Utils.Window.GetCurrentWindowCaretPosition();
                     var X    = (rect.Left   + rect.Width  / 2 - balloon.ActualWidth  / 2);
                     var Y    = (rect.Bottom + rect.Height / 2 - balloon.ActualHeight / 2);
                     if (X == 0 && Y == 0)
@@ -182,7 +87,7 @@ namespace Metatool.MetaKeyboard
 
                 case NotifyPosition.ActiveWindowCenter:
                 {
-                    var rect = UI.Window.GetCurrentWindowRect();
+                    var rect = Utils.Window.GetCurrentWindowRect();
                     var X    = (rect.X + rect.Width  / 2 - balloon.ActualWidth  / 2);
                     var Y    = (rect.Y + rect.Height / 2 - balloon.ActualHeight / 2);
                     point = new Point(X, Y);
@@ -191,7 +96,7 @@ namespace Metatool.MetaKeyboard
 
                 case NotifyPosition.ActiveScreen:
                 {
-                    var screen = Screen.FromHandle(UI.Window.CurrentWindowHandle);
+                    var screen = Screen.FromHandle(Utils.Window.CurrentWindowHandle);
                     if (screen.Equals(Screen.PrimaryScreen))
                     {
                         var p = TrayInfo.GetTrayLocation();
@@ -259,92 +164,8 @@ namespace Metatool.MetaKeyboard
 
             return r;
         }
+       
 
-
-        public static CloseToken ShowMessage(System.Windows.FrameworkElement control, int? timeout,
-            NotifyPosition position = NotifyPosition.ActiveScreen, bool onlyCloseByToken = false)
-        {
-            TaskbarIcon.GetCustomPopupPosition func = null;
-            switch (position)
-            {
-                case NotifyPosition.ActiveWindowCenter:
-                    func = () =>
-                    {
-                        var rect = UI.Window.GetCurrentWindowRect();
-                        return new NotifyIcon.Interop.Point()
-                        {
-                            X = (int) (rect.X + rect.Width  / 2 - control.ActualWidth  / 2),
-                            Y = (int) (rect.Y + rect.Height / 2 - control.ActualHeight / 2)
-                        };
-                    };
-                    break;
-                case NotifyPosition.ActiveScreen:
-                    func = () =>
-                    {
-                        var screen = Screen.FromHandle(UI.Window.CurrentWindowHandle);
-                        if (screen.Equals(Screen.PrimaryScreen))
-                        {
-                            return TrayIcon.GetPopupTrayPosition();
-                        }
-
-                        var bounds = screen.Bounds;
-                        return new NotifyIcon.Interop.Point()
-                        {
-                            X = bounds.X + bounds.Width,
-                            Y = bounds.Y + bounds.Height
-                        };
-                    };
-                    break;
-                case NotifyPosition.Default:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
-            }
-
-            TrayIcon.CustomPopupPosition = func;
-            return TrayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
-        }
-
-        static Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> tipDictionary =
-            new Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>>();
-
-        public static void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
-            NotifyPosition position = NotifyPosition.ActiveScreen)
-        {
-            tipDictionary.TryGetValue(name, out var tp);
-            if (tp != null && tips.SequenceEqual(tp)) return;
-
-            tipDictionary[name] = tips;
-            var t = tipDictionary.SelectMany(pair => pair.Value).ToArray();
-            if (t.Any())
-                ShowKeysTip(t, position);
-            else
-            {
-                CloseKeysTip();
-            }
-        }
-
-        public static void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
-            NotifyPosition position = NotifyPosition.ActiveScreen)
-        {
-            if (tips == null) return;
-            var description =
-                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {Key = t.key, DescriptionInfo = d}));
-            var t = new ObservableCollection<TipItem>(description);
-            if (t.Count == 0) return;
-            var keytipsBalloon = new FancyBalloon() {Tips = t};
-            ShowMessage(keytipsBalloon, 88888);
-        }
-
-        public static void CloseKeysTip(string name)
-        {
-            ShowKeysTip(name, Enumerable.Empty<(string key, IEnumerable<string> descriptions)>());
-        }
-
-        public static void CloseKeysTip()
-        {
-            TrayIcon.CloseBalloon();
-        }
 
         public static void ShowKeysTip1(IEnumerable<(string key, IEnumerable<string> descriptions)> tips)
         {
@@ -359,7 +180,7 @@ namespace Metatool.MetaKeyboard
                 Placement = PlacementMode.AbsolutePoint, StaysOpen = false, Child = b
             };
 
-            var bounds = Screen.FromHandle(UI.Window.CurrentWindowHandle).Bounds;
+            var bounds = Screen.FromHandle(Utils.Window.CurrentWindowHandle).Bounds;
 
             var window = new Window()
             {

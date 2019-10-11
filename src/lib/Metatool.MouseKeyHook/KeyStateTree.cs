@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Trie;
-using Metatool.MetaKeyboard;
+using Metatool.UI;
 
 namespace Metatool.Input
 {
@@ -42,6 +42,8 @@ namespace Metatool.Input
     [DebuggerDisplay("${Name}")]
     public class KeyStateTree
     {
+        internal static INotify Notify { get; set; }
+
         internal static Dictionary<string, KeyStateTree> StateTrees = new Dictionary<string, KeyStateTree>()
         {
             // keep the order
@@ -72,7 +74,7 @@ namespace Metatool.Input
 
         public KeyStateTree(string name)
         {
-            Name                     = name;
+            Name = name;
             _treeWalker              = new TrieWalker<ICombination, KeyEventCommand>(_trie);
             _lastKeyDownNodeForAllUp = null;
         }
@@ -89,7 +91,7 @@ namespace Metatool.Input
             _lastKeyDownNodeForAllUp = null;
             Console.WriteLine($"${Name}{lastDownHit}");
 
-            Notify.CloseKeysTip(Name);
+            Notify?.CloseKeysTip(Name);
             _treeWalker.GoToRoot();
         }
 
@@ -335,12 +337,12 @@ namespace Metatool.Input
                             return ProcessState = KeyProcessState.Continue;
                         }
 
-                        Notify.CloseKeysTip(Name);
+                        Notify?.CloseKeysTip(Name);
                         Reset();
                         return ProcessState = KeyProcessState.Done;
                     }
 
-                    Notify.ShowKeysTip(Name, _treeWalker.CurrentNode.Tip);
+                    Notify?.ShowKeysTip(Name, _treeWalker.CurrentNode.Tip);
                     return ProcessState = KeyProcessState.Continue;
                 }
 
@@ -358,12 +360,12 @@ namespace Metatool.Input
                     if (candidateNode.ChildrenCount == 0)
                     {
                         Reset();
-                        Notify.CloseKeysTip(Name);
+                        Notify?.CloseKeysTip(Name);
                         return ProcessState = KeyProcessState.Done;
                     }
                     else
                     {
-                        Notify.ShowKeysTip(Name, _treeWalker.CurrentNode.Tip);
+                        Notify?.ShowKeysTip(Name, _treeWalker.CurrentNode.Tip);
                         return ProcessState = KeyProcessState.Continue;
                     }
 

@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Metatool.UI.Implementation;
+using Metatool.Utils.Implementation;
 using Point = System.Drawing.Point;
 
-namespace Metatool.UI
+namespace Metatool.Utils
 {
     public class Window
     {
@@ -78,7 +78,7 @@ namespace Metatool.UI
         {
             get
             {
-                var c = UI.Window.CurrentWindowClass;
+                var c = Window.CurrentWindowClass;
                 return "CabinetWClass" == c || "#32770" == c;
             }
         }

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input;
 using Metatool.Plugin;
+using Metatool.UI;
 using Microsoft.Win32;
 using static Metatool.Input.Key;
 
@@ -17,13 +18,15 @@ namespace Metatool.MetaKeyboard
         public IKey  CloseMetaKey = (LCtrl + LWin + C).With(Keys.LMenu)
             .Down(e =>
             {
-                Notify.ShowMessage("MetaKeyBoard Closing...");
+                var notify = Services.Get<INotify>();
+                notify.ShowMessage("MetaKeyBoard Closing...");
                 Environment.Exit(0);
             }, null, "Close");
 
         public IKey  RestartMetakeyAdmin = (LCtrl + LWin + LAlt + X).Down(e =>
         {
-            Notify.ShowMessage("MetaKeyBoard Restarting...");
+            var notify = Services.Get<INotify>();
+            notify.ShowMessage("MetaKeyBoard Restarting...");
             var p    = Application.ExecutablePath;
             var path = p.Remove(p.Length - 4, 4) + ".exe";
 

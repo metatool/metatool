@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Metatool.UI.Implementation
+namespace Metatool.Utils.Implementation
 {
  
     /// <summary>

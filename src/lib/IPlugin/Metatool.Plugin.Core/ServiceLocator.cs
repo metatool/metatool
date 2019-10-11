@@ -7,10 +7,10 @@ namespace Metatool.Plugin
     {
         internal static IServiceProvider Provider;
 
-        public static object Get(Type serviceType)
-        {
-            return Provider.GetService(serviceType);
-        }
+        // public static object Get(Type serviceType)
+        // {
+        //     return Provider.GetService(serviceType);
+        // }
 
         public static T Get<T>()
         {

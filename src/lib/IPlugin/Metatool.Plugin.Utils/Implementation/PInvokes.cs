@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Point = System.Drawing.Point;
 
-namespace Metatool.UI.Implementation
+namespace Metatool.Utils.Implementation
 {
     public delegate bool EnumWindowsProc(IntPtr hwnd, IntPtr lParam);
 

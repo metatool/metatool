@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.MetaKeyboard;
+using Metatool.UI;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input.MouseKeyHook
@@ -13,13 +13,16 @@ namespace Metatool.Input.MouseKeyHook
 
     public class KeyboardHook
     {
+        public INotify Notify { get; }
         private readonly ILogger<KeyboardHook> _logger;
         private readonly IKeyboardMouseEvents  _eventSource;
         public           bool                  IsRuning { get; set; }
 
 
-        public KeyboardHook(ILogger<KeyboardHook> logger)
+        public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
         {
+            Notify = notify;
+            KeyStateTree.Notify = notify;
             _logger      = logger;
             _eventSource = Hook.GlobalEvents();
         }
@@ -59,10 +62,10 @@ namespace Metatool.Input.MouseKeyHook
         {
             var tips = KeyStateTree.StateTrees.Values.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
             if (tips.Length > 0)
-                Notify.ShowKeysTip(tips);
+                Notify?.ShowKeysTip(tips);
             else
             {
-                Notify.CloseKeysTip();
+                Notify?.CloseKeysTip();
             }
         }
 

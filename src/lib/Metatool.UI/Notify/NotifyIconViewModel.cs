@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Metatool.UI.Notify
+namespace Metatool.Utils.Notify
 {
     /// <summary>
     /// Provides bindable properties and commands for the NotifyIcon. In this sample, the

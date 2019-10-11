@@ -9,6 +9,7 @@ using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Plugin;
 using Metatool.UI;
+using Metatool.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,12 +40,13 @@ namespace Metaseed.Metatool
                     options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)
                 .AddSingleton<IKeyboard, Keyboard>()
                 .AddSingleton<IMouse, Mouse>()
-                .AddSingleton<ICommandManager, CommandManager>();
+                .AddSingleton<ICommandManager, CommandManager>()
+                .AddSingleton<INotify, Notify>();
         }
 
-        private static void ConfigNotify()
+        private static void ConfigNotify(INotify notify)
         {
-            Notify.AddContextMenuItem("Show Log", e =>
+            notify.AddContextMenuItem("Show Log", e =>
             {
                 if (e.IsChecked)
                     ConsoleExt.ShowConsole();
@@ -52,9 +54,9 @@ namespace Metaseed.Metatool
                     ConsoleExt.HideConsole();
             }, null, true, IsDebug);
 
-            Notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
+            notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
                 AutoStartManager.IsAutoStart);
-            Notify.ShowMessage("Metatool started!");
+            notify.ShowMessage("Metatool started!");
         }
 
         void SetupEnvVar(ILogger logger)
@@ -98,7 +100,6 @@ namespace Metaseed.Metatool
             var currentDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
-            Notify.ShowMessage("Metatool starting...");
             Current.MainWindow = new MainWindow();
             ConsoleExt.InitialConsole(true);
 
@@ -107,6 +108,9 @@ namespace Metaseed.Metatool
             ConfigureServices(serviceCollection, configuration);
             var provider = serviceCollection.BuildServiceProvider();
             Services.Provider = provider;
+            var notify = provider.GetService<INotify>();
+            notify.ShowMessage("Metatool starting...");
+
             var logger = provider.GetService<ILogger<App>>();
             SetupEnvVar(logger);
 
@@ -139,7 +143,7 @@ namespace Metaseed.Metatool
                 pluginManager.InitPlugins();
             }
 
-            ConfigNotify();
+            ConfigNotify(notify);
             logger.LogInformation($"MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolPath")}");
             logger.LogInformation("Metatool started!");
         }

@@ -100,7 +100,7 @@ namespace Metatool.ScreenPoint
         {
             var w = new Stopwatch();
             w.Start();
-            var h      = UI.Window.CurrentWindowHandle;
+            var h      = Utils.Window.CurrentWindowHandle;
             var points = GetPoints(h);
             Console.WriteLine("GetPoints:" + w.ElapsedMilliseconds);
             w.Restart();

@@ -4,7 +4,7 @@ using Metatool.Command;
 using Metatool.Input;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Input.Key;
-using Window = Metatool.UI.Window;
+using Window = Metatool.Utils.Window;
 using Metatool.Plugin;
 
 namespace Metatool.MetaKeyboard

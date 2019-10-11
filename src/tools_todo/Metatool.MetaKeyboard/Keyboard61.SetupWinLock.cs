@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Metatool.Input;
-using Metatool.UI;
+using Metatool.Utils;
 using Microsoft.Win32;
 
 namespace ConsoleApp1

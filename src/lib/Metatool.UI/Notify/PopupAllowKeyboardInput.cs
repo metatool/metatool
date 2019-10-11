@@ -3,7 +3,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 
-namespace Metatool.UI.Notify
+namespace Metatool.Utils.Notify
 
 {
     public class PopupAllowKeyboardInput

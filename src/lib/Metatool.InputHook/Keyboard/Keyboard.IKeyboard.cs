@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.MetaKeyboard;
+using Metatool.Plugin;
+using Metatool.UI;
 using Metatool.WindowsInput.Native;
 using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
 
@@ -146,7 +147,8 @@ namespace Metatool.Input
             {
                 e.BeginInvoke(() =>
                     {
-                        Notify.ShowSelectionAction(new[]
+                        var notify = Services.Get<INotify>();
+                        notify.ShowSelectionAction(new[]
                         {
                             (target,
                                 (Action) (() =>

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Metatool.UI.Implementation
+namespace Metatool.Utils.Implementation
 {
     public class WindowManager
     {

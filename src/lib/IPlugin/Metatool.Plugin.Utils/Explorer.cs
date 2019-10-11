@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Metatool.UI.Implementation;
+using Metatool.Utils.Implementation;
 using Shell32;
 
-namespace Metatool.UI
+namespace Metatool.Utils
 {
     public class Explorer
     {

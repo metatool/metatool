@@ -8,8 +8,8 @@ using System.Windows.Threading;
 using Metatool.Command;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.MetaKeyboard;
 using Metatool.Plugin;
+using Metatool.UI;
 using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
 using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
@@ -33,7 +33,7 @@ namespace Metatool.Input
         public IKeyPath Root = null;
 
         readonly KeyboardHook _hook =
-            new KeyboardHook(Services.Get<ILogger<KeyboardHook>>());
+            new KeyboardHook(Services.Get<ILogger<KeyboardHook>>(), Services.Get<INotify>());
 
         readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 

@@ -4,9 +4,9 @@
     xmlns:ni="http://www.metaseed.com/notifyicon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:notify="clr-namespace:Metatool.UI.Notify"
+    xmlns:notify="clr-namespace:Metatool.Utils.Notify"
     mc:Ignorable="d"
-    x:Class="Metatool.UI.Notify.SelectableMessage"
+    x:Class="Metatool.Utils.Notify.SelectableMessage"
     Width="Auto" Height="Auto"
     x:Name="me"
     d:DesignWidth="214" d:DesignHeight="106.667">

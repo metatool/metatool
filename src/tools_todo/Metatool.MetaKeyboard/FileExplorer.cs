@@ -8,7 +8,7 @@ using FlaUI.UIA3;
 using Metatool.Command;
 using Metatool.Input;
 using Metatool.Plugin;
-using Metatool.UI;
+using Metatool.Utils;
 using static Metatool.Input.Key;
 
 namespace Metatool.MetaKeyboard
@@ -17,13 +17,13 @@ namespace Metatool.MetaKeyboard
     {
         static bool IsExplorerOrDialog(IKeyEventArgs e)
         {
-            var c = UI.Window.CurrentWindowClass;
+            var c = Utils.Window.CurrentWindowClass;
             return "CabinetWClass" == c || "#32770" == c;
         }
 
         static bool IsExplorer(IKeyEventArgs e)
         {
-            var c = UI.Window.CurrentWindowClass;
+            var c = Utils.Window.CurrentWindowClass;
             return "CabinetWClass" == c;
         }
 
@@ -31,7 +31,7 @@ namespace Metatool.MetaKeyboard
         {
             using (var automation = new UIA3Automation())
             {
-                var h = UI.Window.CurrentWindowHandle;
+                var h = Utils.Window.CurrentWindowHandle;
                 var element = automation.FromHandle(h);
                 var listBox = element.FindFirstDescendant(cf => cf.ByClassName("UIItemsView"))?.AsListBox();
                 if (listBox?.SelectedItem != null) listBox.SelectedItem.Focus();
@@ -46,7 +46,7 @@ namespace Metatool.MetaKeyboard
         {
             using (var automation = new UIA3Automation())
             {
-                var h = UI.Window.CurrentWindowHandle;
+                var h = Utils.Window.CurrentWindowHandle;
                 var element = automation.FromHandle(h);
                 var treeView = element.FindFirstDescendant(cf => cf.ByClassName("SysTreeView32"));
                 treeView?.AsTree().SelectedTreeItem.Focus();
@@ -57,7 +57,7 @@ namespace Metatool.MetaKeyboard
 
         public IKey  CopySelectedPath = (Caps + Pipe).Down(async e =>
         {
-            var handle = UI.Window.CurrentWindowHandle;
+            var handle = Utils.Window.CurrentWindowHandle;
             var paths = await Explorer.GetSelectedPath(handle);
             var r = string.Join(';', paths);
             System.Windows.Clipboard.SetText(r);
@@ -68,7 +68,7 @@ namespace Metatool.MetaKeyboard
         public IKey  NewFile = (Ctrl + Alt + N).Hit(async e =>
         {
             const string newFileName = "NewFile";
-            var handle = UI.Window.CurrentWindowHandle;
+            var handle = Utils.Window.CurrentWindowHandle;
             var fullPath = await Explorer.Path(handle);
             var fileName = newFileName;
             var i = 1;

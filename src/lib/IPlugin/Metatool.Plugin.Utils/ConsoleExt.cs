@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Metatool.UI.Implementation;
+using Metatool.Utils.Implementation;
 
-namespace Metatool.UI
+namespace Metatool.Utils
 {
     public static class ConsoleExt
     {
