@@ -44,10 +44,10 @@ namespace Metatool.Input
         }
 
 
-        internal IMetaKey Add(IList<ICombination> combinations, KeyEvent keyEvent, KeyCommand command,
+        internal IMetaKey Add(IList<ICombination> sequence, KeyEvent keyEvent, KeyCommand command,
             string stateTree = KeyStateTrees.Default)
         {
-            foreach (var combination in combinations)
+            foreach (var combination in sequence)
             {
                 foreach (var keyInChord in combination.Chord)
                 {
@@ -65,7 +65,7 @@ namespace Metatool.Input
                 }
             }
 
-            return _hook.Add(combinations, new KeyEventCommand(keyEvent, command), stateTree);
+            return _hook.Add(sequence, new KeyEventCommand(keyEvent, command), stateTree);
         }
 
         public void ShowTip()

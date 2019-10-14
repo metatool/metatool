@@ -174,6 +174,8 @@ namespace Metatool.Metatool.Plugin
             }
 
 
+            builder.SetupSharedAssemblyPrefix(config.SharedAssemblyPrefixes);
+
             return builder.Build();
         }
     }

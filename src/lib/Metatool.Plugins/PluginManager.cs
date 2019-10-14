@@ -169,6 +169,7 @@ namespace Metatool.Plugin
                 tool?.OnLoaded();
                 token.Tools.Add(tool);
             });
+            _logger.LogInformation($"Tool Loaded: {assemblyName}");
         }
 
         private void Unload(string dllPath)
@@ -191,8 +192,9 @@ namespace Metatool.Plugin
                 pluginDll,
                 config =>
                 {
-                    config.PreferSharedTypes = true;
-                    config.IsUnloadable      = true;
+                    config.PreferSharedTypes      = true;
+                    config.IsUnloadable           = true;
+                    config.SharedAssemblyPrefixes = new List<string>(){"Metatool.Plugin"};
                 });
             return loader;
         }

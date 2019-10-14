@@ -1,1 +1,0 @@
-robocopy .\ ..\..\exe\debug\tools /S

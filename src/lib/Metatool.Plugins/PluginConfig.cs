@@ -24,9 +24,10 @@ namespace Metatool.Metatool.Plugin
 
         public string MainAssemblyPath { get; }
 
-        public ICollection<AssemblyName> PrivateAssemblies { get; protected set; } = new List<AssemblyName>();
+        public ICollection<AssemblyName> PrivateAssemblies { get; set; } = new List<AssemblyName>();
 
-        public ICollection<AssemblyName> SharedAssemblies { get; protected set; } = new List<AssemblyName>();
+        public ICollection<AssemblyName> SharedAssemblies { get; set; } = new List<AssemblyName>();
+        public ICollection<string> SharedAssemblyPrefixes { get; set; } = new List<string>();
 
         public bool PreferSharedTypes { get; set; }
 

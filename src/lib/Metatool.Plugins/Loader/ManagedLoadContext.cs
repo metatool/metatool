@@ -21,6 +21,7 @@ namespace Metatool.Metatool.Plugin.Loader
         private readonly IReadOnlyDictionary<string, NativeLibrary> _nativeLibraries;
         private readonly IReadOnlyCollection<string> _privateAssemblies;
         private readonly IReadOnlyCollection<string> _defaultAssemblies;
+        private readonly ICollection<string> _sharedAssemblyPrefixes;
         private readonly IReadOnlyCollection<string> _additionalProbingPaths;
         private readonly bool _preferDefaultLoadContext;
         private readonly string[] _resourceRoots;
@@ -34,7 +35,7 @@ namespace Metatool.Metatool.Plugin.Loader
             IReadOnlyCollection<string> additionalProbingPaths,
             IReadOnlyCollection<string> resourceProbingPaths,
             bool preferDefaultLoadContext,
-            bool isCollectible)
+            bool isCollectible, ICollection<string> sharedAssemblyPrefixes)
             : base(Path.GetFileNameWithoutExtension(mainAssemblyPath), isCollectible)
         {
             if (resourceProbingPaths == null)
@@ -51,6 +52,7 @@ namespace Metatool.Metatool.Plugin.Loader
             _nativeLibraries = nativeLibraries ?? throw new ArgumentNullException(nameof(nativeLibraries));
             _additionalProbingPaths = additionalProbingPaths ?? throw new ArgumentNullException(nameof(additionalProbingPaths));
             _preferDefaultLoadContext = preferDefaultLoadContext;
+            _sharedAssemblyPrefixes = sharedAssemblyPrefixes;
 
             _resourceRoots = new[] { _basePath }
                 .Concat(resourceProbingPaths)
@@ -72,7 +74,7 @@ namespace Metatool.Metatool.Plugin.Loader
                 return null;
             }
 
-            if ((_preferDefaultLoadContext || _defaultAssemblies.Contains(assemblyName.Name)) && !_privateAssemblies.Contains(assemblyName.Name))
+            if ((_preferDefaultLoadContext ||_sharedAssemblyPrefixes.Any(p=>assemblyName.Name.StartsWith(p))|| _defaultAssemblies.Contains(assemblyName.Name)) && !_privateAssemblies.Contains(assemblyName.Name))
             {
                 // If default context is preferred, check first for types in the default context unless the dependency has been declared as private
                 try

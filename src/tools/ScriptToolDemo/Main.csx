@@ -1,5 +1,4 @@
 ﻿#r "nuget:Metatool.Plugin,*"
-#r "nuget:Microsoft.Extensions.Logging.Abstractions,*"
 #r "nuget:Automapper,9.0.0"
 #r "LocalLib.dll"
 #load "LocalScript.csx"

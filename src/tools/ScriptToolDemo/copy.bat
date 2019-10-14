@@ -1,0 +1,1 @@
+robocopy .\ ..\..\..\exe\debug\tools\ScriptToolDemo /S

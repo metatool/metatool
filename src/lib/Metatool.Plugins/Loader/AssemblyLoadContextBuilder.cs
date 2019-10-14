@@ -20,6 +20,7 @@ namespace Metatool.Metatool.Plugin.Loader
         private bool _preferDefaultLoadContext;
 
         private bool _isCollectible;
+        private ICollection<string> _sharedAssemblyPrefixes;
 
         /// <summary>
         /// Creates an assembly load context using settings specified on the builder.
@@ -50,7 +51,7 @@ namespace Metatool.Metatool.Plugin.Loader
                 _additionalProbingPaths,
                 resourceProbingPaths,
                 _preferDefaultLoadContext,
-                _isCollectible);
+                _isCollectible, _sharedAssemblyPrefixes);
         }
 
         /// <summary>
@@ -119,6 +120,12 @@ namespace Metatool.Metatool.Plugin.Loader
                 _defaultAssemblies.Add(assemblyName.Name);
             }
 
+            return this;
+        }
+
+        public AssemblyLoadContextBuilder SetupSharedAssemblyPrefix(ICollection<string> sharedAssemblyPrefixes)
+        {
+            _sharedAssemblyPrefixes = sharedAssemblyPrefixes;
             return this;
         }
 

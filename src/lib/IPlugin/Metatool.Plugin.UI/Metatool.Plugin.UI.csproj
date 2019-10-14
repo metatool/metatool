@@ -10,9 +10,8 @@
       <_Parameter1>Metatool.UI</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\Metatool.INotifyIcon\Metatool.INotifyIcon.csproj" />
+    <ProjectReference Include="..\Metatool.Plugin.NotifyIcon\Metatool.Plugin.NotifyIcon.csproj" />
   </ItemGroup>
 
 </Project>
