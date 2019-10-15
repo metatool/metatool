@@ -133,7 +133,7 @@ namespace Metaseed.Metatool
                 else if(firstArg.EndsWith(".csx"))
                 {
                     var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
-                    logger.LogInformation($"{fullPath}, {assemblyName}");
+                    logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
 
                     pluginManager.BuildReload(fullPath, assemblyName, false);
                 }

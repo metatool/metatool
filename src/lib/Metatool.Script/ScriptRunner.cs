@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 
@@ -116,7 +117,7 @@ namespace Metatool.Script
             return result;
         }
 
-        public async Task<ImmutableArray<Diagnostic>> SaveAssembly(string assemblyPath,
+        public async Task<ImmutableArray<Diagnostic>> SaveAssembly(string assemblyPath, IEnumerable<EmbeddedText> embeddedTexts,
             CancellationToken cancellationToken = default)
         {
             var compilation = GetCompilation(Path.GetFileNameWithoutExtension(assemblyPath));
@@ -128,7 +129,7 @@ namespace Metatool.Script
             }
 
             var diagnosticsBag = new DiagnosticBag();
-            await SaveAssembly(assemblyPath, compilation, diagnosticsBag, cancellationToken).ConfigureAwait(false);
+            await SaveAssembly(assemblyPath, compilation, diagnosticsBag, cancellationToken, embeddedTexts).ConfigureAwait(false);
             return GetDiagnostics(diagnosticsBag, includeWarnings: true);
         }
 
@@ -170,11 +171,18 @@ namespace Metatool.Script
         }
 
         private static async Task SaveAssembly(string assemblyPath, Compilation compilation, DiagnosticBag diagnostics,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, IEnumerable<EmbeddedText> embeddedTexts)
         {
-            await using var peStream  = new MemoryStream();
-            await using var pdbStream = new MemoryStream();
-            var emitResult = compilation.Emit(peStream, pdbStream, cancellationToken:cancellationToken);
+            await using var peStream   = new MemoryStream();
+            await using var pdbStream  = new MemoryStream();
+            var pdbPath = Path.ChangeExtension(assemblyPath, "pdb");
+
+            // https://gist.github.com/stiano/1e6d37bcf1667f11e3bfdc742cd1e6a0#file-roslyn-codegeneration-withdebugging-cs-L80
+            //  var embeddedTexts = new List<EmbeddedText>
+            // {
+            //     EmbeddedText.FromSource(sourceCodePath, sourceText),
+            // };
+            var emitResult = compilation.Emit(peStream, pdbStream, cancellationToken: cancellationToken, embeddedTexts: embeddedTexts,options:new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb, pdbFilePath: pdbPath));
 
             diagnostics.AddRange(emitResult.Diagnostics);
 
@@ -182,8 +190,8 @@ namespace Metatool.Script
             {
                 peStream.Position  = 0;
                 pdbStream.Position = 0;
-                if (!Debugger.IsAttached)
-                    await CopyToFileAsync(Path.ChangeExtension(assemblyPath, "pdb"), pdbStream).ConfigureAwait(false);
+                // if (!Debugger.IsAttached)
+                await CopyToFileAsync(pdbPath, pdbStream).ConfigureAwait(false);
                 await CopyToFileAsync(assemblyPath, peStream).ConfigureAwait(false);
             }
         }
@@ -206,7 +214,7 @@ namespace Metatool.Script
             var emitResult = compilation.Emit(
                 peStream: peStream,
                 pdbStream: pdbStream,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken, options: new EmitOptions(debugInformationFormat:DebugInformationFormat.PortablePdb));
 
             diagnostics.AddRange(emitResult.Diagnostics);
 
@@ -304,7 +312,8 @@ namespace Metatool.Script
                 metadataReferenceResolver: MetadataResolver,
                 assemblyIdentityComparer: AssemblyIdentityComparer.Default,
                 nullableContextOptions: NullableContextOptions.Enable
-            );
+            );//.WithSpecificDiagnosticOptions(s);
+
             //.WithTopLevelBinderFlags(BinderFlags.IgnoreCorLibraryDuplicatedTypes),
 
             return CSharpCompilation.Create(

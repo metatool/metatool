@@ -86,21 +86,6 @@ namespace Metatool.Plugin
 
             ObservableFileSystemWatcher lastWatcher = null;
 
-            static void move(string pluginDir1, string assemblyName1, ILogger logger1)
-            {
-                var rebuildPath = Path.Combine(pluginDir1, ScriptBin, AssemblyRebuildName(assemblyName1));
-                var dllPath1    = Path.Combine(pluginDir1, ScriptBin, assemblyName1);
-
-                if (File.Exists(rebuildPath + ".dll"))
-                {
-                    File.Move(rebuildPath + ".dll", dllPath1       + ".dll", true);
-                    File.Move(rebuildPath + ".deps.json", dllPath1 + ".deps.json", true);
-                    if (!Debugger.IsAttached)
-                        File.Move(rebuildPath + ".pdb", dllPath1 + ".pdb", true);
-                    logger1.LogInformation($"{assemblyName1}: replaced with new one");
-                }
-            }
-
             if (_plugins.ContainsKey(dllPath))
             {
                 var plugin = _plugins[dllPath];
@@ -112,7 +97,6 @@ namespace Metatool.Plugin
                         if (!plugin.Loader.IsAlive)
                         {
                             _logger.LogInformation($"{assemblyName}: unloaded!");
-                            move(pluginDir, assemblyName, _logger);
 
                             Load(scriptPath, dllPath, assemblyName);
                         }
@@ -133,8 +117,6 @@ namespace Metatool.Plugin
                 lastWatcher = plugin.Watcher;
                 _plugins.Remove(dllPath);
             }
-
-            move(pluginDir, assemblyName, _logger);
 
             _logger.LogInformation($"{assemblyName}: Loading...");
             LoadDll(dllPath, lastWatcher);
@@ -232,10 +214,26 @@ namespace Metatool.Plugin
             _logger.LogInformation($"{assemblyName}: watching modification of *.csx");
         }
 
-        private static string AssemblyRebuildName(string assemblyName) => assemblyName + "_build";
 
         public void BuildReload(string scriptPath, string assemblyName, bool watch = true)
         {
+            static void move(string pluginDir1, string assemblyName1, ILogger logger1)
+            {
+                var backupDir = Path.Combine(pluginDir1, "backup");
+                var backupPath = Path.Combine(backupDir,  assemblyName1);
+                var dllPath1    = Path.Combine(pluginDir1,  assemblyName1);
+
+                if(!Directory.Exists(backupDir) ) Directory.CreateDirectory(backupDir);
+                if (File.Exists(dllPath1 + ".dll"))
+                {
+                    File.Move(dllPath1 + ".dll", backupPath + ".dll",  true);
+                    File.Move(dllPath1 + ".deps.json", backupPath + ".deps.json",  true);
+                    // if (!Debugger.IsAttached) for file is locked by vs
+                    File.Move(dllPath1 + ".pdb", backupPath + ".pdb", true);
+                    logger1.LogInformation($"{assemblyName1}: backup done");
+                }
+            }
+
             _logger.LogInformation($"start to build assembly: {assemblyName}...");
             try
             {
@@ -243,7 +241,8 @@ namespace Metatool.Plugin
                 var outputDir  = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
                 var pluginDll = Path.Combine(outputDir, assemblyName + ".dll");
 
-                scriptHost.Build(scriptPath, outputDir, AssemblyRebuildName(assemblyName), OptimizationLevel.Debug);
+                move(outputDir, assemblyName, _logger);
+                scriptHost.Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug);
                 scriptHost.NotifyBuildResult += errors =>
                 {
                     if (errors.Count > 0)

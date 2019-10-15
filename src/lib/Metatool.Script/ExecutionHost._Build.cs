@@ -57,7 +57,7 @@ namespace Metatool.Script
 
         public string Name { get; set; }
 
-        public async Task BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, bool onlyBuild = true)
+        public async Task BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, IEnumerable<EmbeddedText> embeddedTexts, bool onlyBuild = true)
         {
             await new NoContextYieldAwaitable();
 
@@ -72,9 +72,10 @@ namespace Metatool.Script
                 _assemblyPath = Path.Combine(BuildPath, $"{Name}.dll");
                 _depsFile     = Path.ChangeExtension(_assemblyPath, ".deps.json");
 
+               
                 CopyDependencies();
 
-                var diagnostics = await scriptRunner.SaveAssembly(_assemblyPath, cancellationToken).ConfigureAwait(false);
+                var diagnostics = await scriptRunner.SaveAssembly(_assemblyPath, embeddedTexts, cancellationToken).ConfigureAwait(false);
                 SendDiagnostics(diagnostics);
 
                 if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
@@ -184,7 +185,7 @@ namespace Metatool.Script
         private ScriptRunner CreateScriptRunner(string code, OptimizationLevel? optimizationLevel)
         {
             return new ScriptRunner(code: null,
-                syntaxTrees: ImmutableList.Create(InitHostSyntax, ParseCode(code: code)),
+                syntaxTrees: ImmutableList.Create(/*InitHostSyntax, */ParseCode(code: code)),
                 parseOptions: _parseOptions,
                 outputKind: OutputKind.ConsoleApplication,
                 platform: Platform.AnyCpu,

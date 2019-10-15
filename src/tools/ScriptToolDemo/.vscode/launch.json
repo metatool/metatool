@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    // "requireExactSource": false,
+    "configurations": [
+      {
+        "name": "Metatool Script Debug",
+        "type": "coreclr",
+        "request": "launch",
+        // "program": "metatool.exe",
+        // "args": [
+        //   "C:/Users/jsong12/AppData/Local/Temp/scripts/m/Workspace/metatool/src/tools/ScriptToolDemo/execution-cache/script.dll"
+        // ],
+        "program": "dotnet",
+        "args": [
+            "exec",
+            "C:/Users/jsong12/.dotnet/tools/.store/dotnet-script/0.50.1/dotnet-script/0.50.1/tools/netcoreapp3.0/any/dotnet-script.dll",
+            "${file}"
+        ],
+        "cwd": "${workspaceRoot}",
+        // "stopAtEntry": true
+      }
+    ]
+}

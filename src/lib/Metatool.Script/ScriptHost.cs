@@ -4,10 +4,12 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Metatool.Script.NugetReference;
 using Metatool.Script.Runtime;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Script
@@ -123,7 +125,15 @@ namespace Metatool.Script
                 executionHost.NotifyBuildResult += e => NotifyBuildResult?.Invoke(e);
                 stopWatch.Restart();
                 _logger.LogInformation($"{assemblyName}: Start to build...");
-               await executionHost.BuildAndExecuteAsync(code, optimization);
+                // https://gist.github.com/stiano/1e6d37bcf1667f11e3bfdc742cd1e6a0#file-roslyn-codegeneration-withdebugging-cs-L80
+                var encoding = Encoding.UTF8;
+                var buffer = encoding.GetBytes(code);
+                var sourceText = SourceText.From(buffer, buffer.Length, encoding, canBeEmbedded: true);
+                var embeddedTexts = new List<EmbeddedText>()
+                {
+                    EmbeddedText.FromSource(path, sourceText),
+                };
+                await executionHost.BuildAndExecuteAsync(code, optimization, embeddedTexts);
                _logger.LogInformation($"{assemblyName}: Build successfully, time: {stopWatch.ElapsedMilliseconds}ms");
 
             };
