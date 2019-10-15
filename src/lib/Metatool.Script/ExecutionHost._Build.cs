@@ -20,12 +20,17 @@ namespace Metatool.Script
 {
     public partial class ExecutionHost
     {
-        private static readonly CSharpParseOptions _parseOptions = new CSharpParseOptions(
-            preprocessorSymbols: new[] {"__DEMO__", "__DEMO_EXPERIMENTAL__"}, languageVersion: LanguageVersion.Latest,
-            kind: SourceCodeKind.Script);
+        private static readonly CSharpParseOptions ParseOptions = new CSharpParseOptions(
+            preprocessorSymbols: new[]
+            {
+                "__DEMO__", "__DEMO_EXPERIMENTAL__"
+            },
+            languageVersion: LanguageVersion.Latest,
+            kind: SourceCodeKind.Script
+        );
 
         private static readonly SyntaxTree InitHostSyntax = SyntaxFactory.ParseSyntaxTree(
-            @"Metatool.Script.Runtime.RuntimeInitializer.Initialize();", _parseOptions);
+            @"Metatool.Script.Runtime.RuntimeInitializer.Initialize();", ParseOptions);
 
         private ExecutionHostParameters                          _parameters;
         private ScriptOptions                                    _scriptOptions;
@@ -34,12 +39,12 @@ namespace Metatool.Script
         private string                                           _depsFile;
         private CancellationTokenSource                          _executeCts;
         private bool                                             _initializeBuildPathAfterRun;
-        private ILogger _logger;
+        private ILogger                                          _logger;
         public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
         public ExecutionHost(ExecutionHostParameters parameters, string name, ILogger logger)
         {
-            _logger = logger;
+            _logger     = logger;
             _parameters = parameters;
             Name        = name;
 
@@ -59,25 +64,24 @@ namespace Metatool.Script
 
         public string Name { get; set; }
 
-        public async Task BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, string codePath, bool onlyBuild = true)
+        public async Task BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, string codePath,
+            bool onlyBuild = true)
         {
             await new NoContextYieldAwaitable();
-
             try
             {
                 _running = true;
                 using var executeCts        = new CancellationTokenSource();
                 var       cancellationToken = executeCts.Token;
-                var encoding = Encoding.UTF8;
-
-                var scriptRunner = CreateScriptRunner(code, codePath, encoding, optimizationLevel);
 
                 _assemblyPath = Path.Combine(BuildPath, $"{Name}.dll");
                 _depsFile     = Path.ChangeExtension(_assemblyPath, ".deps.json");
 
-               
+                var encoding     = Encoding.UTF8;
+                var scriptRunner = CreateScriptRunner(code, codePath, encoding, optimizationLevel);
+
                 CopyDependencies();
-                // https://gist.github.com/stiano/1e6d37bcf1667f11e3bfdc742cd1e6a0#file-roslyn-codegeneration-withdebugging-cs-L80
+
                 var buffer     = encoding.GetBytes(code);
                 var sourceText = SourceText.From(buffer, buffer.Length, encoding, canBeEmbedded: true);
                 var embeddedTexts = new List<EmbeddedText>()
@@ -85,7 +89,8 @@ namespace Metatool.Script
                     EmbeddedText.FromSource(codePath, sourceText),
                 };
 
-                var diagnostics = await scriptRunner.SaveAssembly(_assemblyPath, embeddedTexts, cancellationToken).ConfigureAwait(false);
+                var diagnostics = await scriptRunner.SaveAssembly(_assemblyPath, embeddedTexts, cancellationToken)
+                    .ConfigureAwait(false);
                 SendDiagnostics(diagnostics);
 
                 if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
@@ -192,11 +197,12 @@ namespace Metatool.Script
                 .WithSourceResolver(new RemoteFileResolver(parameters.WorkingDirectory));
         }
 
-        private ScriptRunner CreateScriptRunner(string code, string codePath, Encoding encoding, OptimizationLevel? optimizationLevel)
+        private ScriptRunner CreateScriptRunner(string code, string codePath, Encoding encoding,
+            OptimizationLevel? optimizationLevel)
         {
             return new ScriptRunner(code: null,
-                syntaxTrees: ImmutableList.Create(/*InitHostSyntax, */ParseCode( code, codePath, encoding)),
-                parseOptions: _parseOptions,
+                syntaxTrees: ImmutableList.Create( /*InitHostSyntax,*/ ParseCode(code, codePath, encoding)),
+                parseOptions: ParseOptions,
                 outputKind: OutputKind.ConsoleApplication,
                 platform: Platform.AnyCpu,
                 references: _scriptOptions.MetadataReferences,
@@ -210,9 +216,9 @@ namespace Metatool.Script
                 allowUnsafe: _parameters.AllowUnsafe);
         }
 
-        private SyntaxTree ParseCode(string code, string codePath, Encoding encoding )
+        private SyntaxTree ParseCode(string code, string codePath, Encoding encoding)
         {
-            var tree = SyntaxFactory.ParseSyntaxTree(code, _parseOptions, codePath, encoding);
+            var tree = SyntaxFactory.ParseSyntaxTree(code, ParseOptions, codePath, encoding);
             var root = tree.GetRoot();
 
             if (root is CompilationUnitSyntax c)
@@ -238,8 +244,9 @@ namespace Metatool.Script
 
                 root = c.WithMembers(members);
             }
+
             var rootNode = root as CSharpSyntaxNode;
-            return CSharpSyntaxTree.Create(rootNode, _parseOptions, codePath, encoding);
+            return CSharpSyntaxTree.Create(rootNode, ParseOptions, codePath, encoding);
             // return tree.WithRootAndOptions(root, _parseOptions);
         }
 

@@ -117,7 +117,8 @@ namespace Metatool.Script
             return result;
         }
 
-        public async Task<ImmutableArray<Diagnostic>> SaveAssembly(string assemblyPath, IEnumerable<EmbeddedText> embeddedTexts,
+        public async Task<ImmutableArray<Diagnostic>> SaveAssembly(string assemblyPath,
+            IEnumerable<EmbeddedText> embeddedTexts,
             CancellationToken cancellationToken = default)
         {
             var compilation = GetCompilation(Path.GetFileNameWithoutExtension(assemblyPath));
@@ -129,7 +130,8 @@ namespace Metatool.Script
             }
 
             var diagnosticsBag = new DiagnosticBag();
-            await SaveAssembly(assemblyPath, compilation, diagnosticsBag, cancellationToken, embeddedTexts).ConfigureAwait(false);
+            await SaveAssembly(assemblyPath, compilation, diagnosticsBag, cancellationToken, embeddedTexts)
+                .ConfigureAwait(false);
             return GetDiagnostics(diagnosticsBag, includeWarnings: true);
         }
 
@@ -173,12 +175,15 @@ namespace Metatool.Script
         private static async Task SaveAssembly(string assemblyPath, Compilation compilation, DiagnosticBag diagnostics,
             CancellationToken cancellationToken, IEnumerable<EmbeddedText> embeddedTexts)
         {
-            await using var peStream   = new MemoryStream();
-            await using var pdbStream  = new MemoryStream();
-            var pdbPath = Path.ChangeExtension(assemblyPath, "pdb");
+            await using var peStream  = new MemoryStream();
+            await using var pdbStream = new MemoryStream();
+            var             pdbPath   = Path.ChangeExtension(assemblyPath, "pdb");
 
-            // https://gist.github.com/stiano/1e6d37bcf1667f11e3bfdc742cd1e6a0#file-roslyn-codegeneration-withdebugging-cs-L80
-            var emitResult = compilation.Emit(peStream, pdbStream, cancellationToken: cancellationToken, embeddedTexts: embeddedTexts,options:new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb, pdbFilePath: pdbPath));
+            var emitResult = compilation.Emit(peStream, pdbStream, cancellationToken: cancellationToken,
+                embeddedTexts: embeddedTexts,
+                options: new EmitOptions(
+                    debugInformationFormat: DebugInformationFormat.PortablePdb,
+                    pdbFilePath: pdbPath));
 
             diagnostics.AddRange(emitResult.Diagnostics);
 
@@ -210,7 +215,8 @@ namespace Metatool.Script
             var emitResult = compilation.Emit(
                 peStream: peStream,
                 pdbStream: pdbStream,
-                cancellationToken: cancellationToken, options: new EmitOptions(debugInformationFormat:DebugInformationFormat.PortablePdb));
+                cancellationToken: cancellationToken,
+                options: new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb));
 
             diagnostics.AddRange(emitResult.Diagnostics);
 
@@ -308,7 +314,7 @@ namespace Metatool.Script
                 metadataReferenceResolver: MetadataResolver,
                 assemblyIdentityComparer: AssemblyIdentityComparer.Default,
                 nullableContextOptions: NullableContextOptions.Enable
-            );//.WithSpecificDiagnosticOptions(s);
+            ); //.WithSpecificDiagnosticOptions(s);
 
             //.WithTopLevelBinderFlags(BinderFlags.IgnoreCorLibraryDuplicatedTypes),
 
