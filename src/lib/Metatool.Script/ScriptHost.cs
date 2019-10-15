@@ -79,24 +79,26 @@ namespace Metatool.Script
             return GetReferencePaths(DefaultReferences).Concat(references).ToImmutableArray();
         }
 
-        public void Build(string path, string outputDir, string assemblyName = null,
+        public void Build(string codePath, string outputDir, string assemblyName = null,
             OptimizationLevel optimization = OptimizationLevel.Debug)
         {
-            var code         = File.ReadAllText( path);
-            var codeDir = Path.GetDirectoryName(path);
-            var refs         = LibRefParser.ParseReference(code,codeDir);
-            var name         = assemblyName ?? Path.GetFileNameWithoutExtension( path);
+            var code         = File.ReadAllText(codePath);
+            var codeDir      = Path.GetDirectoryName(codePath);
+            var refs         = LibRefParser.ParseReference(code, codeDir);
+            var id         = assemblyName ?? Path.GetFileNameWithoutExtension(codePath);
             var nugetPackage = new NugetPackage(_logger);
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            var packageViewModel = new PackageViewModel(_logger, nugetPackage)
-                {Id = name, RestorePath = Path.Combine(outputDir, "nuget")};
 
+            var packageViewModel = new PackageViewModel(_logger, nugetPackage)
+                {Id = id, RestorePath = Path.Combine(outputDir, "nuget")};
 
             nugetPackage.RestoreResult += async restoreResult =>
             {
-                _logger.LogInformation($"{assemblyName}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
+                _logger.LogInformation(
+                    $"{assemblyName}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
+
                 var executionHostParameters = new ExecutionHostParameters(
                     compileReferences: ImmutableArray<string>.Empty,
                     runtimeReferences: ImmutableArray<string>.Empty,
@@ -107,8 +109,10 @@ namespace Metatool.Script
                     outputDirectory: outputDir,
                     workingDirectory: codeDir,
                     globalPackageFolder: nugetPackage.GlobalPackageFolder);
+
                 executionHostParameters.NuGetCompileReferences =
                     GetReferences(references: restoreResult.CompileReferences);
+
                 // runtime references from NuGet
                 executionHostParameters.NuGetRuntimeReferences =
                     GetReferences(references: restoreResult.RuntimeReferences);
@@ -117,34 +121,32 @@ namespace Metatool.Script
                 executionHostParameters.DirectReferences = packageViewModel.LocalLibraryPaths;
 
                 var executionHost =
-                    new ExecutionHost(executionHostParameters, name,_logger);
+                    new ExecutionHost(executionHostParameters, id, _logger);
                 // executionHost.Dumped            += AddResult;
                 // executionHost.Error             += ExecutionHostOnError;
                 // executionHost.ReadInput         += ExecutionHostOnInputRequest;
                 // executionHost.CompilationErrors += ExecutionHostOnCompilationErrors;
                 executionHost.NotifyBuildResult += e => NotifyBuildResult?.Invoke(e);
-                stopWatch.Restart();
-                _logger.LogInformation($"{assemblyName}: Start to build...");
-                // https://gist.github.com/stiano/1e6d37bcf1667f11e3bfdc742cd1e6a0#file-roslyn-codegeneration-withdebugging-cs-L80
-                var encoding = Encoding.UTF8;
-                var buffer = encoding.GetBytes(code);
-                var sourceText = SourceText.From(buffer, buffer.Length, encoding, canBeEmbedded: true);
-                var embeddedTexts = new List<EmbeddedText>()
-                {
-                    EmbeddedText.FromSource(path, sourceText),
-                };
-                await executionHost.BuildAndExecuteAsync(code, optimization, embeddedTexts);
-               _logger.LogInformation($"{assemblyName}: Build successfully, time: {stopWatch.ElapsedMilliseconds}ms");
 
+                stopWatch.Restart();
+
+                _logger.LogInformation($"{assemblyName}: Start to build...");
+               
+                await executionHost.BuildAndExecuteAsync(code, optimization, codePath);
+                _logger.LogInformation($"{assemblyName}: Build successfully, time: {stopWatch.ElapsedMilliseconds}ms");
             };
             if (DefaultReferences.Length > 0)
             {
                 refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
             }
 
-            packageViewModel.RestoreError += r => { NotifyBuildResult?.Invoke(r.ToList().Select(er=>CompilationErrorResultObject.Create("","","PackageRestoreError:: "+er, "", -1,-1)).ToList()); };
+            packageViewModel.RestoreError += r =>
+            {
+                NotifyBuildResult?.Invoke(r.ToList().Select(er =>
+                        CompilationErrorResultObject.Create("", "", "PackageRestoreError:: " + er, "", -1, -1))
+                    .ToList());
+            };
             packageViewModel.UpdateLibraries(refs);
-
         }
 
         // private void AddResult(IResultObject o)

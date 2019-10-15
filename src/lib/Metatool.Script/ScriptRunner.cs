@@ -178,10 +178,6 @@ namespace Metatool.Script
             var pdbPath = Path.ChangeExtension(assemblyPath, "pdb");
 
             // https://gist.github.com/stiano/1e6d37bcf1667f11e3bfdc742cd1e6a0#file-roslyn-codegeneration-withdebugging-cs-L80
-            //  var embeddedTexts = new List<EmbeddedText>
-            // {
-            //     EmbeddedText.FromSource(sourceCodePath, sourceText),
-            // };
             var emitResult = compilation.Emit(peStream, pdbStream, cancellationToken: cancellationToken, embeddedTexts: embeddedTexts,options:new EmitOptions(debugInformationFormat: DebugInformationFormat.PortablePdb, pdbFilePath: pdbPath));
 
             diagnostics.AddRange(emitResult.Diagnostics);
@@ -190,7 +186,7 @@ namespace Metatool.Script
             {
                 peStream.Position  = 0;
                 pdbStream.Position = 0;
-                // if (!Debugger.IsAttached)
+                // if (!Debugger.IsAttached) for vs lock the pdb file
                 await CopyToFileAsync(pdbPath, pdbStream).ConfigureAwait(false);
                 await CopyToFileAsync(assemblyPath, peStream).ConfigureAwait(false);
             }
