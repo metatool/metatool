@@ -39,6 +39,12 @@ namespace Metatool.Input
         NoFurtherProcess,
     }
 
+    public enum TreeType
+    {
+        Default,
+        SingleCommand
+    };
+
     [DebuggerDisplay("${Name}")]
     public class KeyStateTree
     {
@@ -48,12 +54,13 @@ namespace Metatool.Input
         {
             // keep the order
             {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap)},
-            {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap)},
+            {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap){TreeType = TreeType.SingleCommand}},
             {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default)},
             {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map)},
             {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString)}
         };
 
+        public TreeType TreeType = TreeType.Default;
         public static KeyStateTree GetOrCreateStateTree(string stateTree)
         {
             if (StateTrees.TryGetValue(stateTree, out var keyStateTree))
@@ -133,6 +140,11 @@ namespace Metatool.Input
 
         public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command)
         {
+            if (TreeType == TreeType.SingleCommand)
+            {
+                var commands = _trie.Get(combinations);
+                if (commands.Count() != 0) _trie.Remove(combinations);
+            }
             _trie.Add(combinations, command);
             return new MetaKey(_trie, combinations, command);
         }
