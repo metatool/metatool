@@ -202,7 +202,7 @@ namespace Metatool.Script
             OptimizationLevel? optimizationLevel)
         {
             return new ScriptRunner(code: null,
-                syntaxTrees: ImmutableList.Create( /*InitHostSyntax,*/ ParseCode(sourceText, codePath)),
+                syntaxTrees: ImmutableList.Create( InitHostSyntax, ParseCode(sourceText, codePath)),
                 parseOptions: ParseOptions,
                 outputKind: OutputKind.ConsoleApplication,
                 platform: Platform.AnyCpu,

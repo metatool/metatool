@@ -2,7 +2,7 @@
 #r "nuget: Automapper, 9.0.0"
 #r "LocalLib.dll"
 #load "LocalScript.csx"
-#load "https://gist.githubusercontent.com/metasong/418dde5c695ff087c59cf54255897fd2/raw/0ca795cd567d88818efd857d61ddd9643d4d3049/RemoteCSharpScriptTest.csx"
+#load "https://gist.githubusercontent.com/metasong/418dde5c695ff087c59cf54255897fd2/raw/a4dafc72299e91e1f1741449f484673013966169/RemoteCSharpScriptTest.csx"
 
 using AutoMapper;
 using System;
