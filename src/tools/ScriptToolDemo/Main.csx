@@ -1,4 +1,4 @@
-﻿#r "nuget: Metatool.Plugin, 1.4.1"
+﻿#r "nuget: Metatool.Plugin, *"
 #r "nuget: Automapper, 9.0.0"
 #r "LocalLib.dll"
 #load "LocalScript.csx"
@@ -14,6 +14,9 @@ using Metatool.Command;
 using Metatool.Input;
 using static Metatool.Input.Key;
 using System.Diagnostics;
+
+Debugger.Break();
+Console.WriteLine("Hello we are in Main.csx");
 public class ClassTest
 {
     public void Hello()
@@ -28,7 +31,6 @@ public class MetaScript : PluginBase
     IRemove token;
     public MetaScript(ILogger<MetaScript> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
     {
-        //Debugger.Break();
         logger.LogInformation("Demo script created");
         token = commandManager.Add(keyboard.Down(Caps + A), e =>
           {

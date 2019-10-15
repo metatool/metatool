@@ -2,7 +2,7 @@
   "profiles": {
     "Metaseed.Metatool": {
       "commandName": "Project",
-      "commandLineArgs": "M:\\Workspace\\metatool\\src\\tools\\ScriptToolDemo\\main.csx"
+      "commandLineArgs": "M:\\Workspace\\metatool\\src\\tools\\ScriptToolDemo\\Main.csx"
     }
   }
 }

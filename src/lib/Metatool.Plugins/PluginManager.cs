@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Windows;
 using Metatool.Metatool.Plugin;
 using Metatool.Reactive;
@@ -140,9 +141,11 @@ namespace Metatool.Plugin
             _plugins.Add(dllPath, token);
             var pluginTypes = GetPluginTypes(loader);
 
+            pluginTypes.assembly.EntryPoint?.Invoke(null, new object[]{});
             // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
-            var types = pluginTypes.ToList();
+            var types = pluginTypes.types;
             if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
+
 
             types.ForEach(t =>
             {
@@ -277,12 +280,13 @@ namespace Metatool.Plugin
             // services.BuildServiceProvider();
         }
 
-        private List<Type> GetPluginTypes(PluginLoader loader)
+        private (Assembly assembly,List<Type> types) GetPluginTypes(PluginLoader loader)
 
         {
-            return loader.MainAssembly.GetTypes()
+            var types = loader.MainAssembly.GetTypes()
                 .Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract)
                 .ToList();
+            return (loader.MainAssembly, types);
         }
     }
 
