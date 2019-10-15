@@ -42,7 +42,8 @@ namespace Metatool.Input
     public enum TreeType
     {
         Default,
-        SingleCommand
+        // one for every down, up or allUp KeyEvent
+        SingleEventCommand
     };
 
     [DebuggerDisplay("${Name}")]
@@ -54,7 +55,7 @@ namespace Metatool.Input
         {
             // keep the order
             {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap)},
-            {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap){TreeType = TreeType.SingleCommand}},
+            {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap){TreeType = TreeType.SingleEventCommand}},
             {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default)},
             {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map)},
             {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString)}
@@ -140,10 +141,10 @@ namespace Metatool.Input
 
         public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command)
         {
-            if (TreeType == TreeType.SingleCommand)
+            if (TreeType == TreeType.SingleEventCommand)
             {
                 var commands = _trie.Get(combinations);
-                if (commands.Count() != 0) _trie.Remove(combinations);
+                if (commands.Count() != 0) _trie.Remove(combinations, c => c.KeyEvent == command.KeyEvent);
             }
             _trie.Add(combinations, command);
             return new MetaKey(_trie, combinations, command);
