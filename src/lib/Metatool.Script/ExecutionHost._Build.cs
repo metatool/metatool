@@ -78,12 +78,13 @@ namespace Metatool.Script
                 _depsFile     = Path.ChangeExtension(_assemblyPath, ".deps.json");
 
                 var encoding     = Encoding.UTF8;
-                var scriptRunner = CreateScriptRunner(code, codePath, encoding, optimizationLevel);
+                var buffer     = encoding.GetBytes(code);
+                var sourceText = SourceText.From(buffer, buffer.Length, encoding, canBeEmbedded: true);
+
+                var scriptRunner = CreateScriptRunner(sourceText, codePath, optimizationLevel);
 
                 CopyDependencies();
 
-                var buffer     = encoding.GetBytes(code);
-                var sourceText = SourceText.From(buffer, buffer.Length, encoding, canBeEmbedded: true);
                 var embeddedTexts = new List<EmbeddedText>()
                 {
                     EmbeddedText.FromSource(codePath, sourceText),
@@ -197,11 +198,11 @@ namespace Metatool.Script
                 .WithSourceResolver(new RemoteFileResolver(parameters.WorkingDirectory));
         }
 
-        private ScriptRunner CreateScriptRunner(string code, string codePath, Encoding encoding,
+        private ScriptRunner CreateScriptRunner(SourceText sourceText, string codePath,
             OptimizationLevel? optimizationLevel)
         {
             return new ScriptRunner(code: null,
-                syntaxTrees: ImmutableList.Create( /*InitHostSyntax,*/ ParseCode(code, codePath, encoding)),
+                syntaxTrees: ImmutableList.Create( /*InitHostSyntax,*/ ParseCode(sourceText, codePath)),
                 parseOptions: ParseOptions,
                 outputKind: OutputKind.ConsoleApplication,
                 platform: Platform.AnyCpu,
@@ -216,9 +217,9 @@ namespace Metatool.Script
                 allowUnsafe: _parameters.AllowUnsafe);
         }
 
-        private SyntaxTree ParseCode(string code, string codePath, Encoding encoding)
+        private SyntaxTree ParseCode(SourceText sourceText, string codePath)
         {
-            var tree = SyntaxFactory.ParseSyntaxTree(code, ParseOptions, codePath, encoding);
+            var tree = CSharpSyntaxTree.ParseText(sourceText, ParseOptions, codePath);
             var root = tree.GetRoot();
 
             if (root is CompilationUnitSyntax c)
@@ -246,7 +247,7 @@ namespace Metatool.Script
             }
 
             var rootNode = root as CSharpSyntaxNode;
-            return CSharpSyntaxTree.Create(rootNode, ParseOptions, codePath, encoding);
+            return CSharpSyntaxTree.Create(rootNode, ParseOptions, codePath, sourceText.Encoding);
             // return tree.WithRootAndOptions(root, _parseOptions);
         }
 
