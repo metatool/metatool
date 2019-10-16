@@ -8,7 +8,7 @@
         "program": "metatool.exe",
         "requireExactSource":false,
         "args": [
-          "M:/Workspace/metatool/src/tools/ScriptToolDemo/Main.csx"
+          "${workspaceRoot}/Main.csx"
           // "${file}"
         ],
         "cwd": "${workspaceRoot}",
