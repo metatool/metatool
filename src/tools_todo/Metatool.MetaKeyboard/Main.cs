@@ -3,7 +3,6 @@ using Metatool.Command;
 using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Plugin;
-using Microsoft.Extensions.Logging;
 using Mouse = Metatool.MetaKeyboard.Mouse;
 
 namespace Metatool.ScreenHint
@@ -24,7 +23,7 @@ namespace Metatool.ScreenHint
             return base.OnLoaded();
         }
 
-        public KeyboardPlugin(ILogger<KeyboardPlugin> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
+        public KeyboardPlugin(ICommandManager commandManager, IKeyboard keyboard)
         {
             // commandManager.Add(keyboard.Down(Caps + A), e =>
             // {

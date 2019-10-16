@@ -6,12 +6,13 @@ namespace Metatool.Plugin
     {
         private readonly ILogger _logger;
 
-        protected PluginBase(ILogger logger)
+        protected PluginBase()
         {
-            _logger                  =  logger;
+            var loggerType = typeof(ILogger<>).MakeGenericType(this.GetType());
+            _logger = Services.Get(loggerType) as ILogger;
         }
 
-        protected ILogger Log => _logger;
+        protected ILogger Logger => _logger;
 
         public virtual bool OnLoaded()
         {
@@ -24,5 +25,4 @@ namespace Metatool.Plugin
             _logger.LogInformation($"{this.GetType().Name} start unloading, make sure resources get released here");
         }
     }
-
 }

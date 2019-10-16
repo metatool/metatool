@@ -15,5 +15,4 @@
     <ProjectReference Include="..\Metatool.Plugin.UI\Metatool.Plugin.UI.csproj" />
     <ProjectReference Include="..\Metatool.Plugin.Utils\Metatool.Plugin.Utils.csproj" />
   </ItemGroup>
-
 </Project>

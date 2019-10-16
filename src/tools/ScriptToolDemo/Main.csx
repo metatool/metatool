@@ -29,18 +29,18 @@ public class ClassTest
 public class MetaScript : PluginBase
 {
     IRemove token;
-    public MetaScript(ILogger<MetaScript> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
+    public MetaScript( ICommandManager commandManager, IKeyboard keyboard) 
     {
-        logger.LogInformation("Demo script created");
+        Logger.LogInformation("Demo script created");
         token = commandManager.Add(keyboard.Down(Caps + A), e =>
           {
-              logger.LogInformation("Caps+A is triggered!!!!!");
+              Logger.LogInformation("Caps+A is triggered!!!!!");
           });
     }
 
     public override bool OnLoaded()
     {
-        Log.LogInformation($"we are using {typeof(MapperConfiguration)} nuget lib.");
+        Logger.LogInformation($"we are using {typeof(MapperConfiguration)} nuget lib.");
         new ClassInGist().Hello();
         LocalScript.HelloFromLocalScript();
         new ClassTest().Hello();

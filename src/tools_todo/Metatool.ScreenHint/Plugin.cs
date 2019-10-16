@@ -10,8 +10,7 @@ namespace Metatool.ScreenHint
         private readonly IMouse _mouse;
         private ScreenHint _screenHint;
 
-        public ScreenHintPlugin(ILogger<ScreenHintPlugin> logger, IKeyboard keyboard, IMouse mouse) : base(logger)
-        {
+        public ScreenHintPlugin( IKeyboard keyboard, IMouse mouse)         {
             _keyboard = keyboard;
             _mouse = mouse;
         }

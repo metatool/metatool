@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.4.1</Version>
+    <Version>1.4.6</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>$(SolutionDir)..\pkg\debug\$(AssemblyName)\$(Version)</OutputPath>
@@ -10,4 +10,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>$(SolutionDir)..\pkg\release\$(AssemblyName)\$(Version)</OutputPath>
   </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if not exist  &quot;$(OutDir)..\..\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;if exist &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;xcopy  &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; &quot;$(OutDir)..\..&quot;&#xD;&#xA;)&#xD;&#xA;)" />
+  </Target>
 </Project>

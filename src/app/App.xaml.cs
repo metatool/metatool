@@ -97,7 +97,6 @@ namespace Metaseed.Metatool
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var currentDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
             Current.MainWindow = new MainWindow();
@@ -118,6 +117,7 @@ namespace Metaseed.Metatool
             var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
             if (firstArg != null)
             {
+                var currentDir = Directory.GetCurrentDirectory();
                 var fullPath = Path.GetFullPath(Path.Combine(currentDir,firstArg));
                 if (firstArg.EndsWith(".dll"))
                 {

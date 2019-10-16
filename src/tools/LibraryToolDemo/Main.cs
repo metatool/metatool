@@ -10,15 +10,15 @@ namespace Metatool.Tools
     {
         IRemove token;
 
-        public ToolDemo(ILogger<ToolDemo> logger, ICommandManager commandManager, IKeyboard keyboard) : base(logger)
+        public ToolDemo(ICommandManager commandManager, IKeyboard keyboard)
         {
             token = commandManager.Add(keyboard.Down(Caps + A),
-                e => { logger.LogInformation($"{nameof(ToolDemo)}: Caps+A triggered!!!!!!!"); });
+                e => { Logger.LogInformation($"{nameof(ToolDemo)}: Caps+A triggered!!!!!!!"); });
         }
 
         public override bool OnLoaded()
         {
-            Log.LogInformation($"all other tools are already created here");
+            Logger.LogInformation($"all other tools are already created here");
             return base.OnLoaded();
         }
 
