@@ -69,24 +69,12 @@ namespace Metaseed.Metatool
                 logger.LogInformation($"Set User Environment Var: MetatoolDir");
             }
 
-            static string AddToPath(ILogger log, EnvironmentVariableTarget target)
-            {
-                var s     = System.Environment.GetEnvironmentVariable("PATH",target);
-                var paths = s.Split(Path.PathSeparator);
-                if (!paths.Contains(AppContext.BaseDirectory, StringComparer.InvariantCultureIgnoreCase))
-                {
-                    s = $"{AppContext.BaseDirectory}{Path.PathSeparator}{s}";
-                    System.Environment.SetEnvironmentVariable("PATH", s, target);
-                    log.LogInformation($"Add to {target} PATH Environment Var.");
-                }
+            var scaffolder = new Scaffolder(logger); 
 
-                return s;
-            }
-
-            var pathval = AddToPath(logger, EnvironmentVariableTarget.User);
+            var pathval = scaffolder.AddToPath(EnvironmentVariableTarget.User);
             try
             {
-                AddToPath(logger, EnvironmentVariableTarget.Machine);
+                scaffolder.AddToPath(EnvironmentVariableTarget.Machine);
             }
             catch
             {
@@ -99,7 +87,7 @@ namespace Metaseed.Metatool
             base.OnStartup(e);
             var currentDir = Directory.GetCurrentDirectory();
 
-            Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+            // Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
             Current.MainWindow = new MainWindow();
             ConsoleExt.InitialConsole(true);
@@ -114,7 +102,7 @@ namespace Metaseed.Metatool
 
             var logger = provider.GetService<ILogger<App>>();
             SetupEnvVar(logger);
-
+            new ArgumentProcessor(logger).ArgumentsProcess(e.Args);
             var firstArg      = e.Args.FirstOrDefault();
             var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
             if (firstArg != null)

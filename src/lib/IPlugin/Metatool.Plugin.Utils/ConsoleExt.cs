@@ -11,6 +11,7 @@ namespace Metatool.Utils
 
         // https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms683242.aspx
         private delegate bool SetConsoleCtrlEventHandler(CtrlType sig);
+        static SetConsoleCtrlEventHandler handlerDelegate = new SetConsoleCtrlEventHandler(Handler);
         private static bool Handler(CtrlType signal)
         {
             switch (signal)
@@ -59,7 +60,7 @@ namespace Metatool.Utils
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
             if(disableCloseButton)  DisableCloseButton();
 #endif
-            SetConsoleCtrlHandler(Handler, true);
+            SetConsoleCtrlHandler(handlerDelegate, true);
         }
 
         public static void DisableCloseButton() =>

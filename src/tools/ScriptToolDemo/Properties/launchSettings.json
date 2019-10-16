@@ -3,7 +3,7 @@
     "Debug": {
       "commandName": "Executable",
       "executablePath": "$(MetatoolDir)\\Metatool.exe",
-      "commandLineArgs": "$(ProjectDir)Main.csx"
+      "commandLineArgs": "$(ProjectDir)Scripts\\Main.csx"
     }
   }
 }

@@ -1,1 +1,1 @@
-robocopy .\ ..\..\..\exe\debug\tools\ScriptToolDemo /S
+robocopy .\Scripts\ ..\..\..\exe\debug\tools\ScriptToolDemo /S
