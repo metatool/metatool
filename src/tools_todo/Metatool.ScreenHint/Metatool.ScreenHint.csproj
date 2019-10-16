@@ -18,7 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" />
-  </ItemGroup>
-
+    <PackageReference Include="Metatool.Plugin" Version="*" />
+  </ItemGroup>  
 </Project>

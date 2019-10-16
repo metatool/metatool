@@ -10,7 +10,7 @@ namespace Metaseed.Metatool
         [STAThread]
         public static void Main(string[] args)
         {
-            ArgumentsProcess(args);
+            // ArgumentsProcess(args);
             var application = new App();
             application.InitializeComponent();
             application.Run(); 
