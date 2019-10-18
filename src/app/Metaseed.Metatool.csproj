@@ -10,7 +10,6 @@
     <AssemblyName>Metatool</AssemblyName>
   </PropertyGroup>
 
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>$(SolutionDir)..\exe\debug</OutputPath>
   </PropertyGroup>
@@ -60,17 +59,18 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0&#xD;&#xA;) else (&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.deps.json&#xD;&#xA;del $(SolutionDir)..\exe\release\System.Reactive*&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.runtimeconfig.dev.json&#xD;&#xA;)&#xD;&#xA;" />
   </Target>
+
   <ItemGroup>
     <FluentValidationExcludedCultures Include="be;cs;cs-CZ;da;de;es;fa;fi;fr;ja;it;ko;mk;nl;pl;pt;pt-BR;ru;sv;tr;uk;zh-CN;zh-CHS;zh-CHT;zh-Hant;zh-Hans">
       <InProject>false</InProject>
     </FluentValidationExcludedCultures> 
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
   <Target Name="RemoveTranslationsAfterBuild" AfterTargets="AfterBuild">
     <RemoveDir Directories="@(FluentValidationExcludedCultures->'$(OutputPath)%(Filename)')" />    
   </Target>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
 </Project>
