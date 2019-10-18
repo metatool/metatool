@@ -39,14 +39,39 @@ namespace Metatool.Plugin
 
         public void InitPlugins()
         {
-            var pluginsDir = Path.Combine(AppContext.BaseDirectory, "tools");
+            // tools dir with metatool.dll
+            var pluginsDir     = Path.Combine(AppContext.BaseDirectory, "tools");
+            var pluginDirExist = Directory.Exists(pluginsDir);
+            if (pluginDirExist)
+                InitPlugin(pluginsDir);
+            // tools dir with metatool.exe
+            var pluginsDir_exe = Path.Combine(Environment.CurrentDirectory, "tools");
+            if (Directory.Exists(pluginsDir_exe))
+            {
+                static string NormalizePath(string path)
+                {
+                    return Path.GetFullPath(new Uri(path).LocalPath)
+                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                        .ToUpperInvariant();
+                }
+
+                if (!pluginDirExist || NormalizePath(pluginsDir) != NormalizePath(pluginsDir_exe))
+                {
+                    InitPlugin(pluginsDir_exe);
+                }
+            }
+        }
+
+        private void InitPlugin(string pluginsDir)
+        {
+            _logger.LogInformation($"Loading plugin tools from: {pluginsDir} ...");
             foreach (var dir in Directory.GetDirectories(pluginsDir))
             {
                 var assemblyName = Path.GetFileName(dir);
                 try
                 {
                     var scriptPath = Path.Combine(dir, "main.csx");
-                    var pluginDll = Path.Combine(dir, assemblyName + ".dll");
+                    var pluginDll  = Path.Combine(dir, assemblyName + ".dll");
                     if (File.Exists(scriptPath))
                     {
                         pluginDll = Path.Combine(dir, ScriptBin, assemblyName + ".dll");
@@ -141,7 +166,7 @@ namespace Metatool.Plugin
             _plugins.Add(dllPath, token);
             var pluginTypes = GetPluginTypes(loader);
 
-            pluginTypes.assembly.EntryPoint?.Invoke(null, new object[]{});
+            pluginTypes.assembly.EntryPoint?.Invoke(null, new object[] { });
             // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
             var types = pluginTypes.types;
             if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
@@ -179,7 +204,7 @@ namespace Metatool.Plugin
                 {
                     config.PreferSharedTypes      = true;
                     config.IsUnloadable           = true;
-                    config.SharedAssemblyPrefixes = new List<string>(){"Metatool.Plugin"};
+                    config.SharedAssemblyPrefixes = new List<string>() {"Metatool.Plugin"};
                 });
             return loader;
         }
@@ -222,15 +247,15 @@ namespace Metatool.Plugin
         {
             static void move(string pluginDir1, string assemblyName1, ILogger logger1)
             {
-                var backupDir = Path.Combine(pluginDir1, "backup");
-                var backupPath = Path.Combine(backupDir,  assemblyName1);
-                var dllPath1    = Path.Combine(pluginDir1,  assemblyName1);
+                var backupDir  = Path.Combine(pluginDir1, "backup");
+                var backupPath = Path.Combine(backupDir, assemblyName1);
+                var dllPath1   = Path.Combine(pluginDir1, assemblyName1);
 
-                if(!Directory.Exists(backupDir) ) Directory.CreateDirectory(backupDir);
+                if (!Directory.Exists(backupDir)) Directory.CreateDirectory(backupDir);
                 if (File.Exists(dllPath1 + ".dll"))
                 {
-                    File.Move(dllPath1 + ".dll", backupPath + ".dll",  true);
-                    File.Move(dllPath1 + ".deps.json", backupPath + ".deps.json",  true);
+                    File.Move(dllPath1 + ".dll", backupPath       + ".dll", true);
+                    File.Move(dllPath1 + ".deps.json", backupPath + ".deps.json", true);
                     // if (!Debugger.IsAttached) for file is locked by vs
                     File.Move(dllPath1 + ".pdb", backupPath + ".pdb", true);
                     logger1.LogInformation($"{assemblyName1}: backup done");
@@ -242,7 +267,7 @@ namespace Metatool.Plugin
             {
                 var scriptHost = new ScriptHost(_logger);
                 var outputDir  = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
-                var pluginDll = Path.Combine(outputDir, assemblyName + ".dll");
+                var pluginDll  = Path.Combine(outputDir, assemblyName + ".dll");
 
                 move(outputDir, assemblyName, _logger);
                 scriptHost.Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug);
@@ -280,7 +305,7 @@ namespace Metatool.Plugin
             // services.BuildServiceProvider();
         }
 
-        private (Assembly assembly,List<Type> types) GetPluginTypes(PluginLoader loader)
+        private (Assembly assembly, List<Type> types) GetPluginTypes(PluginLoader loader)
 
         {
             var types = loader.MainAssembly.GetTypes()

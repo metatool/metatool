@@ -84,6 +84,7 @@ namespace Metaseed.Metatool
 
         protected override void OnStartup(StartupEventArgs e)
         {
+
             base.OnStartup(e);
             var currentDir = Directory.GetCurrentDirectory();
 
@@ -133,7 +134,7 @@ namespace Metaseed.Metatool
             }
 
             ConfigNotify(notify);
-            logger.LogInformation($"MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolPath")}");
+            logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolPath")}");
             logger.LogInformation("Metatool started!");
         }
     }

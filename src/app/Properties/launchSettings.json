@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Metaseed.Metatool": {
-      "commandName": "Project",
-      "commandLineArgs": "init aaaa"
+      "commandName": "Project"
     }
   }
 }

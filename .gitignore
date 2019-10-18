@@ -163,3 +163,4 @@ pkg
 /src/app/Metaseed.Clipboard/passwords.txt
 /src/app/Metaseed.Clipboard/Windows Store/ClipboardApp/win32
 !/exe/[Rr]elease/
+/exe/[Rr]elease/win10-x64
