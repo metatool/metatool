@@ -4,6 +4,7 @@ using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Plugin;
+using Metatool.Plugin.Core;
 using Metatool.UI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +38,8 @@ namespace Metaseed.Metatool
         internal static ServiceProvider InitServices()
         {
             var serviceCollection = new ServiceCollection();
-            var configuration     = new ConfigurationBuilder().AddJsonFile("config.json").Build();
+
+            var configuration     = new ConfigurationBuilder().SetBasePath(Context.BaseDirectory).AddJsonFile("config.json",optional:true, reloadOnChange:true).Build();
             ConfigureServices(serviceCollection, configuration);
 
             var provider = serviceCollection.BuildServiceProvider();
