@@ -21,14 +21,20 @@ namespace Metatool.MetaKeyboard
 {
     public partial class Notify: INotify
     {
-        private static readonly TaskbarIcon TrayIcon;
+        private static  TaskbarIcon _trayIcon;
 
-        static Notify()
+        private static TaskbarIcon TrayIcon
         {
-            var resource = new Uri("pack://application:,,,/Metatool.UI;component/Notify/NotifyIconResources.xaml",
-                UriKind.RelativeOrAbsolute);
-            Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() {Source = resource});
-            TrayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
+            get
+            {
+                if (Application.Current == null) return null;
+                if (_trayIcon != null) return _trayIcon;
+                var resource = new Uri("pack://application:,,,/Metatool.UI;component/Notify/NotifyIconResources.xaml",
+                    UriKind.RelativeOrAbsolute);
+                Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = resource });
+                _trayIcon = Application.Current.FindResource("NotifyIcon") as TaskbarIcon;
+                return _trayIcon;
+            }
         }
 
         public static MessageToken<TipItem> ShowMessage(System.Windows.FrameworkElement balloon,

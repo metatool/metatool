@@ -152,13 +152,13 @@ namespace Metatool.Plugin
 
         public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
         {
-            Debug.Assert(Application.Current.Dispatcher != null, "Application.Current.Dispatcher != null");
-            var access = Application.Current.Dispatcher.CheckAccess();
-            if (!access)
-            {
-                Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
-                return;
-            }
+            // Debug.Assert(Application.Current.Dispatcher != null, "Application.Current.Dispatcher != null");
+            // var access = Application.Current.Dispatcher.CheckAccess();
+            // if (!access)
+            // {
+            //     Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
+            //     return;
+            // }
 
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
             var loader       = CreatePluginLoader(dllPath);

@@ -71,8 +71,9 @@ namespace Metatool.Metatool.Plugin
 
             var config = new PluginConfig(assemblyFile);
             configure(config);
-            Debug.Assert(Application.Current.Dispatcher != null, "Application.Current.Dispatcher != null");
-            return Application.Current.Dispatcher.Invoke(() => new PluginLoader(config));
+            //Debug.Assert(Application.Current.Dispatcher != null, "Application.Current.Dispatcher != null");
+            //return Application.Current.Dispatcher.Invoke(() => new PluginLoader(config));
+            return new PluginLoader(config);
         }
 
         private readonly PluginConfig        _config;

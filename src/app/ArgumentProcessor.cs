@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using McMaster.Extensions.CommandLineUtils;
+using McMaster.Extensions.CommandLineUtils.Validation;
+using Metatool.Plugin;
+using Metatool.Plugin.Core;
 using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
@@ -11,20 +14,31 @@ namespace Metaseed.Metatool
     {
         private readonly ILogger _logger;
 
-        public ArgumentProcessor(ILogger logger)
+        public ArgumentProcessor()
         {
-            _logger = logger;
+            _logger = Services.Get<ILogger<ArgumentProcessor>>();
         }
+
         const string HelpOptionTemplate = "-? | -h | --help";
+
         public int ArgumentsProcess(string[] args)
         {
             var app = new CommandLineApplication(throwOnUnexpectedArg: false)
             {
-                Name = "metatool",
-                Description = "tools for Windows",
+                Name             = "metatool",
+                Description      = "tools for Windows",
                 ExtendedHelpText = "===Metaseed Metatool==="
             };
             app.HelpOption(inherited: true);
+
+            app.OnExecute(() =>
+            {
+            var application = new App();
+                    var pluginManager = Services.GetOrCreate<PluginManager>();
+                pluginManager.InitPlugins();
+                application.RunApp();
+            });
+
             app.Command("new", configCmd =>
             {
                 configCmd.OnExecute(() =>
@@ -43,7 +57,7 @@ namespace Metaseed.Metatool
                         "The name of the tool script to be created.");
                     var cwd = c.Option("-dir |--directory <dir>",
                         "The directory to initialize the tool scripts. Defaults to current directory.",
-                        CommandOptionType.SingleValue);
+                        CommandOptionType.SingleValue).Accepts(v => v.ExistingDirectory());
                     c.HelpOption(HelpOptionTemplate);
                     c.OnExecute(() =>
                     {
@@ -61,13 +75,51 @@ namespace Metaseed.Metatool
                         "The name of the tool to be created.");
                     var cwd = c.Option("-dir |--directory <dir>",
                         "The directory to initialize the tool. Defaults to current directory.",
-                        CommandOptionType.SingleValue);
+                        CommandOptionType.SingleValue).Accepts(v => v.ExistingDirectory());
                     c.HelpOption(HelpOptionTemplate);
                     c.OnExecute(() =>
                     {
                         var scaffolder = new Scaffolder(_logger);
-                        scaffolder.InitTemplate(fileName.Value, cwd.Value(),true);
+                        scaffolder.InitTemplate(fileName.Value, cwd.Value(), true);
                     });
+                });
+            });
+
+            app.Command("run", c =>
+            {
+                c.Description = "run the script or lib with metatool ";
+
+                var fileName = c.Argument("path",
+                    "The name of the tool script to be created.");
+                fileName.Validators.Add(new FileNameValidator());
+
+                c.HelpOption(HelpOptionTemplate);
+                c.OnExecute(() =>
+                {
+                    var fullPath = fileName.Value;
+                    if (!File.Exists(fullPath))
+                        fullPath = Path.Combine(Context.CurrentDirectory, fullPath);
+
+                    if (fullPath.EndsWith(".dll"))
+                    {
+                        try
+                        {
+                            var pluginManager = Services.GetOrCreate<PluginManager>();
+                            pluginManager.LoadDll(fullPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex,
+                                $"Error while loading tool {fullPath}! No tools loaded! Please fix it then restart!");
+                        }
+                    }
+                    else if (fullPath.EndsWith(".csx"))
+                    {
+                        var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
+                        _logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
+                        var pluginManager = Services.GetOrCreate<PluginManager>(); 
+                        pluginManager.BuildReload(fullPath, assemblyName, false);
+                    }
                 });
             });
 
@@ -87,14 +139,35 @@ namespace Metaseed.Metatool
                 });
             }
 
-            app.OnExecute(() =>
-            {
-                Console.WriteLine("Specify a subcommand");
-                app.ShowHelp();
-                return 1;
-            });
+          
 
             return app.Execute(args);
+        }
+
+        class FileNameValidator : IArgumentValidator
+        {
+            public ValidationResult GetValidationResult(CommandArgument argument, ValidationContext context)
+            {
+                var path = argument.Value;
+
+                if(string.IsNullOrEmpty(path))
+                    return new ValidationResult($"the 'run' command should have argument of a file end with '.csx' or '.dll'");
+
+                if (!path.EndsWith(".dll") && !path.EndsWith(".csx"))
+                    return new ValidationResult($"The value for {argument.Value} must be end with '.csx' or '.dll'");
+
+                if (File.Exists(path))
+                {
+                    return ValidationResult.Success;
+                }
+
+                path = Path.Combine(Context.CurrentDirectory, path);
+                if (File.Exists(path))
+                {
+                    return ValidationResult.Success;
+                }
+                return new ValidationResult($"Could not find {path}!");
+            }
         }
     }
 }

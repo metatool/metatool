@@ -117,7 +117,7 @@ namespace Metatool.MetaKeyboard
 
         public void CloseKeysTip()
         {
-            TrayIcon.CloseBalloon();
+            TrayIcon?.CloseBalloon();
         }
 
         private  ObservableCollection<TipItem> selectActions;

@@ -29,6 +29,8 @@ namespace Metatool.Plugin.Core
                 return _appDirectory;
             }
         }
+
+        public static string CurrentDirectory => Environment.CurrentDirectory;
     }
 
         

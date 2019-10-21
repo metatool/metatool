@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Metatool.Plugin;
-using Microsoft.Extensions.Logging;
+using Metatool.Utils;
 
 namespace Metaseed.Metatool
 {
@@ -12,12 +9,10 @@ namespace Metaseed.Metatool
         [STAThread]
         public static void Main(string[] args)
         {
-            var application = new App();
-            application.InitializeComponent();
-            application.Run();
-
+            ConsoleExt.InitialConsole(true);
+            InitServices();
+            new ArgumentProcessor().ArgumentsProcess(args);
         }
-
 
     }
 }
