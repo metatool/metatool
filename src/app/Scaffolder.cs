@@ -67,17 +67,20 @@ namespace Metaseed.Metatool
             return s;
         }
 
-        public void InitScriptTemplate(string toolName, string dir = null)
+        public void InitTemplate(string toolName, string dir = null, bool isScript = true)
         {
-            dir??=Path.Combine(Context.AppDirectory, "tools", toolName);
+            var resource = isScript
+                ? "Metaseed.Metatool.Templates.ToolTemplate.zip"
+                : "Metaseed.Metatool.Templates.LibTemplate.zip";
+            dir ??=Path.Combine(Context.AppDirectory, "tools", toolName);
             if (Directory.Exists(dir))
             {
                 if (!Prompt.GetYesNo($"We already have a same folder at: {dir}, do you want to override?", false, ConsoleColor.Yellow)) return;
             }
             using var stream =
-                typeof(Scaffolder).Assembly.GetManifestResourceStream("Metaseed.Metatool.Templates.ToolTemplate.zip");
+                typeof(Scaffolder).Assembly.GetManifestResourceStream(resource);
             new ZipArchive(stream).ExtractToDirectory(dir,true);
-            _logger.LogInformation($"Metatool Script: {toolName} is created in folder: {dir}");
+            _logger.LogInformation($"Metatool: tool {toolName} is created in folder: {dir}");
         }
     }
 }

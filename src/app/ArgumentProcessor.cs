@@ -20,24 +20,54 @@ namespace Metaseed.Metatool
         {
             var app = new CommandLineApplication(throwOnUnexpectedArg: false)
             {
+                Name = "metatool",
+                Description = "tools for Windows",
                 ExtendedHelpText = "===Metaseed Metatool==="
             };
-
-            app.Command("init", c =>
+            app.HelpOption(inherited: true);
+            app.Command("new", configCmd =>
             {
-                c.Description =
-                    "Creates a sample script tool along with the files needed to launch and debug the script.";
-
-                var fileName = c.Argument("name",
-                    "The name of the tool script to be created during initialization.");
-                var cwd = c.Option("-dir |--directory <dir>",
-                    "The directory to initialize the tool scripts. Defaults to current directory.",
-                    CommandOptionType.SingleValue);
-                c.HelpOption(HelpOptionTemplate);
-                c.OnExecute(() =>
+                configCmd.OnExecute(() =>
                 {
-                    var scaffolder = new Scaffolder(_logger);
-                    scaffolder.InitScriptTemplate(fileName.Value, cwd.Value());
+                    Console.WriteLine("Specify a subcommand");
+                    configCmd.ShowHelp();
+                    return 1;
+                });
+
+                configCmd.Command("script", c =>
+                {
+                    c.Description =
+                        "Creates a sample script tool along with the files needed to launch and debug the script.";
+
+                    var fileName = c.Argument("name",
+                        "The name of the tool script to be created.");
+                    var cwd = c.Option("-dir |--directory <dir>",
+                        "The directory to initialize the tool scripts. Defaults to current directory.",
+                        CommandOptionType.SingleValue);
+                    c.HelpOption(HelpOptionTemplate);
+                    c.OnExecute(() =>
+                    {
+                        var scaffolder = new Scaffolder(_logger);
+                        scaffolder.InitTemplate(fileName.Value, cwd.Value());
+                    });
+                });
+
+                configCmd.Command("lib", c =>
+                {
+                    c.Description =
+                        "Creates a sample lib(dll) tool along with the files needed to launch and debug the project.";
+
+                    var fileName = c.Argument("name",
+                        "The name of the tool to be created.");
+                    var cwd = c.Option("-dir |--directory <dir>",
+                        "The directory to initialize the tool. Defaults to current directory.",
+                        CommandOptionType.SingleValue);
+                    c.HelpOption(HelpOptionTemplate);
+                    c.OnExecute(() =>
+                    {
+                        var scaffolder = new Scaffolder(_logger);
+                        scaffolder.InitTemplate(fileName.Value, cwd.Value(),true);
+                    });
                 });
             });
 
@@ -56,6 +86,13 @@ namespace Metaseed.Metatool
                     });
                 });
             }
+
+            app.OnExecute(() =>
+            {
+                Console.WriteLine("Specify a subcommand");
+                app.ShowHelp();
+                return 1;
+            });
 
             return app.Execute(args);
         }
