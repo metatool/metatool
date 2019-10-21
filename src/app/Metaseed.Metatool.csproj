@@ -20,9 +20,11 @@
     <ApplicationDefinition Remove="App.xaml" />
   </ItemGroup>
  <ItemGroup>
+   <None Remove="Templates\LibToolDemo.zip" />
    <None Remove="Templates\ToolTemplate.zip" />
  </ItemGroup>
  <ItemGroup>
+   <EmbeddedResource Include="Templates\LibToolDemo.zip" />
    <EmbeddedResource Include="Templates\ToolTemplate.zip" />
  </ItemGroup>
   <ItemGroup>
