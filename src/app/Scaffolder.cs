@@ -8,7 +8,6 @@ using McMaster.Extensions.CommandLineUtils;
 using Metatool.Plugin.Core;
 using Metatool.Utils;
 using Microsoft.Extensions.Logging;
-using McMaster.Extensions.CommandLineUtils;
 
 namespace Metaseed.Metatool
 {
