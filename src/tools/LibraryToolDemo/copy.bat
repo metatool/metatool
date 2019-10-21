@@ -1,0 +1,1 @@
+robocopy .\LibToolDemo\bin\Debug\netcoreapp3.0\ ..\..\..\exe\debug\tools\LibToolDemo /S

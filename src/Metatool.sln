@@ -55,6 +55,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LibraryToolDemo", "LibraryToolDemo", "{3AA980B4-2DE9-4067-BA64-8D130155C8A4}"
 	ProjectSection(SolutionItems) = preProject
 		tools\LibraryToolDemo\build.ps1 = tools\LibraryToolDemo\build.ps1
+		tools\LibraryToolDemo\copy.bat = tools\LibraryToolDemo\copy.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IPlugin", "IPlugin", "{5C07C04B-D1B8-4D77-8873-18CA3BAE2250}"
