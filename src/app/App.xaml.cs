@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -59,36 +60,11 @@ namespace Metaseed.Metatool
             notify.ShowMessage("Metatool started!");
         }
 
-        void SetupEnvVar(ILogger logger)
-        {
-            var value = Environment.GetEnvironmentVariable("MetatoolDir");
-            if (value == null)
-            {
-                Environment.SetEnvironmentVariable("MetatoolDir", AppContext.BaseDirectory,
-                    EnvironmentVariableTarget.User);
-                logger.LogInformation($"Set User Environment Var: MetatoolDir");
-            }
-
-            var scaffolder = new Scaffolder(logger); 
-
-            var pathval = scaffolder.AddToPath(EnvironmentVariableTarget.User);
-            try
-            {
-                scaffolder.AddToPath(EnvironmentVariableTarget.Machine);
-            }
-            catch
-            {
-                logger.LogWarning("Could not add to Machine scale Path environment variable!");
-            }
-        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-
             base.OnStartup(e);
             var currentDir = Directory.GetCurrentDirectory();
-
-            // Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
             Current.MainWindow = new MainWindow();
             ConsoleExt.InitialConsole(true);
@@ -102,13 +78,19 @@ namespace Metaseed.Metatool
             notify.ShowMessage("Metatool starting...");
 
             var logger = provider.GetService<ILogger<App>>();
-            SetupEnvVar(logger);
+
+            var scaffolder = new Scaffolder(logger);
+            scaffolder.AddToPath(EnvironmentVariableTarget.User);
+            scaffolder.AddToPath(EnvironmentVariableTarget.Machine);
+            scaffolder.SetupEnvVar();
+
             new ArgumentProcessor(logger).ArgumentsProcess(e.Args);
+
             var firstArg      = e.Args.FirstOrDefault();
             var pluginManager = ActivatorUtilities.GetServiceOrCreateInstance<PluginManager>(provider);
             if (firstArg != null)
             {
-                var fullPath = Path.GetFullPath(Path.Combine(currentDir,firstArg));
+                var fullPath = Path.GetFullPath(Path.Combine(currentDir, firstArg));
                 if (firstArg.EndsWith(".dll"))
                 {
                     try
@@ -117,10 +99,11 @@ namespace Metaseed.Metatool
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, $"Error while loading tool{firstArg}! No tools loaded! Please fix it then restart!");
+                        logger.LogError(ex,
+                            $"Error while loading tool{firstArg}! No tools loaded! Please fix it then restart!");
                     }
                 }
-                else if(firstArg.EndsWith(".csx"))
+                else if (firstArg.EndsWith(".csx"))
                 {
                     var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
                     logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");

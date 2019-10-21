@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "Metatool.ToolDemo": {
-      "commandName": "Executable",
-      "executablePath": "$(MetatoolDir)\\Metatool.exe",
-      "commandLineArgs": "$(TargetPath)"
-    }
-  }
-}
