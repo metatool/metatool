@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Metaseed.Metatool": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "new script grt"
     }
   }
 }

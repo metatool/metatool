@@ -6,6 +6,7 @@ using McMaster.Extensions.CommandLineUtils;
 using McMaster.Extensions.CommandLineUtils.Validation;
 using Metatool.Plugin;
 using Metatool.Plugin.Core;
+using Metatool.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
@@ -13,15 +14,20 @@ namespace Metaseed.Metatool
     public class ArgumentProcessor
     {
         private readonly ILogger _logger;
+        private string[] _args;
 
-        public ArgumentProcessor()
+        public ArgumentProcessor(string[] args)
         {
+            _args = args;
+            if(args.Length == 0 || args[0] == "run")
+                ConsoleExt.InitialConsole(true);
+            App.InitServices();
             _logger = Services.Get<ILogger<ArgumentProcessor>>();
         }
 
         const string HelpOptionTemplate = "-? | -h | --help";
 
-        public int ArgumentsProcess(string[] args)
+        public int ArgumentsProcess()
         {
             var app = new CommandLineApplication(throwOnUnexpectedArg: false)
             {
@@ -33,8 +39,9 @@ namespace Metaseed.Metatool
 
             app.OnExecute(() =>
             {
-            var application = new App();
-                    var pluginManager = Services.GetOrCreate<PluginManager>();
+                // without command
+                var application   = new App();
+                var pluginManager = Services.GetOrCreate<PluginManager>();
                 pluginManager.InitPlugins();
                 application.RunApp();
             });
@@ -43,7 +50,7 @@ namespace Metaseed.Metatool
             {
                 configCmd.OnExecute(() =>
                 {
-                    Console.WriteLine("Specify a subcommand");
+                    Console.WriteLine("Please specify a subcommand");
                     configCmd.ShowHelp();
                     return 1;
                 });
@@ -54,7 +61,7 @@ namespace Metaseed.Metatool
                         "Creates a sample script tool along with the files needed to launch and debug the script.";
 
                     var fileName = c.Argument("name",
-                        "The name of the tool script to be created.");
+                        "The name of the tool script to be created.").IsRequired(errorMessage: "please set the tool name \nusage: metatool new script <name>");
                     var cwd = c.Option("-dir |--directory <dir>",
                         "The directory to initialize the tool scripts. Defaults to current directory.",
                         CommandOptionType.SingleValue).Accepts(v => v.ExistingDirectory());
@@ -69,7 +76,7 @@ namespace Metaseed.Metatool
                 configCmd.Command("lib", c =>
                 {
                     c.Description =
-                        "Creates a sample lib(dll) tool along with the files needed to launch and debug the project.";
+                        "Creates a sample lib(dll) tool along with the files needed to launch and debug the csharp project.";
 
                     var fileName = c.Argument("name",
                         "The name of the tool to be created.");
@@ -96,6 +103,7 @@ namespace Metaseed.Metatool
                 c.HelpOption(HelpOptionTemplate);
                 c.OnExecute(() =>
                 {
+                    var application = new App();
                     var fullPath = fileName.Value;
                     if (!File.Exists(fullPath))
                         fullPath = Path.Combine(Context.CurrentDirectory, fullPath);
@@ -117,9 +125,10 @@ namespace Metaseed.Metatool
                     {
                         var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
                         _logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
-                        var pluginManager = Services.GetOrCreate<PluginManager>(); 
+                        var pluginManager = Services.GetOrCreate<PluginManager>();
                         pluginManager.BuildReload(fullPath, assemblyName, false);
                     }
+                    application.RunApp();
                 });
             });
 
@@ -139,9 +148,8 @@ namespace Metaseed.Metatool
                 });
             }
 
-          
 
-            return app.Execute(args);
+            return app.Execute(_args);
         }
 
         class FileNameValidator : IArgumentValidator
@@ -150,8 +158,9 @@ namespace Metaseed.Metatool
             {
                 var path = argument.Value;
 
-                if(string.IsNullOrEmpty(path))
-                    return new ValidationResult($"the 'run' command should have argument of a file end with '.csx' or '.dll'");
+                if (string.IsNullOrEmpty(path))
+                    return new ValidationResult(
+                        $"the 'run' command should have argument of a file end with '.csx' or '.dll'");
 
                 if (!path.EndsWith(".dll") && !path.EndsWith(".csx"))
                     return new ValidationResult($"The value for {argument.Value} must be end with '.csx' or '.dll'");
@@ -166,6 +175,7 @@ namespace Metaseed.Metatool
                 {
                     return ValidationResult.Success;
                 }
+
                 return new ValidationResult($"Could not find {path}!");
             }
         }

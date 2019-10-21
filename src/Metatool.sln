@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 15.0.26124.0
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool.csproj", "{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{920963F4-8205-4A1E-8ED3-9467B5D94794}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}"
@@ -45,8 +47,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MetaKeyboard", "tools_todo\Metatool.MetaKeyboard\Metatool.MetaKeyboard.csproj", "{E45A7DF5-A235-4454-BFD7-11E49D1B9DA6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.ScreenHint", "tools_todo\Metatool.ScreenHint\Metatool.ScreenHint.csproj", "{5DBF6B36-1863-483A-AAC6-E6E892248D97}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool.csproj", "{96CB1362-47B4-4082-BFF1-AB706A2DAB9C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugins", "lib\Metatool.Plugins\Metatool.Plugins.csproj", "{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}"
 EndProject

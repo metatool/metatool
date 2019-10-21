@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Metatool.Utils.Implementation;
+using Microsoft.VisualBasic;
 using Shell32;
+using System.IO;
 
 namespace Metatool.Utils
 {
@@ -89,6 +92,13 @@ namespace Metatool.Utils
                     shellWindow.SelectItem(file, 1);
                 }
             }
+        }
+
+        public static string Open(string path)
+        {
+            if (!Directory.Exists(path)) return "path not exists";
+            Process.Start("explorer.exe", path);
+            return "";
         }
 
     }

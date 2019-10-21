@@ -23,7 +23,7 @@ namespace Metatool.Plugin.Core
         {
             get
             {
-                if (_appDirectory != null) return "";
+                if (_appDirectory != null) return _appDirectory;
                 var mainModule = Process.GetCurrentProcess().MainModule;
                 _appDirectory = Path.GetDirectoryName(mainModule?.FileName);
                 return _appDirectory;

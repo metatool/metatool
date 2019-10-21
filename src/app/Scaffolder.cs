@@ -8,6 +8,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Metatool.Plugin.Core;
 using Metatool.Utils;
 using Microsoft.Extensions.Logging;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace Metaseed.Metatool
 {
@@ -70,15 +71,21 @@ namespace Metaseed.Metatool
             var resource = isScript
                 ? "Metaseed.Metatool.Templates.ToolTemplate.zip"
                 : "Metaseed.Metatool.Templates.LibTemplate.zip";
-            dir ??=Path.Combine(Context.AppDirectory, "tools", toolName);
+            dir ??= Path.Combine(Context.CurrentDirectory, toolName);
             if (Directory.Exists(dir))
             {
-                if (!Prompt.GetYesNo($"We already have a same folder at: {dir}, do you want to override?", false, ConsoleColor.Yellow)) return;
+                if (!Prompt.GetYesNo($"We already have a same folder at: {dir}, do you want to override?", false,
+                    ConsoleColor.Yellow))
+                {
+                    Console.WriteLine("command canceled.");
+                    return;
+                }
             }
             using var stream =
                 typeof(Scaffolder).Assembly.GetManifestResourceStream(resource);
             new ZipArchive(stream).ExtractToDirectory(dir,true);
             _logger.LogInformation($"Metatool: tool {toolName} is created in folder: {dir}");
+            Explorer.Open(dir);
         }
     }
 }

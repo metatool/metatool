@@ -86,7 +86,8 @@ namespace Metatool.MetaKeyboard
 
         public IKey  ShowDesktopFolder = (LWin + D).Down(e =>
             {
-                Process.Start("explorer.exe", Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                
+                Explorer.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 e.Handled = true;
             }
             , null, "Show &Desktop Folder");
