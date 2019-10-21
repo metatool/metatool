@@ -19,6 +19,12 @@
  <ItemGroup>
     <ApplicationDefinition Remove="App.xaml" />
   </ItemGroup>
+ <ItemGroup>
+   <None Remove="Templates\ToolTemplate.zip" />
+ </ItemGroup>
+ <ItemGroup>
+   <EmbeddedResource Include="Templates\ToolTemplate.zip" />
+ </ItemGroup>
   <ItemGroup>
     <None Update="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
