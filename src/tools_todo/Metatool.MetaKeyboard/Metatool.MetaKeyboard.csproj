@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <UseWPF>true</UseWPF>
-    <!-- <GeneratePackageOnBuild>true</GeneratePackageOnBuild> -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <!-- <OutputType>WinExe</OutputType> -->
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
