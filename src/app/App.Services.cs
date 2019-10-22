@@ -14,10 +14,10 @@ namespace Metaseed.Metatool
 {
     public partial class App
     {
-
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddLogging(loggingBuilder =>
+            services.AddOptions()
+                .AddLogging(loggingBuilder =>
                 {
                     loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
                     //loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
@@ -25,7 +25,7 @@ namespace Metaseed.Metatool
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                     //     new TextWriterTraceListener(writer: Console.Out)));
                     loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
-                    loggingBuilder.AddFile(o => o.RootPath = AppContext.BaseDirectory);
+                    loggingBuilder.AddFile(o => o.RootPath = Context.AppDirectory);
                 })
                 .Configure<LoggerFilterOptions>(options =>
                     options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)
@@ -39,7 +39,8 @@ namespace Metaseed.Metatool
         {
             var serviceCollection = new ServiceCollection();
 
-            var configuration     = new ConfigurationBuilder().SetBasePath(Context.BaseDirectory).AddJsonFile("config.json",optional:true, reloadOnChange:true).Build();
+            var configuration = new ConfigurationBuilder().SetBasePath(Context.BaseDirectory)
+                .AddJsonFile("config.json", optional: true, reloadOnChange: true).Build();
             ConfigureServices(serviceCollection, configuration);
 
             var provider = serviceCollection.BuildServiceProvider();
