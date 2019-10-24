@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Windows;
 using System.Windows.Threading;
 using Metatool.Metatool.Plugin.Loader;
 

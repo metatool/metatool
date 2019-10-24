@@ -7,7 +7,6 @@ using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Plugin;
-using Metatool.Plugin.Core;
 using Metatool.Plugins;
 using Metatool.UI;
 using Microsoft.Extensions.Configuration;

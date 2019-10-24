@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Metatool.Plugin.Core
+namespace Metatool.Plugin
 {
     public class Context
     {
@@ -29,6 +30,8 @@ namespace Metatool.Plugin.Core
                 return _appDirectory;
             }
         }
+
+        public static string ToolDir<T>() => Path.GetDirectoryName(typeof(T).Assembly.Location);
 
         public static string CurrentDirectory => Environment.CurrentDirectory;
     }

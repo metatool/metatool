@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
-using System.Windows;
 using Metatool.Metatool.Plugin;
 using Metatool.Reactive;
 using Metatool.Script;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Reactive;
 using Metatool.Tools;
 using Microsoft.Extensions.Configuration;
 

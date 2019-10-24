@@ -5,7 +5,7 @@ using Metatool.MetaKeyboard;
 using Metatool.Plugin;
 using Mouse = Metatool.MetaKeyboard.Mouse;
 
-namespace Metatool.ScreenHint
+namespace Metatool.MetaKeyboard
 {
     public class KeyboardTool : ToolBase
     {
@@ -23,8 +23,9 @@ namespace Metatool.ScreenHint
             return base.OnLoaded();
         }
 
-        public KeyboardTool(ICommandManager commandManager, IKeyboard keyboard)
+        public KeyboardTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config)
         {
+            Config.Current = config.CurrentValue;
             // commandManager.Add(keyboard.Down(Caps + A), e =>
             // {
             //     
