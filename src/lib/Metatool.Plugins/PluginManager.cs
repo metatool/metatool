@@ -202,7 +202,7 @@ namespace Metatool.Plugin
                 method.Invoke(null, new object[] {services, config});
 
                 var provider = services.BuildServiceProvider();
-                // Services.Provider = provider;
+                Services.Provider = provider;
             }
             (Assembly assembly, IEnumerable<Type> types) pluginTypes = (loader.MainAssembly, GetPluginTypes(allTypes));
 
@@ -214,8 +214,7 @@ namespace Metatool.Plugin
 
             types.ForEach(t =>
             {
-                var tool =
-                    ActivatorUtilities.CreateInstance(_services, t) as IPlugin;
+                var tool = Services.Create<IPlugin>(t);
                 tool?.OnLoaded();
                 token.Tools.Add(tool);
             });
