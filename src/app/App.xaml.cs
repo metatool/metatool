@@ -42,7 +42,7 @@ namespace Metaseed.Metatool
             var notify = Services.Get<INotify>();
             notify.ShowMessage("Metatool starting...");
 
-            var logger = Services.Get<ILogger < App>>();
+            var logger = Services.Get<ILogger<App>>();
 
             var scaffolder = new Scaffolder(logger);
             scaffolder.AddToPath(EnvironmentVariableTarget.User);
@@ -53,11 +53,11 @@ namespace Metaseed.Metatool
             logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolPath")}");
             logger.LogInformation("Metatool started!");
         }
+
         internal void RunApp()
         {
             InitializeComponent();
             Run();
         }
-
     }
 }

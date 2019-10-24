@@ -16,8 +16,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>$(SolutionDir)..\exe\release\tools\$(AssemblyName)</OutputPath>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Metatool.Plugin" Version="*" />
+    <ProjectReference Include="..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" />
   </ItemGroup>  
 </Project>

@@ -4,16 +4,18 @@ using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 using static Metatool.Input.Key;
 
-namespace Metatool.Tools
+namespace Metatool.Tools.LibToolDemo
 {
-    public class ToolDemo : PluginBase
+    public class ToolDemo : ToolBase
     {
         IRemove token;
 
-        public ToolDemo(ICommandManager commandManager, IKeyboard keyboard)
+        public ToolDemo(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config)
         {
             token = commandManager.Add(keyboard.Down(Caps + A),
                 e => { Logger.LogInformation($"{nameof(ToolDemo)}: Caps+A triggered!!!!!!!"); });
+            Logger.LogInformation(config.CurrentValue.Option1);
+            Logger.LogInformation(config.CurrentValue.Option2.ToString());
         }
 
         public override bool OnLoaded()

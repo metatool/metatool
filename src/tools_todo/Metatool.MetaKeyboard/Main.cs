@@ -7,7 +7,7 @@ using Mouse = Metatool.MetaKeyboard.Mouse;
 
 namespace Metatool.ScreenHint
 {
-    public class KeyboardPlugin :PluginBase
+    public class KeyboardTool : ToolBase
     {
 
         public override bool OnLoaded()
@@ -23,7 +23,7 @@ namespace Metatool.ScreenHint
             return base.OnLoaded();
         }
 
-        public KeyboardPlugin(ICommandManager commandManager, IKeyboard keyboard)
+        public KeyboardTool(ICommandManager commandManager, IKeyboard keyboard)
         {
             // commandManager.Add(keyboard.Down(Caps + A), e =>
             // {

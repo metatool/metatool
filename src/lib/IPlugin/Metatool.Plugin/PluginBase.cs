@@ -2,11 +2,14 @@
 
 namespace Metatool.Plugin
 {
-    public abstract class PluginBase : IPlugin
+    public abstract class ToolBase : IPlugin
     {
         private readonly ILogger _logger;
 
-        protected PluginBase()
+        private string _id;
+        public string Id => _id??= this.GetType().Assembly.GetName().Name;
+
+        protected ToolBase()
         {
             var loggerType = typeof(ILogger<>).MakeGenericType(this.GetType());
             _logger = Services.Get(loggerType) as ILogger;

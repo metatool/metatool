@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,9 @@ using Metatool.Script;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Reactive;
+using Metatool.Tools;
+using Microsoft.Extensions.Configuration;
 
 namespace Metatool.Plugin
 {
@@ -39,27 +43,46 @@ namespace Metatool.Plugin
 
         public void InitPlugins()
         {
-            // tools dir with metatool.dll
-            var pluginsDir     = Path.Combine(AppContext.BaseDirectory, "tools");
-            var pluginDirExist = Directory.Exists(pluginsDir);
-            if (pluginDirExist)
-                InitPlugin(pluginsDir);
-            // tools dir with metatool.exe
-            var pluginsDir_exe = Path.Combine(Environment.CurrentDirectory, "tools");
-            if (Directory.Exists(pluginsDir_exe))
-            {
-                static string NormalizePath(string path)
-                {
-                    return Path.GetFullPath(new Uri(path).LocalPath)
-                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                        .ToUpperInvariant();
-                }
+            GetToolsDirectories().ForEach(InitPlugin);
+        }
 
-                if (!pluginDirExist || NormalizePath(pluginsDir) != NormalizePath(pluginsDir_exe))
-                {
-                    InitPlugin(pluginsDir_exe);
-                }
+        public static IEnumerable<string> GetToolDirectories()
+        {
+            return GetToolsDirectories().SelectMany(Directory.GetDirectories).Where(dir =>
+            {
+                var assemblyName = Path.GetFileName(dir);
+                var scriptPath   = Path.Combine(dir, "main.csx");
+                var pluginDll    = Path.Combine(dir, assemblyName + ".dll");
+                return File.Exists(scriptPath) || File.Exists(pluginDll);
+            });
+        }
+
+        private static List<string> GetToolsDirectories()
+        {
+            static string NormalizePath(string path)
+            {
+                return Path.GetFullPath(new Uri(path).LocalPath)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    .ToUpperInvariant();
             }
+
+            static List<string> AddToolPath(List<string> tools, string path)
+            {
+                path = NormalizePath(path);
+                if (!Directory.Exists(path) || tools.Contains(path)) return tools;
+                tools.Add(path);
+                return tools;
+            }
+
+            var result = new List<string>()
+            {
+                // tools dir with metatool.dll
+                Path.Combine(AppContext.BaseDirectory, "tools"),
+                // tools dir with metatool.exe
+                Path.Combine(Environment.CurrentDirectory, "tools")
+            }.Aggregate(new List<string>(), AddToolPath);
+
+            return result;
         }
 
         private void InitPlugin(string pluginsDir)
@@ -164,11 +187,28 @@ namespace Metatool.Plugin
             var loader       = CreatePluginLoader(dllPath);
             var token        = new PluginToken() {Loader = loader, Watcher = lastWatcher};
             _plugins.Add(dllPath, token);
-            var pluginTypes = GetPluginTypes(loader);
+
+            var allTypes   = loader.MainAssembly.GetTypes();
+            var optionType = ToolConfig.GetOptionType(allTypes);
+            if (optionType != null)
+            {
+                var services = Services.Get<IServiceCollection>();
+                var id       = loader.MainAssembly.GetName().Name;
+                var config   = Services.Get<IConfiguration>().GetSection(id);
+                // call services.Configure<optionType>(Configuration.GetSection(id));
+                var method = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
+                    nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
+                    new[] {typeof(IServiceCollection), typeof(IConfiguration)}).MakeGenericMethod(optionType);
+                method.Invoke(null, new object[] {services, config});
+
+                var provider = services.BuildServiceProvider();
+                // Services.Provider = provider;
+            }
+            (Assembly assembly, IEnumerable<Type> types) pluginTypes = (loader.MainAssembly, GetPluginTypes(allTypes));
 
             pluginTypes.assembly.EntryPoint?.Invoke(null, new object[] { });
             // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
-            var types = pluginTypes.types;
+            var types = pluginTypes.types.ToList();
             if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
 
 
@@ -305,14 +345,10 @@ namespace Metatool.Plugin
             // services.BuildServiceProvider();
         }
 
-        private (Assembly assembly, List<Type> types) GetPluginTypes(PluginLoader loader)
-
-        {
-            var types = loader.MainAssembly.GetTypes()
+        private IEnumerable<Type> GetPluginTypes(IEnumerable<Type> types)
+            => types
                 .Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract)
                 .ToList();
-            return (loader.MainAssembly, types);
-        }
     }
 
     public static class ServiceCollectionExtensions

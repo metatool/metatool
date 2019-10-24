@@ -29,6 +29,9 @@
    <EmbeddedResource Include="Templates\ToolTemplate.zip" />
  </ItemGroup>
   <ItemGroup>
+    <None Update="config.default.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

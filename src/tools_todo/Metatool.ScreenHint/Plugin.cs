@@ -4,13 +4,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Metatool.ScreenHint
 {
-    public class ScreenHintPlugin : PluginBase
+    public class ScreenHintTool : ToolBase
     {
         private readonly IKeyboard _keyboard;
         private readonly IMouse _mouse;
         private ScreenHint _screenHint;
 
-        public ScreenHintPlugin( IKeyboard keyboard, IMouse mouse)         {
+        public ScreenHintTool( IKeyboard keyboard, IMouse mouse)         {
             _keyboard = keyboard;
             _mouse = mouse;
         }

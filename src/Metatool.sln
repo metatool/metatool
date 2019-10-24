@@ -87,7 +87,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScriptToolDemo", "ScriptToo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.ScriptToolTemplate", "tools\ScriptToolDemo\Metatool.ScriptToolTemplate.csproj", "{B6AB2D7C-E860-48B1-AD48-C3D21CFB3FA8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.LibToolTemplate", "tools\LibraryToolDemo\LibToolDemo\Metatool.LibToolTemplate.csproj", "{D68873B1-D0C8-44A9-A199-D688FE37FEDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.LibToolDemo", "tools\LibraryToolDemo\LibToolDemo\Metatool.Tools.LibToolDemo.csproj", "{D68873B1-D0C8-44A9-A199-D688FE37FEDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

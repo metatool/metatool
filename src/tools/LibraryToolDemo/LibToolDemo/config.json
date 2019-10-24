@@ -1,0 +1,7 @@
+﻿{
+  // the key should be the dll name and it is used as an unique id of the tool 
+  "Metatool.Tools.LibToolDemo": {
+    "Option1": "hello world",
+    "Option2": 8
+  }
+}

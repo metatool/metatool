@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Configuration;
+using System.IO;
+using Metaseed.Metatool.Service;
 using Metatool.Command;
 using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Plugin;
 using Metatool.Plugin.Core;
+using Metatool.Plugins;
 using Metatool.UI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +20,7 @@ namespace Metaseed.Metatool
     {
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddOptions()
+            services
                 .AddLogging(loggingBuilder =>
                 {
                     loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
@@ -32,17 +36,29 @@ namespace Metaseed.Metatool
                 .AddSingleton<IKeyboard, Keyboard>()
                 .AddSingleton<IMouse, Mouse>()
                 .AddSingleton<ICommandManager, CommandManager>()
-                .AddSingleton<INotify, Notify>();
+                .AddSingleton(typeof(IConfig<>), typeof(Config<>))
+                .AddSingleton<INotify, Notify>()
+                .AddSingleton<IServiceCollection>(services)
+                .AddSingleton<IConfiguration>(configuration);
         }
 
         internal static ServiceProvider InitServices()
         {
             var serviceCollection = new ServiceCollection();
 
-            var configuration = new ConfigurationBuilder().SetBasePath(Context.BaseDirectory)
-                .AddJsonFile("config.json", optional: true, reloadOnChange: true).Build();
-            ConfigureServices(serviceCollection, configuration);
+            var configPath = Path.Combine(Context.AppDirectory, "config.json");
+            if (!File.Exists(configPath))
+            {
+                File.Copy(Path.Combine(Context.BaseDirectory, "config.json"), configPath);
+            }
 
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile(Path.Combine(Context.BaseDirectory, "config.default.json"), optional: false,
+                    reloadOnChange: true)
+                .AddPluginsConfig()
+                .AddJsonFile(configPath, optional: true, reloadOnChange: true)
+                .Build();
+            ConfigureServices(serviceCollection, configuration);
             var provider = serviceCollection.BuildServiceProvider();
             Services.Provider = provider;
             return provider;
