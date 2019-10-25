@@ -69,7 +69,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.deps.json&#xD;&#xA;del $(SolutionDir)..\exe\release\System.Reactive*&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.runtimeconfig.dev.json&#xD;&#xA;)&#xD;&#xA;" />
+    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.deps.json&#xD;&#xA;del $(SolutionDir)..\exe\release\System.Reactive*&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.runtimeconfig.dev.json&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />
   </Target>
 
   <ItemGroup>

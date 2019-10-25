@@ -8,95 +8,28 @@
     ".NETCoreApp,Version=v3.0": {
       "Metatool.ScreenHint/1.0.0": {
         "dependencies": {
-          "Metatool.Plugin": "1.4.6"
+          "Metatool.Plugin": "1.4.7"
         },
         "runtime": {
           "Metatool.ScreenHint.dll": {}
         }
       },
-      "Metatool.Plugin/1.4.6": {
+      "Microsoft.Extensions.DependencyInjection/3.0.0": {
         "dependencies": {
-          "Metatool.Plugin.Command": "1.4.6",
-          "Metatool.Plugin.Core": "1.4.6",
-          "Metatool.Plugin.Input": "1.4.6",
-          "Metatool.Plugin.MouseKeyHook": "1.4.6",
-          "Metatool.Plugin.UI": "1.4.6",
-          "Metatool.Plugin.Utils": "1.4.6",
-          "Microsoft.Extensions.Logging.Abstractions": "3.0.0"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.0.0"
         },
         "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
+          "lib/netcoreapp3.0/Microsoft.Extensions.DependencyInjection.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.19.46305"
           }
         }
       },
-      "Metatool.Plugin.Command/1.4.6": {
+      "Microsoft.Extensions.DependencyInjection.Abstractions/3.0.0": {
         "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.Command.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
-          }
-        }
-      },
-      "Metatool.Plugin.Core/1.4.6": {
-        "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.Core.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
-          }
-        }
-      },
-      "Metatool.Plugin.Input/1.4.6": {
-        "dependencies": {
-          "Metatool.Plugin.Core": "1.4.6",
-          "Metatool.Plugin.MouseKeyHook": "1.4.6"
-        },
-        "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.Input.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
-          }
-        }
-      },
-      "Metatool.Plugin.MouseKeyHook/1.4.6": {
-        "dependencies": {
-          "Metatool.Plugin.Command": "1.4.6"
-        },
-        "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.MouseKeyHook.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
-          }
-        }
-      },
-      "Metatool.Plugin.NotifyIcon/1.4.6": {
-        "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.NotifyIcon.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
-          }
-        }
-      },
-      "Metatool.Plugin.UI/1.4.6": {
-        "dependencies": {
-          "Metatool.Plugin.NotifyIcon": "1.4.6"
-        },
-        "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.UI.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
-          }
-        }
-      },
-      "Metatool.Plugin.Utils/1.4.6": {
-        "dependencies": {
-          "System.ComponentModel.Composition": "4.6.0"
-        },
-        "runtime": {
-          "lib/netcoreapp3.0/Metatool.Plugin.Utils.dll": {
-            "assemblyVersion": "1.4.6.0",
-            "fileVersion": "1.4.6.0"
+          "lib/netstandard2.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.19.46305"
           }
         }
       },
@@ -115,6 +48,92 @@
             "fileVersion": "4.700.19.46214"
           }
         }
+      },
+      "Metatool.Plugin/1.4.7": {
+        "dependencies": {
+          "Metatool.Plugin.Command": "1.4.7",
+          "Metatool.Plugin.Core": "1.4.7",
+          "Metatool.Plugin.Input": "1.4.7",
+          "Metatool.Plugin.MouseKeyHook": "1.4.7",
+          "Metatool.Plugin.UI": "1.4.7",
+          "Metatool.Plugin.Utils": "1.4.7",
+          "Microsoft.Extensions.Logging.Abstractions": "3.0.0"
+        },
+        "runtime": {
+          "Metatool.Plugin.dll": {}
+        }
+      },
+      "Metatool.Plugin.Command/1.4.7": {
+        "runtime": {
+          "Metatool.Plugin.Command.dll": {}
+        }
+      },
+      "Metatool.Plugin.Core/1.4.7": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "3.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.0.0"
+        },
+        "runtime": {
+          "Metatool.Plugin.Core.dll": {}
+        }
+      },
+      "Metatool.Plugin.Input/1.4.7": {
+        "dependencies": {
+          "Metatool.Plugin.Core": "1.4.7",
+          "Metatool.Plugin.MouseKeyHook": "1.4.7"
+        },
+        "runtime": {
+          "Metatool.Plugin.Input.dll": {}
+        }
+      },
+      "Metatool.Plugin.MouseKeyHook/1.4.7": {
+        "dependencies": {
+          "Metatool.Plugin.Command": "1.4.7"
+        },
+        "runtime": {
+          "Metatool.Plugin.MouseKeyHook.dll": {}
+        }
+      },
+      "Metatool.Plugin.NotifyIcon/1.4.7": {
+        "runtime": {
+          "Metatool.Plugin.NotifyIcon.dll": {}
+        }
+      },
+      "Metatool.Plugin.UI/1.4.7": {
+        "dependencies": {
+          "Metatool.Plugin.NotifyIcon": "1.4.7"
+        },
+        "runtime": {
+          "Metatool.Plugin.UI.dll": {}
+        }
+      },
+      "Metatool.Plugin.Utils/1.4.7": {
+        "dependencies": {
+          "Metatool.Plugin.Core": "1.4.7",
+          "Microsoft.Extensions.Logging.Abstractions": "3.0.0",
+          "System.ComponentModel.Composition": "4.6.0",
+          "Interop.SHDocVw": "1.1.0.0",
+          "Interop.Shell32": "1.0.0.0"
+        },
+        "runtime": {
+          "Metatool.Plugin.Utils.dll": {}
+        }
+      },
+      "Interop.SHDocVw.Reference/1.1.0.0": {
+        "runtime": {
+          "Interop.SHDocVw.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
+      },
+      "Interop.Shell32.Reference/1.0.0.0": {
+        "runtime": {
+          "Interop.Shell32.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -124,61 +143,19 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Metatool.Plugin/1.4.6": {
+    "Microsoft.Extensions.DependencyInjection/3.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-4xFaq/eT441YZqbwesqFclJ2HrFZg7qsf/TBDxxA0KftfqI+aas9HyKMApB4XxmRpWjr1A4c4kLCwDpcaS8eaA==",
-      "path": "metatool.plugin/1.4.6",
-      "hashPath": "metatool.plugin.1.4.6.nupkg.sha512"
+      "sha512": "sha512-yDsuNA/BT4j9qrcRs0NUNHQAJfywFWX18ZZ+shxXJL+/nIfz3vhuRTfnYgvFeQlNBlgmgdSjOcs4ajgoS6Q/Ng==",
+      "path": "microsoft.extensions.dependencyinjection/3.0.0",
+      "hashPath": "microsoft.extensions.dependencyinjection.3.0.0.nupkg.sha512"
     },
-    "Metatool.Plugin.Command/1.4.6": {
+    "Microsoft.Extensions.DependencyInjection.Abstractions/3.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xvhzYjeQVMDQJ0AwxSAZTMaOz6/8qc+R+SiDpCEqhwLbYtbEozm9fLfCuZhx0S8Vzx2UHRXynM3ud09Wt0X+GA==",
-      "path": "metatool.plugin.command/1.4.6",
-      "hashPath": "metatool.plugin.command.1.4.6.nupkg.sha512"
-    },
-    "Metatool.Plugin.Core/1.4.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-Mk5gZh4YSydavL4lowvdv9WzJgjjYB0IX54piQNjqV/Sk4HhV+/HZxuNE4GvGUtmHgwlsDmm9cCr9MuBl8HduQ==",
-      "path": "metatool.plugin.core/1.4.6",
-      "hashPath": "metatool.plugin.core.1.4.6.nupkg.sha512"
-    },
-    "Metatool.Plugin.Input/1.4.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-tDQvckRf6bSiQZGplcfY2VaukAX5z27R8Gz5U/NTgIhdRlHFhC9P7AWSiuJZBkTkLCxHfXGOoyZUOkWMH/tJAg==",
-      "path": "metatool.plugin.input/1.4.6",
-      "hashPath": "metatool.plugin.input.1.4.6.nupkg.sha512"
-    },
-    "Metatool.Plugin.MouseKeyHook/1.4.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-5tRboVkd7F8hC6EgJo+8CYHR7FB3HimMCs3Dbsxujxh2cyd/oT+FMy979s4nJ1qgAIjCtMVtmrqw64dlxNmTdQ==",
-      "path": "metatool.plugin.mousekeyhook/1.4.6",
-      "hashPath": "metatool.plugin.mousekeyhook.1.4.6.nupkg.sha512"
-    },
-    "Metatool.Plugin.NotifyIcon/1.4.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-XtVqwO8rTzoi2YXH0FgRiEY63ec/CpXLLiVm0HJpShLBvJ6uQOZYgWYbkLRY6XIQ2kEdMcSgAwY3pZQKLU6JZQ==",
-      "path": "metatool.plugin.notifyicon/1.4.6",
-      "hashPath": "metatool.plugin.notifyicon.1.4.6.nupkg.sha512"
-    },
-    "Metatool.Plugin.UI/1.4.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-8D8u+OF34RbQCEzFFCOfk3qSlZ8WiyxoX+kmgwCSp0VC955Zqwl0iE8T1EFFMncbYsx20IfFBsrafRF833MGxw==",
-      "path": "metatool.plugin.ui/1.4.6",
-      "hashPath": "metatool.plugin.ui.1.4.6.nupkg.sha512"
-    },
-    "Metatool.Plugin.Utils/1.4.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-pQhzE10YbSJoehSfUUFoF1oRdxVwrOAGBSrtlX/VssXo8+SrvwpeIkUGnERqWVI20aFH4RQI1BPcI07NgeSVAw==",
-      "path": "metatool.plugin.utils/1.4.6",
-      "hashPath": "metatool.plugin.utils.1.4.6.nupkg.sha512"
+      "sha512": "sha512-ofQRroDlzJ0xKOtzNuaVt6QKNImFkhkG0lIMpGl7PtXnIf5SuLWBeiQZAP8DNSxDBJJdcsPkiJiMYK2WA5H8dQ==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/3.0.0",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.3.0.0.nupkg.sha512"
     },
     "Microsoft.Extensions.Logging.Abstractions/3.0.0": {
       "type": "package",
@@ -193,6 +170,56 @@
       "sha512": "sha512-xrLifQcKzXNinIunzLhgA4T0s0ZjkDdMq93mV8HkrfR6j0E7XVO3nIXorqkcqhdZI8HCQWUo00EHLQcegu9VIg==",
       "path": "system.componentmodel.composition/4.6.0",
       "hashPath": "system.componentmodel.composition.4.6.0.nupkg.sha512"
+    },
+    "Metatool.Plugin/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Metatool.Plugin.Command/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Metatool.Plugin.Core/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Metatool.Plugin.Input/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Metatool.Plugin.MouseKeyHook/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Metatool.Plugin.NotifyIcon/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Metatool.Plugin.UI/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Metatool.Plugin.Utils/1.4.7": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Interop.SHDocVw.Reference/1.1.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Interop.Shell32.Reference/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

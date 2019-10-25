@@ -45,7 +45,7 @@
     <ProjectReference Include="..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;" />
+    <Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0" />
   </Target>
 
 </Project>
