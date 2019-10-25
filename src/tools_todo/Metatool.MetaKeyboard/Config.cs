@@ -50,7 +50,7 @@ namespace Metatool.MetaKeyboard
                 //     new JsonSerializerOptions() {ReadCommentHandling = JsonCommentHandling.Skip});
                 var tools = _config.Tools;
 
-                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                var baseDir = Context.ToolDir<KeyboardTool>();
 
                 foreach (var info in tools.GetType().GetFields())
                 {
