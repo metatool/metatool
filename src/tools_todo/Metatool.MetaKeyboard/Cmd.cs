@@ -35,17 +35,17 @@ namespace Metatool.MetaKeyboard
         /// Process.Start would keep the process parent/child structure, if the parent exit, the child would exit.
         /// so we use cmd to make a workaround
         ///
-        /// this could run *.lnk
+        /// this could run *.lnk and *.bat
         /// </summary>
-        /// <param name="cmd"></param>
-        public static void Start(string cmd)
+        /// <param name="filePath"></param>
+        public static void Start(string filePath)
         {
             var proc = new Process
             {
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName        = "explorer.exe",
-                    Arguments       = cmd,
+                    Arguments       = filePath,
                     CreateNoWindow  = true,
                     UseShellExecute = false,
                     WindowStyle     = ProcessWindowStyle.Hidden

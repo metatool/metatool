@@ -10,7 +10,6 @@ using Metatool.Script;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Metatool.Tools;
 using Microsoft.Extensions.Configuration;
 
 namespace Metatool.Plugin
@@ -27,13 +26,10 @@ namespace Metatool.Plugin
         const            string                 ScriptBin = "bin";
         private readonly ILogger<PluginManager> _logger;
 
-        public PluginManager(ILogger<PluginManager> logger, IServiceProvider services)
+        public PluginManager(ILogger<PluginManager> logger)
         {
-            _services = services;
-            _logger   = logger;
+            _logger = logger;
         }
-
-        private readonly IServiceProvider _services;
 
         readonly Dictionary<string, PluginToken> _plugins = new Dictionary<string, PluginToken>();
 
@@ -163,11 +159,11 @@ namespace Metatool.Plugin
                 _plugins.Remove(dllPath);
             }
 
-            _logger.LogInformation($"{assemblyName}: Loading...");
             LoadDll(dllPath, lastWatcher);
 
             if (watch) Watch(scriptPath, assemblyName);
         }
+
 
         public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
         {
@@ -181,24 +177,24 @@ namespace Metatool.Plugin
 
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
             var loader       = CreatePluginLoader(dllPath);
-            var token        = new PluginToken() {Loader = loader, Watcher = lastWatcher};
+            var token        = new PluginToken() { Loader = loader, Watcher = lastWatcher };
             _plugins.Add(dllPath, token);
 
+            IServiceProviderDisposable provider = null;
             var allTypes   = loader.MainAssembly.GetTypes();
             var optionType = ToolConfig.GetOptionType(allTypes);
             if (optionType != null)
             {
-                var services = Services.Get<IServiceCollection>();
+                var services = new ServiceCollection();//Services.Get<IServiceCollection>();
                 var id       = loader.MainAssembly.GetName().Name;
                 var config   = Services.Get<IConfiguration>().GetSection(id);
                 // call services.Configure<optionType>(Configuration.GetSection(id));
                 var method = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
                     nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
-                    new[] {typeof(IServiceCollection), typeof(IConfiguration)}).MakeGenericMethod(optionType);
-                method.Invoke(null, new object[] {services, config});
+                    new[] { typeof(IServiceCollection), typeof(IConfiguration) }).MakeGenericMethod(optionType);
+                method.Invoke(null, new object[] { services, config });
 
-                var provider = services.BuildServiceProvider();
-                Services.Provider = provider;
+                provider = Services.AddServices(services);
             }
             (Assembly assembly, IEnumerable<Type> types) pluginTypes = (loader.MainAssembly, GetPluginTypes(allTypes));
 
@@ -210,10 +206,11 @@ namespace Metatool.Plugin
 
             types.ForEach(t =>
             {
-                var tool = Services.Create<IPlugin>(t);
+                var tool = provider==null?Services.Create<IPlugin>(t): provider.Create<IPlugin>(t);
                 tool?.OnLoaded();
                 token.Tools.Add(tool);
             });
+            provider?.Dispose();
             _logger.LogInformation($"Tool Loaded: {assemblyName}");
         }
 

@@ -59,7 +59,7 @@ namespace Metaseed.Metatool
                 .Build();
             ConfigureServices(serviceCollection, configuration);
             var provider = serviceCollection.BuildServiceProvider();
-            Services.Provider = provider;
+            Services.SetDefaultProvider(provider);
             return provider;
         }
     }

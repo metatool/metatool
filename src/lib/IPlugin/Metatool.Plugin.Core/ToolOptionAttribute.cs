@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Metatool.Tools
+namespace Metatool.Plugin
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class ToolConfig : Attribute

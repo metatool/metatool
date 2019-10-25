@@ -1,4 +1,6 @@
-﻿namespace Metatool.Tools.LibToolDemo
+﻿using Metatool.Plugin;
+
+namespace Metatool.Tools.LibToolDemo
 {
     [ToolConfig]
     public class Config

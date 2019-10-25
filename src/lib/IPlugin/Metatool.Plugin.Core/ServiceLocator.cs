@@ -1,20 +1,73 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Metatool.Plugin
 {
-    public class Services
+    public interface IServiceProviderDisposable : IServiceProvider, IDisposable
     {
-        internal static IServiceProvider Provider;
+    }
+
+
+    public static class Services
+    {
+        public class ChildServiceProvider : IServiceProviderDisposable
+        {
+            private readonly IServiceProvider _child;
+            private readonly IServiceProvider _parent;
+
+            public ChildServiceProvider(IServiceProvider parent, IServiceProvider child)
+            {
+                _parent = parent;
+                _child  = child;
+            }
+
+            public ChildServiceProvider(IServiceProvider parent, IServiceCollection services)
+            {
+                _parent = parent;
+                _child  = services.BuildServiceProvider();
+            }
+
+            public void Dispose()
+            {
+                _provider = _parent;
+                (_child as IDisposable)?.Dispose();
+            }
+
+            public object GetService(Type serviceType)
+            {
+                var p = _child.GetService(serviceType);
+                if (p == null)
+                {
+                    p = _parent.GetService(serviceType);
+                }
+
+                return p;
+            }
+        }
+
+        static IServiceProvider _provider;
+
+        internal static void SetDefaultProvider(IServiceProvider provider) => _provider = provider;
+
+        internal static IServiceProviderDisposable AddServices(IServiceCollection services)
+        {
+            var p = new ChildServiceProvider(_provider, services);
+            _provider = p;
+            return p;
+        }
+
         public static object Get(Type serviceType)
         {
-            return Provider.GetService(serviceType);
+            return _provider.GetService(serviceType);
         }
 
         public static T Get<T>()
         {
-            return (T)Provider.GetService(typeof(T));
+            return (T) Get(typeof(T));
         }
 
         /// <summary>
@@ -26,8 +79,10 @@ namespace Metatool.Plugin
         public static T GetOrCreate<T>(params object[] parameters)
         {
             var type = typeof(T);
-            return (T)(Provider.GetService(type) ?? ActivatorUtilities.CreateInstance(Provider, type, parameters));
+            // Note: the CreateInstance not take account the sub providers
+            return (T) (Get(type) ?? ActivatorUtilities.CreateInstance(_provider, type, parameters));
         }
+
         /// <summary>
         /// Instantiate a type with constructor arguments provided directly and/or from an <see cref="IServiceProvider"/>.
         /// </summary>
@@ -36,22 +91,36 @@ namespace Metatool.Plugin
         /// <returns></returns>
         public static T Create<T>(params object[] parameters)
         {
-            return ActivatorUtilities.CreateInstance<T>(Provider, parameters);
+            // Note: the CreateInstance not take account the sub providers
+            return ActivatorUtilities.CreateInstance<T>(_provider, parameters);
         }
+
         /// <summary>
         /// Instantiate a type with constructor arguments provided directly and/or from an <see cref="IServiceProvider"/>.
         /// </summary>
         /// <param name="instanceType">The type to activate</param>
         /// <param name="parameters">Constructor arguments not provided by the <paramref name="provider"/>.</param>
         /// <returns>An activated object of type instanceType</returns>
-
         public static T Create<T>(Type instanceType, params object[] parameters)
         {
-            return (T)ActivatorUtilities.CreateInstance(Provider, instanceType, parameters);
+            // Note: the CreateInstance not take account the sub providers
+            return (T) ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
         }
-        public static TOut Get<T, TOut>() 
+
+        public static T Create<T>(this IServiceProviderDisposable provider, Type instanceType,
+            params object[] parameters)
         {
-            return (TOut)Provider.GetService(typeof(T));
+            return (T) ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
+        }
+
+        public static TOut Get<T, TOut>()
+        {
+            return _provider.Get<T, TOut>();
+        }
+
+        public static TOut Get<T, TOut>(this IServiceProvider provider)
+        {
+            return (TOut) Get(typeof(T));
         }
     }
 }

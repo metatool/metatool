@@ -3,7 +3,6 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Metatool.Plugin;
-using Metatool.Tools;
 
 namespace Metatool.MetaKeyboard
 {

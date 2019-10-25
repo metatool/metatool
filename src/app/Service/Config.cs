@@ -10,9 +10,10 @@ namespace Metaseed.Metatool.Service
     {
         private readonly IOptionsMonitor<T> _optionsAccessor;
 
-        public Config(IOptionsMonitor<T> optionsAccessor)
+        public Config()
         {
-            _optionsAccessor = optionsAccessor;
+
+            _optionsAccessor = Services.Get<IOptionsMonitor<T>>();
         }
 
         public T CurrentValue => _optionsAccessor.CurrentValue;
