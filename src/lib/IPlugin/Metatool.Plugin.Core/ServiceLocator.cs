@@ -39,13 +39,7 @@ namespace Metatool.Plugin
 
             public object GetService(Type serviceType)
             {
-                var p = _child.GetService(serviceType);
-                if (p == null)
-                {
-                    p = _parent.GetService(serviceType);
-                }
-
-                return p;
+                return _child.GetService(serviceType) ?? _parent.GetService(serviceType);
             }
         }
 
