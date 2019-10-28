@@ -11,6 +11,7 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.LibraryModel;
+using NuGet.Packaging;
 using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
 
@@ -124,6 +125,7 @@ namespace Metatool.Script.NugetReference
 
             var dgSpec = new DependencyGraphSpec();
             dgSpec.AddRestore(restoreParameters.ProjectName);
+            //restoreParameters.PackagesPath = "M:\\Workspace\\metatool\\src\\tools\\ScriptToolDemo\\Scripts\\bin\\ppp";
             var projectSpec = new PackageSpec
             {
                 Name             = restoreParameters.ProjectName,

@@ -26,7 +26,7 @@ public class ClassTest
         localLib.Hello();
     }
 }
-public class MetaScript : PluginBase
+public class MetaScript : ToolBase
 {
     IRemove token;
     public MetaScript( ICommandManager commandManager, IKeyboard keyboard) 

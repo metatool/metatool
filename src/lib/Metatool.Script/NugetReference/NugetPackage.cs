@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading;
+using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -47,7 +48,9 @@ namespace Metatool.Script.NugetReference
                 GlobalPackageFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
                 _configFilePaths    = new List<string>(); //SettingsUtility.GetConfigFilePaths(settings);
                 _packageSources     = SettingsUtility.GetEnabledSources(settings);
-
+                var p = new PackageSource(Path.Combine(Context.AppDirectory, "..\\..\\pkg\\debug"),"metatool.pkg.lib");
+                var p1 = new PackageSource(Path.Combine(Context.AppDirectory, "..\\..\\pkg.tool"), "metatool.pkg.tool");
+                _packageSources = _packageSources.Append(p).Append(p1);
                 DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance,
                     nonInteractive: false);
 
