@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IPlugin\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
+    <ProjectReference Include="..\IPlugin\Metatool.Plugin.MouseKeyHook\Metatool.Plugin.MouseKeyHook.csproj" />
     <ProjectReference Include="..\IPlugin\Metatool.Plugin.UI\Metatool.Plugin.UI.csproj" />
     <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
   </ItemGroup>

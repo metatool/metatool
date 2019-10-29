@@ -108,7 +108,7 @@ namespace Metatool.Script
                     disabledDiagnostics: DisabledDiagnostics,
                     outputDirectory: outputDir,
                     workingDirectory: codeDir,
-                    globalPackageFolder: nugetPackage.GlobalPackageFolder);
+                    globalPackageFolder: nugetPackage.ToolPackageFolder);
 
                 executionHostParameters.NuGetCompileReferences =
                     GetReferences(references: restoreResult.CompileReferences);

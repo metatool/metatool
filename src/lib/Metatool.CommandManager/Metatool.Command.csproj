@@ -7,4 +7,7 @@
       <_Parameter1>Metatool.MouseKeyHook</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IPlugin\Metatool.Plugin.Command\Metatool.Plugin.Command.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
   <Import Project="..\common.props" />
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -13,5 +12,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Metatool.Plugin.NotifyIcon\Metatool.Plugin.NotifyIcon.csproj" />
   </ItemGroup>
-
 </Project>

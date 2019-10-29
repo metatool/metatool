@@ -5,5 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
+    <ProjectReference Include="..\Metatool.Plugin.MouseKeyHook\Metatool.Plugin.MouseKeyHook.csproj" />
   </ItemGroup>
 </Project>

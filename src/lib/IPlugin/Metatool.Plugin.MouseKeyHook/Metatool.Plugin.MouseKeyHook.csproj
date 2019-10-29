@@ -13,6 +13,6 @@
     </AssemblyAttribute>
   </ItemGroup>
    <ItemGroup>
-     <ProjectReference Include="..\Metatool.ICommand\Metatool.Plugin.Command.csproj" />
+     <ProjectReference Include="..\Metatool.Plugin.Command\Metatool.Plugin.Command.csproj" />
    </ItemGroup>
 </Project>

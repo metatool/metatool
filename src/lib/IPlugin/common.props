@@ -3,13 +3,13 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
-    <Version>1.4.9</Version>
+    <Version>1.4.10</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\pkg\debug\$(AssemblyName)\$(Version)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\debug\pkg\$(AssemblyName)\$(Version)</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\pkg\release\$(AssemblyName)\$(Version)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\release\pkg\$(AssemblyName)\$(Version)</OutputPath>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if not exist  &quot;$(OutDir)..\..\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;if exist &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;xcopy  &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; &quot;$(OutDir)..\..&quot;&#xD;&#xA;)&#xD;&#xA;)" />

@@ -125,7 +125,7 @@ namespace Metatool.Script.NugetReference
 
             var dgSpec = new DependencyGraphSpec();
             dgSpec.AddRestore(restoreParameters.ProjectName);
-            //restoreParameters.PackagesPath = "M:\\Workspace\\metatool\\src\\tools\\ScriptToolDemo\\Scripts\\bin\\ppp";
+            // restoreParameters.PackagesPath = "M:\\Workspace\\metatool\\src\\tools\\ScriptToolDemo\\Scripts\\bin\\ppp";
             var projectSpec = new PackageSpec
             {
                 Name             = restoreParameters.ProjectName,

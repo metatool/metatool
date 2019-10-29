@@ -23,6 +23,7 @@ namespace Metatool.Script.NugetReference
         private readonly ExceptionDispatchInfo      _initializationException;
         private          ILogger      _logger;
         public           string                     GlobalPackageFolder { get; }
+        public           string                     ToolPackageFolder { get; }
         public event Action<NuGetRestoreResult> RestoreResult;
 
         public NugetPackage(ILogger logger)
@@ -48,8 +49,9 @@ namespace Metatool.Script.NugetReference
                 GlobalPackageFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
                 _configFilePaths    = new List<string>(); //SettingsUtility.GetConfigFilePaths(settings);
                 _packageSources     = SettingsUtility.GetEnabledSources(settings);
-                var p = new PackageSource(Path.Combine(Context.AppDirectory, "..\\..\\pkg\\debug"),"metatool.pkg.lib");
-                var p1 = new PackageSource(Path.Combine(Context.AppDirectory, "..\\..\\pkg.tool"), "metatool.pkg.tool");
+                var p = new PackageSource(Path.Combine(Context.AppDirectory, @".\pkg"),"metatool.pkg.source");
+                ToolPackageFolder = Path.Combine(Context.AppDirectory, @".\_pkg");
+                    var p1 = new PackageSource(ToolPackageFolder, "metatool.pkg.used");
                 _packageSources = _packageSources.Append(p).Append(p1);
                 DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance,
                     nonInteractive: false);
@@ -79,7 +81,7 @@ namespace Metatool.Script.NugetReference
                 restoreParams.ConfigFilePaths.Add(configFile);
             }
 
-            restoreParams.PackagesPath = GlobalPackageFolder;
+            restoreParams.PackagesPath = ToolPackageFolder;
 
             return restoreParams;
         }
@@ -93,7 +95,7 @@ namespace Metatool.Script.NugetReference
             }
 
             var (compile, runtime, analyzers) = PackageUtils.ReadProjectLockJson(obj,
-                GlobalPackageFolder,
+                ToolPackageFolder,
                 _targetFramework.DotNetFrameworkName);
 
             TransformLockFileToDepsFile(obj, _targetFramework.DotNetFrameworkName, _libraries);

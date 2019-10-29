@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
   <Import Project="..\common.props" />
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -11,6 +10,7 @@
     <ProjectReference Include="..\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
     <ProjectReference Include="..\Metatool.Plugin.ICommand\Metatool.Plugin.Command.csproj" />
     <ProjectReference Include="..\Metatool.Plugin.Input\Metatool.Plugin.Input.csproj" />
+    <ProjectReference Include="..\Metatool.Plugin.MouseKeyHook\Metatool.Plugin.MouseKeyHook.csproj" />
     <ProjectReference Include="..\Metatool.Plugin.UI\Metatool.Plugin.UI.csproj" />
     <ProjectReference Include="..\Metatool.Plugin.Utils\Metatool.Plugin.Utils.csproj" />
   </ItemGroup>
