@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Metaseed.Metatool": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "run M:\\Workspace\\metatool\\src\\tools\\ScriptToolDemo\\Scripts\\Main.csx"
     }
   }
 }

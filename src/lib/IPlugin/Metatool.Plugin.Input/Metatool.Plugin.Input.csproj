@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Metatool.Input.IMouseKeyHook\Metatool.Plugin.MouseKeyHook.csproj" />
     <ProjectReference Include="..\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
   </ItemGroup>
 </Project>
