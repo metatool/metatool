@@ -91,7 +91,7 @@ namespace Metatool.Script
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var packageViewModel = new PackageViewModel(_logger, nugetPackage)
+            var packageViewModel = new PackageManager(_logger, nugetPackage)
                 {Id = id, RestorePath = Path.Combine(outputDir, "nuget")};
 
             nugetPackage.RestoreResult += async restoreResult =>

@@ -15,7 +15,7 @@ using Metatool.Input;
 using static Metatool.Input.Key;
 using System.Diagnostics;
 
-Debugger.Break();
+// Debugger.Break();
 Console.WriteLine("Hello we are in Main.csx");
 public class ClassTest
 {

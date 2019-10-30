@@ -16,7 +16,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Metatool.Script.NugetReference
 {
-    public class PackageViewModel : NotificationObject
+    public class PackageManager : NotificationObject
     {
         private bool _isRestoring;
         private bool _restoreFailed;
@@ -54,7 +54,7 @@ namespace Metatool.Script.NugetReference
         }
         public event Action<IReadOnlyList<string>> RestoreError;
 
-        public PackageViewModel(ILogger logger, NugetPackage nugetPackage)
+        public PackageManager(ILogger logger, NugetPackage nugetPackage)
         {
             Id = Guid.NewGuid().ToString();
             _logger = logger;
@@ -145,7 +145,8 @@ namespace Metatool.Script.NugetReference
 
             RestoreTask = Task.Run(() => RefreshPackagesAsync(packages, cancellationToken), cancellationToken);
         }
-        private async Task RefreshPackagesAsync(LibraryRef[]? libraries, CancellationToken cancellationToken)
+
+        internal async Task RefreshPackagesAsync(LibraryRef[]? libraries, CancellationToken cancellationToken)
         {
             await _restoreLock.WaitAsync(cancellationToken).ConfigureAwait(false);
             IsRestoring = true;
