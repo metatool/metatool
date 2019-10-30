@@ -1,6 +1,5 @@
 ﻿{
-  // add tools here
   "Tools": {
-    "Metatool.Tools.LibToolDemo":{}
+    "Metatool.Tools.LibToolDemo": { "Update": true  }
   }
 }

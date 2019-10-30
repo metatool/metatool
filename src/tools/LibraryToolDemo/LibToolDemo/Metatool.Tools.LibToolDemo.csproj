@@ -11,14 +11,14 @@
     <RepositoryType>Github</RepositoryType>
     <PackageTags>metatool plugin</PackageTags>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <RootNamespace />
+    <!-- <PackageOutputPath></PackageOutputPath> -->
+    <!-- <IncludeSymbols></IncludeSymbols> -->
+    <!-- <IncludeSource></IncludeSource> -->
+    <Version>1.0.2</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\debug\tools\$(AssemblyName)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\debug\pkg\$(AssemblyName)</OutputPath>
   </PropertyGroup>
-  <ItemGroup>
-    <!-- <PackageReference Include="Metatool.Plugin" Version="*" /> -->
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" />

@@ -34,7 +34,12 @@ namespace Metatool.Plugin
         public static string ToolDir<T>() => Path.GetDirectoryName(typeof(T).Assembly.Location);
 
         public static string CurrentDirectory => Environment.CurrentDirectory;
+
+        public static string DefaultToolsDirectory => Path.Combine(AppDirectory, "tools");
+        public static string PackageDirectory => Path.Combine(BaseDirectory, ".pkg");
+        public static string PackageSourceDirectory => Path.Combine(AppDirectory, "pkg");
+
     }
 
-        
+
 }

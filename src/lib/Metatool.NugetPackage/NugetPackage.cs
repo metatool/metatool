@@ -16,19 +16,22 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Metatool.NugetPackage
 {
-    public class NugetPackage
+    internal class NugetPackage
     {
         private readonly IEnumerable<string>        _configFilePaths;
         private readonly IEnumerable<PackageSource> _packageSources;
         private readonly ExceptionDispatchInfo      _initializationException;
         private readonly ILogger                    _logger;
-        public           string                     GlobalPackageFolder { get; }
-        public           string                     PackageFolder   { get; }
-        public event Action<NuGetRestoreResult>     RestoreResult;
+        private readonly NugetManager               _manager;
 
-        public NugetPackage(ILogger logger)
+        public string GlobalPackageFolder { get; }
+
+        public string PackageFolder => _manager.PackageFolder;
+
+        public NugetPackage(ILogger logger, NugetManager manager)
         {
-            _logger = logger;
+            _manager = manager;
+            _logger  = logger;
             try
             {
                 ISettings settings;
@@ -48,11 +51,7 @@ namespace Metatool.NugetPackage
                 GlobalPackageFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
                 _configFilePaths    = new List<string>(); //SettingsUtility.GetConfigFilePaths(settings);
                 _packageSources     = SettingsUtility.GetEnabledSources(settings);
-                var p = new PackageSource(Path.Combine(Context.AppDirectory, @".\pkg"), "metatool.pkg.source");
-                _packageSources   = _packageSources.Append(p);
-                PackageFolder = Path.Combine(Context.AppDirectory, @".\.pkg");
-                var p1 = new PackageSource(PackageFolder, "metatool.pkg.used");
-                _packageSources = _packageSources.Append(p1);
+                _packageSources     = _manager.AdditionalSources.Select(p=>new PackageSource(p.source,p.name)).Concat(_packageSources);
                 DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance,
                     nonInteractive: false);
 
@@ -78,11 +77,13 @@ namespace Metatool.NugetPackage
             {
                 restoreParams.ConfigFilePaths.Add(configFile);
             }
+
             restoreParams.PackagesPath = PackageFolder;
             return restoreParams;
         }
 
-        internal void ParseLockFile(string lockFilePath, CancellationToken cancellationToken,
+        internal (IList<string> compile, IList<string> runtime, IList<string> analyzers) ParseLockFile(
+            string lockFilePath, CancellationToken cancellationToken,
             NuGetFramework targetFramework, string? frameworkVersion, HashSet<LibraryRef> libraries)
         {
             JObject obj;
@@ -105,7 +106,7 @@ namespace Metatool.NugetPackage
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            RestoreResult?.Invoke(new NuGetRestoreResult(compile, runtime, analyzers));
+            return (compile, runtime, analyzers);
         }
 
         private void TransformLockFileToDepsFile(JObject obj, string targetFramework, HashSet<LibraryRef> _libraries)

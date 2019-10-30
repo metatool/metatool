@@ -86,15 +86,13 @@ namespace Metatool.Script
             var codeDir      = Path.GetDirectoryName(codePath);
             var refs         = LibRefParser.ParseReference(code, codeDir);
             var id         = assemblyName ?? Path.GetFileNameWithoutExtension(codePath);
-            var nugetPackage = new NugetPackage.NugetPackage(_logger);
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var packageViewModel = new PackageManager(_logger, nugetPackage)
-                {Id = id, RestorePath = Path.Combine(outputDir, "nuget")};
+            var packageManager = new NugetManager(_logger) {Id = id, RestorePath = Path.Combine(outputDir, "nuget")};
 
-            nugetPackage.RestoreResult += async restoreResult =>
+            packageManager.RestoreSuccess += async restoreResult =>
             {
                 _logger.LogInformation(
                     $"{assemblyName}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
@@ -108,17 +106,16 @@ namespace Metatool.Script
                     disabledDiagnostics: DisabledDiagnostics,
                     outputDirectory: outputDir,
                     workingDirectory: codeDir,
-                    globalPackageFolder: nugetPackage.PackageFolder);
+                    globalPackageFolder: packageManager.PackageFolder);
 
                 executionHostParameters.NuGetCompileReferences =
                     GetReferences(references: restoreResult.CompileReferences);
 
-                // runtime references from NuGet
                 executionHostParameters.NuGetRuntimeReferences =
                     GetReferences(references: restoreResult.RuntimeReferences);
 
                 // reference directives & default references
-                executionHostParameters.DirectReferences = packageViewModel.LocalLibraryPaths;
+                executionHostParameters.DirectReferences = packageManager.LocalLibraryPaths;
 
                 var executionHost =
                     new ExecutionHost(executionHostParameters, id, _logger);
@@ -140,13 +137,13 @@ namespace Metatool.Script
                 refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
             }
 
-            packageViewModel.RestoreError += r =>
+            packageManager.RestoreError += r =>
             {
                 NotifyBuildResult?.Invoke(r.ToList().Select(er =>
                         CompilationErrorResultObject.Create("", "", "PackageRestoreError:: " + er, "", -1, -1))
                     .ToList());
             };
-            packageViewModel.UpdateLibraries(refs);
+            packageManager.Restore(refs);
         }
 
         // private void AddResult(IResultObject o)
