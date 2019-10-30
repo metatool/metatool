@@ -1,3 +1,6 @@
 ﻿{
-  // tools config
+  "Tools": {
+    "Metatool.Tools.LibToolDemo": {
+    }
+  }
 }

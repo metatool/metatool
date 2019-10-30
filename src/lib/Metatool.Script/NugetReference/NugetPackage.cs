@@ -50,9 +50,10 @@ namespace Metatool.Script.NugetReference
                 _configFilePaths    = new List<string>(); //SettingsUtility.GetConfigFilePaths(settings);
                 _packageSources     = SettingsUtility.GetEnabledSources(settings);
                 var p = new PackageSource(Path.Combine(Context.AppDirectory, @".\pkg"),"metatool.pkg.source");
+                _packageSources = _packageSources.Append(p);
                 ToolPackageFolder = Path.Combine(Context.AppDirectory, @".\_pkg");
                     var p1 = new PackageSource(ToolPackageFolder, "metatool.pkg.used");
-                _packageSources = _packageSources.Append(p).Append(p1);
+                _packageSources = _packageSources.Append(p1);
                 DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance,
                     nonInteractive: false);
 

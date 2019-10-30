@@ -81,6 +81,7 @@ namespace Metatool.Script.NugetReference
         public void UpdateLibraries(IReadOnlyList<LibraryRef> libraries)
         {
             _logger.LogInformation("start updating lib refs...");
+            // libraries = libraries.Where(l => l.Id != "Metatool.Plugin").ToImmutableList();
             var changed = false;
 
             if (_libraries.Count > 0 && (libraries == null || libraries.Count == 0))

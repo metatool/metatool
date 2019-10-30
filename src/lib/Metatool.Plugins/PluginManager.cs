@@ -182,12 +182,12 @@ namespace Metatool.Plugin
 
             IServiceProviderDisposable provider = null;
             var allTypes   = loader.MainAssembly.GetTypes();
-            var optionType = ToolConfig.GetOptionType(allTypes);
+            var optionType = ToolConfig.GetConfigType(allTypes);
             if (optionType != null)
             {
                 var services = new ServiceCollection();//Services.Get<IServiceCollection>();
                 var id       = loader.MainAssembly.GetName().Name;
-                var config   = Services.Get<IConfiguration>().GetSection(id);
+                var config   = Services.Get<IConfiguration>().GetSection("Tools").GetSection(id);
                 // call services.Configure<optionType>(Configuration.GetSection(id));
                 var method = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
                     nameof(OptionsConfigurationServiceCollectionExtensions.Configure),

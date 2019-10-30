@@ -9,11 +9,11 @@ namespace Metatool.Plugin
     [AttributeUsage(AttributeTargets.Class)]
     public class ToolConfig : Attribute
     {
-        public static Type GetOptionType(Assembly assembly) =>
-            GetOptionType(assembly
+        public static Type GetConfigType(Assembly assembly) =>
+            GetConfigType(assembly
                 .GetTypes());
 
-        public static Type GetOptionType(IEnumerable<Type> types) =>
+        public static Type GetConfigType(IEnumerable<Type> types) =>
             types.FirstOrDefault(t => t.GetCustomAttributes(typeof(ToolConfig), true).Length > 0 && !t.IsAbstract);
     }
 }
