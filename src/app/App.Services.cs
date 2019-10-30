@@ -37,7 +37,7 @@ namespace Metaseed.Metatool
                 .AddSingleton<ICommandManager, CommandManager>()
                 .AddSingleton(typeof(IConfig<>), typeof(Config<>))
                 .AddSingleton<INotify, Notify>()
-                .AddSingleton<IServiceCollection>(services)
+                // .AddSingleton<IServiceCollection>(services)
                 .AddSingleton<IConfiguration>(configuration);
         }
 

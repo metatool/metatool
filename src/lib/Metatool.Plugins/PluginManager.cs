@@ -185,10 +185,10 @@ namespace Metatool.Plugin
             var optionType = ToolConfig.GetConfigType(allTypes);
             if (optionType != null)
             {
-                var services = new ServiceCollection();//Services.Get<IServiceCollection>();
+                var services = new ServiceCollection();
                 var id       = loader.MainAssembly.GetName().Name;
                 var config   = Services.Get<IConfiguration>().GetSection("Tools").GetSection(id);
-                // call services.Configure<optionType>(Configuration.GetSection(id));
+                // call services.Configure<optionType>(config);
                 var method = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
                     nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
                     new[] { typeof(IServiceCollection), typeof(IConfiguration) }).MakeGenericMethod(optionType);
