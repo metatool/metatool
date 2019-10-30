@@ -164,6 +164,15 @@ namespace Metatool.Plugin
             if (watch) Watch(scriptPath, assemblyName);
         }
 
+        public void RefreshTools()
+        {
+            var toolIds = Services.Get<IConfiguration>().GetSection("Tools").GetChildren().Select(t => t.Key);
+            foreach (var toolId in toolIds)
+            {
+                
+            }
+        }
+
 
         public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
         {

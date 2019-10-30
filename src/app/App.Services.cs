@@ -57,7 +57,6 @@ namespace Metaseed.Metatool
                 .AddJsonFile(configPath, optional: true, reloadOnChange: true)
                 .Build();
             ConfigureServices(serviceCollection, configuration);
-            var toolIds = configuration.GetSection("Tools").GetChildren().Select(t => t.Key).ToList();
             var provider = serviceCollection.BuildServiceProvider();
             Services.SetDefaultProvider(provider);
             return provider;

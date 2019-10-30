@@ -90,6 +90,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.MouseKeyHoo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.Command", "lib\IPlugin\Metatool.Plugin.Command\Metatool.Plugin.Command.csproj", "{186E368E-36D4-4CE1-97D2-922424E0BFCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.NugetPackage", "lib\Metatool.NugetPackage\Metatool.NugetPackage.csproj", "{85636EB4-2902-470D-868A-7B58840C770C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -376,6 +378,18 @@ Global
 		{186E368E-36D4-4CE1-97D2-922424E0BFCF}.Release|x64.Build.0 = Release|Any CPU
 		{186E368E-36D4-4CE1-97D2-922424E0BFCF}.Release|x86.ActiveCfg = Release|Any CPU
 		{186E368E-36D4-4CE1-97D2-922424E0BFCF}.Release|x86.Build.0 = Release|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Debug|x64.Build.0 = Debug|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Debug|x86.Build.0 = Debug|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Release|x64.ActiveCfg = Release|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Release|x64.Build.0 = Release|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Release|x86.ActiveCfg = Release|Any CPU
+		{85636EB4-2902-470D-868A-7B58840C770C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -408,6 +422,7 @@ Global
 		{D68873B1-D0C8-44A9-A199-D688FE37FEDB} = {3AA980B4-2DE9-4067-BA64-8D130155C8A4}
 		{53D94781-921F-4EE9-9667-617FB735FB19} = {5C07C04B-D1B8-4D77-8873-18CA3BAE2250}
 		{186E368E-36D4-4CE1-97D2-922424E0BFCF} = {5C07C04B-D1B8-4D77-8873-18CA3BAE2250}
+		{85636EB4-2902-470D-868A-7B58840C770C} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}

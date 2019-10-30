@@ -3,15 +3,15 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
-    <Version>1.4.12</Version>
+    <Version>1.4.16</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\debug\pkg\$(AssemblyName)\$(Version)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\debug\pkg\$(AssemblyName)</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\release\pkg\$(AssemblyName)\$(Version)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\release\pkg\$(AssemblyName)</OutputPath>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if not exist  &quot;$(OutDir)..\..\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;if exist &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;xcopy  &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; &quot;$(OutDir)..\..&quot;&#xD;&#xA;)&#xD;&#xA;)" />
+    <Exec Command="if not exist  &quot;$(OutDir)..\$(Version)\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;if exist &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; (&#xD;&#xA;xcopy  &quot;$(OutDir)..\$(TargetName).$(Version).nupkg&quot; &quot;$(OutDir)..\$(Version)\&quot;&#xD;&#xA;)&#xD;&#xA;)" />
   </Target>
 </Project>
