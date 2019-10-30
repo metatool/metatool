@@ -10,6 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{4743D69C-2D08-44CE-93DE-D00692C18D82}"
+	ProjectSection(SolutionItems) = preProject
+		lib\common.props = lib\common.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{7B748A36-C415-494D-B3BD-B6A78EEF8737}"
 	ProjectSection(SolutionItems) = preProject
@@ -24,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{0C2683F4-FE4F-42F8-81CD-C4A8F205250D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tool", "tool", "{0C2683F4-FE4F-42F8-81CD-C4A8F205250D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Core", "lib\Metatool.Core\Metatool.Core.csproj", "{5E647060-FCA3-4D48-93B7-4D04604A5484}"
 EndProject

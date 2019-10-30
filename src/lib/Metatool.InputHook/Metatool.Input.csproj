@@ -9,10 +9,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\pkg\$(MSBuildProjectName)</OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Keyboard\Implementation\**" />
     <EmbeddedResource Remove="Keyboard\Implementation\**" />

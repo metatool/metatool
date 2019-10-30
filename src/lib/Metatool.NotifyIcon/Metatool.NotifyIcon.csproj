@@ -9,14 +9,6 @@
 
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\..\..\pkg\Metatool.NotifyIcon</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\..\..\pkg\Metatool.NotifyIcon</OutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\IPlugin\Metatool.Plugin.NotifyIcon\Metatool.Plugin.NotifyIcon.csproj" />
   </ItemGroup>
