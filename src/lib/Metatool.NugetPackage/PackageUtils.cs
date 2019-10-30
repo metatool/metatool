@@ -11,11 +11,10 @@ using NuGet.Commands;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.LibraryModel;
-using NuGet.Packaging;
 using NuGet.ProjectModel;
 using NuGet.Protocol.Core.Types;
 
-namespace Metatool.Script.NugetReference
+namespace Metatool.NugetPackage
 {
     public class PackageUtils
     {

@@ -8,59 +8,43 @@ using System.Reflection;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
-using Metatool.Core.ViewModel;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Frameworks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Metatool.Script.NugetReference
+namespace Metatool.NugetPackage
 {
-    public class PackageManager : NotificationObject
+    public class PackageManager
     {
-        private bool _isRestoring;
-        private bool _restoreFailed;
-        private readonly ILogger _logger;
-        private IReadOnlyList<string> _restoreErrors;
-        private readonly SemaphoreSlim _restoreLock;
-        private readonly NugetPackage _nugetPackage;
-        private readonly HashSet<LibraryRef> _libraries;
-        private NuGetFramework _targetFramework;
-        private CancellationTokenSource _restoreCts;
-        private string? _frameworkVersion;
+        private readonly ILogger                 _logger;
+        private readonly SemaphoreSlim           _restoreLock;
+        private readonly Metatool.NugetPackage.NugetPackage            _nugetPackage;
+        private readonly HashSet<LibraryRef>     _libraries;
+        private          NuGetFramework          _targetFramework;
+        private          CancellationTokenSource _restoreCts;
+        private          string?                 _frameworkVersion;
 
         public ImmutableArray<string> LocalLibraryPaths { get; private set; }
 
 
         public string Id { get; set; }
 
-        public string RestorePath { get; set; }
-        public bool IsRestoring
-        {
-            get => _isRestoring;
-            private set => SetProperty(ref _isRestoring, value);
-        }
-        public bool RestoreFailed
-        {
-            get => _restoreFailed;
-            private set => SetProperty(ref _restoreFailed, value);
-        }
-        public Task RestoreTask { get; private set; }
+        public string RestorePath   { get; set; }
+        public bool   IsRestoring   { get; private set; }
+        public bool   RestoreFailed { get; private set; }
+        public Task   RestoreTask   { get; private set; }
 
-        public IReadOnlyList<string> RestoreErrors
-        {
-            get => _restoreErrors;
-            private set => SetProperty(ref _restoreErrors, value);
-        }
+        public IReadOnlyList<string>               RestoreErrors { get; private set; }
         public event Action<IReadOnlyList<string>> RestoreError;
 
         public PackageManager(ILogger logger, NugetPackage nugetPackage)
         {
-            Id = Guid.NewGuid().ToString();
-            _logger = logger;
-            _nugetPackage = nugetPackage;
+            Id                = Guid.NewGuid().ToString();
+            _logger           = logger;
+            _nugetPackage     = nugetPackage;
             LocalLibraryPaths = ImmutableArray<string>.Empty;
-            _restoreLock = new SemaphoreSlim(1, 1);
+            _restoreLock      = new SemaphoreSlim(1, 1);
             _libraries        = new HashSet<LibraryRef>();
 
             var framework = Assembly
@@ -69,15 +53,17 @@ namespace Metatool.Script.NugetReference
             var str = framework?.Split(",Version=v");
             Debug.Assert(str != null, nameof(str) + " != null");
             var frameworkName = string.Concat(str);
-            _targetFramework = NuGetFramework.ParseFolder(frameworkName);
+            _targetFramework  = NuGetFramework.ParseFolder(frameworkName);
             _frameworkVersion = str?[1];
         }
+
         public void SetTargetFramework(string targetFrameworkMoniker, string? frameworkVersion = null)
         {
             _targetFramework  = NuGetFramework.ParseFolder(targetFrameworkMoniker);
             _frameworkVersion = frameworkVersion;
             RefreshPackages();
         }
+
         public void UpdateLibraries(IReadOnlyList<LibraryRef> libraries)
         {
             _logger.LogInformation("start updating lib refs...");
@@ -131,6 +117,7 @@ namespace Metatool.Script.NugetReference
                 RefreshPackages();
             }
         }
+
         private void RefreshPackages()
         {
             if (RestorePath == null || _targetFramework == null) return;
@@ -160,10 +147,11 @@ namespace Metatool.Script.NugetReference
                 restoreParams.FrameworkVersion = _frameworkVersion;
 
                 var lockFilePath = Path.Combine(RestorePath, "project.assets.json");
-                
-                if(File.Exists(lockFilePath)) File.Delete(lockFilePath);
-                    
-                var result = await PackageUtils.RestoreAsync(restoreParams, NullLogger.Instance, cancellationToken).ConfigureAwait(false);
+
+                if (File.Exists(lockFilePath)) File.Delete(lockFilePath);
+
+                var result = await PackageUtils.RestoreAsync(restoreParams, NullLogger.Instance, cancellationToken)
+                    .ConfigureAwait(false);
 
                 if (!result.Success)
                 {
@@ -188,13 +176,12 @@ namespace Metatool.Script.NugetReference
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                _nugetPackage.ParseLockFile(lockFilePath, cancellationToken, _targetFramework, _frameworkVersion, _libraries);
-
+                _nugetPackage.ParseLockFile(lockFilePath, cancellationToken, _targetFramework, _frameworkVersion,
+                    _libraries);
             }
             catch (Exception e) when (!(e is OperationCanceledException))
             {
                 _logger?.LogError(e.Message + e.StackTrace);
-            
             }
             finally
             {
@@ -202,8 +189,5 @@ namespace Metatool.Script.NugetReference
                 IsRestoring = false;
             }
         }
-
-
-
     }
 }

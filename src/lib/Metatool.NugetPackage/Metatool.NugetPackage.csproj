@@ -3,5 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGet.Commands" Version="5.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
 
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IPlugin\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
+  </ItemGroup>
 </Project>

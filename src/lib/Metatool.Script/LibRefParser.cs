@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Metatool.Metatool.Script.Resolver;
-using Metatool.Script.NugetReference;
+using Metatool.NugetPackage;
 using Microsoft.CodeAnalysis.CSharp;
 using NuGet.Versioning;
 

@@ -4,7 +4,7 @@ using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Versioning;
 
-namespace Metatool.Script.NugetReference
+namespace Metatool.NugetPackage
 {
     public class NuGetRestoreResult
     {

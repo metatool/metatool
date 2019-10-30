@@ -14,17 +14,17 @@ using NuGet.Credentials;
 using NuGet.Frameworks;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace Metatool.Script.NugetReference
+namespace Metatool.NugetPackage
 {
     public class NugetPackage
     {
         private readonly IEnumerable<string>        _configFilePaths;
         private readonly IEnumerable<PackageSource> _packageSources;
         private readonly ExceptionDispatchInfo      _initializationException;
-        private          ILogger      _logger;
+        private readonly ILogger                    _logger;
         public           string                     GlobalPackageFolder { get; }
-        public           string                     ToolPackageFolder { get; }
-        public event Action<NuGetRestoreResult> RestoreResult;
+        public           string                     PackageFolder   { get; }
+        public event Action<NuGetRestoreResult>     RestoreResult;
 
         public NugetPackage(ILogger logger)
         {
@@ -32,7 +32,6 @@ namespace Metatool.Script.NugetReference
             try
             {
                 ISettings settings;
-
                 try
                 {
                     settings = Settings.LoadDefaultSettings(
@@ -43,16 +42,16 @@ namespace Metatool.Script.NugetReference
                 catch (NuGetConfigurationException ex)
                 {
                     // create default settings using a non-existent config file
-                    settings = new Settings(nameof(Script.ScriptRunner));
+                    settings = new Settings(nameof(NugetPackage));
                 }
 
                 GlobalPackageFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
                 _configFilePaths    = new List<string>(); //SettingsUtility.GetConfigFilePaths(settings);
                 _packageSources     = SettingsUtility.GetEnabledSources(settings);
-                var p = new PackageSource(Path.Combine(Context.AppDirectory, @".\pkg"),"metatool.pkg.source");
-                _packageSources = _packageSources.Append(p);
-                ToolPackageFolder = Path.Combine(Context.AppDirectory, @".\.pkg");
-                    var p1 = new PackageSource(ToolPackageFolder, "metatool.pkg.used");
+                var p = new PackageSource(Path.Combine(Context.AppDirectory, @".\pkg"), "metatool.pkg.source");
+                _packageSources   = _packageSources.Append(p);
+                PackageFolder = Path.Combine(Context.AppDirectory, @".\.pkg");
+                var p1 = new PackageSource(PackageFolder, "metatool.pkg.used");
                 _packageSources = _packageSources.Append(p1);
                 DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance,
                     nonInteractive: false);
@@ -69,9 +68,7 @@ namespace Metatool.Script.NugetReference
         internal RestoreParams CreateRestoreParams()
         {
             _initializationException?.Throw();
-
             var restoreParams = new RestoreParams();
-
             foreach (var packageSource in _packageSources)
             {
                 restoreParams.Sources.Add(packageSource);
@@ -81,13 +78,12 @@ namespace Metatool.Script.NugetReference
             {
                 restoreParams.ConfigFilePaths.Add(configFile);
             }
-
-            restoreParams.PackagesPath = ToolPackageFolder;
-
+            restoreParams.PackagesPath = PackageFolder;
             return restoreParams;
         }
 
-        internal void ParseLockFile(string lockFilePath, CancellationToken cancellationToken, NuGetFramework _targetFramework, string? _frameworkVersion, HashSet<LibraryRef> _libraries)
+        internal void ParseLockFile(string lockFilePath, CancellationToken cancellationToken,
+            NuGetFramework targetFramework, string? frameworkVersion, HashSet<LibraryRef> libraries)
         {
             JObject obj;
             using (var reader = File.OpenText(lockFilePath))
@@ -96,10 +92,10 @@ namespace Metatool.Script.NugetReference
             }
 
             var (compile, runtime, analyzers) = PackageUtils.ReadProjectLockJson(obj,
-                ToolPackageFolder,
-                _targetFramework.DotNetFrameworkName);
+                PackageFolder,
+                targetFramework.DotNetFrameworkName);
 
-            TransformLockFileToDepsFile(obj, _targetFramework.DotNetFrameworkName, _libraries);
+            TransformLockFileToDepsFile(obj, targetFramework.DotNetFrameworkName, libraries);
 
             cancellationToken.ThrowIfCancellationRequested();
 

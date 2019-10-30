@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Metatool.Script.NugetReference;
+using Metatool.NugetPackage;
 using Metatool.Script.Runtime;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -86,7 +86,7 @@ namespace Metatool.Script
             var codeDir      = Path.GetDirectoryName(codePath);
             var refs         = LibRefParser.ParseReference(code, codeDir);
             var id         = assemblyName ?? Path.GetFileNameWithoutExtension(codePath);
-            var nugetPackage = new NugetPackage(_logger);
+            var nugetPackage = new NugetPackage.NugetPackage(_logger);
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -108,7 +108,7 @@ namespace Metatool.Script
                     disabledDiagnostics: DisabledDiagnostics,
                     outputDirectory: outputDir,
                     workingDirectory: codeDir,
-                    globalPackageFolder: nugetPackage.ToolPackageFolder);
+                    globalPackageFolder: nugetPackage.PackageFolder);
 
                 executionHostParameters.NuGetCompileReferences =
                     GetReferences(references: restoreResult.CompileReferences);

@@ -3,7 +3,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 <InternalsAssemblyNames>Microsoft.CodeAnalysis.CSharp;Microsoft.CodeAnalysis.Features;Microsoft.CodeAnalysis.CSharp.Features;Microsoft.CodeAnalysis.Scripting;Microsoft.CodeAnalysis.CSharp.Scripting;Microsoft.CodeAnalysis.Workspaces;Microsoft.CodeAnalysis.CSharp.Workspaces;Microsoft.CodeAnalysis.Extensions;Microsoft.CodeAnalysis.PooledObjects</InternalsAssemblyNames>
   </PropertyGroup>
 
@@ -13,12 +12,12 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.4.0-beta1-final" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.4.0-beta1-final" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
-    <PackageReference Include="NuGet.Commands" Version="5.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IPlugin\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
     <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\Metatool.NugetPackage\Metatool.NugetPackage.csproj" />
     <ProjectReference Include="..\Metatool.Script.Runtime\Metatool.Script.Runtime.csproj" />
   </ItemGroup>
 
