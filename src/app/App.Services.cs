@@ -22,7 +22,7 @@ namespace Metaseed.Metatool
             services
                 .AddLogging(loggingBuilder =>
                 {
-                    loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
+                    loggingBuilder.AddConfiguration(configuration.GetSection("Services").GetSection("Logging"));
                     //loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
                     // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
