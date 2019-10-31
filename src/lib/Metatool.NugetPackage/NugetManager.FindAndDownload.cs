@@ -9,18 +9,18 @@ namespace Metatool.NugetPackage
     public partial class NugetManager
     {
         readonly PackageDownloader _packageDownloader = new PackageDownloader();
+        readonly PackageFinder     _packageFinder      = new PackageFinder();
 
         public List<PackageWrapper> GetListOfPackageIdentities(string packageName, string version,
             IList<NugetRepository> repositories, string folder,
             bool disableCache = false, bool includePrelease = true, bool allowUnlisted = false)
         {
-            var packageFinder        = new PackageFinder(repositories);
             var packageDownloadTasks = new List<Task<List<DllInfo>>>();
             var packageWrappers      = new List<PackageWrapper>();
 
             void GetListOfPackageIdentitiesRecursive(string pkgName, string ver)
             {
-                var packageWrapper = packageFinder.GetPackageByExactSearch(pkgName, ver);
+                var packageWrapper = _packageFinder.GetPackageByExactSearch(pkgName, ver, repositories, disableCache);
                 if (packageWrapper == null)
                 {
                     return;
