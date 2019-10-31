@@ -2,30 +2,34 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>Metatool Tool Demo</Title>
+    <Description>template for create metatool plugin tool</Description>
     <Authors>metasong</Authors>
     <Company>metaseed</Company>
-    <Description>template for create metatool plugin tool</Description>
     <Copyright>2019 metaseed</Copyright>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
-    <PackageTags>metatool plugin</PackageTags>
+    <PackageTags>metatool;plugin</PackageTags>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <!-- <PackageOutputPath></PackageOutputPath> -->
-    <!-- <IncludeSymbols></IncludeSymbols> -->
-    <!-- <IncludeSource></IncludeSource> -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
     <Version>1.0.2</Version>
+    <IsTool>true</IsTool>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>$(SolutionDir)..\exe\debug\pkg\$(AssemblyName)</OutputPath>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <NugetPath>.\tools</NugetPath>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="config.json">
+    <None Update="config.json" Pack="true" PackagePath="$(NugetPath)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

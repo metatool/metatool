@@ -122,20 +122,24 @@ namespace Metatool.Plugin
                 {
                     static string GetPath(string toolDir)
                     {
-                        var dirNames     = new Regex("[\\d.]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                        var ss           = Directory.EnumerateDirectories(toolDir).Where(dir => dirNames.IsMatch(dir)).OrderBy(k => k).ToList();
-                        var versionFoler = ss.LastOrDefault();
-                        if (versionFoler != null)
+                        var dirNames = new Regex("[\\d.]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var latestVersionFolder = Directory.EnumerateDirectories(toolDir).Where(d => dirNames.IsMatch(d))
+                            .OrderBy(k => k).LastOrDefault();
+                        if (latestVersionFolder != null)
                         {
-                            var lib     = Path.Combine(versionFoler, "lib");
+                            var toolsFolder = Path.Combine(latestVersionFolder, "tools");
+                            if (Directory.Exists(toolsFolder))
+                                return toolsFolder;
+                            var libFolder = Path.Combine(latestVersionFolder, "lib");
                             var runtime = new Regex("netcoreapp[\\d.]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                            var s = Directory.EnumerateDirectories(lib)
-                                .FirstOrDefault(dir => runtime.IsMatch(dir));
-                            return s;
+                            var latestRuntimeFolder = Directory.EnumerateDirectories(libFolder).Where(d => runtime.IsMatch(d))
+                                .OrderBy(k => k).LastOrDefault();
+                            if (Directory.Exists(latestRuntimeFolder))
+                                return toolsFolder;
                         }
-
                         return null;
                     }
+
                     var path = GetPath(dir);
                     if (path == null) return;
                     InitPluginTool(path, assemblyName);
@@ -221,7 +225,6 @@ namespace Metatool.Plugin
             var nugetManager = new NugetManager(_logger);
             foreach (var toolId in toolIds)
             {
-
                 _logger.LogInformation($"{toolId}: start updating lib refs...");
 
                 nugetManager.Id          = toolId + "_Restore";
