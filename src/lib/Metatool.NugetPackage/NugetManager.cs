@@ -16,7 +16,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Metatool.NugetPackage
 {
-    public class NugetManager
+    public partial class NugetManager
     {
         private readonly ILogger                 _logger;
         private readonly SemaphoreSlim           _restoreLock = new SemaphoreSlim(1, 1);
