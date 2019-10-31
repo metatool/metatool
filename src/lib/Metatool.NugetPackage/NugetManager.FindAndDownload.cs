@@ -13,14 +13,14 @@ namespace Metatool.NugetPackage
 
         public List<PackageWrapper> GetListOfPackageIdentities(string packageName, string version,
             IList<NugetRepository> repositories, string folder,
-            bool disableCache = false, bool includePrelease = true, bool allowUnlisted = false)
+            bool disableCache = false, bool includePrerelease = false, bool allowUnlisted = false)
         {
             var packageDownloadTasks = new List<Task<List<DllInfo>>>();
             var packageWrappers      = new List<PackageWrapper>();
 
             void GetListOfPackageIdentitiesRecursive(string pkgName, string ver)
             {
-                var packageWrapper = _packageFinder.GetPackageByExactSearch(pkgName, ver, repositories, disableCache);
+                var packageWrapper = _packageFinder.GetPackageByExactSearch(pkgName, ver, repositories, disableCache, includePrerelease, allowUnlisted);
                 if (packageWrapper == null)
                 {
                     return;
@@ -37,7 +37,7 @@ namespace Metatool.NugetPackage
                 });
 
                 packageDownloadTasks.Add(_packageDownloader.DownloadPackage(packageWrapper, folder, disableCache,
-                    includePrelease, allowUnlisted));
+                    includePrerelease, allowUnlisted));
                 lock (packageWrappers)
                 {
                     packageWrappers.Add(packageWrapper);

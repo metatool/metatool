@@ -12,79 +12,74 @@ namespace Metatool.NugetPackage
 {
     public class PackageFinder
     {
-        private          string                        _targetFramework;
-        private readonly ILogger                       _logger;
+        private          string  _targetFramework;
+        private readonly ILogger _logger;
 
         public PackageFinder()
         {
             _targetFramework = NugetHelper.Instance.GetTargetFramework();
             _logger          = NugetHelper.Instance.Logger;
-            
         }
 
-        public PackageWrapper GetPackageByExactSearch(string packageName, string version, IList<NugetRepository> repositories, bool disableCache = false)
+        public PackageWrapper GetPackageByExactSearch(string packageName, string version,
+            IList<NugetRepository> repositories, bool disableCache = false, bool includePrerelease = false,
+            bool includeUnlisted = false)
         {
             PackageWrapper packageWrapper = null;
-            var sourceRepos = NugetHelper.Instance.GetSourceRepos(repositories);
+            var            sourceRepos    = NugetHelper.Instance.GetSourceRepos(repositories);
+            // slow down search if disabling search
+            var sourceCacheContext = new SourceCacheContext() {NoCache = disableCache, DirectDownload = disableCache};
             foreach (var sourceRepository in sourceRepos)
             {
-                    var sourceCacheContext = new SourceCacheContext();
-                    // below will slow down search as it is disabling search
-                    if (disableCache)
-                    {
-                        sourceCacheContext.NoCache        = true;
-                        sourceCacheContext.DirectDownload = true;
-                    }
+                var packageMetadataResource = sourceRepository.GetResourceAsync<PackageMetadataResource>().Result;
 
-                    var packageMetadataResource = sourceRepository.GetResourceAsync<PackageMetadataResource>().Result;
+                IPackageSearchMetadata package;
+                version = version?.Trim();
+                if (!string.IsNullOrEmpty(version) || !string.Equals("*",version))
+                {
+                    package = GetPackage(packageName, version,
+                        packageMetadataResource, sourceCacheContext, sourceRepository);
+                }
+                else
+                {
+                    package = GetLatestPackage(packageName, includePrerelease, includeUnlisted,
+                        packageMetadataResource, sourceCacheContext, sourceRepository);
+                }
 
-                    IPackageSearchMetadata package = null;
+                if (package == null)
+                {
+                    _logger.LogInformation($" No Package found in Repo " +
+                                           $"{sourceRepository.PackageSource.Source} for package : {packageName} | {version}");
+                    continue;
+                }
 
-                    if (!string.IsNullOrWhiteSpace(version))
-                    {
-                        package = GetPackageFromRepoWithVersion(packageName, version,
-                            packageMetadataResource, sourceCacheContext, sourceRepository);
-                    }
-                    else
-                    {
-                        package = GetPackageFromRepoWithoutVersion(packageName,
-                            packageMetadataResource, sourceCacheContext, sourceRepository);
-                    }
+                packageWrapper = new PackageWrapper
+                {
+                    rootPackageIdentity = package.Identity,
+                    packageName         = package.Identity.Id,
+                    version             = package.Identity.Version,
+                    //save the repo info as well so that during install it doesn't need to search on all repos
+                    sourceRepository = sourceRepository,
+                    //load child package identities
+                    childPackageIdentities = NugetHelper.Instance.GetChildPackageIdentities(package)
+                };
 
-                    if (package == null)
-                    {
-                        _logger.LogInformation($" No Package found in Repo " +
-                                               $"{sourceRepository.PackageSource.Source} for package : {packageName} | {version}");
-                        continue;
-                    }
-
-                    packageWrapper = new PackageWrapper
-                    {
-                        rootPackageIdentity = package.Identity,
-                        packageName         = package.Identity.Id,
-                        version             = package.Identity.Version,
-                        //save the repo info as well so that during install it doesn't need to search on all repos
-                        sourceRepository = sourceRepository,
-                        //load child package identities
-                        childPackageIdentities = NugetHelper.Instance.GetChildPackageIdentities(package)
-                    };
-
-                    _logger.LogInformation($"Latest Package form Exact Search : {packageWrapper.packageName}" +
-                                           $"| {packageWrapper.version} in Repo {sourceRepository.PackageSource.Source}");
-                    break;
+                _logger.LogInformation($"Latest Package form Exact Search : {packageWrapper.packageName}" +
+                                       $"| {packageWrapper.version} in Repo {sourceRepository.PackageSource.Source}");
+                break;
             }
 
             return packageWrapper;
         }
 
-        public IPackageSearchMetadata GetPackageFromRepoWithVersion(string packageName, string version,
-            PackageMetadataResource packageMetadataResource, SourceCacheContext sourceCacheContext,
+        public IPackageSearchMetadata GetPackage(string packageName, string version,
+            PackageMetadataResource packageMetadataResource,
+            SourceCacheContext sourceCacheContext,
             SourceRepository sourceRepository)
         {
-            if (!NuGetVersion.TryParse(version, out _)) return null;
+            if (!NuGetVersion.TryParse(version, out var ver)) return null;
 
-            IPackageSearchMetadata rootPackage     = null;
-            var                    packageIdentity = new PackageIdentity(packageName, NuGetVersion.Parse(version));
+            var packageIdentity = new PackageIdentity(packageName, ver);
             var exactSearchMetadata = packageMetadataResource
                 .GetMetadataAsync(packageIdentity, sourceCacheContext, _logger, CancellationToken.None).Result;
 
@@ -93,23 +88,20 @@ namespace Metatool.NugetPackage
                 _logger.LogInformation($"GetPackageFromRepoWithVersion - No Package found in Repo " +
                                        $"{sourceRepository.PackageSource.Source} for package : {packageName}  with version  {version}");
             }
-            else
-            {
-                rootPackage = exactSearchMetadata;
-            }
 
-            return rootPackage;
+            return exactSearchMetadata;
         }
 
-        public IPackageSearchMetadata GetPackageFromRepoWithoutVersion(
-            string packageName,
+        public IPackageSearchMetadata GetLatestPackage(
+            string packageName, bool incluePrerelease, bool includeUnlisted,
             PackageMetadataResource packageMetadataResource,
             SourceCacheContext sourceCacheContext,
             SourceRepository sourceRepository)
         {
             IPackageSearchMetadata rootPackage = null;
             var exactSearchMetadata = packageMetadataResource
-                .GetMetadataAsync(packageName, true, true, sourceCacheContext, _logger, CancellationToken.None).Result
+                .GetMetadataAsync(packageName, incluePrerelease, includeUnlisted, sourceCacheContext, _logger,
+                    CancellationToken.None).Result
                 .ToList();
 
             if (!exactSearchMetadata.Any())

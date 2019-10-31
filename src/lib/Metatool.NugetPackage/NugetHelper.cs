@@ -183,18 +183,15 @@ namespace Metatool.NugetPackage
             return dllInfos;
         }
 
-        public List<PackageIdentity> GetChildPackageIdentities(IPackageSearchMetadata rootPackage)
+        public List<PackageIdentity> GetChildPackageIdentities(IPackageSearchMetadata parentPackage)
         {
             var childPackageIdentities = new List<PackageIdentity>();
 
-            if (rootPackage.DependencySets == null || !rootPackage.DependencySets.Any())
+            if (parentPackage.DependencySets == null || !parentPackage.DependencySets.Any())
                 return childPackageIdentities;
 
-            var mostCompatibleFramework = NugetHelper.Instance.GetMostCompatibleFramework(rootPackage.DependencySets);
-            if (rootPackage.DependencySets.All(x => x.TargetFramework != mostCompatibleFramework))
-                return childPackageIdentities;
-
-            var dependencyGroup = rootPackage.DependencySets.FirstOrDefault(x => x.TargetFramework == mostCompatibleFramework);
+            var mostCompatibleFramework = GetMostCompatibleFramework(parentPackage.DependencySets);
+            var dependencyGroup = parentPackage.DependencySets.FirstOrDefault(x => x.TargetFramework == mostCompatibleFramework);
             if (dependencyGroup == null || !dependencyGroup.Packages.Any()) 
                 return childPackageIdentities;
 
