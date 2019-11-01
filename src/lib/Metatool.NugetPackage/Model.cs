@@ -6,9 +6,9 @@ using NuGet.Versioning;
 
 namespace Metatool.NugetPackage
 {
-    public class NuGetRestoreResult
+    public class RestoreSuccessResult
     {
-        public NuGetRestoreResult(IList<string> compileReferences, IList<string> runtimeReferences, IList<string> analyzers)
+        public RestoreSuccessResult(IList<string> compileReferences, IList<string> runtimeReferences, IList<string> analyzers)
         {
             CompileReferences = compileReferences;
             RuntimeReferences = runtimeReferences;
@@ -40,6 +40,7 @@ namespace Metatool.NugetPackage
             NoOp    = noOp;
         }
 
+        public RestoreSuccessResult SuccessResult { get; set; }
         public IReadOnlyList<string> Errors  { get; }
         public bool                  Success { get; }
         public bool                  NoOp    { get; }

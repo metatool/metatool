@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Metatool.Tools.ScriptToolDemo</id>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <title>Metatool Tool Script Demo</title>
     <authors>metasong</authors>
     <owners>metasong</owners>
@@ -17,6 +17,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src=".\**" target="." />
+    <file src=".\**" target=".\tools" />
   </files>
 </package>

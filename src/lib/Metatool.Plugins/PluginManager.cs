@@ -22,9 +22,27 @@ namespace Metatool.Plugin
 {
     public class PluginToken
     {
+        private Version NoneVersion = new Version(0,0,0,0);
         public PluginLoader                Loader;
         public ObservableFileSystemWatcher Watcher;
-        public Version Version => Loader?.MainAssembly.GetName().Version;
+
+        public Version Version
+        {
+            get
+            {
+                var version = Loader?.MainAssembly.GetName().Version;
+                if (version != NoneVersion) return version;
+                var path = Loader.MainAssembly.Location;
+                var verDir            = new Regex("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var r = verDir.Match(path);
+                var v = Version.Parse(r.Value);
+                Func<int,int> e = (int n) => n == -1 ? 0 : n;
+                if (r.Success) return new Version(e(v.Major),e(v.Minor), e(v.Build), e(v.Revision));
+                return null;
+                
+            }
+        }
+
         public List<IPlugin>               Tools = new List<IPlugin>();
     }
 
@@ -126,8 +144,8 @@ namespace Metatool.Plugin
                 {
                     static string GetPath(string toolDir)
                     {
-                        var dirNames = new Regex("[\\d.]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                        var latestVersionFolder = Directory.EnumerateDirectories(toolDir).Where(d => dirNames.IsMatch(d))
+                        var verRegex = new Regex("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var latestVersionFolder = Directory.EnumerateDirectories(toolDir).Where(d => verRegex.IsMatch(d))
                             .OrderBy(k => k).LastOrDefault();
                         if (latestVersionFolder != null)
                         {
@@ -262,22 +280,21 @@ namespace Metatool.Plugin
 
                 nugetManager.Id          = toolId + "_Restore";
                 nugetManager.RestorePath = Path.Combine(Context.DefaultToolsDirectory, toolId);
-                nugetManager.RestoreSuccess += result =>
-                {
+               
+                var re = await nugetManager.RefreshPackagesAsync(new [] { new LibraryRef(toolId, VersionRange.AllFloating) }, CancellationToken.None, new List<PackageSource>(){r.source});
+                if(re.Success){
                     var toolDir = Path.Combine(Context.DefaultToolsDirectory, toolId);
                     MoveDirectory(Path.Combine(Context.PackageDirectory, toolId), toolDir);
                     _logger.LogInformation($"{toolId}: Restore Success");
                     InitPluginTool(toolDir, toolId);
-                };
-
-                nugetManager.RestoreError += errors =>
+                }
+                else
                 {
-                    foreach (var error in errors)
+                    foreach (var error in re.Errors)
                     {
-                        _logger.LogWarning(error);
+                        _logger.LogError(error);
                     }
                 };
-                await nugetManager.RefreshPackagesAsync(new [] { new LibraryRef(toolId, VersionRange.AllFloating) }, CancellationToken.None, new List<PackageSource>(){r.source});
             }
         }
 
@@ -328,7 +345,7 @@ namespace Metatool.Plugin
                 token.Tools.Add(tool);
             });
             provider?.Dispose();
-            _logger.LogInformation($"Tool Loaded: {assemblyName}");
+            _logger.LogInformation($"Tool Loaded: {assemblyName} - Version: {token.Version}");
         }
 
         private void Unload(string dllPath)

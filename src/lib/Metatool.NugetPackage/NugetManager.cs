@@ -28,7 +28,7 @@ namespace Metatool.NugetPackage
         private          string                 _frameworkVersion;
 
         public ImmutableArray<string>           LocalLibraryPaths { get; private set; } = ImmutableArray<string>.Empty;
-        public event Action<NuGetRestoreResult> RestoreSuccess;
+        public event Action<RestoreSuccessResult> RestoreSuccess;
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
@@ -137,7 +137,7 @@ namespace Metatool.NugetPackage
             RestoreTask = Task.Run(() => RefreshPackagesAsync(packages, cancellationToken), cancellationToken);
         }
 
-        public async Task RefreshPackagesAsync(LibraryRef[] libraries, CancellationToken cancellationToken,
+        public async Task<RestoreResult> RefreshPackagesAsync(LibraryRef[] libraries, CancellationToken cancellationToken,
             IList<PackageSource> sources = null)
         {
             await _restoreLock.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -164,7 +164,7 @@ namespace Metatool.NugetPackage
                     _logger.LogWarning("Package Restore Error!");
                     RestoreFailed = true;
                     RestoreError?.Invoke(result.Errors);
-                    return;
+                    return result;
                 }
 
                 RestoreFailed = false;
@@ -172,7 +172,7 @@ namespace Metatool.NugetPackage
                 if (result.NoOp)
                 {
                     _logger.LogInformation("No operation taken for lib restore.");
-                    return;
+                    return result;
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -180,11 +180,15 @@ namespace Metatool.NugetPackage
                 var (compile, runtime, analyzers) = _nugetPackage.ParseLockFile(lockFilePath, cancellationToken,
                     _targetFramework, _frameworkVersion,
                     _libraries);
-                RestoreSuccess?.Invoke(new NuGetRestoreResult(compile, runtime, analyzers));
+                var r = new RestoreSuccessResult(compile, runtime, analyzers);
+                RestoreSuccess?.Invoke(r);
+                result.SuccessResult = r;
+                return result;
             }
             catch (Exception e) when (!(e is OperationCanceledException))
             {
                 _logger?.LogError(e.Message + e.StackTrace);
+                return new RestoreResult(new List<string>(){e.Message, e.StackTrace},false, false);
             }
             finally
             {
