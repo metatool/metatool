@@ -7,8 +7,8 @@
     <Authors>metasong</Authors>
     <Company>metaseed</Company>
     <Copyright>2019 metaseed</Copyright>
-    <PackageProjectUrl></PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
+    <PackageProjectUrl>https://github.com/metatool/metatool</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/metatool/metatool</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>metatool;plugin</PackageTags>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

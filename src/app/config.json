@@ -1,5 +1,7 @@
 ﻿{
   "Tools": {
-    "Metatool.Tools.LibToolDemo": { "Update": true  }
+    "Metatool.Tools.LibToolDemo": { "Update": true },
+    "Metatool.Tools.ScriptToolDemo": { "Update": true }
+
   }
 }

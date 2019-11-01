@@ -135,11 +135,16 @@ namespace Metatool.Plugin
                             if (Directory.Exists(toolsFolder))
                                 return toolsFolder;
                             var libFolder = Path.Combine(latestVersionFolder, "lib");
-                            var runtime = new Regex("netcoreapp[\\d.]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                            var latestRuntimeFolder = Directory.EnumerateDirectories(libFolder).Where(d => runtime.IsMatch(d))
-                                .OrderBy(k => k).LastOrDefault();
-                            if (Directory.Exists(latestRuntimeFolder))
-                                return toolsFolder;
+                            if (Directory.Exists(toolsFolder))
+                            {
+                                var runtime = new Regex("netcoreapp[\\d.]+",
+                                    RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                                var latestRuntimeFolder = Directory.EnumerateDirectories(libFolder)
+                                    .Where(d => runtime.IsMatch(d))
+                                    .OrderBy(k => k).LastOrDefault();
+                                if (Directory.Exists(latestRuntimeFolder))
+                                    return toolsFolder;
+                            }
                         }
                         return null;
                     }

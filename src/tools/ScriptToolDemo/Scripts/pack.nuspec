@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Metatool.Tools.ScriptToolDemo</id>
+    <version>1.0.0</version>
+    <title>Metatool Tool Script Demo</title>
+    <authors>metasong</authors>
+    <owners>metasong</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>template for create metatool plugin tool</description>
+    <copyright>2019 metaseed</copyright>
+    <tags>metatool plugin</tags>
+    <dependencies>
+      <group targetFramework=".NETCoreApp3.0">
+        <dependency id="Metatool.Plugin" version="*" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src=".\**" target="." />
+  </files>
+</package>
