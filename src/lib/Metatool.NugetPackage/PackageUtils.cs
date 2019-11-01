@@ -36,11 +36,7 @@ namespace Metatool.NugetPackage
             return obj;
         }
 
-        // internal List<LibraryRef> ParseReferences(string code)
-        // {
-        //     
-        // }
-
+      
         internal static (List<string> compile, List<string> runtime, List<string> analyzers) ReadProjectLockJson(JObject obj, string packagesDirectory, string framework)
         {
             var compile = new List<string>();

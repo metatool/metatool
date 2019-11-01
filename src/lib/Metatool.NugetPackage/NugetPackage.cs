@@ -12,6 +12,8 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
 using NuGet.Frameworks;
+using NuGet.Protocol;
+using NuGet.Protocol.Core.Types;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Metatool.NugetPackage
@@ -19,7 +21,8 @@ namespace Metatool.NugetPackage
     internal class NugetPackage
     {
         private readonly IEnumerable<string>        _configFilePaths;
-        private readonly IEnumerable<PackageSource> _packageSources;
+        internal readonly List<PackageSource> _packageSources;
+        internal readonly List<SourceRepository> _sourceRepositories;
         private readonly ExceptionDispatchInfo      _initializationException;
         private readonly ILogger                    _logger;
         private readonly NugetManager               _manager;
@@ -50,12 +53,15 @@ namespace Metatool.NugetPackage
 
                 GlobalPackageFolder = SettingsUtility.GetGlobalPackagesFolder(settings);
                 _configFilePaths    = new List<string>(); //SettingsUtility.GetConfigFilePaths(settings);
-                _packageSources     = SettingsUtility.GetEnabledSources(settings);
-                _packageSources     = _manager.AdditionalSources.Select(p=>new PackageSource(p.source,p.name)).Concat(_packageSources);
+                var sources     = SettingsUtility.GetEnabledSources(settings);
+                _packageSources     = _manager.AdditionalSources.Select(p=>new PackageSource(p.source,p.name)).Concat(sources).ToList();
                 DefaultCredentialServiceUtility.SetupDefaultCredentialService(NullLogger.Instance,
                     nonInteractive: false);
 
                 var sourceProvider = new PackageSourceProvider(settings);
+                var providers = new List<Lazy<INuGetResourceProvider>>();
+                providers.AddRange(Repository.Provider.GetCoreV3());
+                _sourceRepositories = _packageSources.Select(s => new SourceRepository(s, providers)).ToList();
             }
             catch (Exception e)
             {

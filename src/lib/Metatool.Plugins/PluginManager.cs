@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Metatool.Metatool.Plugin;
 using Metatool.NugetPackage;
 using Metatool.Reactive;
@@ -13,6 +15,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using NuGet.Configuration;
 using NuGet.Versioning;
 
 namespace Metatool.Plugin
@@ -21,6 +24,7 @@ namespace Metatool.Plugin
     {
         public PluginLoader                Loader;
         public ObservableFileSystemWatcher Watcher;
+        public Version Version => Loader?.MainAssembly.GetName().Version;
         public List<IPlugin>               Tools = new List<IPlugin>();
     }
 
@@ -157,9 +161,9 @@ namespace Metatool.Plugin
 
             ObservableFileSystemWatcher lastWatcher = null;
 
-            if (_plugins.ContainsKey(dllPath))
+            if (_plugins.ContainsKey(assemblyName))
             {
-                var plugin = _plugins[dllPath];
+                var plugin = _plugins[assemblyName];
                 if (plugin.Loader != null) // reload
                 {
                     try
@@ -186,7 +190,7 @@ namespace Metatool.Plugin
                 }
 
                 lastWatcher = plugin.Watcher;
-                _plugins.Remove(dllPath);
+                _plugins.Remove(assemblyName);
             }
 
             LoadDll(dllPath, lastWatcher);
@@ -217,15 +221,39 @@ namespace Metatool.Plugin
 
         public void InitPlugins()
         {
+
+            var toolDirs = GetToolsDirectories();//.Where(d => !toolIds.Any(d.EndsWith)).ToList();
+            toolDirs.ForEach(InitPlugin);
+            Task.Run(UpdateTools);
+
+        }
+
+        private async Task UpdateTools()
+        {
             var toolIds = Services.Get<IConfiguration>().GetSection("Tools").GetChildren()
                 .Where(t => t.GetValue<bool>("Update") == true).Select(t => t.Key);
-            var toolDirs = GetToolsDirectories().Where(d => !toolIds.Any(d.EndsWith)).ToList();
-            toolDirs.ForEach(InitPlugin);
-
             var nugetManager = new NugetManager(_logger);
+            var nugetFinder  = new PackageFinder();
+
             foreach (var toolId in toolIds)
             {
-                _logger.LogInformation($"{toolId}: start updating lib refs...");
+                var sources = nugetManager.SourceRepositories;
+                var r       = await nugetFinder.GetLatestPackage(toolId, sources, false, false, false);
+                if (r.metadata == null)
+                {
+                    _logger.LogDebug($"No Package({toolId}) found in any source!");
+                    continue;
+                }
+
+                _plugins.TryGetValue(toolId, out var token);
+                var version = token?.Version;
+                if (version != null && r.metadata.Identity.Version.Version <= version)
+                {
+                    _logger.LogDebug($"Package({toolId}) is already the latest version.");
+                    continue;
+                }
+
+                _logger.LogInformation($"{toolId}: new version available, updating...");
 
                 nugetManager.Id          = toolId + "_Restore";
                 nugetManager.RestorePath = Path.Combine(Context.DefaultToolsDirectory, toolId);
@@ -244,10 +272,9 @@ namespace Metatool.Plugin
                         _logger.LogWarning(error);
                     }
                 };
-                nugetManager.Restore(new List<LibraryRef>() {new LibraryRef(toolId, VersionRange.AllFloating)});
+                await nugetManager.RefreshPackagesAsync(new [] { new LibraryRef(toolId, VersionRange.AllFloating) }, CancellationToken.None, new List<PackageSource>(){r.source});
             }
         }
-
 
         public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
         {
@@ -262,7 +289,7 @@ namespace Metatool.Plugin
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
             var loader       = CreatePluginLoader(dllPath);
             var token        = new PluginToken() {Loader = loader, Watcher = lastWatcher};
-            _plugins.Add(dllPath, token);
+            _plugins.Add(assemblyName, token);
 
             IServiceProviderDisposable provider   = null;
             var                        allTypes   = loader.MainAssembly.GetTypes();
@@ -304,8 +331,8 @@ namespace Metatool.Plugin
             var assemblyName = Path.GetFileName(dllPath);
             _logger.LogInformation($"{assemblyName}: start unloading...");
             //RemoveServices(_servicesCollection, plugin.Loader);
-            var plugin = _plugins[dllPath];
-            _plugins.Remove(dllPath);
+            var plugin = _plugins[assemblyName];
+            _plugins.Remove(assemblyName);
             var tools = plugin.Tools;
             tools.ForEach(tool => tool.OnUnloading());
             tools.Clear();
@@ -338,13 +365,13 @@ namespace Metatool.Plugin
                 c.Filter       = "*.csx";
             });
 
-            if (_plugins.ContainsKey(dllPath))
+            if (_plugins.ContainsKey(assemblyName))
             {
-                _plugins[dllPath].Watcher = watcher;
+                _plugins[assemblyName].Watcher = watcher;
             }
             else
             {
-                _plugins.Add(dllPath, new PluginToken() {Watcher = watcher});
+                _plugins.Add(assemblyName, new PluginToken() {Watcher = watcher});
             }
 
             var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(e =>

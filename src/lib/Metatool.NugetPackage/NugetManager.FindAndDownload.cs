@@ -20,7 +20,7 @@ namespace Metatool.NugetPackage
 
             void GetListOfPackageIdentitiesRecursive(string pkgName, string ver)
             {
-                var packageWrapper = _packageFinder.GetPackageByExactSearch(pkgName, ver, repositories, disableCache, includePrerelease, allowUnlisted);
+                var packageWrapper = _packageFinder.GetPackageByExactSearch(pkgName, repositories, ver, disableCache, includePrerelease, allowUnlisted).Result;
                 if (packageWrapper == null)
                 {
                     return;

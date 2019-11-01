@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using NuGet.Configuration;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
@@ -21,29 +22,24 @@ namespace Metatool.NugetPackage
             _logger          = NugetHelper.Instance.Logger;
         }
 
-        public PackageWrapper GetPackageByExactSearch(string packageName, string version,
-            IList<NugetRepository> repositories, bool disableCache = false, bool includePrerelease = false,
+        public async Task<PackageWrapper> GetPackageByExactSearch(string packageName,
+            IList<NugetRepository> repositories,
+            string version, bool disableCache = false, bool includePrerelease = false,
             bool includeUnlisted = false)
         {
-            PackageWrapper packageWrapper = null;
-            var            sourceRepos    = NugetHelper.Instance.GetSourceRepos(repositories);
-            // slow down search if disabling search
-            var sourceCacheContext = new SourceCacheContext() {NoCache = disableCache, DirectDownload = disableCache};
+            var sourceRepos = NugetHelper.Instance.GetSourceRepos(repositories);
             foreach (var sourceRepository in sourceRepos)
             {
-                var packageMetadataResource = sourceRepository.GetResourceAsync<PackageMetadataResource>().Result;
-
                 IPackageSearchMetadata package;
                 version = version?.Trim();
-                if (!string.IsNullOrEmpty(version) || !string.Equals("*",version))
+                if (!string.IsNullOrEmpty(version) || !string.Equals("*", version))
                 {
-                    package = GetPackage(packageName, version,
-                        packageMetadataResource, sourceCacheContext, sourceRepository);
+                    package = await GetPackage(packageName, version, sourceRepository, disableCache);
                 }
                 else
                 {
-                    package = GetLatestPackage(packageName, includePrerelease, includeUnlisted,
-                        packageMetadataResource, sourceCacheContext, sourceRepository);
+                    package = await GetLatestPackage(packageName, sourceRepository, includePrerelease, includeUnlisted,
+                        disableCache);
                 }
 
                 if (package == null)
@@ -53,7 +49,7 @@ namespace Metatool.NugetPackage
                     continue;
                 }
 
-                packageWrapper = new PackageWrapper
+                var packageWrapper = new PackageWrapper
                 {
                     rootPackageIdentity = package.Identity,
                     packageName         = package.Identity.Id,
@@ -66,22 +62,24 @@ namespace Metatool.NugetPackage
 
                 _logger.LogInformation($"Latest Package form Exact Search : {packageWrapper.packageName}" +
                                        $"| {packageWrapper.version} in Repo {sourceRepository.PackageSource.Source}");
-                break;
+                return packageWrapper;
             }
 
-            return packageWrapper;
+            return null;
         }
 
-        public IPackageSearchMetadata GetPackage(string packageName, string version,
-            PackageMetadataResource packageMetadataResource,
-            SourceCacheContext sourceCacheContext,
-            SourceRepository sourceRepository)
+        public async Task<IPackageSearchMetadata> GetPackage(string packageName, string version,
+            SourceRepository sourceRepository,
+            bool disableCache
+        )
         {
             if (!NuGetVersion.TryParse(version, out var ver)) return null;
-
+            var packageMetadataResource = await sourceRepository.GetResourceAsync<PackageMetadataResource>();
+            var sourceCacheContext = new SourceCacheContext()
+                {NoCache = disableCache, DirectDownload = disableCache};
             var packageIdentity = new PackageIdentity(packageName, ver);
-            var exactSearchMetadata = packageMetadataResource
-                .GetMetadataAsync(packageIdentity, sourceCacheContext, _logger, CancellationToken.None).Result;
+            var exactSearchMetadata = await packageMetadataResource
+                .GetMetadataAsync(packageIdentity, sourceCacheContext, _logger, CancellationToken.None);
 
             if (exactSearchMetadata == null)
             {
@@ -92,30 +90,62 @@ namespace Metatool.NugetPackage
             return exactSearchMetadata;
         }
 
-        public IPackageSearchMetadata GetLatestPackage(
-            string packageName, bool incluePrerelease, bool includeUnlisted,
-            PackageMetadataResource packageMetadataResource,
-            SourceCacheContext sourceCacheContext,
-            SourceRepository sourceRepository)
+        public async Task<(IPackageSearchMetadata metadata, PackageSource source)> GetLatestPackage(
+            string packageName, IEnumerable<SourceRepository> sourceRepositories,
+            bool includePrerelease, bool includeUnlisted,
+            bool disableCache)
         {
-            IPackageSearchMetadata rootPackage = null;
-            var exactSearchMetadata = packageMetadataResource
-                .GetMetadataAsync(packageName, incluePrerelease, includeUnlisted, sourceCacheContext, _logger,
-                    CancellationToken.None).Result
-                .ToList();
+            IPackageSearchMetadata packageMetadata = null;
+            PackageSource          sourceRepo      = null;
+            // var                    sourceRepos     = NugetHelper.Instance.GetSourceRepos(repositories);
+            foreach (var sourceRepository in sourceRepositories)
+            {
+                var metadata = await GetLatestPackage(packageName, sourceRepository, includePrerelease, includeUnlisted,
+                    disableCache);
+                if (packageMetadata == null                                                                  ||
+                    metadata != null && metadata.Identity.HasVersion && !packageMetadata.Identity.HasVersion ||
+                    metadata != null                    && metadata.Identity.HasVersion &&
+                    packageMetadata.Identity.HasVersion &&
+                    metadata.Identity.Version > packageMetadata.Identity.Version)
+                {
+                    packageMetadata = metadata;
+                    sourceRepo      = sourceRepository.PackageSource;
+                }
+            }
+
+            return (packageMetadata, sourceRepo);
+        }
+
+        public async Task<IPackageSearchMetadata> GetLatestPackage(
+            string packageName, SourceRepository sourceRepository,
+            bool includePrerelease, bool includeUnlisted,
+            bool disableCache)
+        {
+            var packageMetadataResource = await sourceRepository.GetResourceAsync<PackageMetadataResource>();
+
+            var sourceCacheContext = new SourceCacheContext()
+                {NoCache = disableCache, DirectDownload = disableCache};
+
+            var exactSearchMetadata = (await packageMetadataResource
+                .GetMetadataAsync(packageName, includePrerelease, includeUnlisted, sourceCacheContext, _logger,
+                    CancellationToken.None)).ToList();
 
             if (!exactSearchMetadata.Any())
             {
-                _logger.LogInformation($"GetPackageFromRepoWithoutVersion - No Package & any version  found in Repo " +
-                                       $"{sourceRepository.PackageSource.Source} for package : {packageName}");
+                _logger.LogInformation(
+                    $"GetLatestPackage - No Package & any version  found in Repo {sourceRepository.PackageSource.Source} for package : {packageName}");
+                return null;
             }
             else
             {
-                rootPackage = exactSearchMetadata.OrderByDescending(x => x.Identity.Version)
-                    .FirstOrDefault();
-            }
+                _logger.LogInformation(
+                    $"GetLatestPackage - Package found in Repo {sourceRepository.PackageSource.Source} for package : {packageName}");
 
-            return rootPackage;
+                var rootPackage = exactSearchMetadata.OrderByDescending(x => x.Identity.Version)
+                    .FirstOrDefault();
+                return rootPackage;
+            }
         }
+
     }
 }

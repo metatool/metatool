@@ -49,12 +49,22 @@ namespace Metatool.NugetPackage
                 sourceRepositories.Add(sourceRepository);
             }
 
-            if (sourceRepositories.Count < 1)
+            return sourceRepositories;
+        }
+
+        public SourceRepository GetSourceRepository(NugetRepository repository)
+        {
+            var providers = new List<Lazy<INuGetResourceProvider>>();
+            providers.AddRange(Repository.Provider.GetCoreV3());
+            var packageSource = new PackageSource(repository.Source, repository.Name);
+            if (repository.IsPrivate)
             {
-                throw new Exception("No Source Repository found!!");
+                packageSource.Credentials = new PackageSourceCredential(repository.Name,
+                    repository.Username, repository.Password, repository.IsPasswordClearText, null);
             }
 
-            return sourceRepositories;
+            var sourceRepository = new SourceRepository(packageSource, providers);
+            return sourceRepository;
         }
 
         public string GetTargetFramework()

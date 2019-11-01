@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
+using NuGet.Configuration;
 using NuGet.Frameworks;
+using NuGet.Protocol.Core.Types;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace Metatool.NugetPackage
@@ -23,7 +25,7 @@ namespace Metatool.NugetPackage
         private readonly HashSet<LibraryRef>     _libraries   = new HashSet<LibraryRef>();
         private          NuGetFramework          _targetFramework;
         private          CancellationTokenSource _restoreCts;
-        private          string?                 _frameworkVersion;
+        private          string                 _frameworkVersion;
 
         public ImmutableArray<string>           LocalLibraryPaths { get; private set; } = ImmutableArray<string>.Empty;
         public event Action<NuGetRestoreResult> RestoreSuccess;
@@ -40,6 +42,9 @@ namespace Metatool.NugetPackage
                 ("metatool.pkg.source",Context.PackageSourceDirectory)
                 // ("metatool.pkg.used", Context.PackageDirectory)
             };
+
+        public List<PackageSource> PackageSources => _nugetPackage._packageSources;
+        public List<SourceRepository> SourceRepositories => _nugetPackage._sourceRepositories;
 
         public           bool         IsRestoring   { get; private set; }
         public           bool         RestoreFailed { get; private set; }
@@ -71,7 +76,6 @@ namespace Metatool.NugetPackage
 
         public void Restore(IReadOnlyList<LibraryRef> libraries)
         {
-            // libraries = libraries.Where(l => l.Id != "Metatool.Plugin").ToImmutableList();
             var changed = false;
 
             if (_libraries.Count > 0 && (libraries == null || libraries.Count == 0))
@@ -133,7 +137,8 @@ namespace Metatool.NugetPackage
             RestoreTask = Task.Run(() => RefreshPackagesAsync(packages, cancellationToken), cancellationToken);
         }
 
-        private async Task RefreshPackagesAsync(LibraryRef[] libraries, CancellationToken cancellationToken)
+        public async Task RefreshPackagesAsync(LibraryRef[] libraries, CancellationToken cancellationToken,
+            IList<PackageSource> sources = null)
         {
             await _restoreLock.WaitAsync(cancellationToken).ConfigureAwait(false);
             IsRestoring = true;
@@ -145,6 +150,7 @@ namespace Metatool.NugetPackage
                 restoreParams.Libraries        = libraries;
                 restoreParams.TargetFramework  = _targetFramework;
                 restoreParams.FrameworkVersion = _frameworkVersion;
+                if (sources != null) restoreParams.Sources = sources;
 
                 var lockFilePath = Path.Combine(RestorePath, "project.assets.json");
 

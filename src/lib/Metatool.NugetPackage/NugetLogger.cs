@@ -12,7 +12,7 @@ namespace Metatool.NugetPackage
 {
     internal class NugetLogger: ILogger
     {
-        readonly Microsoft.Extensions.Logging.ILogger _logger = Services.Get<Microsoft.Extensions.Logging.ILogger>();
+        readonly Microsoft.Extensions.Logging.ILogger _logger = Services.Get<Microsoft.Extensions.Logging.ILogger<NugetLogger>>();
         public void LogDebug(string data)
         {
             _logger.LogDebug(data);

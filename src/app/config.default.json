@@ -38,7 +38,7 @@
       },
       // global filter settings
       "LogLevel": {
-        "Default": "Information"
+        "Default": "debug"
       }
     }
   }
