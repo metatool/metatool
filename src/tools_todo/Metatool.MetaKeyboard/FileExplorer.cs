@@ -31,19 +31,10 @@ namespace Metatool.MetaKeyboard
 
         public IKey FocusFileItemsView = (LWin + F).Down(e =>
         {
-            var winHandle  = Utils.Window.CurrentWindowHandle;
-            var winElement = AutomationElement.FromHandle(winHandle);
-            var listBoxEle = winElement.FindFirst(TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.ClassNameProperty, "UIItemsView"));
-            var listBox = listBoxEle.GetCurrentPattern(SelectionPattern.Pattern) as SelectionPattern;
-            var selectedItem = listBox?.Current.GetSelection().FirstOrDefault();
+            var listBoxEle   = UIA.CurrentWindow?.FirstDecendant(c => c.ByClassName("UIItemsView"));
+            var selectedItem = listBoxEle.SelectedItems()?.FirstOrDefault();
             if (selectedItem != null) selectedItem.SetFocus();
-            else
-            {
-                var firstItem = listBoxEle.FindFirst(TreeScope.Children,
-                    new PropertyCondition(AutomationElement.ClassNameProperty, "UIItem"));
-                firstItem?.Select();
-            }
+            else listBoxEle.FirstChild(c => c.ByClassName("UIItem"))?.Select();
 
             // using (var automation = new UIA3Automation())
             // {
@@ -60,15 +51,27 @@ namespace Metatool.MetaKeyboard
 
         public IKey FocusNavigationTreeView = (LWin + N).Down(e =>
         {
-            using (var automation = new UIA3Automation())
+            var winEle       = UIA.CurrentWindow?.FirstDecendant(cf => cf.ByClassName("SysTreeView32"));
+            var selectedItem = winEle?.SelectedItems().FirstOrDefault();
+            if (selectedItem != null)
             {
-                var h        = Utils.Window.CurrentWindowHandle;
-                var element  = automation.FromHandle(h);
-                var treeView = element.FindFirstDescendant(cf => cf.ByClassName("SysTreeView32"));
-                treeView?.AsTree().SelectedTreeItem.Focus();
+                selectedItem.SetFocus();
+            }
+            else
+            {
+                var treeItem = winEle?.FirstDecendant(c => c.ByControlType(ControlType.TreeItem));
+                treeItem?.Select();
             }
 
             e.Handled = true;
+
+            // using (var automation = new UIA3Automation())
+            // {
+            //     var h        = Utils.Window.CurrentWindowHandle;
+            //     var element  = automation.FromHandle(h);
+            //     var treeView = element.FindFirstDescendant(cf => cf.ByClassName("SysTreeView32"));
+            //     treeView?.AsTree().SelectedTreeItem.Focus();
+            // }
         }, IsExplorerOrDialog, "Focus &Navigation Tree View");
 
         public IKey CopySelectedPath = (Caps + Pipe).Down(async e =>

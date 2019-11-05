@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Threading;
 using Metatool.Utils.Implementation;
 using Point = System.Drawing.Point;
@@ -32,7 +33,6 @@ namespace Metatool.Utils
                 return WindowManager.GetClassName(hWnd);
             }
         }
-
 
 
         public static IntPtr CurrentWindowHandle => PInvokes.GetForegroundWindow();
