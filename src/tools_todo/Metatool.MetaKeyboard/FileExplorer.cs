@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Automation;
 using System.Windows.Forms;
-using FlaUI.Core.AutomationElements;
-using FlaUI.UIA3;
 using Metatool.Command;
 using Metatool.Input;
 using Metatool.Plugin;

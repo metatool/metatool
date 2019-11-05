@@ -43,10 +43,6 @@ namespace Metatool.MetaKeyboard
             internal set
             {
                 _config = value;
-                // var configPath = Path.Combine(Context.ToolDir<KeyboardTool>(), @".\config.json");
-                // var config     = File.ReadAllText(configPath);
-                // _config = JsonSerializer.Deserialize<Config>(config,
-                //     new JsonSerializerOptions() {ReadCommentHandling = JsonCommentHandling.Skip});
                 var tools = _config.Tools;
 
                 var baseDir = Context.ToolDir<KeyboardTool>();
@@ -59,13 +55,8 @@ namespace Metatool.MetaKeyboard
                         info.SetValue(tools, abs);
                     }
                 }
-
             }
-            get
-            {
-
-                return _config;
-            }
+            get => _config;
         }
 
         public Settings  Settings  { get; set; }

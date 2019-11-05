@@ -1,5 +1,8 @@
-﻿using System.Windows.Forms;
-using FlaUI.UIA3;
+﻿using System;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Forms;
+// using FlaUI.UIA3;
 using Metatool.Command;
 using Metatool.Input;
 using static Metatool.MetaKeyboard.KeyboardConfig;
@@ -18,13 +21,12 @@ namespace Metatool.MetaKeyboard
 
         static void MoveCursorToActiveControl()
         {
-            using var automation = new UIA3Automation();
-            var       active     = automation.FocusedElement();
-            var       bounding   = active.BoundingRectangle;
+            var active = AutomationElement.FocusedElement;
+            var bounding = (Rect) active.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
 
-            var x = bounding.X + bounding.Width  / 2;
-            var y = bounding.Y + bounding.Height / 2;
-            if (x == 0 && y == 0)
+            var x = (int)Math.Floor(bounding.X + bounding.Width  / 2);
+            var y = (int)Math.Floor(bounding.Y + bounding.Height / 2);
+            if (x ==0 && y ==0)
             {
                 var r = Window.GetCurrentWindowRect();
                 x = (int) (r.X + r.Width  / 2);
