@@ -25,8 +25,11 @@
     <NugetPath>.\tools</NugetPath>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" />
+    <PackageReference Include="Metatool.Plugin" Version="*" />
   </ItemGroup>
+  <!-- <ItemGroup> -->
+  <!--   <ProjectReference Include="..\..\..\lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj" /> -->
+  <!-- </ItemGroup> -->
 
   <ItemGroup>
     <None Update="config.json" Pack="true" PackagePath="$(NugetPath)">
