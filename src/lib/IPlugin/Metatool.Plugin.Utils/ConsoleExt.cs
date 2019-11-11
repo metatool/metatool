@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Threading;
+using Metatool.Plugin;
 using Metatool.Utils.Implementation;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.Utils
 {
     public static class ConsoleExt
     {
+        public static Dispatcher Dispatcher;
         [DllImport("Kernel32")]
         private static extern bool SetConsoleCtrlHandler(SetConsoleCtrlEventHandler handler, bool add);
 
@@ -22,6 +27,7 @@ namespace Metatool.Utils
                 case CtrlType.CTRL_SHUTDOWN_EVENT:
                 case CtrlType.CTRL_CLOSE_EVENT:
                     Exit?.Invoke();
+                    Services.Get<ILogger<Object>>()?.LogInformation("exit");
                     Environment.Exit(0);
                     return false;
 
@@ -55,12 +61,17 @@ namespace Metatool.Utils
         public static void InitialConsole(bool disableCloseButton = false)
         {
             PInvokes.AllocConsole();
+
             var handle = PInvokes.GetConsoleWindow();
 #if !DEBUG
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
             if(disableCloseButton)  DisableCloseButton();
 #endif
             SetConsoleCtrlHandler(handlerDelegate, true);
+            Console.CancelKeyPress += (_, __) =>
+            {
+                Dispatcher?.BeginInvoke((Action) (() => Application.Current.Shutdown(0)));
+            };
         }
 
         public static void DisableCloseButton() =>

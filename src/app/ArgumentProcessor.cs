@@ -40,6 +40,7 @@ namespace Metaseed.Metatool
             {
                 // without command
                 var application   = new App();
+                ConsoleExt.Dispatcher = application.Dispatcher;
                 var pluginManager = Services.GetOrCreate<PluginManager>();
                 pluginManager.InitPlugins();
                 application.RunApp();
