@@ -16,7 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{4743D69C-2D0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{7B748A36-C415-494D-B3BD-B6A78EEF8737}"
 	ProjectSection(SolutionItems) = preProject
-		script\AutoHotkey.csx = script\AutoHotkey.csx
+		script\replace.cmd = script\replace.cmd
+		script\replace.ps1 = script\replace.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{715E3AF6-16D3-40D9-81FA-80D14F9BAE6D}"
