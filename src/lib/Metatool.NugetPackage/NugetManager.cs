@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
-using Metatool.Plugin;
+using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;

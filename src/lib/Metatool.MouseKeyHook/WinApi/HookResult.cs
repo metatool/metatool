@@ -1,4 +1,5 @@
-﻿
+﻿
+
 using System;
 
 namespace Metatool.Input.MouseKeyHook.WinApi

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Metatool.Core;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.UI;
 using Metatool.Utils;
 using Microsoft.Extensions.Logging;

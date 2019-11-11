@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Plugin.NotifyIcon\Metatool.Plugin.NotifyIcon.csproj" />
+    <ProjectReference Include="..\IPlugin\Metatool.Service.NotifyIcon\Metatool.Service.NotifyIcon.csproj" />
   </ItemGroup>
 
 </Project>

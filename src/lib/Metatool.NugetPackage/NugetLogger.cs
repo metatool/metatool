@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Metatool.Plugin;
+using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using ILogger = NuGet.Common.ILogger;

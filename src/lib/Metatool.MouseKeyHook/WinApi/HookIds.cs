@@ -1,4 +1,5 @@
-﻿
+﻿
+
 namespace Metatool.Input.MouseKeyHook.WinApi
 {
     internal static class HookIds

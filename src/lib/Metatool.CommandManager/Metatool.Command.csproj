@@ -8,6 +8,6 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Plugin.Command\Metatool.Plugin.Command.csproj" />
+    <ProjectReference Include="..\IPlugin\Metatool.Service.Command\Metatool.Service.Command.csproj" />
   </ItemGroup>
 </Project>

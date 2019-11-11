@@ -1,6 +1,6 @@
 ﻿using ConsoleApp1;
 using Metatool.Command;
-using Metatool.Plugin;
+using Metatool.Service;
 
 namespace Metatool.MetaKeyboard
 {

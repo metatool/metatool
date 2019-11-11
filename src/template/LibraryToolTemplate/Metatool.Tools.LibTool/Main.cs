@@ -1,6 +1,6 @@
 ﻿using Metatool.Command;
 using Metatool.Input;
-using Metatool.Plugin;
+using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using static Metatool.Input.Key;
 

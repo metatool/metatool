@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.ScreenPoint;
 
 namespace Metatool.ScreenHint

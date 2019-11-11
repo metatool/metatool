@@ -1,4 +1,4 @@
-﻿using Metatool.Plugin;
+﻿using Metatool.Service;
 
 namespace Metatool.Tools.LibToolDemo
 {

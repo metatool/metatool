@@ -50,7 +50,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Script.Runtime", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MetaKeyboard", "tools_todo\Metatool.MetaKeyboard\Metatool.MetaKeyboard.csproj", "{E45A7DF5-A235-4454-BFD7-11E49D1B9DA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugins", "lib\Metatool.Plugins\Metatool.Plugins.csproj", "{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Services", "lib\Metatool.Services\Metatool.Services.csproj", "{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Command", "lib\Metatool.CommandManager\Metatool.Command.csproj", "{D11FFB35-8D2A-4A5B-89E4-B7F844CDD196}"
 EndProject
@@ -62,30 +62,30 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LibraryToolTemplate", "Libr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IPlugin", "IPlugin", "{5C07C04B-D1B8-4D77-8873-18CA3BAE2250}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin", "lib\IPlugin\Metatool.Plugin\Metatool.Plugin.csproj", "{2AC0FFCF-4F55-457A-9EF8-3FD4C5FAE8B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service", "lib\IPlugin\Metatool.Service\Metatool.Service.csproj", "{2AC0FFCF-4F55-457A-9EF8-3FD4C5FAE8B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.Core", "lib\IPlugin\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj", "{7DB48534-4BEE-4628-A496-958FD9958FD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Core", "lib\IPlugin\Metatool.Service.Core\Metatool.Service.Core.csproj", "{7DB48534-4BEE-4628-A496-958FD9958FD7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.Input", "lib\IPlugin\Metatool.Plugin.Input\Metatool.Plugin.Input.csproj", "{0E044BC4-A436-41AD-A978-150D6D9B1362}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Input", "lib\IPlugin\Metatool.Service.Input\Metatool.Service.Input.csproj", "{0E044BC4-A436-41AD-A978-150D6D9B1362}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugin", "Plugin", "{566F4027-9EC8-4BFF-89ED-80ACDC592CC8}"
 	ProjectSection(SolutionItems) = preProject
 		lib\IPlugin\common.props = lib\IPlugin\common.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.Utils", "lib\IPlugin\Metatool.Plugin.Utils\Metatool.Plugin.Utils.csproj", "{5FDB5F32-1C08-4C4F-B099-130E93BEF4AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Utils", "lib\IPlugin\Metatool.Service.Utils\Metatool.Service.Utils.csproj", "{5FDB5F32-1C08-4C4F-B099-130E93BEF4AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.UI", "lib\IPlugin\Metatool.Plugin.UI\Metatool.Plugin.UI.csproj", "{EDC44228-2A4C-4204-9AB7-C12F1003B50D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.UI", "lib\IPlugin\Metatool.Service.UI\Metatool.Service.UI.csproj", "{EDC44228-2A4C-4204-9AB7-C12F1003B50D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.UI", "lib\Metatool.UI\Metatool.UI.csproj", "{58ACE775-1559-4CEF-9AFE-86F74A106EC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.NotifyIcon", "lib\IPlugin\Metatool.Plugin.NotifyIcon\Metatool.Plugin.NotifyIcon.csproj", "{7682A886-A59A-42D2-A904-12C111351823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.NotifyIcon", "lib\IPlugin\Metatool.Service.NotifyIcon\Metatool.Service.NotifyIcon.csproj", "{7682A886-A59A-42D2-A904-12C111351823}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScriptToolTemplate", "ScriptToolTemplate", "{8DB56D1B-DC7F-4B06-8F2D-341305DE37FB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.MouseKeyHook", "lib\IPlugin\Metatool.Plugin.MouseKeyHook\Metatool.Plugin.MouseKeyHook.csproj", "{53D94781-921F-4EE9-9667-617FB735FB19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.MouseKeyHook", "lib\IPlugin\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj", "{53D94781-921F-4EE9-9667-617FB735FB19}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.Command", "lib\IPlugin\Metatool.Plugin.Command\Metatool.Plugin.Command.csproj", "{186E368E-36D4-4CE1-97D2-922424E0BFCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Command", "lib\IPlugin\Metatool.Service.Command\Metatool.Service.Command.csproj", "{186E368E-36D4-4CE1-97D2-922424E0BFCF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.NugetPackage", "lib\Metatool.NugetPackage\Metatool.NugetPackage.csproj", "{85636EB4-2902-470D-868A-7B58840C770C}"
 EndProject
@@ -93,7 +93,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "service", "service", "{F04E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.ScreenHint", "lib\Metatool.ScreenHint\Metatool.ScreenHint.csproj", "{C74A85CC-B193-4205-A603-1EF58B74DFE7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin.ScreenHint", "lib\IPlugin\Metatool.Plugin.ScreenHint\Metatool.Plugin.ScreenHint.csproj", "{645280E5-58B6-4828-B083-A202536846C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.ScreenHint", "lib\IPlugin\Metatool.Service.ScreenHint\Metatool.Service.ScreenHint.csproj", "{645280E5-58B6-4828-B083-A202536846C6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.LibTool", "template\LibraryToolTemplate\Metatool.Tools.LibTool\Metatool.Tools.LibTool.csproj", "{5B73BCF3-1DCA-4B50-9933-DB3A86859548}"
 EndProject

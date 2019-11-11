@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Trie;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.UI;
 using Microsoft.Extensions.Logging;
 

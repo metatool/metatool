@@ -8,8 +8,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Plugin.Input\Metatool.Plugin.Input.csproj" />
-    <ProjectReference Include="..\IPlugin\Metatool.Plugin.ScreenHint\Metatool.Plugin.ScreenHint.csproj" />
-    <ProjectReference Include="..\IPlugin\Metatool.Plugin.Utils\Metatool.Plugin.Utils.csproj" />
+    <ProjectReference Include="..\IPlugin\Metatool.Service.Input\Metatool.Service.Input.csproj" />
+    <ProjectReference Include="..\IPlugin\Metatool.Service.ScreenHint\Metatool.Service.ScreenHint.csproj" />
+    <ProjectReference Include="..\IPlugin\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />
   </ItemGroup>
 </Project>

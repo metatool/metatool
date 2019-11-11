@@ -5,7 +5,7 @@ using System.Windows.Automation;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.Utils;
 using static Metatool.Input.Key;
 

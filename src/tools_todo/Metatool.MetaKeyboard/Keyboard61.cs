@@ -1,6 +1,6 @@
 ﻿using Metatool.Command;
 using Metatool.Input;
-using Metatool.Plugin;
+using Metatool.Service;
 using static Metatool.Input.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 

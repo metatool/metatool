@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Metatool.Plugin;
+using Metatool.Service;
 
 namespace Metatool.MetaKeyboard
 {

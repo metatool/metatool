@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Metatool.Plugin;
+using Metatool.Service;
 using Microsoft.Extensions.Options;
 
 namespace Metaseed.Metatool.Service

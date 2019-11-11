@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Windows.Forms;
 using Metatool.Command;
-using Metatool.Plugin;
+using Metatool.Service;
 using static Metatool.Input.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 

@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.WindowsInput;
 
 namespace Metatool.Input

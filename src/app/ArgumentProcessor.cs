@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using McMaster.Extensions.CommandLineUtils;
 using McMaster.Extensions.CommandLineUtils.Validation;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.Utils;
 using Microsoft.Extensions.Logging;
 

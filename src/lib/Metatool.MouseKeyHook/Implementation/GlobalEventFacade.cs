@@ -1,4 +1,5 @@
-﻿
+﻿
+
 namespace Metatool.Input.MouseKeyHook.Implementation
 {
     internal class GlobalEventFacade : EventFacade

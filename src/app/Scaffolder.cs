@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using McMaster.Extensions.CommandLineUtils;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.Utils;
 using Microsoft.Extensions.Logging;
 

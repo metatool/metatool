@@ -8,7 +8,7 @@ using System.Windows.Threading;
 using Metatool.Command;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.UI;
 using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;

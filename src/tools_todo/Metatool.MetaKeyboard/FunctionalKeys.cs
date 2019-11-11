@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.UI;
 using Microsoft.Win32;
 using static Metatool.Input.Key;

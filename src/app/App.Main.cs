@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Metatool.Plugin;
+using Metatool.Service;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Logging;
 

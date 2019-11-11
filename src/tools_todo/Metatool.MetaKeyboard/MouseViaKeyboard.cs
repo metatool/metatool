@@ -7,7 +7,7 @@ using Metatool.Input;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Input.Key;
 using Window = Metatool.Utils.Window;
-using Metatool.Plugin;
+using Metatool.Service;
 using Point= System.Drawing.Point;
 
 namespace Metatool.MetaKeyboard

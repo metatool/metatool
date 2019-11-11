@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.Plugin;
+using Metatool.Service;
 using Metatool.UI;
 using Metatool.WindowsInput.Native;
 using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
