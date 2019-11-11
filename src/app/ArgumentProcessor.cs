@@ -87,7 +87,7 @@ namespace Metaseed.Metatool
                     c.OnExecute(() =>
                     {
                         var scaffolder = new Scaffolder(_logger);
-                        scaffolder.InitTemplate(fileName.Value, cwd.Value(), true);
+                        scaffolder.InitTemplate(fileName.Value, cwd.Value(), false);
                     });
                 });
             });

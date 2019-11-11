@@ -5,6 +5,6 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="powershell -ExecutionPolicy Unrestricted  $(ProjectDir)build.ps1 $(SolutionDir)app\templates\ToolTemplate.zip" />
+    <Exec Command="powershell -ExecutionPolicy Unrestricted  $(ProjectDir)build.ps1 $(SolutionDir)app\templates\Metatool.Tools.ScriptTool.zip" />
   </Target>
 </Project>

@@ -66,8 +66,8 @@ namespace Metaseed.Metatool
         public void InitTemplate(string toolName, string dir = null, bool isScript = true)
         {
             var resource = isScript
-                ? "Metaseed.Metatool.Templates.ToolTemplate.zip"
-                : "Metaseed.Metatool.Templates.LibTemplate.zip";
+                ? "Metaseed.Metatool.Templates.Metatool.Tools.ScriptTool.zip"
+                : "Metaseed.Metatool.Templates.Metatool.Tools.LibTool.zip";
             dir ??= Path.Combine(Context.CurrentDirectory, toolName);
             if (Directory.Exists(dir))
             {
