@@ -93,10 +93,8 @@ namespace Metatool.ScreenPoint
             return keyPointPairs;
         }
 
-      
 
-        public (Rect windowRect, Dictionary<string, Rect> rects) BuildHintPositions(
-            )
+        public (Rect windowRect, Dictionary<string, Rect> rects) BuildHintPositions()
         {
             var w = new Stopwatch();
             w.Start();

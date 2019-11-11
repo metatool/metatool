@@ -13,8 +13,8 @@ namespace Metatool.Input
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
         private bool _valid;
-        private IKey _keyDownActionToken;
-        private IKey _keyUpActionToken;
+        private IKeyCommand _keyCommandDownActionToken;
+        private IKeyCommand _keyCommandUpActionToken;
         internal ToggleKey(Key key)
         {
             _key = key;
@@ -33,8 +33,8 @@ namespace Metatool.Input
 
         void InstallHook()
         {
-            if (_keyDownActionToken == null)
-                _keyDownActionToken = _key.Down(e =>
+            if (_keyCommandDownActionToken == null)
+                _keyCommandDownActionToken = _key.Down(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
@@ -65,8 +65,8 @@ namespace Metatool.Input
 
                     e.Handled = true;
                 }, e=> !e.IsVirtual);
-            if (_keyUpActionToken == null)
-                _keyUpActionToken = _key.Up(e =>
+            if (_keyCommandUpActionToken == null)
+                _keyCommandUpActionToken = _key.Up(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
@@ -95,10 +95,10 @@ namespace Metatool.Input
 
         void RemoveHook()
         {
-            _keyDownActionToken?.Remove();
-            _keyDownActionToken = null;
-            _keyUpActionToken?.Remove();
-            _keyUpActionToken = null;
+            _keyCommandDownActionToken?.Remove();
+            _keyCommandDownActionToken = null;
+            _keyCommandUpActionToken?.Remove();
+            _keyCommandUpActionToken = null;
         }
 
         public void AlwaysOn()

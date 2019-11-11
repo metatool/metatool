@@ -53,7 +53,7 @@ namespace Metatool.Input
             var combination = sequenceUnit.ToCombination();
             var trigger     = new KeyboardCommandTrigger();
             var token = Hit(combination,
-                trigger.OnExecute, trigger.OnCanExecute, "", stateTree) as KeyTokens;
+                trigger.OnExecute, trigger.OnCanExecute, "", stateTree) as KeyCommandTokens;
             trigger._metaKey = token?.metaKey;
             return trigger;
         }
@@ -95,11 +95,11 @@ namespace Metatool.Input
             return trigger;
         }
 
-        public IKey HardMap(ICombination source, ICombination target,
+        public IKeyCommand HardMap(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             var handled = false;
-            return new KeyTokens()
+            return new KeyCommandTokens()
             {
                 source.Down(e =>
                 {
@@ -139,7 +139,7 @@ namespace Metatool.Input
             };
         }
 
-        public IKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
+        public IKeyCommand Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
@@ -164,11 +164,11 @@ namespace Metatool.Input
         }
 
 
-        public IKey Map(ICombination source, ICombination target,
+        public IKeyCommand Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
         {
             var handled = false;
-            return new KeyTokens()
+            return new KeyCommandTokens()
             {
                 source.Down(e =>
                 {
@@ -214,7 +214,7 @@ namespace Metatool.Input
             };
         }
 
-        public IKey MapOnHit(ICombination source, ICombination target,
+        public IKeyCommand MapOnHit(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
         {
             var           handling     = false;
@@ -255,7 +255,7 @@ namespace Metatool.Input
                 return true;
             }
 
-            return new KeyTokens()
+            return new KeyCommandTokens()
             {
                 source.Down(e =>
                 {

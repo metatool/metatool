@@ -2,7 +2,7 @@
 
 namespace Metatool.Plugin
 {
-    public abstract class ToolBase : IPlugin
+    public abstract class ToolBase : CommandPackage, IPlugin
     {
         private readonly ILogger _logger;
 

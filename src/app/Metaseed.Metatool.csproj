@@ -64,6 +64,7 @@
     <ProjectReference Include="..\lib\Metatool.Core\Metatool.Core.csproj" />
     <ProjectReference Include="..\lib\Metatool.InputHook\Metatool.Input.csproj" />
     <ProjectReference Include="..\lib\Metatool.Plugins\Metatool.Plugins.csproj" />
+    <ProjectReference Include="..\lib\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
     <ProjectReference Include="..\lib\Metatool.Script\Metatool.Script.csproj" />
     <ProjectReference Include="..\lib\Metatool.UI\Metatool.UI.csproj" />
   </ItemGroup>

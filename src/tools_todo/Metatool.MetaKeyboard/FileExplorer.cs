@@ -13,8 +13,12 @@ using AutomationElement = System.Windows.Automation.AutomationElement;
 
 namespace Metatool.MetaKeyboard
 {
-    public class FileExplorer
+    public class FileExplorer: CommandPackage
     {
+        public FileExplorer()
+        {
+            RegisterCommands();
+        }
         static bool IsExplorerOrDialog(IKeyEventArgs e)
         {
             var c = Utils.Window.CurrentWindowClass;
@@ -27,7 +31,7 @@ namespace Metatool.MetaKeyboard
             return "CabinetWClass" == c;
         }
 
-        public IKey FocusFileItemsView = (LWin + F).Down(e =>
+        public IKeyCommand FocusFileItemsView = (LWin + F).Down(e =>
         {
             var listBoxEle   = UIA.CurrentWindow?.FirstDecendant(c => c.ByClassName("UIItemsView"));
             var selectedItem = listBoxEle.SelectedItems()?.FirstOrDefault();
@@ -47,7 +51,7 @@ namespace Metatool.MetaKeyboard
         }, IsExplorerOrDialog, "Focus &File Items View");
 
 
-        public IKey FocusNavigationTreeView = (LWin + N).Down(e =>
+        public IKeyCommand FocusNavigationTreeView = (LWin + N).Down(e =>
         {
             var winEle       = UIA.CurrentWindow?.FirstDecendant(cf => cf.ByClassName("SysTreeView32"));
             var selectedItem = winEle?.SelectedItems().FirstOrDefault();
@@ -72,7 +76,7 @@ namespace Metatool.MetaKeyboard
             // }
         }, IsExplorerOrDialog, "Focus &Navigation Tree View");
 
-        public IKey CopySelectedPath = (Caps + Pipe).Down(async e =>
+        public IKeyCommand CopySelectedPath = (Caps + Pipe).Down(async e =>
         {
             var handle = Utils.Window.CurrentWindowHandle;
             var paths  = await Explorer.GetSelectedPath(handle);
@@ -82,7 +86,7 @@ namespace Metatool.MetaKeyboard
         }, IsExplorerOrDialog, "Copy Selected Files Path");
 
 
-        public IKey NewFile = (Ctrl + Alt + N).Hit(async e =>
+        public IKeyCommand NewFile = (Ctrl + Alt + N).Hit(async e =>
         {
             const string newFileName = "NewFile";
             var          handle      = Utils.Window.CurrentWindowHandle;
@@ -101,7 +105,7 @@ namespace Metatool.MetaKeyboard
             keyboard.Type(Keys.F2);
         }, IsExplorer, "&New File");
 
-        public IKey ShowDesktopFolder = (LWin + D).Down(e =>
+        public IKeyCommand ShowDesktopFolder = (LWin + D).Down(e =>
             {
                 Explorer.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 e.Handled = true;

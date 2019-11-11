@@ -2,16 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Command;
+using Metatool.Input;
 
-namespace Metatool.Input
+namespace Metatool.Plugin
 {
-    public interface IKeyboardVirtual
-    {
-        void Type(Key key);
-        void Type(Key[] keys);
-        void Type(string text);
-        void Type(char character);
-    }
     public interface IKeyboard : IKeyboardVirtual
     {
         IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
@@ -23,19 +17,27 @@ namespace Metatool.Input
         IKeyboardCommandTrigger Up(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger AllUp(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
 
-        IKey Map(ICombination source, ICombination target,
+        IKeyCommand Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1);
 
-        IKey Map(string source, string target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand Map(string source, string target, Predicate<IKeyEventArgs> predicate = null);
 
-        IKey HardMap(ICombination source, ICombination target,
+        IKeyCommand HardMap(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null);
 
-        IKey MapOnHit(ICombination source, ICombination target,
+        IKeyCommand MapOnHit(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true);
 
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);
         Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default);
 
+    }
+
+    public interface IKeyboardVirtual
+    {
+        void Type(Key key);
+        void Type(Key[] keys);
+        void Type(string text);
+        void Type(char character);
     }
 }

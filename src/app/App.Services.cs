@@ -7,6 +7,7 @@ using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Plugin;
 using Metatool.Plugins;
+using Metatool.ScreenHint;
 using Metatool.UI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,7 @@ namespace Metaseed.Metatool
                 .AddSingleton<ICommandManager, CommandManager>()
                 .AddSingleton(typeof(IConfig<>), typeof(Config<>))
                 .AddSingleton<INotify, Notify>()
+                .AddSingleton<IScreenHint, ScreenHint>()
                 // .AddSingleton<IServiceCollection>(services)
                 .AddSingleton<IConfiguration>(configuration);
         }

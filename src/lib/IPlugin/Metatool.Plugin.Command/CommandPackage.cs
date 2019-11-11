@@ -15,12 +15,7 @@ namespace Metatool.Plugin
             return commands;
         }
 
-        protected CommandPackage()
-        {
-            Start();
-        }
-
-        void Start()
+        protected void RegisterCommands()
         {
             GetCommands().ToList().ForEach(c =>
             {

@@ -9,7 +9,7 @@ namespace Metatool.Input
         private static IKeyboard _keyboard;
         private static IKeyboard Keyboard =>
             _keyboard ??= Services.Get<IKeyboard>();
-        public static IKey Map(this string source, string target, Predicate<IKeyEventArgs> predicate = null)
+        public static IKeyCommand Map(this string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             return Keyboard.Map(source, target, e=> !e.IsVirtual);
         }

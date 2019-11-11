@@ -17,19 +17,19 @@ namespace Metatool.Input
         private static ICommandManager CommandManager =>
             _commandManager ??= Services.Get<ICommandManager>();
 
-        public static IKey  Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Down(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Down(action, canExecute, description, stateTree);
         }
 
-        public static IKey  Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Down(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action, canExecute, description, stateTree);
         }
 
-        public static IKey  Down(
+        public static IKeyCommand  Down(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
@@ -37,7 +37,7 @@ namespace Metatool.Input
                 .Down(action, canExecute, description, stateTree);
         }
 
-        public static IKey  Down(
+        public static IKeyCommand  Down(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
@@ -45,7 +45,7 @@ namespace Metatool.Input
                 .Down(action, canExecute, description, stateTree);
         }
 
-        public static IKey Down(
+        public static IKeyCommand Down(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
@@ -53,26 +53,26 @@ namespace Metatool.Input
                 .Down(action, canExecute, description, stateTree);
         }
 
-        public static IKey  Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Up(this ValueTuple<ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Up(action, canExecute, description, stateTree);
         }
 
-        public static IKey  Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action, canExecute, description, stateTree);
         }
 
-        public static IKey  Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Up(this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4)
                 .Up(action, canExecute, description, stateTree);
         }
 
-        public static IKey  Up(
+        public static IKeyCommand  Up(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
@@ -80,7 +80,7 @@ namespace Metatool.Input
                 .Up(action, canExecute, description, stateTree);
         }
 
-        public static IKey Up(
+        public static IKeyCommand Up(
             this ValueTuple<ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
@@ -91,7 +91,7 @@ namespace Metatool.Input
 
 
 
-        public static IKey Down(this ISequence sequence,
+        public static IKeyCommand Down(this ISequence sequence,
             Action<IKeyEventArgs> execute, Predicate<IKeyEventArgs> canExecute = null, string description = "",
             string stateTree = KeyStateTrees.Default)
         {
@@ -102,7 +102,7 @@ namespace Metatool.Input
             return keyboardInternal.GetToken(token, trigger);
         }
 
-        public static IKey  Up(this ISequence sequence, Action<IKeyEventArgs> execute,
+        public static IKeyCommand  Up(this ISequence sequence, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute=null,
             string description = "", string stateTree = KeyStateTrees.Default)
         {

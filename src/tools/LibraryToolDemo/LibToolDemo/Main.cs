@@ -8,14 +8,18 @@ namespace Metatool.Tools.LibToolDemo
 {
     public class ToolDemo : ToolBase
     {
-        IRemove token;
+        public ICommandToken<IKeyEventArgs> CommandA;
+        public IKeyCommand CommandB;
 
         public ToolDemo(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config)
         {
-            token = commandManager.Add(keyboard.Down(Caps + A),
+            CommandA = commandManager.Add(keyboard.Down(Caps + A),
                 e => { Logger.LogInformation($"{nameof(ToolDemo)}: Caps+A triggered!!!!!!!"); });
+            CommandB = (Caps + B).Down(e => Logger.LogWarning("Caps+B pressed!!!"));
+
             Logger.LogInformation(config.CurrentValue.Option1);
             Logger.LogInformation(config.CurrentValue.Option2.ToString());
+            RegisterCommands();
         }
 
         public override bool OnLoaded()
@@ -26,7 +30,7 @@ namespace Metatool.Tools.LibToolDemo
 
         public override void OnUnloading()
         {
-            token.Remove();
+            CommandA.Remove();
             base.OnUnloading();
         }
     }

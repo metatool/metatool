@@ -1,7 +1,7 @@
 ﻿using Metatool.Input;
 
 namespace Metatool.Command{
-    public interface IKey: ICommandToken<IKeyEventArgs>
+    public interface IKeyCommand: ICommandToken<IKeyEventArgs>
     {
         bool Change(IHotkey key);
     }

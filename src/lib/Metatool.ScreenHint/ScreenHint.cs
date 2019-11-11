@@ -6,40 +6,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using Metatool.Command;
-using Metatool.Input;
+using Metatool.Plugin;
 using Metatool.ScreenPoint;
-using Point = System.Drawing.Point;
-using static Metatool.Input.Key;
 
 namespace Metatool.ScreenHint
 {
-    public sealed class ScreenHint
+    public sealed class ScreenHint: IScreenHint
     {
         private readonly IKeyboard _keyboard;
-        private readonly IMouse _mouse;
 
-        public ScreenHint(IKeyboard keyboard, IMouse mouse)
+        public ScreenHint(IKeyboard keyboard)
         {
             _keyboard = keyboard;
-            _mouse = mouse;
-
-            MouseClick = (Ctrl + Alt + X).Down(e =>
-            {
-                e.Handled = true;
-                e.BeginInvoke(() => Show(MouseLeftClick));
-            });
-
-            MouseClickLast = (Ctrl + Alt + Z).Down(e =>
-            {
-                e.Handled = true;
-                e.BeginInvoke(() => Show(MouseLeftClick, false));
-            });
-
         }
         static (Rect windowRect, Dictionary<string, Rect> rects) _positions;
 
-        public  async void Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true)
+        public  async Task Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true)
         {
             buildHints = buildHints || _positions.Equals(default);
             if (buildHints)
@@ -113,18 +95,5 @@ namespace Metatool.ScreenHint
             }
         }
 
-        void MouseLeftClick((Rect winRect, Rect clientRect) position)
-        {
-            var rect    = position.clientRect;
-            var winRect = position.winRect;
-            rect.X = winRect.X + rect.X;
-            rect.Y = winRect.Y + rect.Y;
-            var p = new Point((int) (rect.X + rect.Width / 2), (int) (rect.Y + rect.Height / 2));
-            _mouse.Position = p;
-            _mouse.LeftClick();
-        }
-
-        public IKey  MouseClick;
-        public IKey MouseClickLast;
-    }
+     }
 }
