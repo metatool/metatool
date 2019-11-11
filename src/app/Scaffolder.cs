@@ -25,8 +25,9 @@ namespace Metaseed.Metatool
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // register dotnet-script as the tool to process .csx files
-                CommandRunner.Run("reg", @"add HKCU\Software\classes\.csx /f /ve /t REG_SZ /d metatool");
-                CommandRunner.Run("reg",
+                var cmdRunner = new CommandRunner();
+                cmdRunner.Run("reg", @"add HKCU\Software\classes\.csx /f /ve /t REG_SZ /d metatool");
+                cmdRunner.Run("reg",
                     $@"add HKCU\Software\Classes\metatool\Shell\Open\Command /f /ve /t REG_EXPAND_SZ /d ""\""%MetatoolDir%\Metatool.exe\"" \""%1\"" -- %*""");
             }
         }

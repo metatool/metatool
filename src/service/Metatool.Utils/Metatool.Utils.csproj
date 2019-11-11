@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IService\Metatool.Service.Core\Metatool.Service.Core.csproj" />
+    <ProjectReference Include="..\IService\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />
+  </ItemGroup>
+
+</Project>

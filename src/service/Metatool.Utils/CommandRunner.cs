@@ -8,12 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Metatool.Utils
 {
-    public class CommandRunner
+    public class CommandRunner: ICommandRunner
     {
         private static readonly ILogger _logger = Services.Get<ILogger<CommandRunner>>();
 
 
-        public static int Run(string commandPath, string arguments = null, string workingDirectory = null)
+        public int Run(string commandPath, string arguments = null, string workingDirectory = null)
         {
             _logger.LogDebug($"Executing '{commandPath} {arguments}'");
             var startInformation = CreateProcessStartInfo(commandPath, arguments, workingDirectory);
@@ -22,7 +22,7 @@ namespace Metatool.Utils
             return process.ExitCode;
         }
         // i.e. if run as admin Chrome could not load extensions
-        public static void RunAsNormalUser(string exeWithArgs)
+        public void RunAsNormalUser(string exeWithArgs)
         {
             exeWithArgs += " \n exit 0";
             var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
@@ -30,7 +30,7 @@ namespace Metatool.Utils
             RunWithExplorer(tempBat);
         }
 
-        public static CommandResult Capture(string commandPath, string arguments, string workingDirectory = null)
+        public CommandResult Capture(string commandPath, string arguments, string workingDirectory = null)
         {
             var startInformation = CreateProcessStartInfo(commandPath, arguments, workingDirectory);
             var process          = CreateProcess(startInformation);
@@ -47,7 +47,7 @@ namespace Metatool.Utils
         // https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/cmd
         // https: //ss64.com/nt/cmd.html
         // could run *.lnk with args
-        public static void RunWithCmd(string cmd, params string[] args)
+        public void RunWithCmd(string cmd, params string[] args)
         {
             var proc = new Process
             {
@@ -71,7 +71,7 @@ namespace Metatool.Utils
         /// this could run *.lnk and *.bat
         /// </summary>
         /// <param name="filePath"></param>
-        public static void RunWithExplorer(string filePath, string workingDir = null)
+        public void RunWithExplorer(string filePath, string workingDir = null)
         {
             var proc = new Process
             {
@@ -139,27 +139,5 @@ namespace Metatool.Utils
         }
     }
 
-    public class CommandResult
-    {
-        public CommandResult(int exitCode, string standardOut, string standardError)
-        {
-            ExitCode      = exitCode;
-            StandardOut   = standardOut;
-            StandardError = standardError;
-        }
-
-        public string StandardOut   { get; }
-        public string StandardError { get; }
-        public int    ExitCode      { get; }
-
-        public CommandResult EnsureSuccessfulExitCode(int success = 0)
-        {
-            if (ExitCode != success)
-            {
-                throw new InvalidOperationException(StandardError);
-            }
-
-            return this;
-        }
-    }
+   
 }

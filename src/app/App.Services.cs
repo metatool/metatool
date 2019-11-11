@@ -9,6 +9,7 @@ using Metatool.Service;
 using Metatool.Plugins;
 using Metatool.ScreenHint;
 using Metatool.UI;
+using Metatool.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -38,6 +39,7 @@ namespace Metaseed.Metatool
                 .AddSingleton(typeof(IConfig<>), typeof(Config<>))
                 .AddSingleton<INotify, Notify>()
                 .AddSingleton<IScreenHint, ScreenHint>()
+                .AddMetatoolUtils()
                 // .AddSingleton<IServiceCollection>(services)
                 .AddSingleton<IConfiguration>(configuration);
         }

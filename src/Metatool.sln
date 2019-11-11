@@ -103,6 +103,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.UI", "service\Meta
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MouseKeyHook", "lib\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj", "{033580A1-96B1-400E-84F1-28D1954C6F38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Utils", "service\Metatool.Utils\Metatool.Utils.csproj", "{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -413,6 +415,18 @@ Global
 		{033580A1-96B1-400E-84F1-28D1954C6F38}.Release|x64.Build.0 = Release|Any CPU
 		{033580A1-96B1-400E-84F1-28D1954C6F38}.Release|x86.ActiveCfg = Release|Any CPU
 		{033580A1-96B1-400E-84F1-28D1954C6F38}.Release|x86.Build.0 = Release|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Debug|x64.Build.0 = Debug|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Debug|x86.Build.0 = Debug|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|x64.ActiveCfg = Release|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|x64.Build.0 = Release|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|x86.ActiveCfg = Release|Any CPU
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -446,6 +460,7 @@ Global
 		{DBE3AF9E-FCDA-4D7B-823D-AD8EACB52DB0} = {F04E87E1-835C-41FF-8B17-F488BCEC651A}
 		{8AAA9AB7-9B20-478E-8C87-F53DCD6FFA10} = {F04E87E1-835C-41FF-8B17-F488BCEC651A}
 		{033580A1-96B1-400E-84F1-28D1954C6F38} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
+		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1} = {F04E87E1-835C-41FF-8B17-F488BCEC651A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}

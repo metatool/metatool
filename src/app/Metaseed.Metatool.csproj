@@ -67,6 +67,7 @@
     <ProjectReference Include="..\service\Metatool.UI\Metatool.UI.csproj" />
     <ProjectReference Include="..\lib\Metatool.Script\Metatool.Script.csproj" />
     <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
+    <ProjectReference Include="..\service\Metatool.Utils\Metatool.Utils.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

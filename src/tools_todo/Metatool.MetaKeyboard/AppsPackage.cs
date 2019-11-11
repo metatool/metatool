@@ -15,6 +15,8 @@ namespace Metatool.MetaKeyboard
 {
     public class Software : CommandPackage
     {
+        private static ICommandRunner _commandRunner;
+        private static ICommandRunner CommandRunner => _commandRunner??=Services.Get<ICommandRunner>();
         public Software()
         {
             RegisterCommands();
