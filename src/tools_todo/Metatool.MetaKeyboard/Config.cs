@@ -21,7 +21,7 @@ namespace Metatool.MetaKeyboard
         public string SearchEngineSecondary { get; set; }
         public string Code                  { get; set; }
         public string Editor                { get; set; }
-        public string Cmd                   { get; set; }
+        public string Terminal              { get; set; }
         public string Ruler                 { get; set; }
         public string VisualStudio          { get; set; }
         public string ProcessExplorer       { get; set; }

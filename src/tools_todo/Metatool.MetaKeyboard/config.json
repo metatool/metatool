@@ -15,7 +15,7 @@
 
         "Code": ".\\software\\Visual Studio Code.lnk",
         "Editor": "gvim.bat",
-        "Cmd": ".\\software\\cmder\\Cmder.exe",
+        "Terminal": ".\\software\\Windows Terminal.lnk",
         "Ruler": ".\\software\\ruler\\aruler.exe",
         "VisualStudio": ".\\software\\Visual Studio 2019.lnk",
         "ProcessExplorer": ".\\software\\procexp64.exe",

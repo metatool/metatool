@@ -24,7 +24,7 @@ namespace Metatool.MetaKeyboard
         public IKeyCommand  Find = (AK + F).Down(async e =>
         {
             e.Handled = true;
-            var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
+            var shiftDown = e.KeyboardState.IsDown(Shift);
 
             var    c = Window.CurrentWindowClass;
             var arg = shiftDown
@@ -43,18 +43,14 @@ namespace Metatool.MetaKeyboard
 
         public IKeyCommand  OpenTerminal = (AK + T).Down(async e =>
         {
-            string path;
             e.Handled = true;
-            var c = Window.CurrentWindowClass;
-            var shiftDown = e.KeyboardState.IsDown(Keys.ShiftKey);
-            if ("CabinetWClass" != c)
-                path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            else
-                path = await Explorer.Path(Window.CurrentWindowHandle);
-            if (shiftDown)
-                ProcessEx.Run(Config.Current.Tools.Cmd, "/single", "/start", path);
-            else
-                ProcessEx.Run(Config.Current.Tools.Cmd, "/start", path);
+            // string path;
+            // var c = Window.CurrentWindowClass;
+            // if ("CabinetWClass" != c)
+            //     path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            // else
+            //     path = await Explorer.Path(Window.CurrentWindowHandle);
+            ProcessEx.Start(Config.Current.Tools.Terminal);
         }, null, "Open &Terminal");
 
         public IKeyCommand  WebSearch = (AK + W).Down(async e =>

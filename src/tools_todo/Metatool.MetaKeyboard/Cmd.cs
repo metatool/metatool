@@ -45,7 +45,7 @@ namespace Metatool.MetaKeyboard
                 StartInfo = new ProcessStartInfo()
                 {
                     FileName        = "explorer.exe",
-                    Arguments       = filePath,
+                    Arguments = filePath,
                     CreateNoWindow  = true,
                     UseShellExecute = false,
                     WindowStyle     = ProcessWindowStyle.Hidden
