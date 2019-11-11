@@ -32,5 +32,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Metatool.Plugin.Core\Metatool.Plugin.Core.csproj" />
+    <ProjectReference Include="..\Metatool.Plugin.UI\Metatool.Plugin.UI.csproj" />
   </ItemGroup>
 </Project>

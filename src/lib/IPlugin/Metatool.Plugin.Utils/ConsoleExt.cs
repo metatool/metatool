@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 using Metatool.Plugin;
+using Metatool.UI;
 using Metatool.Utils.Implementation;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,6 @@ namespace Metatool.Utils
 {
     public static class ConsoleExt
     {
-        public static Dispatcher Dispatcher;
         [DllImport("Kernel32")]
         private static extern bool SetConsoleCtrlHandler(SetConsoleCtrlEventHandler handler, bool add);
 
@@ -70,8 +70,12 @@ namespace Metatool.Utils
             SetConsoleCtrlHandler(handlerDelegate, true);
             Console.CancelKeyPress += (_, __) =>
             {
-                Dispatcher?.BeginInvoke((Action) (() => Application.Current.Shutdown(0)));
+                Services.Get<ILogger<Object>>()?.LogInformation("Ctrl-C: exist");
+                var notify = Services.Get<INotify>();
+                notify.ShowMessage("MetaKeyBoard Closing...");
+                Context.Exit(0);
             };
+
         }
 
         public static void DisableCloseButton() =>

@@ -24,26 +24,14 @@ namespace Metatool.MetaKeyboard
             {
                 var notify = Services.Get<INotify>();
                 notify.ShowMessage("MetaKeyBoard Closing...");
-                Environment.Exit(0);
+                Context.Exit(0);
             }, null, "Close");
 
         public IKeyCommand  RestartMetakeyAdmin = (LCtrl + LWin + LAlt + X).Down(e =>
         {
             var notify = Services.Get<INotify>();
             notify.ShowMessage("MetaKeyBoard Restarting...");
-            var p    = Application.ExecutablePath;
-            var path = p.Remove(p.Length - 4, 4) + ".exe";
-
-            new Process()
-            {
-                StartInfo =
-                {
-                    FileName        = path,
-                    Verb            = "runas",
-                    UseShellExecute = true
-                }
-            }.Start();
-            Environment.Exit(0);
+            Context.Restart(0, true);
         }, null, "Restart(Admin)");
 
         public IKeyCommand  ShowTips = (Caps + Question).Down(e =>
