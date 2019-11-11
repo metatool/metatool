@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Metatool.Utils;
+using Metatool.Plugin;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
 {
@@ -35,7 +36,7 @@ namespace Metaseed.Metatool
                                             || arg == DebugFlagLong)
                     ? e.ToString()
                     : e.GetBaseException().Message;
-                Console.Error.WriteLine(error);
+                Services.CommonLogger.LogError($"Error: {error}");
                 return 0x1;
             }
         }

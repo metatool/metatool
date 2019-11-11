@@ -8,7 +8,9 @@ using System.Windows.Forms;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Trie;
+using Metatool.Plugin;
 using Metatool.UI;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input
 {
@@ -43,6 +45,7 @@ namespace Metatool.Input
     public enum TreeType
     {
         Default,
+
         // one for every down, up or allUp KeyEvent
         SingleEventCommand
     };
@@ -56,13 +59,14 @@ namespace Metatool.Input
         {
             // keep the order
             {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap)},
-            {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap){TreeType = TreeType.SingleEventCommand}},
+            {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap) {TreeType = TreeType.SingleEventCommand}},
             {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default)},
             {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map)},
             {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString)}
         };
 
         public TreeType TreeType = TreeType.Default;
+
         public static KeyStateTree GetOrCreateStateTree(string stateTree)
         {
             if (StateTrees.TryGetValue(stateTree, out var keyStateTree))
@@ -83,7 +87,7 @@ namespace Metatool.Input
 
         public KeyStateTree(string name)
         {
-            Name = name;
+            Name                     = name;
             _treeWalker              = new TrieWalker<ICombination, KeyEventCommand>(_trie);
             _lastKeyDownNodeForAllUp = null;
         }
@@ -147,6 +151,7 @@ namespace Metatool.Input
                 var commands = _trie.Get(combinations);
                 if (commands.Count() != 0) _trie.Remove(combinations, c => c.KeyEvent == command.KeyEvent);
             }
+
             _trie.Add(combinations, command);
             return new MetaKey(_trie, combinations, command);
         }
@@ -284,10 +289,7 @@ namespace Metatool.Input
             Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
             // execute
-#if !DEBUG
-            try
-            {
-#endif
+
             var oneExecuted = false;
             foreach (var keyCommand in actionList[eventType])
             {
@@ -302,7 +304,14 @@ namespace Metatool.Input
                 var isAsync = exe?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
                 Console.WriteLine(
                     $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
-                exe?.Invoke(args);
+                try
+                {
+                    exe?.Invoke(args);
+                }
+                catch (Exception e) when (!Debugger.IsAttached)
+                {
+                    Services.CommonLogger.LogError(e.ToString());
+                }
             }
 
             if (!oneExecuted && actionList[eventType].Any())
@@ -318,13 +327,7 @@ namespace Metatool.Input
                 Reset();
                 return ProcessState = KeyProcessState.Yield; // all not executable, state of the eventType disabled
             }
-#if !DEBUG
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
-#endif
+
             if (args.PathToGo != null && !args.PathToGo.SequenceEqual(candidateNode.KeyPath)) // goto state by requiring
             {
                 if (!_treeWalker.TryGoToState(args.PathToGo, out var state))

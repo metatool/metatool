@@ -4,6 +4,7 @@ using System.ComponentModel.Design;
 using System.Runtime;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.Plugin
 {
@@ -42,6 +43,9 @@ namespace Metatool.Plugin
                 return _child.GetService(serviceType) ?? _parent.GetService(serviceType);
             }
         }
+
+        static ILogger commonLogger;
+        public static ILogger CommonLogger => commonLogger??= GetOrCreate<ILogger<Object>>();
 
         static IServiceProvider _provider;
 

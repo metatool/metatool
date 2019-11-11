@@ -41,10 +41,9 @@ namespace Metatool.MetaKeyboard
             {
                 _config = value;
                 var tools = _config.Tools;
-
                 var baseDir = Context.ToolDir<KeyboardTool>();
 
-                foreach (var info in tools.GetType().GetFields())
+                foreach (var info in tools.GetType().GetProperties())
                 {
                     if (info.GetValue(tools) is string v && v.StartsWith('.'))
                     {

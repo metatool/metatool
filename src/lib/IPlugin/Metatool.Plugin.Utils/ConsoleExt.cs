@@ -27,8 +27,8 @@ namespace Metatool.Utils
                 case CtrlType.CTRL_SHUTDOWN_EVENT:
                 case CtrlType.CTRL_CLOSE_EVENT:
                     Exit?.Invoke();
-                    Services.Get<ILogger<Object>>()?.LogInformation("exit");
-                    Environment.Exit(0);
+                    Services.Get<ILogger<Object>>()?.LogInformation("exit: Ctrl Handler");
+                    Context.Exit(0);
                     return false;
 
                 default:
@@ -70,7 +70,7 @@ namespace Metatool.Utils
             SetConsoleCtrlHandler(handlerDelegate, true);
             Console.CancelKeyPress += (_, __) =>
             {
-                Services.Get<ILogger<Object>>()?.LogInformation("Ctrl-C: exist");
+                Services.Get<ILogger<Object>>()?.LogInformation("exist: Ctrl+C");
                 var notify = Services.Get<INotify>();
                 notify.ShowMessage("MetaKeyBoard Closing...");
                 Context.Exit(0);

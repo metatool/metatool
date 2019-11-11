@@ -209,8 +209,10 @@ namespace Metatool.MetaKeyboard
 
             foreach (var path in paths)
             {
+                Console.WriteLine(path);
+                // CommandRunner.RunWithExplorer(Config.Current.Tools.Code);
                 // need to find a way to start *.lnk with arguments, but still not killed if parent process exit
-                var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true, Arguments = path};
+                var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true, ArgumentList = { path } };
                 Process.Start(info);
             }
         }, null, "Open &Code Editor" );
