@@ -1,4 +1,5 @@
 ﻿{
+  "CtrlCExit":  false, 
   "Services": {
     "Logging": {
       "File": {

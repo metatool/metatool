@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using Metatool.Plugin;
 using Metatool.UI;
 using Metatool.Utils.Implementation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Utils
@@ -70,7 +71,15 @@ namespace Metatool.Utils
             SetConsoleCtrlHandler(handlerDelegate, true);
             Console.CancelKeyPress += (_, __) =>
             {
-                Services.Get<ILogger<Object>>()?.LogInformation("exist: Ctrl+C");
+                var config = Services.Get<IConfiguration>();
+                var exit = config.GetValue<bool>("CtrlCExit");
+                if (!exit)
+                {
+                    Services.CommonLogger.LogInformation("Ctrl+C exit disabled, to exit with Ctrl+C,please config CtrlCExit = true ");
+                    return;
+                }
+                Exit?.Invoke();
+                Services.CommonLogger.LogInformation("exist: Ctrl+C");
                 var notify = Services.Get<INotify>();
                 notify.ShowMessage("MetaKeyBoard Closing...");
                 Context.Exit(0);

@@ -21,6 +21,14 @@ namespace Metatool.Utils
             RunAndWait(process);
             return process.ExitCode;
         }
+        // i.e. if run as admin Chrome could not load extensions
+        public static void RunAsNormalUser(string exeWithArgs)
+        {
+            exeWithArgs += " \n exit 0";
+            var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
+            File.WriteAllText(tempBat, exeWithArgs);
+            RunWithExplorer(tempBat);
+        }
 
         public static CommandResult Capture(string commandPath, string arguments, string workingDirectory = null)
         {
@@ -38,7 +46,8 @@ namespace Metatool.Utils
         // so we use cmd to make a workaround
         // https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/cmd
         // https: //ss64.com/nt/cmd.html
-        public static void RunWithCmd(string cmd, params string[] args )
+        // could run *.lnk with args
+        public static void RunWithCmd(string cmd, params string[] args)
         {
             var proc = new Process
             {

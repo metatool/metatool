@@ -67,16 +67,9 @@ namespace Metatool.MetaKeyboard
             var process     = await VirtualDesktopManager.Inst.GetFirstProcessOnCurrentVirtualDesktop(exeName);
             if (process == null)
             {
-                void RunAsNormalUser(string exewithArgs)
-                {
-                    var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
-                    File.WriteAllText(tempBat, exewithArgs);
-
-                    CommandRunner.RunWithExplorer(tempBat);
-                }
-
                 if (Context.IsElevated)
-                    RunAsNormalUser($"start \"\" \"{defaultPath}\" --new-window --new-instance \n exit");
+                    // if runas admin, the chrome extensions could not loaded.
+                    CommandRunner.RunAsNormalUser($"start \"\" \"{defaultPath}\" --new-window --new-instance");
                 else
                 {
                     new Process
@@ -190,9 +183,8 @@ namespace Metatool.MetaKeyboard
             CommandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
         }, null, "&Inspect");
 
-        public IKeyCommand  OpenCodeEditor = (AK + C).Hit(async e =>
+        public IKeyCommand  OpenCodeEditor = (AK + C).Handled().Hit(async e =>
         {
-            e.Handled = true;
             if (!Window.IsExplorerOrOpenSaveDialog)
             {
                 CommandRunner.RunWithExplorer(Config.Current.Tools.Code);
@@ -209,11 +201,7 @@ namespace Metatool.MetaKeyboard
 
             foreach (var path in paths)
             {
-                Console.WriteLine(path);
-                // CommandRunner.RunWithExplorer(Config.Current.Tools.Code);
-                // need to find a way to start *.lnk with arguments, but still not killed if parent process exit
-                var info = new ProcessStartInfo(Config.Current.Tools.Code) {UseShellExecute = true, ArgumentList = { path } };
-                Process.Start(info);
+                CommandRunner.RunWithCmd(Config.Current.Tools.Code, path);
             }
         }, null, "Open &Code Editor" );
     }

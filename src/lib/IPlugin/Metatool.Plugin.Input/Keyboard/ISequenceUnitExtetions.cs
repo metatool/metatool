@@ -106,6 +106,7 @@ namespace Metatool.Input
             return Keyboard.MapOnHit(key.ToCombination(), target, canExecute, allUp);
         }
 
+        // if the handler async run, this is needed.
         public static ICombination Handled(this ISequenceUnit sequenceUnit,
             KeyEvent keyEvent = KeyEvent.Down | KeyEvent.Up | KeyEvent.AllUp)
         {
