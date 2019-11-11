@@ -34,23 +34,23 @@ namespace Metatool.MetaKeyboard
             if ("CabinetWClass" == c)
             {
                 var path = await Explorer.Path(Window.CurrentWindowHandle);
-                ProcessEx.Run(Config.Current.Tools.Everything, arg, "-path", path);
+                CommandRunner.RunWithCmd(Config.Current.Tools.Everything, arg, "-path", path);
                 return;
             }
 
-            ProcessEx.Run(Config.Current.Tools.Everything, arg);
+            CommandRunner.RunWithCmd(Config.Current.Tools.Everything, arg);
         }, null, "&Find With Everything");
 
         public IKeyCommand  OpenTerminal = (AK + T).Down(async e =>
         {
             e.Handled = true;
-            // string path;
-            // var c = Window.CurrentWindowClass;
-            // if ("CabinetWClass" != c)
-            //     path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            // else
-            //     path = await Explorer.Path(Window.CurrentWindowHandle);
-            ProcessEx.Start(Config.Current.Tools.Terminal);
+            string path;
+            var c = Window.CurrentWindowClass;
+            if ("CabinetWClass" != c)
+                path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            else
+                path = await Explorer.Path(Window.CurrentWindowHandle);
+            CommandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
         }, null, "Open &Terminal");
 
         public IKeyCommand  WebSearch = (AK + W).Down(async e =>
@@ -72,13 +72,10 @@ namespace Metatool.MetaKeyboard
                     var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
                     File.WriteAllText(tempBat, exewithArgs);
 
-                    ProcessEx.Start(tempBat);
+                    CommandRunner.RunWithExplorer(tempBat);
                 }
 
-                var IsElevated =
-                    new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-
-                if (IsElevated)
+                if (Context.IsElevated)
                     RunAsNormalUser($"start \"\" \"{defaultPath}\" --new-window --new-instance \n exit");
                 else
                 {
@@ -113,21 +110,21 @@ namespace Metatool.MetaKeyboard
             e =>
             {
                 e.Handled = true;
-                ProcessEx.Run(Config.Current.Tools.Ruler);
+                CommandRunner.RunWithCmd(Config.Current.Tools.Ruler);
             }, null, "Screen &Ruler");
 
         public IKeyCommand  StartTaskExplorer = (softwareTrigger, T).Down(
             e =>
             {
                 e.Handled = true;
-                ProcessEx.Run(Config.Current.Tools.ProcessExplorer);
+                CommandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
             }, null, "&Task Explorer ");
 
         public IKeyCommand  StartGifRecord = (softwareTrigger, G).Down(
             e =>
             {
                 e.Handled = true;
-                ProcessEx.Run(Config.Current.Tools.GifTool);
+                CommandRunner.RunWithCmd(Config.Current.Tools.GifTool);
             }, null, "&Gif Record ");
 
         public IKeyCommand  StartNotepad = (softwareTrigger, N).Down(async e =>
@@ -139,7 +136,6 @@ namespace Metatool.MetaKeyboard
                 VirtualDesktopManager.Inst.GetProcessesOnCurrentVirtualDesktop(exeName,
                     p => p.MainWindowTitle == "Untitled - Notepad");
 
-
             var notePad = notePads.FirstOrDefault();
 
             var hWnd = notePad?.MainWindowHandle;
@@ -150,7 +146,7 @@ namespace Metatool.MetaKeyboard
                 return;
             }
 
-            ProcessEx.Run("Notepad");
+            CommandRunner.RunWithCmd("Notepad");
         }, null, "&Notepad");
 
         public IKeyCommand  StartVisualStudio = (softwareTrigger, V).Down(async e =>
@@ -162,7 +158,7 @@ namespace Metatool.MetaKeyboard
             var path = await Explorer.Path(Window.CurrentWindowHandle);
             if (string.IsNullOrEmpty(path))
             {
-                ProcessEx.Start(Config.Current.Tools.VisualStudio);
+                CommandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
                 return;
             }
 
@@ -191,7 +187,7 @@ namespace Metatool.MetaKeyboard
             }
 
 
-            ProcessEx.Start(Config.Current.Tools.Inspect);
+            CommandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
         }, null, "&Inspect");
 
         public IKeyCommand  OpenCodeEditor = (AK + C).Hit(async e =>
@@ -199,7 +195,7 @@ namespace Metatool.MetaKeyboard
             e.Handled = true;
             if (!Window.IsExplorerOrOpenSaveDialog)
             {
-                ProcessEx.Start(Config.Current.Tools.Code);
+                CommandRunner.RunWithExplorer(Config.Current.Tools.Code);
                 return;
             }
 
@@ -207,7 +203,7 @@ namespace Metatool.MetaKeyboard
 
             if (paths.Length == 0)
             {
-                ProcessEx.Start(Config.Current.Tools.Code);
+                CommandRunner.RunWithExplorer(Config.Current.Tools.Code);
                 return;
             }
 

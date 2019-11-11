@@ -14,12 +14,10 @@ namespace Metaseed.Metatool
     public class Scaffolder
     {
         private readonly ILogger       _logger;
-        private readonly CommandRunner _commandRunner;
 
         public Scaffolder(ILogger logger)
         {
             _logger        = logger;
-            _commandRunner = new CommandRunner(logger);
         }
 
         public void RegisterFileHandler()
@@ -27,8 +25,8 @@ namespace Metaseed.Metatool
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // register dotnet-script as the tool to process .csx files
-                _commandRunner.Execute("reg", @"add HKCU\Software\classes\.csx /f /ve /t REG_SZ /d metatool");
-                _commandRunner.Execute("reg",
+                CommandRunner.Run("reg", @"add HKCU\Software\classes\.csx /f /ve /t REG_SZ /d metatool");
+                CommandRunner.Run("reg",
                     $@"add HKCU\Software\Classes\metatool\Shell\Open\Command /f /ve /t REG_EXPAND_SZ /d ""\""%MetatoolDir%\Metatool.exe\"" \""%1\"" -- %*""");
             }
         }

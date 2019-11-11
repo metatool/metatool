@@ -2,38 +2,41 @@
 using System.Windows;
 using Metatool.Input;
 using Metatool.Utils;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 namespace ConsoleApp1
 {
     partial class Keyboard61
     {
-        private static void SetupWinLock()
+        private  void SetupWinLock()
         {
-            static void EnableWinLock()
+            void EnableWinLock()
             {
                 try
                 {
                     Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")?
                         .SetValue("DisableLockWorkstation", 0, RegistryValueKind.DWord);
+                    Logger.LogInformation("WinLock Enabled");
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine(
+                    Logger.LogWarning(
                         "Could not enable WinLock(Win+L), so *+Win+L would trigger ScreenLock, press LCtrl+LWin+LAlt+X to restart with Admin rights.");
                 }
             }
 
-            static void DisableWinLock()
+            void DisableWinLock()
             {
                 try
                 {
                     Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")?
                         .SetValue("DisableLockWorkstation", 1, RegistryValueKind.DWord);
+                    Logger.LogInformation("WinLock disabled!");
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine(
+                    Logger.LogWarning(
                         "Could not disable WinLock(Win+L), so *+Win+L would trigger ScreenLock, press LCtrl+LWin+LAlt+X to restart with Admin rights.");
                 }
             }
@@ -60,7 +63,6 @@ namespace ConsoleApp1
             Console.CancelKeyPress                           += (_, __) => EnableWinLock();
             ConsoleExt.Exit                                  += EnableWinLock;
 
-            Console.WriteLine("WinLock disabled!");
         }
     }
 }

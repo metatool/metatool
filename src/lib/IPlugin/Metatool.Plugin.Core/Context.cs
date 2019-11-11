@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Security.Principal;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
@@ -13,7 +14,8 @@ namespace Metatool.Plugin
     public class Context
     {
         public static Dispatcher Dispatcher;
-
+        public static bool IsElevated =>
+            new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
         private static          string _dotnetExePath;
         private static readonly string dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
 

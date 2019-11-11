@@ -2,20 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
 
-namespace Metatool.Utils{
+namespace Metatool.Utils
+{
     public class CommandRunner
     {
-        private readonly ILogger _logger;
+        private static readonly ILogger _logger = Services.Get<ILogger<CommandRunner>>();
 
-        public CommandRunner(ILogger logger)
-        {
-            _logger = logger;
-        }
 
-        public int Execute(string commandPath, string arguments = null, string workingDirectory = null)
+        public static int Run(string commandPath, string arguments = null, string workingDirectory = null)
         {
             _logger.LogDebug($"Executing '{commandPath} {arguments}'");
             var startInformation = CreateProcessStartInfo(commandPath, arguments, workingDirectory);
@@ -24,7 +22,7 @@ namespace Metatool.Utils{
             return process.ExitCode;
         }
 
-        public CommandResult Capture(string commandPath, string arguments, string workingDirectory = null)
+        public static CommandResult Capture(string commandPath, string arguments, string workingDirectory = null)
         {
             var startInformation = CreateProcessStartInfo(commandPath, arguments, workingDirectory);
             var process          = CreateProcess(startInformation);
@@ -33,6 +31,58 @@ namespace Metatool.Utils{
             var standardError = process.StandardError.ReadToEnd();
             process.WaitForExit();
             return new CommandResult(process.ExitCode, standardOut, standardError);
+        }
+
+
+        // Process.Start would keep the process parent/child structure, if the parent exit, the child would exit.
+        // so we use cmd to make a workaround
+        // https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/cmd
+        // https: //ss64.com/nt/cmd.html
+        public static void RunWithCmd(string cmd, params string[] args )
+        {
+            var proc = new Process
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo()
+                {
+                    FileName               = "cmd",
+                    Arguments              = "/c " + BuildCmd(cmd, args),
+                    RedirectStandardOutput = true,
+                    UseShellExecute        = false,
+                    CreateNoWindow         = true,
+                    WorkingDirectory = Context.AppDirectory
+                }
+            };
+            proc.Start();
+        }
+
+        /// <summary>
+        /// Process.Start would keep the process parent/child structure, if the parent exit, the child would exit.
+        /// so we use cmd to make a workaround
+        ///
+        /// this could run *.lnk and *.bat
+        /// </summary>
+        /// <param name="filePath"></param>
+        public static void RunWithExplorer(string filePath, string workingDir = null)
+        {
+            var proc = new Process
+            {
+                StartInfo = new ProcessStartInfo()
+                {
+                    FileName        = "explorer.exe",
+                    ArgumentList = { filePath },
+                    CreateNoWindow  = true,
+                    UseShellExecute = false,
+                    WindowStyle     = ProcessWindowStyle.Hidden,
+                    WorkingDirectory = workingDir??Context.AppDirectory
+                }
+            };
+            proc.Start();
+        }
+
+        private static string BuildCmd(string cmd, params string[] args)
+        {
+            var a = string.Join(" ", args.ToList().Select(arg => arg.Any(char.IsWhiteSpace) ? $"\"{arg}\"" : arg));
+            return $"\"\"{cmd}\" {a}\"";
         }
 
         private static ProcessStartInfo CreateProcessStartInfo(string commandPath, string arguments,
@@ -48,18 +98,8 @@ namespace Metatool.Utils{
                 WorkingDirectory       = workingDirectory ?? System.Environment.CurrentDirectory
             };
 
-            RemoveMsBuildEnvironmentVariables(startInformation.Environment);
             return startInformation;
         }
-
-        private static void RemoveMsBuildEnvironmentVariables(IDictionary<string, string> environment)
-        {
-            // Remove various MSBuild environment variables set by OmniSharp to ensure that
-            // the .NET CLI is not launched with the wrong values.
-            environment.Remove("MSBUILD_EXE_PATH");
-            environment.Remove("MSBuildExtensionsPath");
-        }
-
 
         private static void RunAndWait(System.Diagnostics.Process process)
         {
@@ -69,7 +109,7 @@ namespace Metatool.Utils{
             process.WaitForExit();
         }
 
-        private System.Diagnostics.Process CreateProcess(ProcessStartInfo startInformation)
+        private static System.Diagnostics.Process CreateProcess(ProcessStartInfo startInformation)
         {
             var process = new System.Diagnostics.Process {StartInfo = startInformation};
             process.OutputDataReceived += (s, e) =>
