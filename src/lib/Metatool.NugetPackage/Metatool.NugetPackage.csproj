@@ -11,6 +11,6 @@
 
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Service.Core\Metatool.Service.Core.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.Core\Metatool.Service.Core.csproj" />
   </ItemGroup>
 </Project>

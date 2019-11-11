@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Service\Metatool.Service.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
     <ProjectReference Include="..\Metatool.Script\Metatool.Script.csproj" />
   </ItemGroup>
 

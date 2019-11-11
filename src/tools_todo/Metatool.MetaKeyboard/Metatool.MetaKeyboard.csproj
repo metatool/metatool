@@ -20,12 +20,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="FlaUI.Core" Version="2.0.0-rc1" /> -->
-    <!-- <PackageReference Include="FlaUI.UIA3" Version="2.0.0-rc1" /> -->
-    <!-- <PackageReference Include="Metatool.Service" Version="*" /> -->
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
@@ -43,7 +37,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\IPlugin\Metatool.Service\Metatool.Service.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0" />

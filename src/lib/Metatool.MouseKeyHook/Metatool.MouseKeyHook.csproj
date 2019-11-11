@@ -23,10 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Service.Core\Metatool.Service.Core.csproj" />
-    <ProjectReference Include="..\IPlugin\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj" />
-    <ProjectReference Include="..\IPlugin\Metatool.Service.UI\Metatool.Service.UI.csproj" />
-    <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.Core\Metatool.Service.Core.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.UI\Metatool.Service.UI.csproj" />
+    <ProjectReference Include="..\..\service\Metatool.Core\Metatool.Core.csproj" />
   </ItemGroup>
 
 </Project>

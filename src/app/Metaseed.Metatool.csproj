@@ -58,15 +58,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\lib\IPlugin\Metatool.Service\Metatool.Service.csproj" />
-    <ProjectReference Include="..\lib\Metatool.CommandManager\Metatool.Command.csproj" />
-    <ProjectReference Include="..\lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
-    <ProjectReference Include="..\lib\Metatool.Core\Metatool.Core.csproj" />
-    <ProjectReference Include="..\lib\Metatool.InputHook\Metatool.Input.csproj" />
-    <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
-    <ProjectReference Include="..\lib\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
+    <ProjectReference Include="..\service\IService\Metatool.Service\Metatool.Service.csproj" />
+    <ProjectReference Include="..\service\Metatool.Command\Metatool.Command.csproj" />
+    <ProjectReference Include="..\service\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
+    <ProjectReference Include="..\service\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\service\Metatool.Input\Metatool.Input.csproj" />
+    <ProjectReference Include="..\service\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
+    <ProjectReference Include="..\service\Metatool.UI\Metatool.UI.csproj" />
     <ProjectReference Include="..\lib\Metatool.Script\Metatool.Script.csproj" />
-    <ProjectReference Include="..\lib\Metatool.UI\Metatool.UI.csproj" />
+    <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
-using Metatool.Service;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Packaging;

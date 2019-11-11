@@ -34,9 +34,8 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Service.NotifyIcon\Metatool.Service.NotifyIcon.csproj" />
-    <ProjectReference Include="..\IPlugin\Metatool.Service.UI\Metatool.Service.UI.csproj" />
-    <ProjectReference Include="..\IPlugin\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />
+    <ProjectReference Include="..\IService\Metatool.Service.UI\Metatool.Service.UI.csproj" />
+    <ProjectReference Include="..\IService\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />
     <ProjectReference Include="..\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
   </ItemGroup>
 </Project>

@@ -17,10 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IPlugin\Metatool.Service\Metatool.Service.csproj" />
+    <ProjectReference Include="..\..\lib\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\..\lib\Metatool.WindowsInput\Metatool.WindowsInput.csproj" />
+    <ProjectReference Include="..\IService\Metatool.Service\Metatool.Service.csproj" />
     <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
-    <ProjectReference Include="..\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj" />
-    <ProjectReference Include="..\Metatool.WindowsInput\Metatool.WindowsInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>
