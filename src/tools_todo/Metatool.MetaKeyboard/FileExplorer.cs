@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Automation;
@@ -9,7 +8,6 @@ using Metatool.Input;
 using Metatool.Plugin;
 using Metatool.Utils;
 using static Metatool.Input.Key;
-using AutomationElement = System.Windows.Automation.AutomationElement;
 
 namespace Metatool.MetaKeyboard
 {

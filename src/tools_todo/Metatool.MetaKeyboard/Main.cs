@@ -1,7 +1,5 @@
 ﻿using ConsoleApp1;
 using Metatool.Command;
-using Metatool.Input;
-using Metatool.MetaKeyboard;
 using Metatool.Plugin;
 
 namespace Metatool.MetaKeyboard

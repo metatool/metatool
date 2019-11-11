@@ -19,7 +19,7 @@ namespace Metatool.MetaKeyboard
         public IKeyCommand  CloseMetaKeysCommand = (LWin + L).Handled().Down(null);
 
 
-        public IKeyCommand  CloseMetaKeyCommand = (LCtrl + LWin + C).With(Keys.LMenu)
+        public IKeyCommand  CloseMetaKeyCommand = (LCtrl + LWin + LAlt +  C)
             .Down(e =>
             {
                 var notify = Services.Get<INotify>();

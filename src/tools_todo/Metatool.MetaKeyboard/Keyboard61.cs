@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using Metatool.Command;
+﻿using Metatool.Command;
 using Metatool.Input;
 using Metatool.Plugin;
 using static Metatool.Input.Key;
@@ -17,7 +16,7 @@ namespace ConsoleApp1
             RegisterCommands();
         }
 
-        public IKeyCommand  Esc = Caps.MapOnHit(Keys.Escape, e => !e.IsVirtual, false);
+        public IKeyCommand  Esc = Caps.MapOnHit(Key.Esc, e => !e.IsVirtual, false);
 
         public IKeyCommand  ToggleCaps = (Caps + Tilde).Down(e =>
         {
@@ -54,14 +53,14 @@ namespace ConsoleApp1
         public IKeyCommand  PageDown = (GK + N).Map(Key.PageDown);
 
         // LAlt + Move
-        public IKeyCommand  LAltLeft     = (LMenu + H).Map(Keys.Left);
-        public IKeyCommand  LAltDown     = (LMenu + J).Map(Keys.Down);
-        public IKeyCommand  LAltUp       = (LMenu + K).Map(Keys.Up);
-        public IKeyCommand  LAltRight    = (LMenu + L).Map(Keys.Right);
-        public IKeyCommand  LAltHome     = (LMenu + I).Map(Keys.Home);
-        public IKeyCommand  LAltEnd      = (LMenu + O).Map(Keys.End);
-        public IKeyCommand  LAltPageUp   = (LMenu + U).Map(Keys.PageUp);
-        public IKeyCommand  LAltPageDown = (LMenu + N).Map(Keys.PageDown);
+        public IKeyCommand  LAltLeft     = (LMenu + H).Map(Key.Left);
+        public IKeyCommand  LAltDown     = (LMenu + J).Map(Key.Down);
+        public IKeyCommand  LAltUp       = (LMenu + K).Map(Key.Up);
+        public IKeyCommand  LAltRight    = (LMenu + L).Map(Key.Right);
+        public IKeyCommand  LAltHome     = (LMenu + I).Map(Key.Home);
+        public IKeyCommand  LAltEnd      = (LMenu + O).Map(Key.End);
+        public IKeyCommand  LAltPageUp   = (LMenu + U).Map(Key.PageUp);
+        public IKeyCommand  LAltPageDown = (LMenu + N).Map(Key.PageDown);
 
         // 
         public IKeyCommand  Del         = (GK + Back).Map(Key.Del);

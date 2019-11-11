@@ -1,5 +1,4 @@
-﻿using Metatool.Command;
-using Metatool.Input;
+﻿using Metatool.Input;
 using Metatool.Plugin;
 using static Metatool.Input.Key;
 
