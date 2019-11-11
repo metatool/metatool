@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
-using Metatool.Metatool.Service.LibraryModel;
+using Metatool.Metatool.Plugin.LibraryModel;
 
-namespace Metatool.Metatool.Service.Loader
+namespace Metatool.Metatool.Plugin.Loader
 {
     public class AssemblyLoadContextBuilder
     {

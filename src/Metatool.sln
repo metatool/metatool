@@ -50,7 +50,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Script.Runtime", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MetaKeyboard", "tools_todo\Metatool.MetaKeyboard\Metatool.MetaKeyboard.csproj", "{E45A7DF5-A235-4454-BFD7-11E49D1B9DA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Services", "lib\Metatool.Services\Metatool.Services.csproj", "{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Plugin", "lib\Metatool.Plugin\Metatool.Plugin.csproj", "{BE98BE3C-64A9-4D44-BF71-2FA9378F0C8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Command", "lib\Metatool.CommandManager\Metatool.Command.csproj", "{D11FFB35-8D2A-4A5B-89E4-B7F844CDD196}"
 EndProject

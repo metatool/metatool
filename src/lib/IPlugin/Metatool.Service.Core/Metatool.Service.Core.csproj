@@ -11,7 +11,7 @@
       <_Parameter1>Metatool</_Parameter1>
     </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Metatool.Services</_Parameter1>
+      <_Parameter1>Metatool.Plugin</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>

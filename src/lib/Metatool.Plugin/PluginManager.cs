@@ -7,10 +7,11 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Metatool.Metatool.Service;
+using Metatool.Metatool.Plugin;
 using Metatool.NugetPackage;
 using Metatool.Reactive;
 using Metatool.Script;
+using Metatool.Service;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ using Microsoft.Extensions.Configuration;
 using NuGet.Configuration;
 using NuGet.Versioning;
 
-namespace Metatool.Service
+namespace Metatool.Plugin
 {
     public class PluginToken
     {
@@ -370,7 +371,7 @@ namespace Metatool.Service
                 {
                     config.PreferSharedTypes      = true;
                     config.IsUnloadable           = true;
-                    config.SharedAssemblyPrefixes = new List<string>() {"Metatool.Service"};
+                    config.SharedAssemblyPrefixes = new List<string>() {"Metatool.Plugin"};
                 });
             return loader;
         }

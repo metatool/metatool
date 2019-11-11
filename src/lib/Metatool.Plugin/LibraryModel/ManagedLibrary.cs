@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace Metatool.Metatool.Service.LibraryModel
+namespace Metatool.Metatool.Plugin.LibraryModel
 {
     [DebuggerDisplay("{Name} = {AdditionalProbingPath}")]
     public class ManagedLibrary

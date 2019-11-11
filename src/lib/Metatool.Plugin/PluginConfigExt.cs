@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Linq;
-using Metatool.Service;
+using Metatool.Plugin;
 using Microsoft.Extensions.Configuration;
 
-namespace Metatool.Services
+namespace Metatool.Plugins
 {
     public static class PluginConfigExt
     {

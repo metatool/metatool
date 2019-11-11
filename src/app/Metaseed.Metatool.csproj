@@ -63,7 +63,7 @@
     <ProjectReference Include="..\lib\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
     <ProjectReference Include="..\lib\Metatool.Core\Metatool.Core.csproj" />
     <ProjectReference Include="..\lib\Metatool.InputHook\Metatool.Input.csproj" />
-    <ProjectReference Include="..\lib\Metatool.Services\Metatool.Services.csproj" />
+    <ProjectReference Include="..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
     <ProjectReference Include="..\lib\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
     <ProjectReference Include="..\lib\Metatool.Script\Metatool.Script.csproj" />
     <ProjectReference Include="..\lib\Metatool.UI\Metatool.UI.csproj" />

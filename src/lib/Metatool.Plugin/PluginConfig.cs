@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace Metatool.Metatool.Service
+namespace Metatool.Metatool.Plugin
 {
     public class PluginConfig
     {

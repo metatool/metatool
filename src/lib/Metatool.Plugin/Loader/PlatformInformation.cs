@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Metatool.Metatool.Service.Loader
+namespace Metatool.Metatool.Plugin.Loader
 {
     internal class PlatformInformation
     {

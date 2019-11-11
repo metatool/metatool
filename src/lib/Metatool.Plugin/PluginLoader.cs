@@ -2,9 +2,9 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Windows.Threading;
-using Metatool.Metatool.Service.Loader;
+using Metatool.Metatool.Plugin.Loader;
 
-namespace Metatool.Metatool.Service
+namespace Metatool.Metatool.Plugin
 {
     /// <summary>
     /// This loader attempts to load binaries for execution (both managed assemblies and native libraries)

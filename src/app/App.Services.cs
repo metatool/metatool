@@ -6,7 +6,7 @@ using Metatool.Input;
 using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Service;
-using Metatool.Services;
+using Metatool.Plugins;
 using Metatool.ScreenHint;
 using Metatool.UI;
 using Microsoft.Extensions.Configuration;

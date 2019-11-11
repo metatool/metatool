@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Metatool.Metatool.Service.LibraryModel
+namespace Metatool.Metatool.Plugin.LibraryModel
 {
     /// <summary>
     /// Represents an unmanaged library, such as `libsqlite3`, which may need to be loaded
