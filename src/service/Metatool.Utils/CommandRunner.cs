@@ -71,7 +71,7 @@ namespace Metatool.Utils
         /// this could run *.lnk and *.bat
         /// </summary>
         /// <param name="filePath"></param>
-        public void RunWithExplorer(string filePath, string workingDir = null)
+        public void RunWithExplorer(string filePath, bool asAdmin = false, string workingDir = null)
         {
             var proc = new Process
             {
@@ -85,6 +85,7 @@ namespace Metatool.Utils
                     WorkingDirectory = workingDir??Context.AppDirectory
                 }
             };
+            if(asAdmin)proc.StartInfo.Verb = "runas";
             proc.Start();
         }
 

@@ -17,22 +17,24 @@ namespace Metatool.MetaKeyboard
     {
         private static ICommandRunner _commandRunner;
         private static ICommandRunner CommandRunner => _commandRunner??=Services.Get<ICommandRunner>();
+
         public Software()
         {
             RegisterCommands();
         }
-        public IKeyCommand  ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
 
-        public IKeyCommand  Find = (AK + F).Down(async e =>
+        public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
+
+        public IKeyCommand Find = (AK + F).Down(async e =>
         {
             e.Handled = true;
             var shiftDown = e.KeyboardState.IsDown(Shift);
 
-            var    c = Window.CurrentWindowClass;
+            var c = Window.CurrentWindowClass;
             var arg = shiftDown
                 ? "-newwindow"
                 : "-toggle-window";
-            
+
             if ("CabinetWClass" == c)
             {
                 var path = await Explorer.Path(Window.CurrentWindowHandle);
@@ -43,19 +45,21 @@ namespace Metatool.MetaKeyboard
             CommandRunner.RunWithCmd(Config.Current.Tools.Everything, arg);
         }, null, "&Find With Everything");
 
-        public IKeyCommand  OpenTerminal = (AK + T).Down(async e =>
+        public IKeyCommand OpenTerminal = (AK + T).Down(async e =>
         {
             e.Handled = true;
+            var shiftDown = e.KeyboardState.IsDown(Shift);
             string path;
-            var c = Window.CurrentWindowClass;
+            var    c = Window.CurrentWindowClass;
             if ("CabinetWClass" != c)
                 path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             else
                 path = await Explorer.Path(Window.CurrentWindowHandle);
-            CommandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
+            if(shiftDown) CommandRunner.RunWithExplorer(Config.Current.Tools.Terminal, true);
+            else CommandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
         }, null, "Open &Terminal");
 
-        public IKeyCommand  WebSearch = (AK + W).Down(async e =>
+        public IKeyCommand WebSearch = (AK + W).Down(async e =>
         {
             e.Handled = true;
 
@@ -101,28 +105,28 @@ namespace Metatool.MetaKeyboard
 
         private static readonly ICombination softwareTrigger = (AK + Space).Handled();
 
-        public IKeyCommand  OpenScreenRuler = (softwareTrigger, R).Down(
+        public IKeyCommand OpenScreenRuler = (softwareTrigger, R).Down(
             e =>
             {
                 e.Handled = true;
                 CommandRunner.RunWithCmd(Config.Current.Tools.Ruler);
             }, null, "Screen &Ruler");
 
-        public IKeyCommand  StartTaskExplorer = (softwareTrigger, T).Down(
+        public IKeyCommand StartTaskExplorer = (softwareTrigger, T).Down(
             e =>
             {
                 e.Handled = true;
                 CommandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
             }, null, "&Task Explorer ");
 
-        public IKeyCommand  StartGifRecord = (softwareTrigger, G).Down(
+        public IKeyCommand StartGifRecord = (softwareTrigger, G).Down(
             e =>
             {
                 e.Handled = true;
                 CommandRunner.RunWithCmd(Config.Current.Tools.GifTool);
             }, null, "&Gif Record ");
 
-        public IKeyCommand  StartNotepad = (softwareTrigger, N).Down(async e =>
+        public IKeyCommand StartNotepad = (softwareTrigger, N).Down(async e =>
         {
             e.Handled = true;
             var exeName = "Notepad";
@@ -144,7 +148,7 @@ namespace Metatool.MetaKeyboard
             CommandRunner.RunWithCmd("Notepad");
         }, null, "&Notepad");
 
-        public IKeyCommand  StartVisualStudio = (softwareTrigger, V).Down(async e =>
+        public IKeyCommand StartVisualStudio = (softwareTrigger, V).Down(async e =>
         {
             if (!Window.IsExplorerOrOpenSaveDialog) return;
 
@@ -160,11 +164,11 @@ namespace Metatool.MetaKeyboard
             Directory.CreateDirectory(path).EnumerateFiles("*.sln").Select(f => f.FullName).AsParallel().ForAll(s =>
             {
                 Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
-                    { UseShellExecute = true, Arguments = s, WorkingDirectory = path });
+                    {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
             });
         }, null, "&VisualStudio");
 
-        public IKeyCommand  StartInspect = (softwareTrigger, I).Down(async e =>
+        public IKeyCommand StartInspect = (softwareTrigger, I).Down(async e =>
         {
             var exeName = "Inspect";
 
@@ -185,7 +189,7 @@ namespace Metatool.MetaKeyboard
             CommandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
         }, null, "&Inspect");
 
-        public IKeyCommand  OpenCodeEditor = (AK + C).Handled().Hit(async e =>
+        public IKeyCommand OpenCodeEditor = (AK + C).Handled().Hit(async e =>
         {
             if (!Window.IsExplorerOrOpenSaveDialog)
             {
@@ -205,6 +209,6 @@ namespace Metatool.MetaKeyboard
             {
                 CommandRunner.RunWithCmd(Config.Current.Tools.Code, path);
             }
-        }, null, "Open &Code Editor" );
+        }, null, "Open &Code Editor");
     }
 }
