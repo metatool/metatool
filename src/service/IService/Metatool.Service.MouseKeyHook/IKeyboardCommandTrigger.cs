@@ -1,4 +1,4 @@
-﻿using Metatool.Input;
+﻿using Metatool.Service;
 
 namespace Metatool.Command
 {

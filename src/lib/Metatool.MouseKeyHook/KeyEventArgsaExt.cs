@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.WinApi;
+using Metatool.Service;
 
 namespace Metatool.Input
 {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Metatool.Input.MouseKeyHook.WinApi
+namespace Metatool.Service.MouseKeyHook.WinApi
 {
     /// <summary>
     ///     The Point structure defines the X- and Y- coordinates of a point.

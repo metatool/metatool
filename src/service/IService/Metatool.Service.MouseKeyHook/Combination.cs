@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.Service.MouseKeyHook.Implementation;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     /// <summary>
     ///     Used to represent a key combination as frequently used in application as shortcuts.

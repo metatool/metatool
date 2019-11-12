@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Metatool.Service;
 
 namespace Metatool.Input.MouseKeyHook.Implementation
 {

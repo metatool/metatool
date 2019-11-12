@@ -3,9 +3,8 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Forms;
 using Metatool.Command;
-using Metatool.Input;
 using static Metatool.MetaKeyboard.KeyboardConfig;
-using static Metatool.Input.Key;
+using static Metatool.Service.Key;
 using Window = Metatool.Utils.Window;
 using Metatool.Service;
 using Point= System.Drawing.Point;
@@ -33,8 +32,8 @@ namespace Metatool.MetaKeyboard
         }
         // static readonly Hint Hint= new Hint();
         // LButton & RButton
-        public IKeyCommand MouseLB = (GK + OpenBrackets).Map(Keys.LButton);
-        public IKeyCommand MouseRB = (GK + CloseBrackets).Map(Keys.RButton);
+        public IKeyCommand MouseLB = (GK + OpenBrackets).Map(LButton);
+        public IKeyCommand MouseRB = (GK + CloseBrackets).Map(RButton);
 
         static void MoveCursorToActiveControl()
         {

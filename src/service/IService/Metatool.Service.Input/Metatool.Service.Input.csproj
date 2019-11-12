@@ -2,6 +2,7 @@
   <Import Project="..\common.props" />
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Metatool.Service.Core\Metatool.Service.Core.csproj" />

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     public partial class Combination
     {

@@ -1,8 +1,7 @@
 ﻿using System;
 using Metatool.Command;
-using Metatool.Service;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     public static class HotString
     {

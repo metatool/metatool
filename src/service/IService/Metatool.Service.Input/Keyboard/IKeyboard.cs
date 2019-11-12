@@ -2,21 +2,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Command;
-using Metatool.Input;
 
 namespace Metatool.Service
 {
     public interface IKeyboard : IKeyboardVirtual
     {
-        IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger Up(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger AllUp(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Down(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Up(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger AllUp(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default);
+
         IKeyboardCommandTrigger Hit(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
-
-        IKeyboardCommandTrigger Down(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger Up(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger AllUp(ISequence sequenceUnit, string stateTree = KeyStateTrees.Default);
-
+     
         IKeyCommand Map(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1);
 

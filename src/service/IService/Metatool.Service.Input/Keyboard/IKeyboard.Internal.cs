@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Metatool.Command;
+﻿using Metatool.Command;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     public interface IKeyboardInternal
     {

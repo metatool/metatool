@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices.WindowsRuntime;
 using Metatool.Command;
+using Metatool.Service;
 
 namespace Metatool.Input
 {

@@ -1,6 +1,6 @@
 ﻿using Metatool.Command;
 
-namespace Metatool.Input{
+namespace Metatool.Service{
     public interface IMeta
     {
         string Id    { get; set; }

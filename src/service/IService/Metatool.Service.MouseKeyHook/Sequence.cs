@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Metatool.Input{
+namespace Metatool.Service{
     /// <summary>
     ///     Describes key or key combination sequences. e.g. Control+Z,Z
     /// </summary>

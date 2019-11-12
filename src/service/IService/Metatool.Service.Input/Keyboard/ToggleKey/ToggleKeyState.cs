@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Metatool.Input
+﻿namespace Metatool.Service
 {
     public enum ToggleKeyState
     {

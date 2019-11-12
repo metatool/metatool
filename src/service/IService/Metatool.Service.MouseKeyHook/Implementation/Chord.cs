@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Metatool.Input.MouseKeyHook.Implementation
+namespace Metatool.Service.MouseKeyHook.Implementation
 {
     internal class Chord : IEnumerable<Key>
     {

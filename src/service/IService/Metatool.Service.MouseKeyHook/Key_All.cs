@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Windows.Forms;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     public partial class Key
     {

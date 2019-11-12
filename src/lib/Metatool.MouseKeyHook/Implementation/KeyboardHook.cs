@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.Service;
 using Metatool.UI;
 using Microsoft.Extensions.Logging;
 

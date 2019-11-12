@@ -1,5 +1,6 @@
 ﻿
 
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace Metatool.Input.MouseKeyHook.WinApi

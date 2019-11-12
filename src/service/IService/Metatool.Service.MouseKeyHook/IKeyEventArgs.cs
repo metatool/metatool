@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.Windows.Threading;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     public interface IKeyEventArgs
     {

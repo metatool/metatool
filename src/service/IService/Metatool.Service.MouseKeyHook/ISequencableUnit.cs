@@ -1,4 +1,4 @@
-﻿namespace Metatool.Input
+﻿namespace Metatool.Service
 {
     public interface ISequenceUnit: IHotkey
     {

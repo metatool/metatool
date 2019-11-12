@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
-using Metatool.Command;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     public static class KeysExtensions
     {

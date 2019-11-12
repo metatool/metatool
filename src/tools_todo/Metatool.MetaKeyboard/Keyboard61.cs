@@ -1,7 +1,6 @@
 ﻿using Metatool.Command;
-using Metatool.Input;
 using Metatool.Service;
-using static Metatool.Input.Key;
+using static Metatool.Service.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 
 namespace ConsoleApp1

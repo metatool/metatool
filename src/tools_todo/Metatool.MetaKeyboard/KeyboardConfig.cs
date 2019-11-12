@@ -1,6 +1,5 @@
-﻿using Metatool.Input;
-using Metatool.Service;
-using static Metatool.Input.Key;
+﻿using Metatool.Service;
+using static Metatool.Service.Key;
 
 namespace Metatool.MetaKeyboard
 {

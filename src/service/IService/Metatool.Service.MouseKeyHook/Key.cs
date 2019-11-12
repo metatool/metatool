@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     /// <summary>
     /// https://www.w3.org/TR/uievents-key/

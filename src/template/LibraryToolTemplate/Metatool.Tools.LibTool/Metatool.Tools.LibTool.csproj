@@ -25,10 +25,7 @@
     <NugetPath>.\tools</NugetPath>
   </PropertyGroup>
   <ItemGroup>
-    <!-- <PackageReference Include="Metatool.Service" Version="*" /> -->
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\lib\IPlugin\Metatool.Service\Metatool.Service.csproj" />
+    <ProjectReference Include="..\..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>

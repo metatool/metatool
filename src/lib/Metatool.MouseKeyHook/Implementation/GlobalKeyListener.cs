@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Metatool.Input.MouseKeyHook.WinApi;
+using Metatool.Service;
 
 namespace Metatool.Input.MouseKeyHook.Implementation
 {

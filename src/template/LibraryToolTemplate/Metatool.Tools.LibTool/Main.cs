@@ -1,8 +1,7 @@
 ﻿using Metatool.Command;
-using Metatool.Input;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
-using static Metatool.Input.Key;
+using static Metatool.Service.Key;
 
 namespace Metatool.Tools.LibToolDemo
 {

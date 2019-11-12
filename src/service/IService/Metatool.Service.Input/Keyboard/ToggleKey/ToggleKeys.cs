@@ -1,6 +1,4 @@
-﻿using Metatool.Service;
-
-namespace Metatool.Input
+﻿namespace Metatool.Service
 {
     public class ToggleKeys
     {

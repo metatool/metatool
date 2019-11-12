@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Metatool.Command;
+using Metatool.Service;
 using Metatool.WindowsInput.Native;
 
 namespace Metatool.Input

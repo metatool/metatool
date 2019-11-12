@@ -1,4 +1,7 @@
 ﻿using System;
+using System.CodeDom;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +9,7 @@ using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKeyHook.Implementation;
 using Metatool.UI;
 using Metatool.WindowsInput.Native;
 using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
@@ -33,17 +37,17 @@ namespace Metatool.Input
 
     public partial class Keyboard
     {
-        public IKeyboardCommandTrigger Down(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger Down(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default)
         {
             return Event(sequenceUnit, KeyEvent.Down, stateTree);
         }
 
-        public IKeyboardCommandTrigger Up(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger Up(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default)
         {
             return Event(sequenceUnit, KeyEvent.Up, stateTree);
         }
 
-        public IKeyboardCommandTrigger AllUp(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger AllUp(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default)
         {
             return Event(sequenceUnit, KeyEvent.AllUp, stateTree);
         }
@@ -58,38 +62,17 @@ namespace Metatool.Input
             return trigger;
         }
 
-        public IKeyboardCommandTrigger Down(ISequence sequence, string stateTree = KeyStateTrees.Default)
-        {
-            return Event(sequence, KeyEvent.Down, stateTree);
-        }
-
-        public IKeyboardCommandTrigger Up(ISequence sequence, string stateTree = KeyStateTrees.Default)
-        {
-            return Event(sequence, KeyEvent.Up, stateTree);
-        }
-
-        public IKeyboardCommandTrigger AllUp(ISequence sequence, string stateTree = KeyStateTrees.Default)
-        {
-            return Event(sequence, KeyEvent.AllUp, stateTree);
-        }
-
-        private IKeyboardCommandTrigger Event(ISequence sequence, KeyEvent keyEvent,
+        private IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent,
             string stateTree = KeyStateTrees.Default)
         {
-            var seq     = sequence as Sequence;
+            var sequence = hotkey switch
+            {
+                ISequenceUnit sequenceUnit => new List<ICombination>() {sequenceUnit.ToCombination().ToCombination()},
+                ISequence seq => seq.ToList(),
+                _ => throw new Exception("IHotkey should be ISequence or ISequenceUnit")
+            };
             var trigger = new KeyboardCommandTrigger();
-            var metaKey = Add(seq.ToList(), keyEvent,
-                new KeyCommand(trigger.OnExecute) {CanExecute = trigger.OnCanExecute}, stateTree) as MetaKey;
-            trigger._metaKey = metaKey;
-            return trigger;
-        }
-
-        private IKeyboardCommandTrigger Event(ISequenceUnit sequenceUnit, KeyEvent keyEvent,
-            string stateTree = KeyStateTrees.Default)
-        {
-            var combination = sequenceUnit.ToCombination();
-            var trigger     = new KeyboardCommandTrigger();
-            var metaKey = Add(combination, keyEvent,
+            var metaKey = Add(sequence, keyEvent,
                 new KeyCommand(trigger.OnExecute) {CanExecute = trigger.OnCanExecute}, stateTree) as MetaKey;
             trigger._metaKey = metaKey;
             return trigger;
@@ -287,7 +270,7 @@ namespace Metatool.Input
                     if (handled)
                         e.Handled = true;
                 })
-                .HandlerConversion(h => new KeyEventHandler(h))
+                .HandlerConversion(h => new MouseKeyHook.KeyEventHandler(h))
                 .Start(h => KeyUp += h, h => KeyUp -= h, token == default ? CancellationToken.None : token);
         }
     }

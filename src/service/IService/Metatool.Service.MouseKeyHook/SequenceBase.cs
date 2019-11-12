@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Metatool.Input
+namespace Metatool.Service
 {
     /// <summary>
     ///     Describes a sequence of generic objects.

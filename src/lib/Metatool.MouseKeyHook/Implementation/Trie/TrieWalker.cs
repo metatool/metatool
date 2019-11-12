@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Metatool.DataStructures;
+using Metatool.Service;
 
 namespace Metatool.Input.MouseKeyHook.Implementation.Trie
 {

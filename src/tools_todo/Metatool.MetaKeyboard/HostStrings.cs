@@ -1,5 +1,4 @@
 ﻿using Metatool.Command;
-using Metatool.Input;
 using Metatool.Service;
 
 namespace Metatool.MetaKeyboard

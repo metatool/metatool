@@ -6,6 +6,7 @@
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
+    <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
    <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">

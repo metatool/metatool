@@ -1,5 +1,4 @@
 ﻿using System;
-using Metatool.Input;
 using Metatool.Utils;
 using System.Diagnostics;
 using System.IO;
@@ -9,7 +8,7 @@ using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Service;
 using Microsoft.Win32;
-using static Metatool.Input.Key;
+using static Metatool.Service.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 
 namespace Metatool.MetaKeyboard

@@ -9,6 +9,8 @@ using Metatool.Command;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKeyHook;
+using Metatool.Service.MouseKeyHook.Implementation;
 using Metatool.UI;
 using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
@@ -36,13 +38,6 @@ namespace Metatool.Input
             new KeyboardHook(Services.Get<ILogger<KeyboardHook>>(), Services.Get<INotify>());
 
         readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
-
-        internal IMetaKey Add(ICombination combination, KeyEvent keyEvent, KeyCommand command,
-            string stateTree = KeyStateTrees.Default)
-        {
-            return Add(new List<ICombination> {combination}, keyEvent, command, stateTree);
-        }
-
 
         internal IMetaKey Add(IList<ICombination> sequence, KeyEvent keyEvent, KeyCommand command,
             string stateTree = KeyStateTrees.Default)
@@ -142,13 +137,13 @@ namespace Metatool.Input
             remove => _hook.KeyPress -= value;
         }
 
-        public event KeyEventHandler KeyDown
+        public event MouseKeyHook.KeyEventHandler KeyDown
         {
             add => _hook.KeyDown += value;
             remove => _hook.KeyDown -= value;
         }
 
-        public event KeyEventHandler KeyUp
+        public event MouseKeyHook.KeyEventHandler KeyUp
         {
             add => _hook.KeyUp += value;
             remove => _hook.KeyUp -= value;
@@ -163,7 +158,7 @@ namespace Metatool.Input
             }
 
             var combination = Combination.FromString(keys) as Combination;
-            Add(combination, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
+            Add(new List<ICombination>(){combination}, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
         }
 
         private void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
