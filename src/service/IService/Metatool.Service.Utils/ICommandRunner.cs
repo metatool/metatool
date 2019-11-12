@@ -31,8 +31,9 @@ namespace Metatool.Service
     {
         int Run(string commandPath, string arguments = null, string workingDirectory = null);
         CommandResult Capture(string commandPath, string arguments, string workingDirectory = null);
-        void RunWithCmd(string cmd, params string[] args);
-        void RunWithExplorer(string filePath,bool asAdmin = false, string workingDir = null);
-        void RunAsNormalUser(string exeWithArgs);
+        string NormalizeCmd(params string[] cmdArgsSerials);
+        void RunWithCmd(string cmdWithArgs, bool asAdmin = false, string workingDir = null);
+        void RunWithExplorer(string filePath, string workingDir = null);
+        void RunAsNormalUser(string cmd, params string[] args);
     }
 }

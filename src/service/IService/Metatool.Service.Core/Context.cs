@@ -54,9 +54,8 @@ namespace Metatool.Service
         {
             Dispatcher?.BeginInvoke((Action)(() =>
             {
-
                 var p = System.Windows.Forms.Application.ExecutablePath;
-                var path = p.Remove(p.Length - 4, 4) + ".exe";
+                var path = Path.GetFileNameWithoutExtension(p);
                 try
                 {
                     var process = new Process()
@@ -64,7 +63,7 @@ namespace Metatool.Service
                         StartInfo =
                         {
                             FileName        = path,
-                            UseShellExecute = true
+                            UseShellExecute = true,
                         }
                     };
 

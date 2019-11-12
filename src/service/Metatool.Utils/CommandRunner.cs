@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Metatool.Utils
 {
-    public class CommandRunner: ICommandRunner
+    public class CommandRunner : ICommandRunner
     {
         private static readonly ILogger _logger = Services.Get<ILogger<CommandRunner>>();
 
@@ -21,13 +21,34 @@ namespace Metatool.Utils
             RunAndWait(process);
             return process.ExitCode;
         }
+
         // i.e. if run as admin Chrome could not load extensions
-        public void RunAsNormalUser(string exeWithArgs)
+        public void RunAsNormalUser(string cmd, params string[] args)
         {
-            exeWithArgs += " \n exit 0";
-            var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
-            File.WriteAllText(tempBat, exeWithArgs);
-            RunWithExplorer(tempBat);
+            if (Context.IsElevated)
+            {
+                var c = args.ToList();
+                    c.Insert(0, cmd);
+                var exeWithArgs =  NormalizeCmd(c.ToArray());
+                var s = $"start \"\" {exeWithArgs} \n exit 0";
+                var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
+                File.WriteAllText(tempBat, s);
+                RunWithExplorer(tempBat);
+            }
+            else
+            {
+                new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = true,
+                        FileName        = cmd,
+                        Arguments= NormalizeCmd(args)
+                    }
+                }.Start();
+            }
+
+           
         }
 
         public CommandResult Capture(string commandPath, string arguments, string workingDirectory = null)
@@ -41,26 +62,33 @@ namespace Metatool.Utils
             return new CommandResult(process.ExitCode, standardOut, standardError);
         }
 
+        public string NormalizeCmd(params string[] cmdArgsSerials)
+        {
+            return string.Join(" ", cmdArgsSerials.Select(arg => arg.Any(char.IsWhiteSpace) ? $"\"{arg}\"" : arg));
+        }
 
         // Process.Start would keep the process parent/child structure, if the parent exit, the child would exit.
         // so we use cmd to make a workaround
         // https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/cmd
         // https: //ss64.com/nt/cmd.html
         // could run *.lnk with args
-        public void RunWithCmd(string cmd, params string[] args)
+        public void RunWithCmd(string cmdWithArgs, bool asAdmin = false, string workingDir = null)
         {
             var proc = new Process
             {
                 StartInfo = new System.Diagnostics.ProcessStartInfo()
                 {
-                    FileName               = "cmd",
-                    Arguments              = "/c " + BuildCmd(cmd, args),
-                    RedirectStandardOutput = true,
+                    FileName               = "cmd.exe",
+                    Arguments              = "/C \"" + cmdWithArgs + "\"",
+                    RedirectStandardInput  = true,
                     UseShellExecute        = false,
+                    RedirectStandardOutput = true,
                     CreateNoWindow         = true,
-                    WorkingDirectory = Context.AppDirectory
+                    WindowStyle            = ProcessWindowStyle.Hidden,
+                    WorkingDirectory       = workingDir ?? Context.AppDirectory
                 }
             };
+            if (asAdmin) proc.StartInfo.Verb = "runas";
             proc.Start();
         }
 
@@ -71,29 +99,24 @@ namespace Metatool.Utils
         /// this could run *.lnk and *.bat
         /// </summary>
         /// <param name="filePath"></param>
-        public void RunWithExplorer(string filePath, bool asAdmin = false, string workingDir = null)
+        public void RunWithExplorer(string filePath, string workingDir = null)
         {
             var proc = new Process
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName        = "explorer.exe",
-                    ArgumentList = { filePath },
-                    CreateNoWindow  = true,
-                    UseShellExecute = false,
-                    WindowStyle     = ProcessWindowStyle.Hidden,
-                    WorkingDirectory = workingDir??Context.AppDirectory
+                    FileName         = "explorer.exe",
+                    ArgumentList     = {filePath},
+                    CreateNoWindow   = true,
+                    UseShellExecute  = false,
+                    WindowStyle      = ProcessWindowStyle.Hidden,
+                    WorkingDirectory = workingDir ?? Context.AppDirectory
                 }
             };
-            if(asAdmin)proc.StartInfo.Verb = "runas";
+
             proc.Start();
         }
 
-        private static string BuildCmd(string cmd, params string[] args)
-        {
-            var a = string.Join(" ", args.ToList().Select(arg => arg.Any(char.IsWhiteSpace) ? $"\"{arg}\"" : arg));
-            return $"\"\"{cmd}\" {a}\"";
-        }
 
         private static ProcessStartInfo CreateProcessStartInfo(string commandPath, string arguments,
             string workingDirectory)
@@ -139,6 +162,4 @@ namespace Metatool.Utils
             return process;
         }
     }
-
-   
 }

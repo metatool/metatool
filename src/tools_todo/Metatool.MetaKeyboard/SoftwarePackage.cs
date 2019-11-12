@@ -8,6 +8,7 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Service;
+using Microsoft.Win32;
 using static Metatool.Input.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 
@@ -22,6 +23,18 @@ namespace Metatool.MetaKeyboard
         {
             RegisterCommands();
         }
+        public IKeyCommand DoublePinyinSwitch = (Pipe + P).Down(e =>
+        {
+            e.Handled = true;
+            var keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
+            var valueName = "Enable Double Pinyin";
+            var k         = (int)Registry.GetValue(keyName, valueName, -1);
+            if (k == 0)
+                Registry.SetValue(keyName, valueName, 1);
+            else if (k == 1)
+                Registry.SetValue(keyName, valueName, 0);
+
+        }, null, "&Toggle Double &Pinyin(Microsoft)");
 
         public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
 
@@ -38,11 +51,11 @@ namespace Metatool.MetaKeyboard
             if ("CabinetWClass" == c)
             {
                 var path = await Explorer.Path(Window.CurrentWindowHandle);
-                CommandRunner.RunWithCmd(Config.Current.Tools.Everything, arg, "-path", path);
+                CommandRunner.RunWithCmd(CommandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path", path));
                 return;
             }
 
-            CommandRunner.RunWithCmd(Config.Current.Tools.Everything, arg);
+            CommandRunner.RunWithCmd(CommandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
         }, null, "&Find With Everything");
 
         public IKeyCommand OpenTerminal = (AK + T).Down(async e =>
@@ -55,7 +68,7 @@ namespace Metatool.MetaKeyboard
                 path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             else
                 path = await Explorer.Path(Window.CurrentWindowHandle);
-            if(shiftDown) CommandRunner.RunWithExplorer(Config.Current.Tools.Terminal, true);
+            if(shiftDown) CommandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
             else CommandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
         }, null, "Open &Terminal");
 
@@ -73,22 +86,7 @@ namespace Metatool.MetaKeyboard
             var process     = await VirtualDesktopManager.Inst.GetFirstProcessOnCurrentVirtualDesktop(exeName);
             if (process == null)
             {
-                if (Context.IsElevated)
-                    // if runas admin, the chrome extensions could not loaded.
-                    CommandRunner.RunAsNormalUser($"start \"\" \"{defaultPath}\" --new-window --new-instance");
-                else
-                {
-                    new Process
-                    {
-                        StartInfo =
-                        {
-                            UseShellExecute = true,
-                            FileName        = defaultPath,
-                            ArgumentList    = {url, "--new-window", "--new-instance"},
-                        }
-                    }.Start();
-                }
-
+                CommandRunner.RunAsNormalUser(defaultPath, url, "--new-window","--new-instance");
                 return;
             }
 
@@ -207,7 +205,7 @@ namespace Metatool.MetaKeyboard
 
             foreach (var path in paths)
             {
-                CommandRunner.RunWithCmd(Config.Current.Tools.Code, path);
+                CommandRunner.RunWithCmd(CommandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
             }
         }, null, "Open &Code Editor");
     }

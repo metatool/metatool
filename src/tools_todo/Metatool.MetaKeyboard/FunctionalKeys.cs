@@ -42,17 +42,6 @@ namespace Metatool.MetaKeyboard
             e.Handled = true;
         }, null, "Show Tips");
 
-        public IKeyCommand  DoublePinyinSwitch = (Pipe + P).Down(e =>
-        {
-            e.Handled = true;
-            var keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
-            var valueName = "Enable Double Pinyin";
-            var k         = (int)Registry.GetValue(keyName, valueName, -1);
-            if(k == 0)
-                Registry.SetValue(keyName, valueName, 1);
-            else if(k ==1)
-                Registry.SetValue(keyName, valueName, 0);
-
-        }, null, "&Toggle Double &Pinyin(Microsoft)");
+      
     }
 }
