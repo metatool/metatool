@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Metatool.Command
+namespace Metatool.Service
 {
     public class Command<T> : ICommand<T>
     {

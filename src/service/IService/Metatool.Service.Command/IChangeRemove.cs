@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Metatool.Command
+namespace Metatool.Service
 {
     public interface IRemove
     {

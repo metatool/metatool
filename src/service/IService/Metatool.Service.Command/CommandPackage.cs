@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Metatool.Command;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service

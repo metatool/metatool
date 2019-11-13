@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Metatool.Command
+namespace Metatool.Service
 {
     public class CommandTrigger<TArgs> : ICommandTrigger<TArgs>
     {

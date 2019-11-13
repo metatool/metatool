@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Metatool.Service;
 
 namespace Metatool.Command
 {
