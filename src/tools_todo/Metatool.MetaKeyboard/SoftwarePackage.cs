@@ -14,35 +14,34 @@ using static Metatool.MetaKeyboard.KeyboardConfig;
 
 namespace Metatool.MetaKeyboard
 {
-    public class Software : CommandPackage
+    public sealed class Software : CommandPackage
     {
 
-        private ICommandRunner CommandRunner;
-        private INotify Notify;
+        private static ICommandRunner _commandRunner;
+        private static INotify _notify;
        
         public Software(ICommandRunner commandRunner, INotify notify)
         {
-            CommandRunner = commandRunner;
-            Notify = notify;
+            _commandRunner = commandRunner;
+            _notify = notify;
             RegisterCommands();
         }
         public IKeyCommand DoublePinyinSwitch = (Pipe + P).Down(e =>
         {
             e.Handled = true;
-            var keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
-            var valueName = "Enable Double Pinyin";
+            const string keyName = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
+            const string valueName = "Enable Double Pinyin";
             var k         = (int)Registry.GetValue(keyName, valueName, -1);
             if (k == 0)
             {
-                Notify.ShowMessage("Double Pinyin Enabled");
+                _notify.ShowMessage("Double Pinyin Enabled");
                 Registry.SetValue(keyName, valueName, 1);
             }
             else if (k == 1)
             {
-                Notify.ShowMessage("Full Pinyin Enabled");
+                _notify.ShowMessage("Full Pinyin Enabled");
                 Registry.SetValue(keyName, valueName, 0);
             }
-
         }, null, "&Toggle Double &Pinyin(Microsoft)");
 
         public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
@@ -60,11 +59,11 @@ namespace Metatool.MetaKeyboard
             if ("CabinetWClass" == c)
             {
                 var path = await Explorer.Path(Window.CurrentWindowHandle);
-                CommandRunner.RunWithCmd(CommandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path", path));
+                _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path", path));
                 return;
             }
 
-            CommandRunner.RunWithCmd(CommandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
+            _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
         }, null, "&Find With Everything");
 
         public IKeyCommand OpenTerminal = (AK + T).Down(async e =>
@@ -77,8 +76,8 @@ namespace Metatool.MetaKeyboard
                 path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             else
                 path = await Explorer.Path(Window.CurrentWindowHandle);
-            if(shiftDown) CommandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
-            else CommandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
+            if(shiftDown) _commandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
+            else _commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
         }, null, "Open &Terminal");
 
         public IKeyCommand WebSearch = (AK + W).Down(async e =>
@@ -95,7 +94,7 @@ namespace Metatool.MetaKeyboard
             var process     = await VirtualDesktopManager.Inst.GetFirstProcessOnCurrentVirtualDesktop(exeName);
             if (process == null)
             {
-                CommandRunner.RunAsNormalUser(defaultPath, url, "--new-window","--new-instance");
+                _commandRunner.RunAsNormalUser(defaultPath, url, "--new-window","--new-instance");
                 return;
             }
 
@@ -116,21 +115,21 @@ namespace Metatool.MetaKeyboard
             e =>
             {
                 e.Handled = true;
-                CommandRunner.RunWithCmd(Config.Current.Tools.Ruler);
+                _commandRunner.RunWithCmd(Config.Current.Tools.Ruler);
             }, null, "Screen &Ruler");
 
         public IKeyCommand StartTaskExplorer = (softwareTrigger, T).Down(
             e =>
             {
                 e.Handled = true;
-                CommandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
+                _commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
             }, null, "&Task Explorer ");
 
         public IKeyCommand StartGifRecord = (softwareTrigger, G).Down(
             e =>
             {
                 e.Handled = true;
-                CommandRunner.RunWithCmd(Config.Current.Tools.GifTool);
+                _commandRunner.RunWithCmd(Config.Current.Tools.GifTool);
             }, null, "&Gif Record ");
 
         public IKeyCommand StartNotepad = (softwareTrigger, N).Down(async e =>
@@ -152,7 +151,7 @@ namespace Metatool.MetaKeyboard
                 return;
             }
 
-            CommandRunner.RunWithCmd("Notepad");
+            _commandRunner.RunWithCmd("Notepad");
         }, null, "&Notepad");
 
         public IKeyCommand StartVisualStudio = (softwareTrigger, V).Down(async e =>
@@ -164,7 +163,7 @@ namespace Metatool.MetaKeyboard
             var path = await Explorer.Path(Window.CurrentWindowHandle);
             if (string.IsNullOrEmpty(path))
             {
-                CommandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
+                _commandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
                 return;
             }
 
@@ -192,15 +191,14 @@ namespace Metatool.MetaKeyboard
                 return;
             }
 
-
-            CommandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
+            _commandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
         }, null, "&Inspect");
 
         public IKeyCommand OpenCodeEditor = (AK + C).Handled().Hit(async e =>
         {
             if (!Window.IsExplorerOrOpenSaveDialog)
             {
-                CommandRunner.RunWithExplorer(Config.Current.Tools.Code);
+                _commandRunner.RunWithExplorer(Config.Current.Tools.Code);
                 return;
             }
 
@@ -208,13 +206,13 @@ namespace Metatool.MetaKeyboard
 
             if (paths.Length == 0)
             {
-                CommandRunner.RunWithExplorer(Config.Current.Tools.Code);
+                _commandRunner.RunWithExplorer(Config.Current.Tools.Code);
                 return;
             }
 
             foreach (var path in paths)
             {
-                CommandRunner.RunWithCmd(CommandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
+                _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
             }
         }, null, "Open &Code Editor");
     }
