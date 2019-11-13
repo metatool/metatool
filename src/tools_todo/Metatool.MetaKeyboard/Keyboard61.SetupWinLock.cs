@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using Metatool.Service;
-using Metatool.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 

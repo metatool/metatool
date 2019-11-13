@@ -1,10 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows.Forms;
-using Metatool.Command;
+﻿using Metatool.Command;
 using Metatool.Service;
-using Metatool.UI;
-using Microsoft.Win32;
 using static Metatool.Service.Key;
 
 namespace Metatool.MetaKeyboard

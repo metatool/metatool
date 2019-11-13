@@ -5,7 +5,6 @@ using System.Windows.Automation;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Service;
-using Metatool.Utils;
 using static Metatool.Service.Key;
 
 namespace Metatool.MetaKeyboard

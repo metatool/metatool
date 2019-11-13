@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Forms;
 using Metatool.Command;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Service.Key;

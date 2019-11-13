@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using Metatool.NotifyIcon;
+using Metatool.UI;
 
-namespace Metatool.UI
+namespace Metatool.Service
 {
     public interface INotify
     {

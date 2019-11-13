@@ -1,13 +1,10 @@
 ﻿using System;
-using Metatool.Utils;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Service;
-using Metatool.UI;
 using Microsoft.Win32;
 using static Metatool.Service.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Win32;
 
-namespace Metatool.Utils
+namespace Metatool.Service
 {
     public class Browser
     {
