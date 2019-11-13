@@ -91,11 +91,12 @@ namespace Metaseed.Metatool
             try
             {
                 _commandRunner.RunWithCmd($"code {dir}");
+                _logger.LogInformation("open it with vscode...");
             }
             catch (Exception e)
             {
                 _fileExplorer.Open(dir);
-                Console.WriteLine(e.Message);
+                _logger.LogWarning(e.Message);
             }
         }
     }
