@@ -12,11 +12,12 @@ namespace Metatool.MetaKeyboard
     public class FileExplorer : CommandPackage
     {
         private static IWindowManager _windowManager;
-        private static IFileExplorer _fileExplorer;
+        private static IFileExplorer  _fileExplorer;
+
         public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer)
         {
             _windowManager = windowManager;
-            _fileExplorer = fileExplorer;
+            _fileExplorer  = fileExplorer;
             RegisterCommands();
         }
 

@@ -13,13 +13,15 @@ namespace Metaseed.Metatool
 {
     public class Scaffolder
     {
-        private readonly ILogger       _logger;
-        private readonly IFileExplorer _fileExplorer;
+        private readonly ILogger        _logger;
+        private readonly IFileExplorer  _fileExplorer;
+        private          ICommandRunner _commandRunner;
 
         public Scaffolder(ILogger logger)
         {
             _logger        = logger;
-            _fileExplorer = Services.Get<IFileExplorer>();
+            _fileExplorer  = Services.Get<IFileExplorer>();
+            _commandRunner = Services.Get<ICommandRunner>();
         }
 
         public void RegisterFileHandler()
@@ -71,7 +73,7 @@ namespace Metaseed.Metatool
             var resource = isScript
                 ? "Metaseed.Metatool.Templates.Metatool.Tools.ScriptTool.zip"
                 : "Metaseed.Metatool.Templates.Metatool.Tools.LibTool.zip";
-            dir ??= Path.Combine(Context.CurrentDirectory, toolName);
+            dir??=Path.Combine(Context.CurrentDirectory, toolName);
             if (Directory.Exists(dir))
             {
                 if (!Prompt.GetYesNo($"We already have a same folder at: {dir}, do you want to override?", false,
@@ -81,11 +83,20 @@ namespace Metaseed.Metatool
                     return;
                 }
             }
+
             using var stream =
                 typeof(Scaffolder).Assembly.GetManifestResourceStream(resource);
-            new ZipArchive(stream).ExtractToDirectory(dir,true);
+            new ZipArchive(stream).ExtractToDirectory(dir, true);
             _logger.LogInformation($"Metatool: tool {toolName} is created in folder: {dir}");
-            _fileExplorer.Open(dir);
+            try
+            {
+                _commandRunner.RunWithCmd($"code {dir}");
+            }
+            catch (Exception e)
+            {
+                _fileExplorer.Open(dir);
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

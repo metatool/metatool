@@ -59,7 +59,7 @@ namespace Metatool.Service
             }
         }
 
-        public bool IsExplorer => "#CabinetWClass" == Class;
+        public bool IsExplorer => "CabinetWClass" == Class;
 
         public bool IsOpenSaveDialog => "#32770" == Class;
 
