@@ -16,13 +16,14 @@ namespace Metatool.MetaKeyboard
 {
     public sealed class Software : CommandPackage
     {
-
         private static ICommandRunner _commandRunner;
         private static INotify _notify;
-       
-        public Software(ICommandRunner commandRunner, INotify notify)
+        private static IWindowManager _windowManager;
+        private static IVirtualDesktopManager _virtualDesktopManager;
+        public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager )
         {
             _commandRunner = commandRunner;
+            _virtualDesktopManager = virtualDesktopManager;
             _notify = notify;
             RegisterCommands();
         }
@@ -51,14 +52,14 @@ namespace Metatool.MetaKeyboard
             e.Handled = true;
             var shiftDown = e.KeyboardState.IsDown(Shift);
 
-            var c = Window.CurrentWindowClass;
+            var c = _windowManager.CurrentWindow.Class;
             var arg = shiftDown
                 ? "-newwindow"
                 : "-toggle-window";
 
             if ("CabinetWClass" == c)
             {
-                var path = await Explorer.Path(Window.CurrentWindowHandle);
+                var path = await Explorer.Path(_windowManager.CurrentWindow.Handle);
                 _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path", path));
                 return;
             }
@@ -71,11 +72,11 @@ namespace Metatool.MetaKeyboard
             e.Handled = true;
             var shiftDown = e.KeyboardState.IsDown(Shift);
             string path;
-            var    c = Window.CurrentWindowClass;
+            var    c = _windowManager.CurrentWindow.Class;
             if ("CabinetWClass" != c)
                 path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             else
-                path = await Explorer.Path(Window.CurrentWindowHandle);
+                path = await Explorer.Path(_windowManager.CurrentWindow.Handle);
             if(shiftDown) _commandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
             else _commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
         }, null, "Open &Terminal");
@@ -91,7 +92,7 @@ namespace Metatool.MetaKeyboard
 
             var defaultPath = Browser.DefaultPath;
             var exeName     = Path.GetFileNameWithoutExtension(defaultPath);
-            var process     = await VirtualDesktopManager.Inst.GetFirstProcessOnCurrentVirtualDesktop(exeName);
+            var process     = await _virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
             if (process == null)
             {
                 _commandRunner.RunAsNormalUser(defaultPath, url, "--new-window","--new-instance");
@@ -138,7 +139,7 @@ namespace Metatool.MetaKeyboard
             var exeName = "Notepad";
 
             var notePads = await
-                VirtualDesktopManager.Inst.GetProcessesOnCurrentVirtualDesktop(exeName,
+                _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
                     p => p.MainWindowTitle == "Untitled - Notepad");
 
             var notePad = notePads.FirstOrDefault();
@@ -147,7 +148,7 @@ namespace Metatool.MetaKeyboard
 
             if (hWnd != null)
             {
-                Window.Show(hWnd.Value);
+                _windowManager.Show(hWnd.Value);
                 return;
             }
 
@@ -156,11 +157,11 @@ namespace Metatool.MetaKeyboard
 
         public IKeyCommand StartVisualStudio = (softwareTrigger, V).Down(async e =>
         {
-            if (!Window.IsExplorerOrOpenSaveDialog) return;
+            if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
 
             e.Handled = true;
 
-            var path = await Explorer.Path(Window.CurrentWindowHandle);
+            var path = await Explorer.Path(_windowManager.CurrentWindow.Handle);
             if (string.IsNullOrEmpty(path))
             {
                 _commandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
@@ -179,7 +180,7 @@ namespace Metatool.MetaKeyboard
             var exeName = "Inspect";
 
             var processes = await
-                VirtualDesktopManager.Inst.GetProcessesOnCurrentVirtualDesktop(exeName);
+                _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName);
 
             var process = processes.FirstOrDefault();
 
@@ -187,7 +188,7 @@ namespace Metatool.MetaKeyboard
 
             if (hWnd != null)
             {
-                Window.Show(hWnd.Value);
+                _windowManager.Show(hWnd.Value);
                 return;
             }
 
@@ -196,13 +197,13 @@ namespace Metatool.MetaKeyboard
 
         public IKeyCommand OpenCodeEditor = (AK + C).Handled().Hit(async e =>
         {
-            if (!Window.IsExplorerOrOpenSaveDialog)
+            if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
             {
                 _commandRunner.RunWithExplorer(Config.Current.Tools.Code);
                 return;
             }
 
-            var paths = await Explorer.GetSelectedPath(Window.CurrentWindowHandle);
+            var paths = await Explorer.GetSelectedPath(_windowManager.CurrentWindow.Handle);
 
             if (paths.Length == 0)
             {

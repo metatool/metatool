@@ -9,6 +9,7 @@
     <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <!--document: https://www.geoffchappell.com/studies/windows/shell/shell32/index.htm?tx=62,64 -->
     <COMReference Include="Shell32.dll">
       <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
       <VersionMajor>1</VersionMajor>

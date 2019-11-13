@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Metatool.Utils.Implementation
 {
-    internal class WindowManager
+    public class WindowHelper
     {
         public static List<IntPtr> GetChildWindows(IntPtr parent)
         {
@@ -109,8 +109,6 @@ namespace Metatool.Utils.Implementation
             }
             PInvokes.EnumChildWindows(parentHandle, new EnumWindowsProc(EnumChildWindowsCallback), IntPtr.Zero);
         }
-
-
 
         public static bool BringWindowToTop(string className, string windowName, bool wait)
         {

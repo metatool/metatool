@@ -6,16 +6,16 @@ using Metatool.Command;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Service.Key;
 using Metatool.Service;
-using Point= System.Drawing.Point;
-using Window = Metatool.Service.Window;
+using Point = System.Drawing.Point;
 
 namespace Metatool.MetaKeyboard
 {
     public class MouseViaKeyboard : CommandPackage
     {
-        private readonly IMouse _mouse;
+        private readonly IMouse         _mouse;
+        private static   IWindowManager WindowManager;
 
-        public MouseViaKeyboard(IScreenHint screenHint, IMouse mouse)
+        public MouseViaKeyboard(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager)
         {
             _mouse = mouse;
             MouseLeftClick = (GK + C).Down(e =>
@@ -30,6 +30,7 @@ namespace Metatool.MetaKeyboard
             });
             RegisterCommands();
         }
+
         // static readonly Hint Hint= new Hint();
         // LButton & RButton
         public IKeyCommand MouseLB = (GK + OpenBrackets).Map(LButton);
@@ -37,14 +38,14 @@ namespace Metatool.MetaKeyboard
 
         static void MoveCursorToActiveControl()
         {
-            var active = AutomationElement.FocusedElement;
+            var active   = AutomationElement.FocusedElement;
             var bounding = (Rect) active.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
 
-            var x = (int)Math.Floor(bounding.X + bounding.Width  / 2);
-            var y = (int)Math.Floor(bounding.Y + bounding.Height / 2);
-            if (x ==0 && y ==0)
+            var x = (int) Math.Floor(bounding.X + bounding.Width  / 2);
+            var y = (int) Math.Floor(bounding.Y + bounding.Height / 2);
+            if (x == 0 && y == 0)
             {
-                var r = Window.GetCurrentWindowRect();
+                var r = WindowManager.CurrentWindow.Rect;
                 x = (int) (r.X + r.Width  / 2);
                 y = (int) (r.Y + r.Height / 2);
             }
@@ -54,10 +55,7 @@ namespace Metatool.MetaKeyboard
         }
 
         // Scroll up/down (reading, one hand)
-        public IKeyCommand MouseToFocus = (GK + F).Handled().Down(e =>
-        {
-            e.BeginInvoke(MoveCursorToActiveControl);
-        });
+        public IKeyCommand MouseToFocus = (GK + F).Handled().Down(e => { e.BeginInvoke(MoveCursorToActiveControl); });
 
         // Scroll up/down (reading, one hand)
         public IKeyCommand MouseScrollUp = (GK + W).Handled().Down(e =>
@@ -81,7 +79,7 @@ namespace Metatool.MetaKeyboard
             var winRect = position.winRect;
             rect.X = winRect.X + rect.X;
             rect.Y = winRect.Y + rect.Y;
-            var p = new Point((int)(rect.X + rect.Width / 2), (int)(rect.Y + rect.Height / 2));
+            var p = new Point((int) (rect.X + rect.Width / 2), (int) (rect.Y + rect.Height / 2));
             _mouse.Position = p;
             _mouse.LeftClick();
         }

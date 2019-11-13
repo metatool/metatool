@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Metatool.NotifyIcon;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
+using Metatool.NotifyIcon;
+using Metatool.NotifyIcon.Interop;
+using Metatool.Service;
+using Metatool.Utils.Implementation;
 using Metatool.Utils.Notify;
 using Application = System.Windows.Application;
-using System.Windows.Threading;
-using Metatool.NotifyIcon.Interop;
-using Metatool.Utils.Implementation;
 using Point = System.Windows.Point;
-using Metatool.UI;
 
-namespace Metatool.MetaKeyboard
+namespace Metatool.UI
 {
     public partial class Notify: INotify
     {
         private static  TaskbarIcon _trayIcon;
-
+        private static IWindowManager _windowManager;
+        private static IWindowManager WindowManager => _windowManager ??= Services.Get<IWindowManager>();
         private static TaskbarIcon TrayIcon
         {
             get
@@ -79,7 +80,7 @@ namespace Metatool.MetaKeyboard
             {
                 case NotifyPosition.Caret:
                 {
-                    var rect = Service.Window.GetCurrentWindowCaretPosition();
+                    var rect = WindowManager.CurrentWindow.CaretPosition;
                     var X    = (rect.Left   + rect.Width  / 2 - balloon.ActualWidth  / 2);
                     var Y    = (rect.Bottom + rect.Height / 2 - balloon.ActualHeight / 2);
                     if (X == 0 && Y == 0)
@@ -93,7 +94,7 @@ namespace Metatool.MetaKeyboard
 
                 case NotifyPosition.ActiveWindowCenter:
                 {
-                    var rect = Service.Window.GetCurrentWindowRect();
+                    var rect = WindowManager.CurrentWindow.Rect;
                     var X    = (rect.X + rect.Width  / 2 - balloon.ActualWidth  / 2);
                     var Y    = (rect.Y + rect.Height / 2 - balloon.ActualHeight / 2);
                     point = new Point(X, Y);
@@ -102,7 +103,7 @@ namespace Metatool.MetaKeyboard
 
                 case NotifyPosition.ActiveScreen:
                 {
-                    var screen = Screen.FromHandle(Service.Window.CurrentWindowHandle);
+                    var screen = Screen.FromHandle(WindowManager.CurrentWindow.Handle);
                     if (screen.Equals(Screen.PrimaryScreen))
                     {
                         var p = TrayInfo.GetTrayLocation();
@@ -186,7 +187,7 @@ namespace Metatool.MetaKeyboard
                 Placement = PlacementMode.AbsolutePoint, StaysOpen = false, Child = b
             };
 
-            var bounds = Screen.FromHandle(Service.Window.CurrentWindowHandle).Bounds;
+            var bounds = Screen.FromHandle(WindowManager.CurrentWindow.Handle).Bounds;
 
             var window = new Window()
             {

@@ -40,7 +40,7 @@ namespace Metatool.Service
         public static AutomationElement FirstChild(this AutomationElement ele,
             Func<ConditionFactory, Condition> condition) => First(ele, TreeScope.Children, condition);
 
-        public static AutomationElement FirstDecendant(this AutomationElement ele,
+        public static AutomationElement FirstDecendent(this AutomationElement ele,
             Func<ConditionFactory, Condition> condition) => First(ele, TreeScope.Descendants, condition);
 
         public static AutomationElement First(this AutomationElement ele, TreeScope scope, Func<ConditionFactory, Condition> condition)

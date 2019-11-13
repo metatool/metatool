@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using Metatool.Service;
 using MenuItem = System.Windows.Controls.MenuItem;
 
-namespace Metatool.MetaKeyboard
+namespace Metatool.UI
 {
     public partial class Notify
     {
@@ -31,7 +31,7 @@ namespace Metatool.MetaKeyboard
                 case NotifyPosition.ActiveWindowCenter:
                     func = () =>
                     {
-                        var rect = Window.GetCurrentWindowRect();
+                        var rect = WindowManager.CurrentWindow.Rect;
                         return new NotifyIcon.Interop.Point()
                         {
                             X = (int)(rect.X + rect.Width / 2 - control.ActualWidth / 2),
@@ -42,7 +42,7 @@ namespace Metatool.MetaKeyboard
                 case NotifyPosition.ActiveScreen:
                     func = () =>
                     {
-                        var screen = Screen.FromHandle(Window.CurrentWindowHandle);
+                        var screen = Screen.FromHandle(WindowManager.CurrentWindow.Handle);
                         if (screen.Equals(Screen.PrimaryScreen))
                         {
                             return TrayIcon.GetPopupTrayPosition();

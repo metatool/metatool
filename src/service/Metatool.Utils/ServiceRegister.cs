@@ -8,9 +8,9 @@ namespace Metatool.Utils
 {
     public static class ServiceRegister
     {
-        public static IServiceCollection AddMetatoolUtils(this IServiceCollection services)
-        {
-            return services.AddSingleton<ICommandRunner, CommandRunner>();
-        }
+        public static IServiceCollection AddMetatoolUtils(this IServiceCollection services) =>
+            services.AddSingleton<ICommandRunner, CommandRunner>()
+                .AddSingleton<IWindowManager, WindowManager>()
+                .AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>();
     }
 }

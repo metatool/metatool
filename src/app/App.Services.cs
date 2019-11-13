@@ -3,7 +3,6 @@ using System.Linq;
 using Metaseed.Metatool.Service;
 using Metatool.Command;
 using Metatool.Input;
-using Metatool.MetaKeyboard;
 using Metatool.Metatool;
 using Metatool.Service;
 using Metatool.Plugins;

@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Automation;
 using Metatool.Service;
-using Window = Metatool.Service.Window;
 
 namespace Metatool.ScreenPoint
 {
@@ -16,6 +15,9 @@ namespace Metatool.ScreenPoint
 
     public class HintsBuilder
     {
+
+        private static IWindowManager _windowManager;
+        private static IWindowManager WindowManager=>_windowManager??= Services.Get<IWindowManager>();
         private (Rect winRect, List<Rect> rects) GetPoints(IntPtr winHandle)
         {
             var cacheRequest = new CacheRequest();
@@ -100,7 +102,7 @@ namespace Metatool.ScreenPoint
         {
             var w = new Stopwatch();
             w.Start();
-            var h      = Window.CurrentWindowHandle;
+            var h      = WindowManager.CurrentWindow.Handle;
             var points = GetPoints(h);
             Console.WriteLine("GetPoints:" + w.ElapsedMilliseconds);
             w.Restart();

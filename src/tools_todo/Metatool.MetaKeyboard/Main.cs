@@ -15,10 +15,10 @@ namespace Metatool.MetaKeyboard
             var keyboard61   = new Keyboard61();
             var mouse        = Services.GetOrCreate<MouseViaKeyboard>();
             var fun          = new FunctionalKeys();
-            var fileExplorer = new FileExplorer();
+            var fileExplorer = Services.GetOrCreate<FileExplorer>();
             var hotstrings   = new HostStrings();
             var windowKeys   = new WindowKeys();
-            var software = Services.GetOrCreate<Software>();
+            var software     = Services.GetOrCreate<Software>();
             return base.OnLoaded();
         }
 

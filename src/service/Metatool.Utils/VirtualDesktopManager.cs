@@ -9,7 +9,7 @@ namespace Metatool.Service
 {
     [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("a5cd92ff-29be-454c-8d04-d82879fb3f1b")]
     [System.Security.SuppressUnmanagedCodeSecurity]
-    public interface IVirtualDesktopManager
+    public interface ICVirtualDesktopManager
     {
         [PreserveSig]
         int IsWindowOnCurrentVirtualDesktop(
@@ -35,14 +35,14 @@ namespace Metatool.Service
     {
 
     }
-    public class VirtualDesktopManager
+    public class VirtualDesktopManager : IVirtualDesktopManager
     {
         public static VirtualDesktopManager Inst = new VirtualDesktopManager();
 
         public VirtualDesktopManager()
         {
             cmanager = new CVirtualDesktopManager();
-            manager = (IVirtualDesktopManager)cmanager;
+            manager = (ICVirtualDesktopManager)cmanager;
         }
         ~VirtualDesktopManager()
         {
@@ -50,10 +50,9 @@ namespace Metatool.Service
             cmanager = null;
         }
         private CVirtualDesktopManager cmanager = null;
-        private IVirtualDesktopManager manager;
+        private ICVirtualDesktopManager manager;
 
-        public async Task<Process> GetFirstProcessOnCurrentVirtualDesktop(string exeName,
-            Func<Process, bool> predict = null)
+        public async Task<Process> GetFirstProcessOnCurrentVirtualDesktop(string exeName, Func<Process, bool> predict = null)
         {
             Process process = null;
             return (await GetProcessesOnCurrentVirtualDesktop(exeName, p =>
@@ -68,17 +67,17 @@ namespace Metatool.Service
                 return false;
             })).FirstOrDefault();
         }
+
         public async Task<IEnumerable<Process>> GetProcessesOnCurrentVirtualDesktop(string exeName, Func<Process, bool> predict=null)
         {
             var     processes = Process.GetProcessesByName(exeName);
-
             var l = new List<Process>();
             foreach (var n in processes)
             {
                 if(predict!=null && !predict(n)) continue;
 
                 var onCurrentDesktop =
-                    await VirtualDesktopManager.Inst.IsWindowOnCurrentVirtualDesktop(n.MainWindowHandle);
+                    await VirtualDesktopManager.Inst.IsOnCurrentVirtualDesktop(n.MainWindowHandle);
                 if (onCurrentDesktop)
                 {
                     l.Add(n);
@@ -88,12 +87,12 @@ namespace Metatool.Service
             return l;
         }
 
-        public async Task<bool> IsWindowOnCurrentVirtualDesktop(IntPtr TopLevelWindow)
+        public async Task<bool> IsOnCurrentVirtualDesktop(IntPtr hWnd)
         {
-            return await Window.DispatchAsync<bool>(() =>
+            return await UiDispacher.DispatchAsync<bool>(() =>
             {
                 int hr;
-                if ((hr = manager.IsWindowOnCurrentVirtualDesktop(TopLevelWindow, out var result)) != 0)
+                if ((hr = manager.IsWindowOnCurrentVirtualDesktop(hWnd, out var result)) != 0)
                 {
                     Marshal.ThrowExceptionForHR(hr);
                 }
@@ -102,13 +101,12 @@ namespace Metatool.Service
             });
         }
 
-        public async Task<Guid> GetWindowDesktopId(IntPtr TopLevelWindow)
+        public async Task<Guid> GetWindowDesktopId(IntPtr hWnd)
         {
-            return await Window.DispatchAsync<Guid>(() =>
+            return await UiDispacher.DispatchAsync<Guid>(() =>
             {
-                Guid result;
                 int  hr;
-                if ((hr = manager.GetWindowDesktopId(TopLevelWindow, out result)) != 0)
+                if ( (hr = manager.GetWindowDesktopId(hWnd, out var result)) != 0)
                 {
                     Marshal.ThrowExceptionForHR(hr);
                 }
@@ -117,12 +115,12 @@ namespace Metatool.Service
             });
         }
 
-        public async Task MoveWindowToDesktop(IntPtr TopLevelWindow, Guid CurrentDesktop)
+        public async Task MoveWindowToDesktop(IntPtr hWnd, Guid currentDesktop)
         {
-            await Window.DispatchAsync<object>(() =>
+            await UiDispacher.DispatchAsync<object>(() =>
             {
                 int hr;
-                if ((hr = manager.MoveWindowToDesktop(TopLevelWindow, CurrentDesktop)) != 0)
+                if ((hr = manager.MoveWindowToDesktop(hWnd, currentDesktop)) != 0)
                 {
                     Marshal.ThrowExceptionForHR(hr);
                 }
