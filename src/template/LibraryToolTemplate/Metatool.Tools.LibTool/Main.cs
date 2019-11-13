@@ -1,5 +1,4 @@
-﻿using Metatool.Command;
-using Metatool.Service;
+﻿using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using static Metatool.Service.Key;
 

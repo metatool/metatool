@@ -128,9 +128,8 @@ namespace Metatool.Script
                 stopWatch.Restart();
 
                 _logger.LogInformation($"{assemblyName}: Start to build...");
-               
-                await executionHost.BuildAndExecuteAsync(code, optimization, codePath);
-                _logger.LogInformation($"{assemblyName}: Build successfully, time: {stopWatch.ElapsedMilliseconds}ms");
+                var result = await executionHost.BuildAndExecuteAsync(code, optimization, codePath) ? "successfully" : "error";
+                _logger.LogInformation($"{assemblyName}: Build {result} , time: {stopWatch.ElapsedMilliseconds}ms");
             };
             if (DefaultReferences.Length > 0)
             {

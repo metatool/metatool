@@ -9,6 +9,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using Metatool.Metatool.Plugin.LibraryModel;
+using Metatool.Service;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.Metatool.Plugin.Loader
 {
@@ -86,7 +88,7 @@ namespace Metatool.Metatool.Plugin.Loader
                         return null;
                     }
                 }
-                catch
+                catch(Exception)
                 {
                     // Swallow errors in loading from the default context
                 }

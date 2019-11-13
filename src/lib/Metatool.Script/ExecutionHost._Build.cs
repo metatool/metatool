@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Metatool.Script.Resolver;
+using Metatool.Service;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -64,9 +65,10 @@ namespace Metatool.Script
 
         public string Name { get; set; }
 
-        public async Task BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, string codePath,
+        public async Task<bool> BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, string codePath,
             bool onlyBuild = true)
         {
+            bool buildResult = true;
             await new NoContextYieldAwaitable();
             try
             {
@@ -77,7 +79,7 @@ namespace Metatool.Script
                 _assemblyPath = Path.Combine(BuildPath, $"{Name}.dll");
                 _depsFile     = Path.ChangeExtension(_assemblyPath, ".deps.json");
 
-                var encoding     = Encoding.UTF8;
+                var encoding   = Encoding.UTF8;
                 var buffer     = encoding.GetBytes(code);
                 var sourceText = SourceText.From(buffer, buffer.Length, encoding, canBeEmbedded: true);
 
@@ -96,13 +98,18 @@ namespace Metatool.Script
 
                 if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
                 {
-                    return;
+                    return false;
                 }
 
                 _executeCts = executeCts;
 
                 if (!onlyBuild)
                     await RunProcess(_assemblyPath, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                buildResult = false;
+                Services.CommonLogger?.LogError(e.Message + e.StackTrace);
             }
             finally
             {
@@ -115,6 +122,8 @@ namespace Metatool.Script
                     InitializeBuildPath(stop: false);
                 }
             }
+
+            return buildResult;
         }
 
         private void InitializeBuildPath(bool stop)
@@ -202,7 +211,7 @@ namespace Metatool.Script
             OptimizationLevel? optimizationLevel)
         {
             return new ScriptRunner(code: null,
-                syntaxTrees: ImmutableList.Create( InitHostSyntax, ParseCode(sourceText, codePath)),
+                syntaxTrees: ImmutableList.Create(InitHostSyntax, ParseCode(sourceText, codePath)),
                 parseOptions: ParseOptions,
                 outputKind: OutputKind.ConsoleApplication,
                 platform: Platform.AnyCpu,

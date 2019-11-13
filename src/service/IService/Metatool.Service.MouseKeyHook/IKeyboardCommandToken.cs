@@ -1,6 +1,4 @@
-﻿using Metatool.Service;
-
-namespace Metatool.Command{
+﻿namespace Metatool.Service{
     public interface IKeyCommand: ICommandToken<IKeyEventArgs>
     {
         bool Change(IHotkey key);

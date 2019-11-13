@@ -36,6 +36,7 @@ namespace Metatool.Plugin
                 var path = Loader.MainAssembly.Location;
                 var verDir            = new Regex("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 var r = verDir.Match(path);
+                if (r.Value == "") return NoneVersion;
                 var v = Version.Parse(r.Value);
                 Func<int,int> e = (int n) => n == -1 ? 0 : n;
                 if (r.Success) return new Version(e(v.Major),e(v.Minor), e(v.Build), e(v.Revision));
