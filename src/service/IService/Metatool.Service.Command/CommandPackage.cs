@@ -16,7 +16,7 @@ namespace Metatool.Service
             _logger = Services.Get(loggerType) as ILogger;
         }
 
-        protected IEnumerable<(FieldInfo, ICommandToken)> GetCommands()
+        protected IEnumerable<(FieldInfo fi, ICommandToken token)> GetCommands()
         {
             var commands = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
                 .Where(f => typeof(ICommandToken).IsAssignableFrom(f.FieldType))
@@ -26,9 +26,10 @@ namespace Metatool.Service
 
         protected void RegisterCommands()
         {
-            GetCommands().ToList().ForEach(c =>
+            GetCommands().Where(k=>k.token!=null).ToList().ForEach(c =>
             {
                 var (fi, metaKey) = c;
+                k
                 if (string.IsNullOrEmpty(metaKey.Id))
                     metaKey.Id = GetType().FullName + "." + fi.Name;
             });
