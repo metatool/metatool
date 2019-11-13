@@ -16,14 +16,14 @@ namespace Metatool.MetaKeyboard
 {
     public class Software : CommandPackage
     {
-        private static ICommandRunner _commandRunner;
-        private static ICommandRunner CommandRunner => _commandRunner??=Services.Get<ICommandRunner>();
 
-        private static INotify _notify;
-        private static INotify Notify => _notify??=Services.Get<INotify>();
-
-        public Software()
+        private ICommandRunner CommandRunner;
+        private INotify Notify;
+       
+        public Software(ICommandRunner commandRunner, INotify notify)
         {
+            CommandRunner = commandRunner;
+            Notify = notify;
             RegisterCommands();
         }
         public IKeyCommand DoublePinyinSwitch = (Pipe + P).Down(e =>

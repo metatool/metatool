@@ -18,7 +18,7 @@ namespace Metatool.MetaKeyboard
             var fileExplorer = new FileExplorer();
             var hotstrings   = new HostStrings();
             var windowKeys   = new WindowKeys();
-            var software     = new Software();
+            var software = Services.GetOrCreate<Software>();
             return base.OnLoaded();
         }
 
