@@ -7,6 +7,7 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Service;
+using Metatool.UI;
 using Microsoft.Win32;
 using static Metatool.Service.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
@@ -17,6 +18,9 @@ namespace Metatool.MetaKeyboard
     {
         private static ICommandRunner _commandRunner;
         private static ICommandRunner CommandRunner => _commandRunner??=Services.Get<ICommandRunner>();
+
+        private static INotify _notify;
+        private static INotify Notify => _notify??=Services.Get<INotify>();
 
         public Software()
         {
@@ -29,9 +33,15 @@ namespace Metatool.MetaKeyboard
             var valueName = "Enable Double Pinyin";
             var k         = (int)Registry.GetValue(keyName, valueName, -1);
             if (k == 0)
+            {
+                Notify.ShowMessage("Double Pinyin Enabled");
                 Registry.SetValue(keyName, valueName, 1);
+            }
             else if (k == 1)
+            {
+                Notify.ShowMessage("Full Pinyin Enabled");
                 Registry.SetValue(keyName, valueName, 0);
+            }
 
         }, null, "&Toggle Double &Pinyin(Microsoft)");
 
