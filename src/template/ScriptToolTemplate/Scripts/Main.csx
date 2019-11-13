@@ -1,4 +1,4 @@
-﻿#r "nuget: Metatool.Plugin, *"
+﻿#r "nuget: Metatool.Service, *"
 #r "nuget: Automapper, 9.0.0"
 #r "LocalLib.dll"
 #load "LocalScript.csx"
@@ -10,7 +10,7 @@ using System.Threading;
 using LocalLib;
 using Microsoft.Extensions.Logging;
 using Metatool.Service;
-using static Metatool.Input.Key;
+using static Metatool.Service.Key;
 using System.Diagnostics;
 
 // Debugger.Break();
@@ -26,8 +26,8 @@ public class ClassTest
 }
 public class MetaScript : ToolBase
 {
-    IRemove token;
-    public MetaScript( ICommandManager commandManager, IKeyboard keyboard) 
+    public ICommandToken<IKeyEventArgs> token;
+    public MetaScript(ICommandManager commandManager, IKeyboard keyboard) 
     {
         Logger.LogInformation("Demo script created");
         token = commandManager.Add(keyboard.Down(Caps + A), e =>
