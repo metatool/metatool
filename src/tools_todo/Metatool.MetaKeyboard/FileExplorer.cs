@@ -23,7 +23,7 @@ namespace Metatool.MetaKeyboard
         public IKeyCommand FocusFileItemsView = (LWin + F).Down(e =>
         {
             var listBoxEle   = _windowManager.CurrentWindow?.FirstDescendant(c => c.ByClassName("UIItemsView"));
-            var selectedItem = listBoxEle.SelectedItems()?.FirstOrDefault();
+            var selectedItem = listBoxEle?.SelectedItems()?.FirstOrDefault();
             if (selectedItem != null) selectedItem.SetFocus();
             else listBoxEle.FirstChild(c => c.ByClassName("UIItem"))?.Select();
             e.Handled = true;
@@ -54,6 +54,7 @@ namespace Metatool.MetaKeyboard
 
         public IKeyCommand NewFile = (Ctrl + Alt + N).Hit(async e =>
         {
+            e.Handled = true;
             const string newFileName = "NewFile";
             var          handle      = _windowManager.CurrentWindow.Handle;
             var          fullPath    = await _fileExplorer.Path(handle);
