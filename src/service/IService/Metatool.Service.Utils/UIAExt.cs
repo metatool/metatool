@@ -57,7 +57,6 @@ namespace Metatool.Service
             return null;
         }
 
-        public static AutomationElement CurrentWindow => AutomationElement.FromHandle(Window.CurrentWindowHandle);
 
 
     }

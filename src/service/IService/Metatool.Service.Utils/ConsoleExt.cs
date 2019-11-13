@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Threading;
-using Metatool.Service;
 using Metatool.UI;
 using Metatool.Utils.Implementation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Metatool.Utils
+namespace Metatool.Service
 {
     public static class ConsoleExt
     {

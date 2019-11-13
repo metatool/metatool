@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
+using Window = Metatool.Service.Window;
 
 namespace Metatool.ScreenPoint
 {
@@ -98,7 +99,7 @@ namespace Metatool.ScreenPoint
         {
             var w = new Stopwatch();
             w.Start();
-            var h      = Utils.Window.CurrentWindowHandle;
+            var h      = Window.CurrentWindowHandle;
             var points = GetPoints(h);
             Console.WriteLine("GetPoints:" + w.ElapsedMilliseconds);
             w.Restart();

@@ -79,7 +79,7 @@ namespace Metatool.MetaKeyboard
             {
                 case NotifyPosition.Caret:
                 {
-                    var rect = Utils.Window.GetCurrentWindowCaretPosition();
+                    var rect = Service.Window.GetCurrentWindowCaretPosition();
                     var X    = (rect.Left   + rect.Width  / 2 - balloon.ActualWidth  / 2);
                     var Y    = (rect.Bottom + rect.Height / 2 - balloon.ActualHeight / 2);
                     if (X == 0 && Y == 0)
@@ -93,7 +93,7 @@ namespace Metatool.MetaKeyboard
 
                 case NotifyPosition.ActiveWindowCenter:
                 {
-                    var rect = Utils.Window.GetCurrentWindowRect();
+                    var rect = Service.Window.GetCurrentWindowRect();
                     var X    = (rect.X + rect.Width  / 2 - balloon.ActualWidth  / 2);
                     var Y    = (rect.Y + rect.Height / 2 - balloon.ActualHeight / 2);
                     point = new Point(X, Y);
@@ -102,7 +102,7 @@ namespace Metatool.MetaKeyboard
 
                 case NotifyPosition.ActiveScreen:
                 {
-                    var screen = Screen.FromHandle(Utils.Window.CurrentWindowHandle);
+                    var screen = Screen.FromHandle(Service.Window.CurrentWindowHandle);
                     if (screen.Equals(Screen.PrimaryScreen))
                     {
                         var p = TrayInfo.GetTrayLocation();
@@ -186,7 +186,7 @@ namespace Metatool.MetaKeyboard
                 Placement = PlacementMode.AbsolutePoint, StaysOpen = false, Child = b
             };
 
-            var bounds = Screen.FromHandle(Utils.Window.CurrentWindowHandle).Bounds;
+            var bounds = Screen.FromHandle(Service.Window.CurrentWindowHandle).Bounds;
 
             var window = new Window()
             {

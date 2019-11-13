@@ -19,19 +19,19 @@ namespace Metatool.MetaKeyboard
 
         static bool IsExplorerOrDialog(IKeyEventArgs e)
         {
-            var c = Utils.Window.CurrentWindowClass;
+            var c = Window.CurrentWindowClass;
             return "CabinetWClass" == c || "#32770" == c;
         }
 
         static bool IsExplorer(IKeyEventArgs e)
         {
-            var c = Utils.Window.CurrentWindowClass;
+            var c = Window.CurrentWindowClass;
             return "CabinetWClass" == c;
         }
 
         public IKeyCommand FocusFileItemsView = (LWin + F).Down(e =>
         {
-            var listBoxEle   = UIA.CurrentWindow?.FirstDecendant(c => c.ByClassName("UIItemsView"));
+            var listBoxEle   = Window.CurrentWindow?.FirstDecendant(c => c.ByClassName("UIItemsView"));
             var selectedItem = listBoxEle.SelectedItems()?.FirstOrDefault();
             if (selectedItem != null) selectedItem.SetFocus();
             else listBoxEle.FirstChild(c => c.ByClassName("UIItem"))?.Select();
@@ -41,7 +41,7 @@ namespace Metatool.MetaKeyboard
 
         public IKeyCommand FocusNavigationTreeView = (LWin + N).Down(e =>
         {
-            var winEle       = UIA.CurrentWindow?.FirstDecendant(cf => cf.ByClassName("SysTreeView32"));
+            var winEle       = Window.CurrentWindow?.FirstDecendant(cf => cf.ByClassName("SysTreeView32"));
             var selectedItem = winEle?.SelectedItems().FirstOrDefault();
             if (selectedItem != null)
                 selectedItem.SetFocus();
@@ -56,7 +56,7 @@ namespace Metatool.MetaKeyboard
 
         public IKeyCommand CopySelectedPath = (Caps + Pipe).Down(async e =>
         {
-            var handle = Utils.Window.CurrentWindowHandle;
+            var handle = Window.CurrentWindowHandle;
             var paths  = await Explorer.GetSelectedPath(handle);
             var r      = string.Join(';', paths);
             System.Windows.Clipboard.SetText(r);
@@ -67,7 +67,7 @@ namespace Metatool.MetaKeyboard
         public IKeyCommand NewFile = (Ctrl + Alt + N).Hit(async e =>
         {
             const string newFileName = "NewFile";
-            var          handle      = Utils.Window.CurrentWindowHandle;
+            var          handle      = Window.CurrentWindowHandle;
             var          fullPath    = await Explorer.Path(handle);
             var          fileName    = newFileName;
             var          i           = 1;

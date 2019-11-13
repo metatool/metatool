@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using Metatool.Utils.Implementation;
-using Microsoft.VisualBasic;
 using Shell32;
-using System.IO;
 
-namespace Metatool.Utils
+namespace Metatool.Service
 {
     public class Explorer
     {

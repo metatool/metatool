@@ -6,6 +6,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon />
     <StartupObject />
+    <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <COMReference Include="Shell32.dll">

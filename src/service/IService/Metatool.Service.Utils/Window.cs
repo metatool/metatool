@@ -7,7 +7,7 @@ using System.Windows.Threading;
 using Metatool.Utils.Implementation;
 using Point = System.Drawing.Point;
 
-namespace Metatool.Utils
+namespace Metatool.Service
 {
     public class Window
     {
@@ -36,7 +36,7 @@ namespace Metatool.Utils
 
 
         public static IntPtr CurrentWindowHandle => PInvokes.GetForegroundWindow();
-
+        public static AutomationElement CurrentWindow => AutomationElement.FromHandle(Window.CurrentWindowHandle);
 
         public static void FocusControl(string className, string text)
         {
