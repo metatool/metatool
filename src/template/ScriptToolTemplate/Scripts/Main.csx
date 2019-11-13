@@ -8,10 +8,8 @@ using AutoMapper;
 using System;
 using System.Threading;
 using LocalLib;
-using Metatool.Plugin;
 using Microsoft.Extensions.Logging;
-using Metatool.Command;
-using Metatool.Input;
+using Metatool.Service;
 using static Metatool.Input.Key;
 using System.Diagnostics;
 
