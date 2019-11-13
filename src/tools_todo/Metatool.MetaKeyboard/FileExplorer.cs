@@ -17,18 +17,6 @@ namespace Metatool.MetaKeyboard
             RegisterCommands();
         }
 
-        static bool IsExplorerOrDialog(IKeyEventArgs e)
-        {
-            var c = Window.CurrentWindowClass;
-            return "CabinetWClass" == c || "#32770" == c;
-        }
-
-        static bool IsExplorer(IKeyEventArgs e)
-        {
-            var c = Window.CurrentWindowClass;
-            return "CabinetWClass" == c;
-        }
-
         public IKeyCommand FocusFileItemsView = (LWin + F).Down(e =>
         {
             var listBoxEle   = Window.CurrentWindow?.FirstDecendant(c => c.ByClassName("UIItemsView"));
@@ -36,7 +24,7 @@ namespace Metatool.MetaKeyboard
             if (selectedItem != null) selectedItem.SetFocus();
             else listBoxEle.FirstChild(c => c.ByClassName("UIItem"))?.Select();
             e.Handled = true;
-        }, IsExplorerOrDialog, "Focus &File Items View");
+        }, _ => Window.IsExplorerOrOpenSaveDialog, "Focus &File Items View");
 
 
         public IKeyCommand FocusNavigationTreeView = (LWin + N).Down(e =>
@@ -46,13 +34,10 @@ namespace Metatool.MetaKeyboard
             if (selectedItem != null)
                 selectedItem.SetFocus();
             else
-            {
-                var treeItem = winEle?.FirstDecendant(c => c.ByControlType(ControlType.TreeItem));
-                treeItem?.Select();
-            }
+                winEle?.FirstDecendant(c => c.ByControlType(ControlType.TreeItem))?.Select();
 
             e.Handled = true;
-        }, IsExplorerOrDialog, "Focus &Navigation Tree View");
+        }, _ => Window.IsExplorerOrOpenSaveDialog, "Focus &Navigation Tree View");
 
         public IKeyCommand CopySelectedPath = (Caps + Pipe).Down(async e =>
         {
@@ -61,7 +46,7 @@ namespace Metatool.MetaKeyboard
             var r      = string.Join(';', paths);
             System.Windows.Clipboard.SetText(r);
             e.Handled = true;
-        }, IsExplorerOrDialog, "Copy Selected Files Path");
+        }, _ => Window.IsExplorerOrOpenSaveDialog, "Copy Selected Files Path");
 
 
         public IKeyCommand NewFile = (Ctrl + Alt + N).Hit(async e =>
@@ -81,13 +66,12 @@ namespace Metatool.MetaKeyboard
             var keyboard = Services.Get<IKeyboard>();
             Explorer.Select(handle, new[] {fileName});
             keyboard.Type(Keys.F2);
-        }, IsExplorer, "&New File");
+        }, _ => Window.IsExplorer, "&New File");
 
         public IKeyCommand ShowDesktopFolder = (LWin + D).Down(e =>
-            {
-                Explorer.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-                e.Handled = true;
-            }
-            , null, "Show &Desktop Folder");
+        {
+            Explorer.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            e.Handled = true;
+        }, null, "Show &Desktop Folder");
     }
 }

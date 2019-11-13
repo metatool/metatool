@@ -35,12 +35,12 @@ namespace Metatool.Service
         }
 
 
-        public static IntPtr CurrentWindowHandle => PInvokes.GetForegroundWindow();
-        public static AutomationElement CurrentWindow => AutomationElement.FromHandle(Window.CurrentWindowHandle);
+        public static IntPtr            CurrentWindowHandle => PInvokes.GetForegroundWindow();
+        public static AutomationElement CurrentWindow       => AutomationElement.FromHandle(Window.CurrentWindowHandle);
 
         public static void FocusControl(string className, string text)
         {
-            var hWnd = PInvokes.GetForegroundWindow();
+            var hWnd     = PInvokes.GetForegroundWindow();
             var hControl = PInvokes.FindWindowEx(hWnd, IntPtr.Zero, className, text);
             PInvokes.SetFocus(hControl);
         }
@@ -53,25 +53,27 @@ namespace Metatool.Service
 
         public static Rect GetCurrentWindowCaretPosition()
         {
-           var guiInfo        = new GUITHREADINFO();
-            guiInfo.cbSize = (uint)Marshal.SizeOf(guiInfo);
+            var guiInfo = new GUITHREADINFO();
+            guiInfo.cbSize = (uint) Marshal.SizeOf(guiInfo);
 
             PInvokes.GetGUIThreadInfo(0, out guiInfo);
 
-            var lt = new Point((int)guiInfo.rcCaret.Left, (int)guiInfo.rcCaret.Top);
-            var rb = new Point((int)guiInfo.rcCaret.Right, (int)guiInfo.rcCaret.Bottom);
+            var lt = new Point((int) guiInfo.rcCaret.Left, (int) guiInfo.rcCaret.Top);
+            var rb = new Point((int) guiInfo.rcCaret.Right, (int) guiInfo.rcCaret.Bottom);
 
             PInvokes.ClientToScreen(guiInfo.hwndCaret, out lt);
             PInvokes.ClientToScreen(guiInfo.hwndCaret, out rb);
-            Console.WriteLine(lt.ToString()+ rb.ToString());
+            Console.WriteLine(lt.ToString() + rb.ToString());
             //SystemInformation.WorkingArea
-            return new Rect(new System.Windows.Point() { X = lt.X, Y = lt.Y }, new System.Windows.Point() { X = rb.X, Y = rb.Y });
+            return new Rect(new System.Windows.Point() {X = lt.X, Y = lt.Y},
+                new System.Windows.Point() {X             = rb.X, Y = rb.Y});
         }
 
         public static Rect GetCurrentWindowRect()
         {
             PInvokes.GetWindowRect(CurrentWindowHandle, out var rect);
-            return new Rect(new System.Windows.Point(){X = rect.Left, Y = rect.Top}, new System.Windows.Point() { X = rect.Right, Y = rect.Bottom });
+            return new Rect(new System.Windows.Point() {X = rect.Left, Y  = rect.Top},
+                new System.Windows.Point() {X             = rect.Right, Y = rect.Bottom});
         }
 
         public static bool IsExplorerOrOpenSaveDialog
@@ -82,5 +84,9 @@ namespace Metatool.Service
                 return "CabinetWClass" == c || "#32770" == c;
             }
         }
+
+        public static bool IsExplorer => "#CabinetWClass" == Window.CurrentWindowClass;
+      
+        public static bool IsOpenSaveDialog => "#32770" == Window.CurrentWindowClass;
     }
 }
