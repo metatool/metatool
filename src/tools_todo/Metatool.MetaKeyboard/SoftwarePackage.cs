@@ -20,10 +20,14 @@ namespace Metatool.MetaKeyboard
         private static INotify _notify;
         private static IWindowManager _windowManager;
         private static IVirtualDesktopManager _virtualDesktopManager;
-        public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager )
+        private static IFileExplorer _fileExplorer;
+
+        public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager, IFileExplorer fileExplorer)
         {
             _commandRunner = commandRunner;
             _virtualDesktopManager = virtualDesktopManager;
+            _fileExplorer = fileExplorer;
+            _windowManager = windowManager;
             _notify = notify;
             RegisterCommands();
         }
@@ -59,7 +63,7 @@ namespace Metatool.MetaKeyboard
 
             if ("CabinetWClass" == c)
             {
-                var path = await Explorer.Path(_windowManager.CurrentWindow.Handle);
+                var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
                 _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path", path));
                 return;
             }
@@ -76,7 +80,7 @@ namespace Metatool.MetaKeyboard
             if ("CabinetWClass" != c)
                 path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             else
-                path = await Explorer.Path(_windowManager.CurrentWindow.Handle);
+                path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
             if(shiftDown) _commandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
             else _commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
         }, null, "Open &Terminal");
@@ -161,7 +165,7 @@ namespace Metatool.MetaKeyboard
 
             e.Handled = true;
 
-            var path = await Explorer.Path(_windowManager.CurrentWindow.Handle);
+            var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
             if (string.IsNullOrEmpty(path))
             {
                 _commandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
@@ -203,7 +207,7 @@ namespace Metatool.MetaKeyboard
                 return;
             }
 
-            var paths = await Explorer.GetSelectedPath(_windowManager.CurrentWindow.Handle);
+            var paths = await _fileExplorer.GetSelectedPath(_windowManager.CurrentWindow.Handle);
 
             if (paths.Length == 0)
             {

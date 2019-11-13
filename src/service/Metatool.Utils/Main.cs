@@ -6,11 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Metatool.Utils
 {
-    public static class ServiceRegister
+    public static class Main
     {
         public static IServiceCollection AddMetatoolUtils(this IServiceCollection services) =>
             services.AddSingleton<ICommandRunner, CommandRunner>()
                 .AddSingleton<IWindowManager, WindowManager>()
-                .AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>();
+                .AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>()
+                .AddSingleton<IFileExplorer,FileExplorer>();
     }
 }

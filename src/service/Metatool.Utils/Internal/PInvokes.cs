@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Point = System.Drawing.Point;
 
-namespace Metatool.Utils.Implementation
+namespace Metatool.Utils.Internal
 {
     public delegate bool EnumWindowsProc(IntPtr hwnd, IntPtr lParam);
 
@@ -46,11 +46,7 @@ namespace Metatool.Utils.Implementation
         public static extern bool GetGUIThreadInfo(uint idThread, out GUITHREADINFO threadInfo);
         [DllImport("user32.dll")]
         public static extern bool ClientToScreen(IntPtr hWnd, out Point position);
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool AllocConsole();
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetConsoleWindow();
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]

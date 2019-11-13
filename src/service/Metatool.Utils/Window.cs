@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using Metatool.Utils.Implementation;
+using Metatool.Utils.Internal;
 using Condition = System.Windows.Automation.Condition;
 using Point = System.Drawing.Point;
-using WindowHelper = Metatool.Utils.WindowHelper;
 
 namespace Metatool.Service
 {

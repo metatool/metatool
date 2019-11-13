@@ -8,9 +8,9 @@ using Shell32;
 
 namespace Metatool.Service
 {
-    public class Explorer
+    public class FileExplorer : IFileExplorer
     {
-        public static async Task<string[]> GetSelectedPath(IntPtr hWnd)
+        public  async Task<string[]> GetSelectedPath(IntPtr hWnd)
         {
             return await UiDispacher.DispatchAsync<string[]>(() =>
                 {
@@ -36,7 +36,7 @@ namespace Metatool.Service
             );
         }
 
-        public static async Task<string> Path(IntPtr hWnd)
+        public  async Task<string> Path(IntPtr hWnd)
         {
             return await UiDispacher.DispatchAsync<string>(() =>
             {
@@ -67,7 +67,7 @@ namespace Metatool.Service
             });
         }
 
-        public static void Select(IntPtr hWnd, string[] fileNames)
+        public  void Select(IntPtr hWnd, string[] fileNames)
         {
             var shellWindows = new SHDocVw.ShellWindows();
             foreach (SHDocVw.InternetExplorer window in shellWindows)
@@ -93,7 +93,7 @@ namespace Metatool.Service
             }
         }
 
-        public static string Open(string path)
+        public  string Open(string path)
         {
             if (!Directory.Exists(path)) return "path not exists";
             Process.Start("explorer.exe", path);

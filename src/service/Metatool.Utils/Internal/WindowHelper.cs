@@ -6,11 +6,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using Metatool.Utils.Implementation;
+using Metatool.Utils.Internal;
 
-namespace Metatool.Utils
+namespace Metatool.Utils.Implementation
 {
-    internal class WindowHelper
+    public class WindowHelper
     {
         public static List<IntPtr> GetChildWindows(IntPtr parent)
         {

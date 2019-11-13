@@ -14,10 +14,12 @@ namespace Metaseed.Metatool
     public class Scaffolder
     {
         private readonly ILogger       _logger;
+        private readonly IFileExplorer _fileExplorer;
 
         public Scaffolder(ILogger logger)
         {
             _logger        = logger;
+            _fileExplorer = Services.Get<IFileExplorer>();
         }
 
         public void RegisterFileHandler()
@@ -83,7 +85,7 @@ namespace Metaseed.Metatool
                 typeof(Scaffolder).Assembly.GetManifestResourceStream(resource);
             new ZipArchive(stream).ExtractToDirectory(dir,true);
             _logger.LogInformation($"Metatool: tool {toolName} is created in folder: {dir}");
-            Explorer.Open(dir);
+            _fileExplorer.Open(dir);
         }
     }
 }

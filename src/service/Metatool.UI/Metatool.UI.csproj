@@ -35,7 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IService\Metatool.Service.UI\Metatool.Service.UI.csproj" />
-    <ProjectReference Include="..\IService\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />
     <ProjectReference Include="..\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
+    <ProjectReference Include="..\Metatool.Utils\Metatool.Utils.csproj" />
   </ItemGroup>
 </Project>

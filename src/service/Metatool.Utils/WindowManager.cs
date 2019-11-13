@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Metatool.Utils.Implementation;
+using Metatool.Utils.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service

@@ -3,7 +3,25 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <!--document: https://www.geoffchappell.com/studies/windows/shell/shell32/index.htm?tx=62,64 -->
+    <COMReference Include="Shell32.dll">
+      <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+    </COMReference>
+    <COMReference Include="SHDocVw.dll">
+      <Guid>eab22ac0-30c1-11cf-a7eb-0000c05bae0b</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+    </COMReference>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IService\Metatool.Service.Core\Metatool.Service.Core.csproj" />
     <ProjectReference Include="..\IService\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />
