@@ -90,7 +90,7 @@ namespace Metatool.Service
 
         public async Task<bool> IsWindowOnCurrentVirtualDesktop(IntPtr TopLevelWindow)
         {
-            return await Window.Dispatch<bool>(() =>
+            return await Window.DispatchAsync<bool>(() =>
             {
                 int hr;
                 if ((hr = manager.IsWindowOnCurrentVirtualDesktop(TopLevelWindow, out var result)) != 0)
@@ -104,7 +104,7 @@ namespace Metatool.Service
 
         public async Task<Guid> GetWindowDesktopId(IntPtr TopLevelWindow)
         {
-            return await Window.Dispatch<Guid>(() =>
+            return await Window.DispatchAsync<Guid>(() =>
             {
                 Guid result;
                 int  hr;
@@ -119,7 +119,7 @@ namespace Metatool.Service
 
         public async Task MoveWindowToDesktop(IntPtr TopLevelWindow, Guid CurrentDesktop)
         {
-            await Window.Dispatch<object>(() =>
+            await Window.DispatchAsync<object>(() =>
             {
                 int hr;
                 if ((hr = manager.MoveWindowToDesktop(TopLevelWindow, CurrentDesktop)) != 0)

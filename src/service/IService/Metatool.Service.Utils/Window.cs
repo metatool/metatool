@@ -11,14 +11,19 @@ namespace Metatool.Service
 {
     public class Window
     {
-        static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
+        private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
 
-        public static void Dispatch(Delegate action)
+        internal static void Dispatch(Action action)
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
         }
 
-        public static async Task<T> Dispatch<T>(Func<T> action)
+        internal static T Dispatch<T>(Func<T> action)
+        {
+            return (T)Dispatcher.Invoke(DispatcherPriority.Send, action);
+        }
+
+        internal static async Task<T> DispatchAsync<T>(Func<T> action)
         {
             var o = Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
             await o;

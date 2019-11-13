@@ -12,7 +12,7 @@ namespace Metatool.Service
     {
         public static async Task<string[]> GetSelectedPath(IntPtr hWnd)
         {
-            return await Window.Dispatch<string[]>(() =>
+            return await Window.DispatchAsync<string[]>(() =>
                 {
                     var selected = new List<string>();
                     var shellWindows = new SHDocVw.ShellWindows();
@@ -38,7 +38,7 @@ namespace Metatool.Service
 
         public static async Task<string> Path(IntPtr hWnd)
         {
-            return await Window.Dispatch<string>(() =>
+            return await Window.DispatchAsync<string>(() =>
             {
                 var shellWindows = new SHDocVw.ShellWindows();
                 foreach (SHDocVw.InternetExplorer window in shellWindows)
