@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Automation;
 using System.Windows.Forms;
-using Metatool.Command;
 using Metatool.Service;
 using static Metatool.Service.Key;
 

@@ -1,5 +1,4 @@
 ﻿using ConsoleApp1;
-using Metatool.Command;
 using Metatool.Service;
 
 namespace Metatool.MetaKeyboard

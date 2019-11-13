@@ -1,5 +1,4 @@
-﻿using Metatool.Command;
-using Metatool.Service;
+﻿using Metatool.Service;
 using static Metatool.Service.Key;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 
