@@ -12,10 +12,11 @@ namespace Metatool.MetaKeyboard
     public class MouseViaKeyboard : CommandPackage
     {
         private readonly IMouse         _mouse;
-        private static   IWindowManager WindowManager;
+        private static   IWindowManager _windowManager;
 
         public MouseViaKeyboard(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager)
         {
+            _windowManager = windowManager;
             _mouse = mouse;
             MouseLeftClick = (GK + C).Down(e =>
             {
@@ -44,7 +45,7 @@ namespace Metatool.MetaKeyboard
             var y = (int) Math.Floor(bounding.Y + bounding.Height / 2);
             if (x == 0 && y == 0)
             {
-                var r = WindowManager.CurrentWindow.Rect;
+                var r = _windowManager.CurrentWindow.Rect;
                 x = (int) (r.X + r.Width  / 2);
                 y = (int) (r.Y + r.Height / 2);
             }

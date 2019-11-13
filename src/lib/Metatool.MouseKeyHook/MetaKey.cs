@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.Input.MouseKeyHook.Implementation.Command;
 using Metatool.Service;
 
 namespace Metatool.Input
