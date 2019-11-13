@@ -25,18 +25,10 @@ namespace Metatool.Service
             return (T) (o.Result);
         }
 
-        public static string CurrentWindowClass
-        {
-            get
-            {
-                var hWnd = PInvokes.GetForegroundWindow();
-                return WindowManager.GetClassName(hWnd);
-            }
-        }
-
+        public static string CurrentWindowClass => WindowManager.GetClassName(PInvokes.GetForegroundWindow());
 
         public static IntPtr            CurrentWindowHandle => PInvokes.GetForegroundWindow();
-        public static AutomationElement CurrentWindow       => AutomationElement.FromHandle(Window.CurrentWindowHandle);
+        public static AutomationElement CurrentWindow       => AutomationElement.FromHandle(Service.Window.CurrentWindowHandle);
 
         public static void FocusControl(string className, string text)
         {
@@ -80,13 +72,13 @@ namespace Metatool.Service
         {
             get
             {
-                var c = Window.CurrentWindowClass;
+                var c = Service.Window.CurrentWindowClass;
                 return "CabinetWClass" == c || "#32770" == c;
             }
         }
 
-        public static bool IsExplorer => "#CabinetWClass" == Window.CurrentWindowClass;
+        public static bool IsExplorer => "#CabinetWClass" == Service.Window.CurrentWindowClass;
       
-        public static bool IsOpenSaveDialog => "#32770" == Window.CurrentWindowClass;
+        public static bool IsOpenSaveDialog => "#32770" == Service.Window.CurrentWindowClass;
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Automation;
+using Metatool.Service;
 using Window = Metatool.Service.Window;
 
 namespace Metatool.ScreenPoint

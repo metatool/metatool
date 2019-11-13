@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Metatool.Utils.Implementation
 {
-    public class WindowManager
+    internal class WindowManager
     {
         public static List<IntPtr> GetChildWindows(IntPtr parent)
         {
@@ -42,7 +42,6 @@ namespace Metatool.Utils.Implementation
 
         public static List<IntPtr> GetAllWindows()
         {
-
             static bool GetWindowHandle(IntPtr windowHandle, ArrayList windowHandles)
             {
                 windowHandles.Add(windowHandle);
@@ -145,12 +144,7 @@ namespace Metatool.Utils.Implementation
         {
             var className = new StringBuilder(512);
             var r =  PInvokes.GetClassName(hWnd, className, className.Capacity);
-            if (r != 0)
-            {
-                return className.ToString();
-            }
-
-            return string.Empty;
+            return r != 0 ? className.ToString() : "";
         }
     }
 }

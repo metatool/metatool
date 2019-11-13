@@ -5,9 +5,9 @@ using System.Windows.Forms;
 using Metatool.Command;
 using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Service.Key;
-using Window = Metatool.Service.Window;
 using Metatool.Service;
 using Point= System.Drawing.Point;
+using Window = Metatool.Service.Window;
 
 namespace Metatool.MetaKeyboard
 {
