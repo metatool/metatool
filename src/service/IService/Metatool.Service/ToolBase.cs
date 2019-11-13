@@ -5,11 +5,11 @@ namespace Metatool.Service
     public abstract class ToolBase : CommandPackage, IPlugin
     {
         private string _id;
-        public string Id => _id??= this.GetType().Assembly.GetName().Name;
+        public  string Id => _id??= this.GetType().Assembly.GetName().Name;
 
-               public virtual bool OnLoaded()
+        public virtual bool OnLoaded()
         {
-            Logger.LogInformation($"{this.GetType().Name} loaded.");
+            // no need to add tool loaded log here
             return true;
         }
 

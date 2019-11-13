@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using NuGet.Configuration;
 using NuGet.Versioning;
+using System.Windows;
 
 namespace Metatool.Plugin
 {
@@ -309,7 +311,6 @@ namespace Metatool.Plugin
             //     Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
             //     return;
             // }
-
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
             var loader       = CreatePluginLoader(dllPath);
             var token        = new PluginToken() {Loader = loader, Watcher = lastWatcher};

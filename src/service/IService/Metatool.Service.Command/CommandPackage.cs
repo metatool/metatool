@@ -29,7 +29,6 @@ namespace Metatool.Service
             GetCommands().Where(k=>k.token!=null).ToList().ForEach(c =>
             {
                 var (fi, metaKey) = c;
-                k
                 if (string.IsNullOrEmpty(metaKey.Id))
                     metaKey.Id = GetType().FullName + "." + fi.Name;
             });

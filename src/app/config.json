@@ -1,7 +1,14 @@
 ﻿{
+  "Services": {
+    "Logging": {
+      "File": {
+        "Enabled": false
+      }
+    }
+  },
   "Tools": {
     //"Metatool.Tools.LibToolDemo": { "Update": true },
     //"Metatool.Tools.ScriptToolDemo": { "Update": true }
-
+        
   }
 }

@@ -51,7 +51,7 @@ namespace Metaseed.Metatool
             var s     = System.Environment.GetEnvironmentVariable("PATH", target);
             var paths = s.Split(Path.PathSeparator).ToList();
 
-            if (paths.Contains(Context.AppDirectory, StringComparer.InvariantCultureIgnoreCase)) return s;
+            if (paths.Any(p=>StringComparer.InvariantCultureIgnoreCase.Compare(Context.AppDirectory, p)!=0)) return s;
 
             s = $"{AppContext.BaseDirectory}{Path.PathSeparator}{s}";
 

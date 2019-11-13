@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Metaseed.Metatool.Service;
 using Metatool.Command;
@@ -22,13 +23,19 @@ namespace Metaseed.Metatool
             services
                 .AddLogging(loggingBuilder =>
                 {
-                    loggingBuilder.AddConfiguration(configuration.GetSection("Services").GetSection("Logging"));
+                    var logConfig = configuration.GetSection("Services").GetSection("Logging");
+                    loggingBuilder.AddConfiguration(logConfig);
                     //loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
                     // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                     //     new TextWriterTraceListener(writer: Console.Out)));
                     loggingBuilder.AddProvider(new CustomConsoleLoggerProvider());
-                    loggingBuilder.AddFile(o => o.RootPath = Context.AppDirectory);
+                    if (logConfig.GetSection("File").GetValue<bool>("Enabled"))
+                    {
+                        loggingBuilder.AddFile(o => o.RootPath = Context.AppDirectory);
+                    }
+                    else
+                        Console.WriteLine("FileLogger is disabled, modify the config.json to enable it");
                 })
                 .Configure<LoggerFilterOptions>(options =>
                     options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)

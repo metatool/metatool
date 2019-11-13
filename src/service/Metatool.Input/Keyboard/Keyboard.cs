@@ -52,11 +52,10 @@ namespace Metatool.Input
                         if (!key.IsCommonChordKey())
                         {
                             var keyStateTree = KeyStateTree.GetOrCreateStateTree(KeyStateTrees.ChordMap);
-                            if(!keyStateTree.Contains(key))
-                                MapOnHit(key.ToCombination(),key.ToCombination(), e => !e.IsVirtual, false);
+                            if (!keyStateTree.Contains(key))
+                                MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, false);
                         }
                     }
-                   
                 }
             }
 
@@ -72,7 +71,8 @@ namespace Metatool.Input
         /// down up happened successively
         /// </summary>
         internal IKeyCommand Hit(ICombination combination, Action<IKeyEventArgs> execute,
-            Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
+            Predicate<IKeyEventArgs> canExecute = null, string description = "",
+            string stateTree = KeyStateTrees.Default)
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
@@ -82,7 +82,7 @@ namespace Metatool.Input
                 {
                     handling     = true;
                     keyDownEvent = e;
-                }, canExecute, description,stateTree),
+                }, canExecute, description, stateTree),
 
                 combination.Up(e =>
                 {
@@ -102,7 +102,7 @@ namespace Metatool.Input
                     {
                         Console.WriteLine($"\t{combination}_Hit: last down event is not from me, Not Execute!");
                     }
-                }, canExecute, description,stateTree)
+                }, canExecute, description, stateTree)
             };
 
             return token;
@@ -129,7 +129,6 @@ namespace Metatool.Input
             };
         }
 
-      
 
         public event KeyPressEventHandler KeyPress
         {
@@ -158,7 +157,8 @@ namespace Metatool.Input
             }
 
             var combination = Combination.FromString(keys) as Combination;
-            Add(new List<ICombination>(){combination}, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
+            Add(new List<ICombination>() {combination}, KeyEvent.Down,
+                new KeyCommand(e => action()) {Description = description});
         }
 
         private void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
@@ -166,14 +166,9 @@ namespace Metatool.Input
             _dispatcher.BeginInvoke(priority, action);
         }
 
-
-
         private void Hook()
         {
-            _logger.LogInformation("Keyboard hook is running...");
             _hook.Run();
         }
-
-       
     }
 }

@@ -75,7 +75,14 @@ namespace Metatool.Input.MouseKeyHook
         public void Run()
         {
             if (IsRuning) return;
+            var access = System.Windows.Application.Current.Dispatcher.CheckAccess();
+            if (!access)
+            {
+                System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)Run);
+                return;
+            }
             IsRuning = true;
+            _logger.LogInformation($"Keyboard hook is running...");
 
             foreach (var stateTree in KeyStateTree.StateTrees.Values) stateTree.Reset();
 
