@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Metatool.Service.MouseKeyHook.Implementation;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service
 {
@@ -77,31 +78,29 @@ namespace Metatool.Service
             return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1))) + (Disabled ? "⍻" : "");
         }
 
-        /// <summary>
-        ///     TriggeredBy a chord from any string like this 'Alt+Shift+R'.
-        ///     Note that the trigger key must be the last one.
-        /// </summary>
-        public static ICombination FromString(string trigger)
+        public static Combination Parse(string str)
         {
-            var parts = trigger
-                .Split('+')
-                .Select(p =>
-                {
-                    try
-                    {
-                        return Enum.Parse(typeof(Keys), p);
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(
-                            $@"Could not Parse the keys;{Environment.NewLine}{e.Message} please use the below string (i.e. Control+Z):{Environment.NewLine} {string.Join(", ", Enum.GetNames(typeof(Keys)))}");
-                        throw e;
-                    }
-                })
-                .Cast<Keys>();
-            var stack      = new Stack<Keys>(parts);
+            var parts = str
+                .Split('+', StringSplitOptions.RemoveEmptyEntries)
+                .Select(p =>Key.Parse(p.Trim()));
+            var stack      = new Stack<Key>(parts);
             var triggerKey = stack.Pop();
             return new Combination(triggerKey, stack);
+        }
+
+        public static bool TryParse(string str, out Combination value)
+        {
+            try
+            {
+                value = Parse(str);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Services.CommonLogger?.LogError(e.Message);
+                value = null;
+                return false;
+            }
         }
     }
 }

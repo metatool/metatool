@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metatool.Command;
+using Metatool.Input.implementation;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.WindowsInput.Native;
@@ -115,6 +116,8 @@ namespace Metatool.Input
                 }, "", KeyStateTrees.HardMap)
             };
         }
+
+
 
         public IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {

@@ -129,7 +129,6 @@ namespace Metatool.Input
             };
         }
 
-
         public event KeyPressEventHandler KeyPress
         {
             add => _hook.KeyPress += value;
@@ -146,19 +145,6 @@ namespace Metatool.Input
         {
             add => _hook.KeyUp += value;
             remove => _hook.KeyUp -= value;
-        }
-
-        internal void HotKey(string keys, string description, Action action)
-        {
-            if (keys.Contains(','))
-            {
-                var sequence = Sequence.FromString(keys).ToList();
-                Add(sequence, KeyEvent.Down, new KeyCommand(e => action()) {Description = description});
-            }
-
-            var combination = Combination.FromString(keys) as Combination;
-            Add(new List<ICombination>() {combination}, KeyEvent.Down,
-                new KeyCommand(e => action()) {Description = description});
         }
 
         private void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)

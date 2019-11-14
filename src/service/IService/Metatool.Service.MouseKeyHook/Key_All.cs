@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace Metatool.Service
@@ -244,5 +246,18 @@ namespace Metatool.Service
         {
             return CommonChordKeys.Any(chord => this == chord);
         }
+
+         private static readonly IDictionary<string, Key> _all;
+
+         public static readonly IDictionary<string, Key> All= _all ??= typeof(Key)
+             .GetFields(BindingFlags.Static | BindingFlags.Public)
+             .Where(f => typeof(Key).IsAssignableFrom(f.FieldType)).ToDictionary(f=>f.Name.ToUpper(), fi => fi.GetValue(null) as Key);
+
+         private static readonly IEnumerable<Key> _allKeys;
+
+         public static readonly IEnumerable<Key> AllKeys = _allKeys??=All.Values;
+         private static readonly IEnumerable<string> _allNames;
+
+         public static readonly IEnumerable<string> AllNames = _allNames ??= All.Keys;
     }
 }

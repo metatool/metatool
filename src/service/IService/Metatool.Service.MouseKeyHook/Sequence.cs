@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Metatool.Input.implementation;
+using Microsoft.Extensions.Logging;
 
-namespace Metatool.Service{
+namespace Metatool.Service
+{
     /// <summary>
     ///     Describes key or key combination sequences. e.g. Control+Z,Z
     /// </summary>
     public partial class Sequence : SequenceBase<ICombination>, ISequence
     {
-        private static char Comma = '，';
-
         public Sequence(params ICombination[] combinations) : base(combinations)
         {
         }
@@ -26,30 +28,35 @@ namespace Metatool.Service{
 
         public object Context { get; set; }
 
-        static string PreProcess(string keys)
+        public static Sequence FromString(string str)
         {
-            var query  = new StringBuilder(keys).Replace(" ", ""); // remove space
-            if (query[0] == ',' && query[1] == ',') query[0] = Comma;
-            query.Replace(",,,", $",{Comma},")
-                .Replace("+,", $"+{Comma}")
-                .Replace(",+", $"{Comma}+");
-            return query.ToString();
+            var sequence = str.Select(Helper.CharToKey);
+            return new Sequence(sequence.ToArray());
         }
-     
-        /// <summary>
-        ///     Creates an instance of sequnce object from string.
-        ///     The string must contain comma ',' delimited list of strings describing keys or key combinations.
-        ///     Examples: 'A,B,C' 'Alt+R,S', 'Shift+R,Alt+K'
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static Sequence FromString(string sequence)
+
+        public static Sequence Parse(string sequence)
         {
             if (sequence == null) throw new ArgumentNullException(nameof(sequence));
-            var keys         = PreProcess(sequence);
-            var par          = keys.Split(',');
-            var combinations = par.Select(c => Combination.FromString(c.Replace(Comma, ','))).ToArray();
-            return new Sequence(combinations);
+
+            var parts = sequence
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(p => Combination.Parse(p.Trim()));
+            return new Sequence(parts.ToArray());
+        }
+
+        public static bool TryParse(string str, out Sequence value)
+        {
+            try
+            {
+                value = Parse(str);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Services.CommonLogger?.LogError(e.Message);
+                value = null;
+                return false;
+            }
         }
     }
 }
