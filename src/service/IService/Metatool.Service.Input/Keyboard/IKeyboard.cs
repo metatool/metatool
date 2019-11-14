@@ -7,13 +7,13 @@ namespace Metatool.Service
 {
     public interface IKeyboard : IKeyboardVirtual
     {
-        IKeyboardCommandTrigger Down(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger Up(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger AllUp(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Down(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Up(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
 
-        IKeyboardCommandTrigger Hit(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
      
-        IKeyCommand Map(ICombination source, ICombination target,
+        IKeyCommand Map(IHotkey source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1);
 
         IKeyCommand Map(string source, string target, Predicate<IKeyEventArgs> predicate = null);
@@ -21,7 +21,7 @@ namespace Metatool.Service
         IKeyCommand HardMap(ICombination source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null);
 
-        IKeyCommand MapOnHit(ICombination source, ICombination target,
+        IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true);
 
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);

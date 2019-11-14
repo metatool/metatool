@@ -31,6 +31,34 @@ namespace Metatool.Service
             var keyboardInternal = (IKeyboardInternal)Keyboard;
             return keyboardInternal.GetToken(token, trigger);
         }
+        public static IKeyCommand AllUp(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
+            Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
+        {
+            var trigger          = Keyboard.AllUp(sequenceUnit, stateTree);
+            var token            = CommandManager.Add(trigger, execute, canExecute, description);
+            var keyboardInternal = (IKeyboardInternal)Keyboard;
+            return keyboardInternal.GetToken(token, trigger);
+        }
+        public static IKeyCommand Hit(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
+            Predicate<IKeyEventArgs> canExecute, string description, string stateTree = KeyStateTrees.Default)
+        {
+            var trigger          = Keyboard.Hit(sequenceUnit, stateTree);
+            var token            = CommandManager.Add(trigger, execute, canExecute, description);
+            var keyboardInternal = (IKeyboardInternal)Keyboard;
+            return keyboardInternal.GetToken(token, trigger);
+        }
+        public static IKeyCommand MapOnHit(this IHotkey key, ISequenceUnit target,
+            Predicate<IKeyEventArgs> canExecute = null, bool allUp = true)
+        {
+            return Keyboard.MapOnHit(key, target, canExecute, allUp);
+        }
+
+        public static IKeyCommand Map(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null,
+            int repeat = 1)
+        {
+            return Keyboard.Map(key, target, canExecute, repeat);
+        }
+
         /// <summary>
         /// register the key to the state tree, and wait the down event;
         /// timeout: return null
@@ -47,6 +75,19 @@ namespace Metatool.Service
             var command = new KeyEventAsync();
             sequenceUnit.Up(command.OnEvent, null, description, stateTree);
             return command.WaitAsync(timeout);
+        }
+
+        // if the handler async run, this is needed.
+        public static IHotkey Handled(this IHotkey hotkey,
+            KeyEvent keyEvent = KeyEvent.Down | KeyEvent.Up | KeyEvent.AllUp)
+        {
+            if ((keyEvent & KeyEvent.Down) == KeyEvent.Down)
+                hotkey.Down(e => e.Handled = true);
+            if ((keyEvent & KeyEvent.Up) == KeyEvent.Up)
+                hotkey.Up(e => e.Handled = true);
+            if ((keyEvent & KeyEvent.AllUp) == KeyEvent.AllUp)
+                hotkey.AllUp(e => e.Handled = true);
+            return hotkey;
         }
 
     }

@@ -37,26 +37,25 @@ namespace Metatool.Input
 
     public partial class Keyboard
     {
-        public IKeyboardCommandTrigger Down(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger Down(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            return Event(sequenceUnit, KeyEvent.Down, stateTree);
+            return Event(hotkey, KeyEvent.Down, stateTree);
         }
 
-        public IKeyboardCommandTrigger Up(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger Up(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            return Event(sequenceUnit, KeyEvent.Up, stateTree);
+            return Event(hotkey, KeyEvent.Up, stateTree);
         }
 
-        public IKeyboardCommandTrigger AllUp(IHotkey sequenceUnit, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            return Event(sequenceUnit, KeyEvent.AllUp, stateTree);
+            return Event(hotkey, KeyEvent.AllUp, stateTree);
         }
 
-        public IKeyboardCommandTrigger Hit(ISequenceUnit sequenceUnit, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            var combination = sequenceUnit.ToCombination();
             var trigger     = new KeyboardCommandTrigger();
-            var token = Hit(combination,
+            var token = Hit(hotkey,
                 trigger.OnExecute, trigger.OnCanExecute, "", stateTree) as KeyCommandTokens;
             trigger._metaKey = token?.metaKey;
             return trigger;
@@ -147,10 +146,11 @@ namespace Metatool.Input
         }
 
 
-        public IKeyCommand Map(ICombination source, ICombination target,
+        public IKeyCommand Map(IHotkey source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
         {
             var handled = false;
+            var combination = target.ToCombination();
             return new KeyCommandTokens()
             {
                 source.Down(e =>
@@ -158,19 +158,19 @@ namespace Metatool.Input
                     handled   = true;
                     e.Handled = true;
 
-                    if (target.TriggerKey == Keys.LButton)
+                    if (combination.TriggerKey == Keys.LButton)
                     {
                         Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftDown()));
                     }
-                    else if (target.TriggerKey == Keys.RButton)
+                    else if (combination.TriggerKey == Keys.RButton)
                     {
                         Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightDown()));
                     }
                     else
                     {
                         Async(Repeat(repeat, () => InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                            target.Chord.Cast<VirtualKeyCode>(),
-                            (VirtualKeyCode) (Keys) target.TriggerKey)
+                            combination.Chord.Cast<VirtualKeyCode>(),
+                            (VirtualKeyCode) (Keys) combination.TriggerKey)
                         ));
                     }
                 }, predicate, "", KeyStateTrees.Map),
@@ -179,36 +179,37 @@ namespace Metatool.Input
                     if (!handled) return;
                     handled   = false;
                     e.Handled = true;
-                    if (target.TriggerKey == Keys.LButton)
+                    if (combination.TriggerKey == Keys.LButton)
                     {
                         Async(() => InputSimu.Inst.Mouse.LeftUp());
                         return;
                     }
 
-                    if (target.TriggerKey == Keys.RButton)
+                    if (combination.TriggerKey == Keys.RButton)
                     {
                         Async(() => InputSimu.Inst.Mouse.RightUp());
                         return;
                     }
 
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) target.TriggerKey);
+                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Cast<VirtualKeyCode>(),
+                        (VirtualKeyCode) (Keys) combination.TriggerKey);
                 }, predicate, "", KeyStateTrees.Map)
             };
         }
 
-        public IKeyCommand MapOnHit(ICombination source, ICombination target,
+        public IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
+            var combination = target.ToCombination();
 
             void AsyncCall(IKeyEventArgs e)
             {
                 e.Handled = true;
                 e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                    target.Chord.Select(k => (VirtualKeyCode) (Keys) k),
-                    (VirtualKeyCode) (Keys) target.TriggerKey));
+                    combination.Chord.Select(k => (VirtualKeyCode) (Keys) k),
+                    (VirtualKeyCode) (Keys) combination.TriggerKey));
             }
 
             // if not: A+B -> C become A+C

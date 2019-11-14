@@ -70,7 +70,7 @@ namespace Metatool.Input
         /// <summary>
         /// down up happened successively
         /// </summary>
-        internal IKeyCommand Hit(ICombination combination, Action<IKeyEventArgs> execute,
+        internal IKeyCommand Hit(IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "",
             string stateTree = KeyStateTrees.Default)
         {
@@ -78,17 +78,17 @@ namespace Metatool.Input
             IKeyEventArgs keyDownEvent = null;
             var token = new KeyCommandTokens
             {
-                combination.Down(e =>
+                hotkey.Down(e =>
                 {
                     handling     = true;
                     keyDownEvent = e;
                 }, canExecute, description, stateTree),
 
-                combination.Up(e =>
+                hotkey.Up(e =>
                 {
                     if (!handling)
                     {
-                        Console.WriteLine($"\t{combination}_Hit Down CanExecute:false");
+                        Console.WriteLine($"\t{hotkey}_Hit Down CanExecute:false");
                         return;
                     }
 
@@ -100,7 +100,7 @@ namespace Metatool.Input
                     }
                     else
                     {
-                        Console.WriteLine($"\t{combination}_Hit: last down event is not from me, Not Execute!");
+                        Console.WriteLine($"\t{hotkey}_Hit: last down event is not from me, Not Execute!");
                     }
                 }, canExecute, description, stateTree)
             };

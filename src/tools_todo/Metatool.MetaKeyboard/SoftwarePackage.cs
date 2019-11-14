@@ -110,7 +110,7 @@ namespace Metatool.MetaKeyboard
         }, null, "&Web Search(Alt: second)");
 
 
-        private static readonly ICombination softwareTrigger = (AK + Space).Handled();
+        private static readonly IHotkey softwareTrigger = (AK + Space).Handled();
 
         public IKeyCommand OpenScreenRuler = (softwareTrigger, R).Down(
             e =>
