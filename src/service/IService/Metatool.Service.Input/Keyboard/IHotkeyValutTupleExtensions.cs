@@ -3,22 +3,22 @@ using Metatool.Command;
 
 namespace Metatool.Service
 {
-    public static class ISequenceValutTupleExtensions
+    public static class IHotkeyValutTupleExtensions
     {
-        public static IKeyCommand  Down(this ValueTuple<IHotkey, ISequenceUnit> sequence,
+        public static IKeyCommand  Down(this ValueTuple<IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Down(action, canExecute, description, stateTree);
         }
 
-        public static IKeyCommand  Down(this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Down(this ValueTuple<IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Down(action, canExecute, description, stateTree);
         }
 
         public static IKeyCommand  Down(
-            this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            this ValueTuple<IHotkey, IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4)
@@ -26,7 +26,7 @@ namespace Metatool.Service
         }
 
         public static IKeyCommand  Down(
-            this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            this ValueTuple<IHotkey, IHotkey, IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5)
@@ -34,26 +34,26 @@ namespace Metatool.Service
         }
 
         public static IKeyCommand Down(
-            this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            this ValueTuple<IHotkey, IHotkey, IHotkey, IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Then(sequence.Item6)
                 .Down(action, canExecute, description, stateTree);
         }
 
-        public static IKeyCommand  Up(this ValueTuple<IHotkey, ISequenceUnit> sequence,
+        public static IKeyCommand  Up(this ValueTuple<IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Up(action, canExecute, description, stateTree);
         }
 
-        public static IKeyCommand  Up(this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Up(this ValueTuple<IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Up(action, canExecute, description, stateTree);
         }
 
-        public static IKeyCommand  Up(this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+        public static IKeyCommand  Up(this ValueTuple<IHotkey, IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4)
@@ -61,7 +61,7 @@ namespace Metatool.Service
         }
 
         public static IKeyCommand  Up(
-            this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            this ValueTuple<IHotkey, IHotkey, IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute=null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5)
@@ -69,7 +69,7 @@ namespace Metatool.Service
         }
 
         public static IKeyCommand Up(
-            this ValueTuple<IHotkey, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit, ISequenceUnit> sequence,
+            this ValueTuple<IHotkey, IHotkey, IHotkey, IHotkey, IHotkey, IHotkey> sequence,
             Action<IKeyEventArgs> action, Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             return sequence.Item1.Then(sequence.Item2).Then(sequence.Item3).Then(sequence.Item4).Then(sequence.Item5).Then(sequence.Item6)

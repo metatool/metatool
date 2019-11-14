@@ -18,7 +18,7 @@ namespace Metatool.Service
 
         IKeyCommand Map(string source, string target, Predicate<IKeyEventArgs> predicate = null);
 
-        IKeyCommand HardMap(ICombination source, ICombination target,
+        IKeyCommand HardMap(IHotkey source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null);
 
         IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target,

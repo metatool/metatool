@@ -2,7 +2,7 @@
 
 namespace Metatool.Service
 {
-    public interface ISequence : IEnumerable<ICombination>, IHotkey, IKeyPath
+    public interface ISequence : IList<ICombination>, IHotkey, IKeyPath
     {
     }
 }

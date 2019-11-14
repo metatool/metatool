@@ -8,36 +8,23 @@ namespace Metatool.Service
     ///     Describes a sequence of generic objects.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class SequenceBase<T> : IEnumerable<T>
+    public abstract class SequenceBase<T> :List<T>, IEnumerable<T>
     {
-        private readonly T[] _elements;
 
         protected SequenceBase(params T[] elements)
         {
-            _elements = elements;
-        }
-
-        public int Length => _elements.Length;
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _elements.Cast<T>().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            AddRange(elements);
         }
 
         public override string ToString()
         {
-            return string.Join(",", _elements);
+            return string.Join(",", this);
         }
 
         protected bool Equals(SequenceBase<T> other)
         {
-            if (_elements.Length != other._elements.Length) return false;
-            return _elements.SequenceEqual(other._elements);
+            if (Count != other.Count) return false;
+            return this.SequenceEqual(other);
         }
 
         public override bool Equals(object obj)
@@ -52,9 +39,9 @@ namespace Metatool.Service
         {
             unchecked
             {
-                return (_elements.Length + 13) ^
-                       ((_elements.Length != 0
-                            ? _elements[0].GetHashCode() ^ _elements[^1].GetHashCode()
+                return (Count + 13) ^
+                       ((Count != 0
+                            ? this[0].GetHashCode() ^ this[^1].GetHashCode()
                             : 0) * 397);
             }
         }

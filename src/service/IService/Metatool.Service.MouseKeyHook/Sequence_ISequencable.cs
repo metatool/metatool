@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Metatool.Service{
@@ -9,10 +10,12 @@ namespace Metatool.Service{
             return this.Then(new Combination(key));
         }
 
-        public ISequence Then(ISequenceUnit sequencable)
+        public ISequence Then(IHotkey hotkey)
         {
-            this.Append(sequencable.ToCombination());
+            this.AddRange(hotkey.ToSequence());
             return this;
         }
+
+        public ISequence ToSequence() => this;
     }
 }

@@ -19,7 +19,7 @@ namespace Metatool.Service{
             get => this.Last()?.Disabled ?? false;
             set
             {
-                if (this.Length > 0)
+                if (Count > 0)
                     this.Last().Disabled = value;
             }
         }

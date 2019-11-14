@@ -5,7 +5,7 @@ namespace Metatool.Service
     public interface ISequencable 
     {
         ISequence Then(Keys key);
-        ISequence Then(ISequenceUnit sequencable);
+        ISequence Then(IHotkey hotkey);
     }
 
 }

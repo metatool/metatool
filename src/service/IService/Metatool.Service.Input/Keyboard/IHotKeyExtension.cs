@@ -58,7 +58,10 @@ namespace Metatool.Service
         {
             return Keyboard.Map(key, target, canExecute, repeat);
         }
-
+        public static IKeyCommand HardMap(this IHotkey key, Key target, Predicate<IKeyEventArgs> canExecute = null)
+        {
+            return Keyboard.HardMap(key, new Combination(target), canExecute);
+        }
         /// <summary>
         /// register the key to the state tree, and wait the down event;
         /// timeout: return null

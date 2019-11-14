@@ -79,12 +79,12 @@ namespace Metatool.Input.MouseKeyHook
             var actBySeq = map.ToArray();
             var endsWith = new Func<Queue<ICombination>, Sequence, bool>((chords, sequence) =>
             {
-                var skipCount = chords.Count - sequence.Length;
+                var skipCount = chords.Count - sequence.Count;
                 return skipCount >= 0 && chords.Skip(skipCount).SequenceEqual(sequence);
             });
 
-            var max = actBySeq.Select(p => p.Key).Max(c => c.Length);
-            var min = actBySeq.Select(p => p.Key).Min(c => c.Length);
+            var max = actBySeq.Select(p => p.Key).Max(c => c.Count);
+            var min = actBySeq.Select(p => p.Key).Min(c => c.Count);
             var buffer = new Queue<ICombination>(max);
 
             var wrapMap = actBySeq.SelectMany(p => p.Key).Select(c => new KeyValuePair<ICombination, Action>(c, () =>
@@ -95,7 +95,7 @@ namespace Metatool.Input.MouseKeyHook
                 //Invoke action corresponding to the longest matching sequence
                 actBySeq
                     .Where(pair => endsWith(buffer, pair.Key))
-                    .OrderBy(pair => pair.Key.Length)
+                    .OrderBy(pair => pair.Key.Count)
                     .Select(pair => pair.Value)
                     .LastOrDefault()
                     ?.Invoke();

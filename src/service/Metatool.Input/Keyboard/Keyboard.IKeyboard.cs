@@ -1,6 +1,4 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,10 +7,7 @@ using System.Windows.Forms;
 using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
-using Metatool.Service.MouseKeyHook.Implementation;
-using Metatool.UI;
 using Metatool.WindowsInput.Native;
-using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
 
 namespace Metatool.Input
 {
@@ -77,7 +72,7 @@ namespace Metatool.Input
             return trigger;
         }
 
-        public IKeyCommand HardMap(ICombination source, ICombination target,
+        public IKeyCommand HardMap(IHotkey source, ICombination target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             var handled = false;
