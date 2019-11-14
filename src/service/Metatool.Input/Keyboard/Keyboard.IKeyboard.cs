@@ -116,7 +116,7 @@ namespace Metatool.Input
             };
         }
 
-        public IKeyCommand Map(string source, string target, Predicate<IKeyEventArgs> predicate = null)
+        public IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             var sequence = Sequence.FromString(string.Join(",", source.ToUpper().ToCharArray()));
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();

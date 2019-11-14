@@ -8,8 +8,8 @@ namespace Metatool.MetaKeyboard
         {
             RegisterCommands();
         }
-        public IKeyCommand Tks = "tks".Map("thank you very much");
-        public IKeyCommand hh  = "hh".Map("0哈哈😊");
-        public IKeyCommand hh1 = "hh".Map("1😊SSSS");
+        public IKeyCommand Tks = "tks".HotString("thank you very much");
+        public IKeyCommand hh  = "hh".HotString("0哈哈😊");
+        public IKeyCommand hh1 = "hh".HotString("1😊SSSS");
     }
 }
