@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Metatool.Service;
 
 namespace Metatool.MetaKeyboard
@@ -55,6 +56,8 @@ namespace Metatool.MetaKeyboard
             get => _config;
         }
 
+        public Dictionary<string, string> KeyAliases { get; set; }
+        public Dictionary<string,string> KeyMaps { get; set; }
         public Settings  Settings  { get; set; }
         public Tools     Tools     { get; set; }
         public Registers Registers { get; set; }

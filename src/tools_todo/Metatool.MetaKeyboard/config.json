@@ -1,6 +1,51 @@
 ﻿{
   "Tools": {
     "Metatool.MetaKeyboard": {
+      "KeyAliases": {
+        // global key
+        "GK": "Space",
+        // context key
+        "CK": "Caps|Enter",
+        // apps key
+        "AK": "Apps|Tab"
+      },
+      "KeyMaps": {
+        // Fn
+        "GK + D1": "F1",
+        "GK + D2": "F2",
+        "GK + D3": "F3",
+        "GK + D4": "F4",
+        "GK + D5": "F5",
+        "GK + D6": "F6",
+        "GK + D7": "F7",
+        "GK + D8": "F8",
+        "GK + D9": "F9",
+        "GK + D0": "F10",
+        "GK + Minus": "F11",
+        "GK + Plus": "F12",
+        // Move (Vim)
+        "GK + K": "Up",
+        "GK + J": "Down",
+        "GK + H": "Left",
+        "GK + L": "Right",
+        "GK + I": "Home",
+        "GK + O": "End",
+        "GK + U": "PageUp",
+        "GK + N": "PageDown",
+        // LAlt + Move
+        "LMenu + K": "Up",
+        "LMenu + J": "Down",
+        "LMenu + H": "Left",
+        "LMenu + L": "Right",
+        "LMenu + I": "Home",
+        "LMenu + O": "End",
+        "LMenu + U": "PageUp",
+        "LMenu + N": "PageDown",
+        //
+        "GK + Back": "Del",
+        "GK + P": "PrintScreen",
+        "GK + SemiColon": "Apps"
+      },
       "Settings": {
         "RemoteDesktopEnable": false
       },
@@ -8,11 +53,9 @@
         // set alt+shift+f as toggle window hotkey, ctrl+alt+shift+f as new window hotkey
         "Everything": ".\\software\\everything\\Everything.exe",
         "GifTool": ".\\software\\ScreenToGif.exe",
-
         "SnippingTool": ".\\software\\snipaste\\Snipaste.exe",
         "SearchEngine": "https://www.google.com",
         "SearchEngineSecondary": "https://global.bing.com/?FORM=HPCNEN&setmkt=en-us&setlang=en-us",
-
         "Code": ".\\software\\Visual Studio Code.lnk",
         "Editor": "gvim.bat",
         "Terminal": ".\\software\\Windows Terminal.lnk",

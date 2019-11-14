@@ -1,5 +1,9 @@
-﻿using ConsoleApp1;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Markup;
+using ConsoleApp1;
 using Metatool.Service;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.MetaKeyboard
 {
@@ -27,6 +31,35 @@ namespace Metatool.MetaKeyboard
             _mouse         = mouse;
             Config.Current = config.CurrentValue;
             RegisterCommands();
+
+            var conf = Config.Current;
+            var aliases = conf.KeyAliases;
+            var maps = conf.KeyMaps;
+            static string ReplaceAlias(string v, Dictionary<string,string> aliases)
+            {
+                foreach (var alias in aliases)
+                {
+                    v = v.Replace(alias.Key, alias.Value);
+                }
+
+                return v;
+            }
+            foreach (var map in maps)
+            {
+                try
+                {
+                    var source = ReplaceAlias(map.Key, aliases);
+                    var target = ReplaceAlias(map.Value, aliases);
+                    var s      = Sequence.Parse(source);
+                    var t      = Combination.Parse(target);
+                    s.Map(t);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("KeyMappings: "+e.Message);
+                }
+
+            }
         }
     }
 }
