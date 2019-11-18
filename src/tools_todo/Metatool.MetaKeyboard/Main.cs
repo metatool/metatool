@@ -35,7 +35,12 @@ namespace Metatool.MetaKeyboard
             var conf = Config.Current;
             var aliases = conf.KeyAliases;
             var maps = conf.KeyMaps;
-            static string ReplaceAlias(string v, Dictionary<string,string> aliases)
+            RegisterKeyMaps(maps, aliases);
+        }
+
+        private void RegisterKeyMaps(Dictionary<string, string> maps, Dictionary<string, string> aliases)
+        {
+            static string ReplaceAlias(string v, Dictionary<string, string> aliases)
             {
                 foreach (var alias in aliases)
                 {
@@ -44,6 +49,7 @@ namespace Metatool.MetaKeyboard
 
                 return v;
             }
+
             foreach (var map in maps)
             {
                 try
@@ -56,9 +62,8 @@ namespace Metatool.MetaKeyboard
                 }
                 catch (Exception e)
                 {
-                    Logger.LogError("KeyMappings: "+e.Message);
+                    Logger.LogError("KeyMappings: " + e.Message);
                 }
-
             }
         }
     }
