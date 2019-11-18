@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Metatool.Service;
+using Metatool.UI;
 
 namespace Metatool.MetaKeyboard
 {
@@ -31,35 +32,54 @@ namespace Metatool.MetaKeyboard
         public string Inspect { get; set; }
     }
 
+    public class FileExplorerHotKeys
+    {
+        public HotkeyConfig FocusItemsView { get; set; }
+        public HotkeyConfig FocusNavigationTreeView { get; set; }
+        public HotkeyConfig CopySelectedPath { get; set; }
+        public HotkeyConfig NewFile { get; set; }
+        public HotkeyConfig ShowDesktopFolder { get; set; }
+
+    }
+
     [ToolConfig]
     public class Config
     {
         private static Config _config;
+        private Tools _tools;
 
         public static Config Current
         {
-            internal set
-            {
-                _config = value;
-                var tools = _config.Tools;
-                var baseDir = Context.ToolDir<KeyboardTool>();
-
-                foreach (var info in tools.GetType().GetProperties())
-                {
-                    if (info.GetValue(tools) is string v && v.StartsWith('.'))
-                    {
-                        var abs = Path.GetFullPath(Path.Combine(baseDir, v));
-                        info.SetValue(tools, abs);
-                    }
-                }
-            }
+            internal set => _config = value;
             get => _config;
         }
 
         public Dictionary<string, string> KeyAliases { get; set; }
         public Dictionary<string,string> KeyMaps { get; set; }
+        public FileExplorerHotKeys FileExplorerHotKeys { get; set; }
+
         public Settings  Settings  { get; set; }
-        public Tools     Tools     { get; set; }
+
+        public Tools Tools
+        {
+            get => _tools;
+            set
+            {
+                var baseDir = Context.ToolDir<KeyboardTool>();
+
+                foreach (var info in value.GetType().GetProperties())
+                {
+                    if (info.GetValue(value) is string v && v.StartsWith('.'))
+                    {
+                        var abs = Path.GetFullPath(Path.Combine(baseDir, v));
+                        info.SetValue(value, abs);
+                    }
+                }
+
+                _tools = value;
+            }
+        }
+
         public Registers Registers { get; set; }
     }
 }

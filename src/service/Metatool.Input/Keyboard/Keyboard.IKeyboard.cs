@@ -9,6 +9,7 @@ using Metatool.Input.implementation;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.WindowsInput.Native;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input
 {
@@ -50,14 +51,14 @@ namespace Metatool.Input
 
         public IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            var trigger     = new KeyboardCommandTrigger();
+            var trigger = new KeyboardCommandTrigger();
             var token = Hit(hotkey,
                 trigger.OnExecute, trigger.OnCanExecute, "", stateTree) as KeyCommandTokens;
             trigger._metaKey = token?.metaKey;
             return trigger;
         }
 
-        private IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent,
+        public IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent,
             string stateTree = KeyStateTrees.Default)
         {
             var sequence = hotkey switch
@@ -118,7 +119,6 @@ namespace Metatool.Input
         }
 
 
-
         public IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
             var sequence = Sequence.FromString(source);
@@ -147,7 +147,7 @@ namespace Metatool.Input
         public IKeyCommand Map(IHotkey source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
         {
-            var handled = false;
+            var handled     = false;
             var combination = target.ToCombination();
             return new KeyCommandTokens()
             {
@@ -200,7 +200,7 @@ namespace Metatool.Input
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
-            var combination = target.ToCombination();
+            var           combination  = target.ToCombination();
 
             void AsyncCall(IKeyEventArgs e)
             {
@@ -271,6 +271,78 @@ namespace Metatool.Input
                 })
                 .HandlerConversion(h => new MouseKeyHook.KeyEventHandler(h))
                 .Start(h => KeyUp += h, h => KeyUp -= h, token == default ? CancellationToken.None : token);
+        }
+
+        readonly IDictionary<string, string> _aliases = new Dictionary<string, string>();
+
+        public bool AddAliases(IDictionary<string, string> aliases)
+        {
+            var re = true;
+            foreach (var alias in aliases)
+            {
+                if (string.IsNullOrEmpty(alias.Value)) continue;
+
+                var r = Sequence.TryParse(alias.Value, out _);
+                if (!r)
+                {
+                    re = false;
+                    Services.CommonLogger.LogError($"Could not parse {alias.Value} of alias: {alias.Key}");
+                    continue;
+                }
+
+                _aliases.Add(alias.Key, alias.Value);
+            }
+
+            return re;
+        }
+
+        public bool RegisterKeyMaps(IDictionary<string, string> maps,
+            IDictionary<string, string> additionalAliases = null)
+        {
+            static string ReplaceAlias(string v, IDictionary<string, string> aliases)
+            {
+                foreach (var alias in aliases)
+                {
+                    v = v.Replace(alias.Key, alias.Value);
+                }
+
+                return v;
+            }
+
+            var hasError = false;
+            foreach (var map in maps)
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(map.Value))
+                    {
+                        Services.CommonLogger.LogInformation($"Key map: {map.Key} is disabled.");
+                        continue;
+                    }
+
+                    var aliases = new Dictionary<string, string>(_aliases);
+                    if (additionalAliases != null)
+                    {
+                        foreach (var alias in additionalAliases)
+                        {
+                            aliases[alias.Key] = alias.Value;
+                        }
+                    }
+
+                    var source = ReplaceAlias(map.Key, aliases);
+                    var target = ReplaceAlias(map.Value, aliases);
+                    var t      = Combination.Parse(target);
+                    var s      = Sequence.Parse(source);
+                    s.Map(t);
+                }
+                catch (Exception e)
+                {
+                    hasError = true;
+                    Services.CommonLogger.LogError("KeyMappings: " + e.Message);
+                }
+            }
+
+            return hasError;
         }
     }
 }

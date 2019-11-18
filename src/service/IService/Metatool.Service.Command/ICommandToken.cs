@@ -5,7 +5,7 @@
         string Id { get; set; }
     }
 
-    public interface ICommandToken<in T> : ICommandToken, IChangeRemove<ICommandTrigger<T>> 
+    public interface ICommandToken<T> : ICommandToken, IChangeRemove<ICommandTrigger<T>>
     {
     }
 }

@@ -14,38 +14,38 @@ namespace Metatool.Service
         private static ICommandManager CommandManager =>
             _commandManager ??= Services.Get<ICommandManager>();
 
+        public static IKeyCommand Register(this IKeyboardCommandTrigger  trigger, Action<IKeyEventArgs> execute,
+            Predicate<IKeyEventArgs> canExecute = null, string description = "")
+        {
+            var token            = CommandManager.Add(trigger, execute, canExecute, description);
+            var keyboardInternal = (IKeyboardInternal)Keyboard;
+            return keyboardInternal.GetToken(token, trigger);
+        }
+
         public static IKeyCommand Down(this IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var trigger = Keyboard.Down(hotkey, stateTree);
-            var token = CommandManager.Add(trigger, execute, canExecute, description);
-            var keyboardInternal = (IKeyboardInternal)Keyboard;
-            return keyboardInternal.GetToken(token, trigger);
+            return trigger.Register(execute, canExecute, description);
         }
 
         public static IKeyCommand Up(this IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var trigger = Keyboard.Up(hotkey, stateTree);
-            var token = CommandManager.Add(trigger, execute, canExecute, description);
-            var keyboardInternal = (IKeyboardInternal)Keyboard;
-            return keyboardInternal.GetToken(token, trigger);
+            return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand AllUp(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var trigger          = Keyboard.AllUp(sequenceUnit, stateTree);
-            var token            = CommandManager.Add(trigger, execute, canExecute, description);
-            var keyboardInternal = (IKeyboardInternal)Keyboard;
-            return keyboardInternal.GetToken(token, trigger);
+            return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand Hit(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute, string description, string stateTree = KeyStateTrees.Default)
         {
             var trigger          = Keyboard.Hit(sequenceUnit, stateTree);
-            var token            = CommandManager.Add(trigger, execute, canExecute, description);
-            var keyboardInternal = (IKeyboardInternal)Keyboard;
-            return keyboardInternal.GetToken(token, trigger);
+            return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand MapOnHit(this IHotkey key, ISequenceUnit target,
             Predicate<IKeyEventArgs> canExecute = null, bool allUp = true)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Command;
@@ -10,8 +11,9 @@ namespace Metatool.Service
         IKeyboardCommandTrigger Down(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger Up(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
-
         IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent, string stateTree = KeyStateTrees.Default);
+
         IKeyCommand Map(IHotkey source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null, int repeat = 1);
         IKeyCommand HardMap(IHotkey source, ICombination target,
@@ -23,7 +25,8 @@ namespace Metatool.Service
 
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);
         Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default);
-
+        bool AddAliases(IDictionary<string, string> aliases);
+        bool RegisterKeyMaps(IDictionary<string, string> maps, IDictionary<string, string> additionalAliases=null);
     }
 
     public interface IKeyboardVirtual

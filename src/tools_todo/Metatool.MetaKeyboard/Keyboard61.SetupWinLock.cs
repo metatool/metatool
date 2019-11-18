@@ -18,7 +18,7 @@ namespace ConsoleApp1
                         .SetValue("DisableLockWorkstation", 0, RegistryValueKind.DWord);
                     Logger.LogInformation("WinLock Enabled");
                 }
-                catch (Exception)
+                catch (UnauthorizedAccessException)
                 {
                     Logger.LogWarning(
                         "Could not enable WinLock(Win+L), so *+Win+L would trigger ScreenLock, press LCtrl+LWin+LAlt+X to restart with Admin rights.");
@@ -33,7 +33,7 @@ namespace ConsoleApp1
                         .SetValue("DisableLockWorkstation", 1, RegistryValueKind.DWord);
                     Logger.LogInformation("WinLock disabled!");
                 }
-                catch (Exception)
+                catch (UnauthorizedAccessException)
                 {
                     Logger.LogWarning(
                         "Could not disable WinLock(Win+L), so *+Win+L would trigger ScreenLock, press LCtrl+LWin+LAlt+X to restart with Admin rights.");
