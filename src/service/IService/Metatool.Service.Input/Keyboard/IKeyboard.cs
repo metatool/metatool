@@ -26,6 +26,7 @@ namespace Metatool.Service
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);
         Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default);
         bool AddAliases(IDictionary<string, string> aliases);
+        Dictionary<string, IHotkey> Aliases { get; }
         bool RegisterKeyMaps(IDictionary<string, string> maps, IDictionary<string, string> additionalAliases=null);
     }
 

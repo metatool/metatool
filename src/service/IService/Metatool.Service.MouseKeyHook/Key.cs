@@ -64,7 +64,7 @@ namespace Metatool.Service
 
         public override string ToString()
         {
-            return  $"({string.Join("|", Codes)})";
+            return  $"{string.Join("|", Codes)}";
         }
 
     }

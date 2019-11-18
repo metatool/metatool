@@ -56,6 +56,7 @@ namespace Metatool.MetaKeyboard
 
         public Dictionary<string, string> KeyAliases { get; set; }
         public Dictionary<string,string> KeyMaps { get; set; }
+
         public FileExplorerHotKeys FileExplorerHotKeys { get; set; }
 
         public Settings  Settings  { get; set; }

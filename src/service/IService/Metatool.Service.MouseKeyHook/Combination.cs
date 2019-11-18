@@ -75,7 +75,7 @@ namespace Metatool.Service
 
         public override string ToString()
         {
-            return string.Join("+", Chord.Concat(Enumerable.Repeat(TriggerKey, 1))) + (Disabled ? "⍻" : "");
+            return string.Join(" + ", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)));
         }
 
         public static Combination Parse(string str)

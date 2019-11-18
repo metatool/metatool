@@ -273,7 +273,9 @@ namespace Metatool.Input
                 .Start(h => KeyUp += h, h => KeyUp -= h, token == default ? CancellationToken.None : token);
         }
 
-        readonly IDictionary<string, string> _aliases = new Dictionary<string, string>();
+        readonly IDictionary<string, IHotkey> _aliases = new Dictionary<string, IHotkey>();
+        readonly IDictionary<string, string> _aliasesRaw = new Dictionary<string, string>();
+        public Dictionary<string, IHotkey> Aliases => _aliases as Dictionary<string, IHotkey>;
 
         public bool AddAliases(IDictionary<string, string> aliases)
         {
@@ -282,15 +284,15 @@ namespace Metatool.Input
             {
                 if (string.IsNullOrEmpty(alias.Value)) continue;
 
-                var r = Sequence.TryParse(alias.Value, out _);
+                var r = Sequence.TryParse(alias.Value, out var key);
                 if (!r)
                 {
                     re = false;
                     Services.CommonLogger.LogError($"Could not parse {alias.Value} of alias: {alias.Key}");
                     continue;
                 }
-
-                _aliases.Add(alias.Key, alias.Value);
+                _aliasesRaw.Add(alias.Key, alias.Value);
+                _aliases.Add(alias.Key, key);
             }
 
             return re;
@@ -320,7 +322,7 @@ namespace Metatool.Input
                         continue;
                     }
 
-                    var aliases = new Dictionary<string, string>(_aliases);
+                    var aliases = new Dictionary<string, string>(_aliasesRaw);
                     if (additionalAliases != null)
                     {
                         foreach (var alias in additionalAliases)

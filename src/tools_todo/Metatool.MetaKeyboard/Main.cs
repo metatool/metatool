@@ -28,6 +28,7 @@ namespace Metatool.MetaKeyboard
         {
             _keyboard      = keyboard;
             _mouse         = mouse;
+            var t = config.CurrentValue.TestKey;
             Config.Current = config.CurrentValue;
             keyboard.AddAliases(config.CurrentValue.KeyAliases);
             RegisterCommands();

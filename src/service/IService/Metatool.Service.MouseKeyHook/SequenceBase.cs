@@ -18,7 +18,7 @@ namespace Metatool.Service
 
         public override string ToString()
         {
-            return string.Join(",", this);
+            return string.Join(", ", this);
         }
 
         protected bool Equals(SequenceBase<T> other)
