@@ -15,6 +15,12 @@ namespace Metatool.MetaKeyboard
         public string WorkDir { get; set; }
     }
 
+    public class Keyboard61Package
+    {
+
+        public Dictionary<string,string> KeyMaps { get; set; }
+    }
+
     public class Tools
     {
         public string Everything            { get; set; }
@@ -32,6 +38,17 @@ namespace Metatool.MetaKeyboard
         public string Inspect { get; set; }
     }
 
+    public class FileExplorerPackage
+    {
+        public FileExplorerHotKeys HotKeys { get; set; }
+        
+    }
+
+    public class SoftwarePackage
+    {
+        public SoftwareHotKeys HotKeys { get; set; }
+    }
+
     public class FileExplorerHotKeys
     {
         public HotkeyConfig FocusItemsView { get; set; }
@@ -40,6 +57,15 @@ namespace Metatool.MetaKeyboard
         public HotkeyConfig NewFile { get; set; }
         public HotkeyConfig ShowDesktopFolder { get; set; }
 
+    }
+
+    public class SoftwareHotKeys
+    {
+        public HotkeyConfig DoublePinyinSwitch { get; set; }
+        public HotkeyConfig  Find { get; set; }
+        public HotkeyConfig OpenTerminal { get; set; }
+        public HotkeyConfig OpenCodeEditor { get; set; }
+        public HotkeyConfig WebSearch { get; set; }
     }
 
     [ToolConfig]
@@ -55,9 +81,11 @@ namespace Metatool.MetaKeyboard
         }
 
         public Dictionary<string, string> KeyAliases { get; set; }
-        public Dictionary<string,string> KeyMaps { get; set; }
+        public Keyboard61Package Keyboard61Package { get; set; }
 
-        public FileExplorerHotKeys FileExplorerHotKeys { get; set; }
+        public FileExplorerPackage FileExplorerPackage { get; set; }
+
+        public SoftwareHotKeys SoftwareHotKeys { get; set; }
 
         public Settings  Settings  { get; set; }
 

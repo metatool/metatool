@@ -9,80 +9,111 @@
         // apps key
         "AK": "Apps|Tab"
       },
-      "MyKeyMaps": {
-        // "LMenu + U": "PageUp"
-      },
-      "KeyMaps": {
-        // note: in user config.json
-        // add: "source":"target",
-        // delete: "GK + D1": null or "" to disable it
-        // modify: "GK + D1": "F2" to remap it to F2
-        // Fn
-        "GK + D1": "F1",
-        "GK + D2": "F2",
-        "GK + D3": "F3",
-        "GK + D4": "F4",
-        "GK + D5": "F5",
-        "GK + D6": "F6",
-        "GK + D7": "F7",
-        "GK + D8": "F8",
-        "GK + D9": "F9",
-        "GK + D0": "F10",
-        "GK + Minus": "F11",
-        "GK + Plus": "F12",
-        // Move (Vim)
-        "GK + K": "Up",
-        "GK + J": "Down",
-        "GK + H": "Left",
-        "GK + L": "Right",
-        "GK + I": "Home",
-        "GK + O": "End",
-        "GK + U": "PageUp",
-        "GK + N": "PageDown",
-        // LAlt + Move
-        "LMenu + K": "Up",
-        "LMenu + J": "Down",
-        "LMenu + H": "Left",
-        "LMenu + L": "Right",
-        "LMenu + I": "Home",
-        "LMenu + O": "End",
-        "LMenu + U": "PageUp",
-        "LMenu + N": "PageDown",
-        //
-        "GK + Back": "Del",
-        "GK + P": "PrintScreen",
-        "GK + SemiColon": "Apps"
-      },
-      "FileExplorerHotKeys": {
-        //  "FocusItemsView": null to disable it
-        "FocusItemsView": {
-          // "Enabled": false, to disable it
-          // "Handled": true, to mark the HotKey handle, useful for async call
-          // "StateTree": "Default", "Map"...
-          "HotKey": "LWin + F",
-          "KeyEvent": "Down",
-          "Description": "Focus &File Items View"
-        },
-        "FocusNavigationTreeView": {
-          "HotKey": "LWin + N",
-          "KeyEvent": "Down",
-          "Description": "Focus &Navigation Tree View"
-        },
-        "CopySelectedPath": {
-          "HotKey": "Caps + Pipe",
-          "KeyEvent": "Down",
-          "Description": "Copy Selected Files Path"
-        },
-        "NewFile": {
-          "HotKey": "Ctrl + Alt + N",
-          "KeyEvent": "Down",
-          "Description": "&New File"
-        },
-        "ShowDesktopFolder": {
-          "HotKey": "LWin + D",
-          "KeyEvent": "Down",
-          "Description": "Show &Desktop Folder"
+      "Keyboard61Package": {
+        "KeyMaps": {
+          // note: in user config.json
+          // add: "source":"target",
+          // delete: "GK + D1": null or "" to disable it
+          // modify: "GK + D1": "F2" to remap it to F2
+          // Fn
+          "GK + D1": "F1",
+          "GK + D2": "F2",
+          "GK + D3": "F3",
+          "GK + D4": "F4",
+          "GK + D5": "F5",
+          "GK + D6": "F6",
+          "GK + D7": "F7",
+          "GK + D8": "F8",
+          "GK + D9": "F9",
+          "GK + D0": "F10",
+          "GK + Minus": "F11",
+          "GK + Plus": "F12",
+          // Move (Vim)
+          "GK + K": "Up",
+          "GK + J": "Down",
+          "GK + H": "Left",
+          "GK + L": "Right",
+          "GK + I": "Home",
+          "GK + O": "End",
+          "GK + U": "PageUp",
+          "GK + N": "PageDown",
+          // LAlt + Move
+          "LMenu + K": "Up",
+          "LMenu + J": "Down",
+          "LMenu + H": "Left",
+          "LMenu + L": "Right",
+          "LMenu + I": "Home",
+          "LMenu + O": "End",
+          "LMenu + U": "PageUp",
+          "LMenu + N": "PageDown",
+          //
+          "GK + Back": "Del",
+          "GK + P": "PrintScreen",
+          "GK + SemiColon": "Apps"
         }
+      },
+      "FileExplorerPackage": {
+        "HotKeys": {
+          //  "FocusItemsView": null to disable it
+          "FocusItemsView": {
+            // "Enabled": false, to disable it
+            // "Handled": true, to mark the HotKey handle, useful for async call
+            // "StateTree": "Default", "Map"...
+            "HotKey": "LWin + F",
+            "KeyEvent": "Down",
+            "Description": "Focus &File Items View"
+          },
+          "FocusNavigationTreeView": {
+            "HotKey": "LWin + N",
+            "KeyEvent": "Down",
+            "Description": "Focus &Navigation Tree View"
+          },
+          "CopySelectedPath": {
+            "HotKey": "Caps + Pipe",
+            "KeyEvent": "Down",
+            "Description": "Copy Selected Files Path"
+          },
+          "NewFile": {
+            "HotKey": "Ctrl + Alt + N",
+            "KeyEvent": "Down",
+            "Description": "&New File"
+          },
+          "ShowDesktopFolder": {
+            "HotKey": "LWin + D",
+            "KeyEvent": "Down",
+            "Description": "Show &Desktop Folder"
+          }
+        }
+      },
+      "SoftwarePackage": {
+        "SoftwareHotKeys": {
+          "DoublePinyinSwitch": {
+            "HotKey": "Pipe + P",
+            "KeyEvent": "Down",
+            "Description": "Toggle Double &Pinyin(Microsoft)"
+          }
+        },
+        "Find": {
+          "HotKey": "AK + F",
+          "KeyEvent": "Down",
+          "Description": "&Find with Everything"
+        },
+        "OpenTerminal": {
+          "HotKey": "AK + T",
+          "KeyEvent": "Down",
+          "Description": "Open &Terminal"
+        },
+        "OpenCodeEditor": {
+          "HotKey": "AK + C",
+          "KeyEvent": "Down",
+          "Description": "Open &Code Editor"
+        },
+        "WebSearch": {
+          "HotKey": "AK + W",
+          "KeyEvent": "Down",
+          "Description":  "&Web Search(Alt: second)" 
+
+        } 
       },
       "Settings": {
         "RemoteDesktopEnable": false

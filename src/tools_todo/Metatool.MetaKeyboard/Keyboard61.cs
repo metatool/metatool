@@ -13,7 +13,7 @@ namespace ConsoleApp1
             SetupWinLock();
             RegisterCommands();
             var conf    = Config.Current;
-            var maps    = conf.KeyMaps;
+            var maps = conf.Keyboard61Package.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
         }
 

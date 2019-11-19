@@ -18,7 +18,7 @@ namespace Metatool.MetaKeyboard
             _windowManager = windowManager;
             _fileExplorer  = fileExplorer;
             RegisterCommands();
-            var hotKeys = config.CurrentValue.FileExplorerHotKeys;
+            var hotKeys = config.CurrentValue.FileExplorerPackage.HotKeys;
             hotKeys.FocusItemsView.Register(e =>
             {
                 var listBoxEle   = _windowManager.CurrentWindow?.FirstDescendant(c => c.ByClassName("UIItemsView"));

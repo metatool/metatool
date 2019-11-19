@@ -18,7 +18,7 @@ namespace Metatool.MetaKeyboard
         private static IVirtualDesktopManager _virtualDesktopManager;
         private static IFileExplorer _fileExplorer;
 
-        public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager, IFileExplorer fileExplorer)
+        public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager, IFileExplorer fileExplorer, IConfig<Config> config)
         {
             _commandRunner = commandRunner;
             _virtualDesktopManager = virtualDesktopManager;
@@ -26,89 +26,113 @@ namespace Metatool.MetaKeyboard
             _windowManager = windowManager;
             _notify = notify;
             RegisterCommands();
+            var hotKeys = config.CurrentValue.SoftwareHotKeys;
+            hotKeys.DoublePinyinSwitch.Register(e =>
+            {
+                e.Handled = true;
+                const string keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
+                const string valueName = "Enable Double Pinyin";
+                var          k         = (int) Registry.GetValue(keyName, valueName, -1);
+                if (k == 0)
+                {
+                    _notify.ShowMessage("Double Pinyin Enabled");
+                    Registry.SetValue(keyName, valueName, 1);
+                }
+                else if (k == 1)
+                {
+                    _notify.ShowMessage("Full Pinyin Enabled");
+                    Registry.SetValue(keyName, valueName, 0);
+                }
+            });
+
+            hotKeys.Find.Register(async e =>
+            {
+                e.Handled = true;
+                var shiftDown = e.KeyboardState.IsDown(Shift);
+
+                var c = _windowManager.CurrentWindow.Class;
+                var arg = shiftDown
+                    ? "-newwindow"
+                    : "-toggle-window";
+
+                if ("CabinetWClass" == c)
+                {
+                    var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
+                    _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path",
+                        path));
+                    return;
+                }
+
+                _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
+            });
+
+            hotKeys.OpenTerminal.Register(async e =>
+            {
+                e.Handled = true;
+                var    shiftDown = e.KeyboardState.IsDown(Shift);
+                string path;
+                var    c = _windowManager.CurrentWindow.Class;
+                if ("CabinetWClass" != c)
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                else
+                    path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
+                if (shiftDown) _commandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
+                else _commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
+            });
+
+            hotKeys.OpenCodeEditor.Register(async e =>
+            {
+                if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+                {
+                    _commandRunner.RunWithExplorer(Config.Current.Tools.Code);
+                    return;
+                }
+
+                var paths = await _fileExplorer.GetSelectedPath(_windowManager.CurrentWindow.Handle);
+
+                if (paths.Length == 0)
+                {
+                    var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
+                    _commandRunner.RunWithExplorer(Config.Current.Tools.Code, path);
+                    return;
+                }
+
+                foreach (var path in paths)
+                {
+                    _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
+                }
+            });
+            hotKeys.WebSearch.Register(async e =>
+            {
+                e.Handled = true;
+
+                var altDown = e.KeyboardState.IsDown(Keys.Menu);
+                var url = altDown
+                    ? Config.Current.Tools.SearchEngineSecondary
+                    : Config.Current.Tools.SearchEngine;
+
+                var defaultPath = Browser.DefaultPath;
+                var exeName     = Path.GetFileNameWithoutExtension(defaultPath);
+                var process     = await _virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
+                if (process == null)
+                {
+                    _commandRunner.RunAsNormalUser(defaultPath, url, "--new-window", "--new-instance");
+                    return;
+                }
+
+                new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = true,
+                        FileName        = url
+                    }
+                }.Start();
+            });
+
         }
-        public IKeyCommand DoublePinyinSwitch = (Pipe + P).Down(e =>
-        {
-            e.Handled = true;
-            const string keyName = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
-            const string valueName = "Enable Double Pinyin";
-            var k         = (int)Registry.GetValue(keyName, valueName, -1);
-            if (k == 0)
-            {
-                _notify.ShowMessage("Double Pinyin Enabled");
-                Registry.SetValue(keyName, valueName, 1);
-            }
-            else if (k == 1)
-            {
-                _notify.ShowMessage("Full Pinyin Enabled");
-                Registry.SetValue(keyName, valueName, 0);
-            }
-        }, null, "&Toggle Double &Pinyin(Microsoft)");
 
         public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
-
-        public IKeyCommand Find = (AK + F).Down(async e =>
-        {
-            e.Handled = true;
-            var shiftDown = e.KeyboardState.IsDown(Shift);
-
-            var c = _windowManager.CurrentWindow.Class;
-            var arg = shiftDown
-                ? "-newwindow"
-                : "-toggle-window";
-
-            if ("CabinetWClass" == c)
-            {
-                var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
-                _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path", path));
-                return;
-            }
-
-            _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
-        }, null, "&Find With Everything");
-
-        public IKeyCommand OpenTerminal = (AK + T).Down(async e =>
-        {
-            e.Handled = true;
-            var shiftDown = e.KeyboardState.IsDown(Shift);
-            string path;
-            var    c = _windowManager.CurrentWindow.Class;
-            if ("CabinetWClass" != c)
-                path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            else
-                path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
-            if(shiftDown) _commandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
-            else _commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
-        }, null, "Open &Terminal");
-
-        public IKeyCommand WebSearch = (AK + W).Down(async e =>
-        {
-            e.Handled = true;
-
-            var altDown = e.KeyboardState.IsDown(Keys.Menu);
-            var url = altDown
-                ? Config.Current.Tools.SearchEngineSecondary
-                : Config.Current.Tools.SearchEngine;
-
-            var defaultPath = Browser.DefaultPath;
-            var exeName     = Path.GetFileNameWithoutExtension(defaultPath);
-            var process     = await _virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
-            if (process == null)
-            {
-                _commandRunner.RunAsNormalUser(defaultPath, url, "--new-window","--new-instance");
-                return;
-            }
-
-            new Process
-            {
-                StartInfo =
-                {
-                    UseShellExecute = true,
-                    FileName        = url
-                }
-            }.Start();
-        }, null, "&Web Search(Alt: second)");
-
 
         private static readonly IHotkey softwareTrigger = (AK + Space).Handled();
 
@@ -195,26 +219,5 @@ namespace Metatool.MetaKeyboard
             _commandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
         }, null, "&Inspect");
 
-        public IKeyCommand OpenCodeEditor = (AK + C).Handled().Hit(async e =>
-        {
-            if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
-            {
-                _commandRunner.RunWithExplorer(Config.Current.Tools.Code);
-                return;
-            }
-
-            var paths = await _fileExplorer.GetSelectedPath(_windowManager.CurrentWindow.Handle);
-
-            if (paths.Length == 0)
-            {
-                _commandRunner.RunWithExplorer(Config.Current.Tools.Code);
-                return;
-            }
-
-            foreach (var path in paths)
-            {
-                _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
-            }
-        }, null, "Open &Code Editor");
     }
 }
