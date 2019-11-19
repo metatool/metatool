@@ -303,7 +303,7 @@ namespace Metatool.Input
         {
             static string ReplaceAlias(string v, IDictionary<string, string> aliases)
             {
-                foreach (var alias in aliases)
+                foreach (var alias in aliases.Reverse())
                 {
                     v = v.Replace(alias.Key, alias.Value);
                 }
