@@ -66,6 +66,7 @@ namespace Metatool.MetaKeyboard
         public HotkeyConfig OpenTerminal { get; set; }
         public HotkeyConfig OpenCodeEditor { get; set; }
         public HotkeyConfig WebSearch { get; set; }
+        public HotkeyConfig StartTaskExplorer { get; set; }
     }
 
     [ToolConfig]
@@ -85,7 +86,7 @@ namespace Metatool.MetaKeyboard
 
         public FileExplorerPackage FileExplorerPackage { get; set; }
 
-        public SoftwareHotKeys SoftwareHotKeys { get; set; }
+        public SoftwarePackage SoftwarePackage { get; set; }
 
         public Settings  Settings  { get; set; }
 

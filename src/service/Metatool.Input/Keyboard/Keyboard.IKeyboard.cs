@@ -298,18 +298,28 @@ namespace Metatool.Input
             return re;
         }
 
+        public string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalAliasesDics)
+        {
+            var aliases = new Dictionary<string, string>(_aliasesRaw);
+                foreach (var aliasesDic in additionalAliasesDics)
+                {
+                if(aliasesDic == null) continue;
+                    foreach (var alias in aliasesDic)
+                    {
+                        aliases[alias.Key] = alias.Value;
+                    }
+                }
+            foreach (var alias in aliases.Reverse())
+            {
+                hotkey = hotkey.Replace(alias.Key, alias.Value);
+            }
+
+            return hotkey;
+        }
+
         public bool RegisterKeyMaps(IDictionary<string, string> maps,
             IDictionary<string, string> additionalAliases = null)
         {
-            static string ReplaceAlias(string v, IDictionary<string, string> aliases)
-            {
-                foreach (var alias in aliases.Reverse())
-                {
-                    v = v.Replace(alias.Key, alias.Value);
-                }
-
-                return v;
-            }
 
             var hasError = false;
             foreach (var map in maps)
@@ -322,17 +332,8 @@ namespace Metatool.Input
                         continue;
                     }
 
-                    var aliases = new Dictionary<string, string>(_aliasesRaw);
-                    if (additionalAliases != null)
-                    {
-                        foreach (var alias in additionalAliases)
-                        {
-                            aliases[alias.Key] = alias.Value;
-                        }
-                    }
-
-                    var source = ReplaceAlias(map.Key, aliases);
-                    var target = ReplaceAlias(map.Value, aliases);
+                    var source = ReplaceAlias(map.Key, additionalAliases);
+                    var target = ReplaceAlias(map.Value, additionalAliases);
                     var t      = Combination.Parse(target);
                     var s      = Sequence.Parse(source);
                     s.Map(t);

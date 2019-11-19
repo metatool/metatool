@@ -26,7 +26,7 @@ namespace Metatool.MetaKeyboard
             _windowManager = windowManager;
             _notify = notify;
             RegisterCommands();
-            var hotKeys = config.CurrentValue.SoftwareHotKeys;
+            var hotKeys = config.CurrentValue.SoftwarePackage.HotKeys;
             hotKeys.DoublePinyinSwitch.Register(e =>
             {
                 e.Handled = true;
@@ -130,6 +130,12 @@ namespace Metatool.MetaKeyboard
                 }.Start();
             });
 
+            // hotKeys.StartTaskExplorer.Register(e =>
+            // {
+            //     e.Handled = true;
+            //     _commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
+            // });
+
         }
 
         public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
@@ -142,13 +148,6 @@ namespace Metatool.MetaKeyboard
                 e.Handled = true;
                 _commandRunner.RunWithCmd(Config.Current.Tools.Ruler);
             }, null, "Screen &Ruler");
-
-        public IKeyCommand StartTaskExplorer = (softwareTrigger, T).Down(
-            e =>
-            {
-                e.Handled = true;
-                _commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
-            }, null, "&Task Explorer ");
 
         public IKeyCommand StartGifRecord = (softwareTrigger, G).Down(
             e =>

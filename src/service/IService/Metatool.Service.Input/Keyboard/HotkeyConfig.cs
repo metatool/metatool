@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Metatool.Command;
 
 namespace Metatool.Service
@@ -15,18 +16,16 @@ namespace Metatool.Service
         private static ICommandManager CommandManager =>
             _commandManager ??= Services.Get<ICommandManager>();
 
-        private string    _hotKey;
-        private ISequence HotKeyTrigger { get; set; }
-
-        public string HotKey
+        private ISequence HotKeyTrigger
         {
-            get => _hotKey;
-            set
+            get
             {
-                _hotKey       = value;
-                HotKeyTrigger = Sequence.Parse(value);
+                var hotkey = Keyboard.ReplaceAlias(HotKey);
+                return Sequence.Parse(hotkey);
             }
         }
+
+        public string HotKey { get; set; }
 
         public KeyEvent KeyEvent    { get; set; }
         public string   Description { get; set; }
@@ -42,5 +41,11 @@ namespace Metatool.Service
             var token   = trigger.Register(execute, canExecute, Description);
             return token;
         }
+
+        // public HotkeyConfig WithAliases(IDictionary<string, string> additionalAliases)
+        // {
+        //     additionalAliases
+        //     return this;
+        // }
     }
 }

@@ -86,8 +86,15 @@
         }
       },
       "SoftwarePackage": {
-
+        "KeyAliases": {
+          "SW": "AK + Space" 
+        },
         "HotKeys": {
+          //"StartTaskExplorer": {
+            //"HotKey": "SW, T",
+           // "KeyEvent": "Down",
+           // "Description": "&Task Explorer"
+          //},
           "DoublePinyinSwitch": {
             "HotKey": "Pipe + P",
             "KeyEvent": "Down",
