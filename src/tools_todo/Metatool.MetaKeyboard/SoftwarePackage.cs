@@ -26,7 +26,8 @@ namespace Metatool.MetaKeyboard
             _windowManager = windowManager;
             _notify = notify;
             RegisterCommands();
-            var hotKeys = config.CurrentValue.SoftwarePackage.HotKeys;
+            var software = config.CurrentValue.SoftwarePackage;
+            var hotKeys = software.HotKeys;
             hotKeys.DoublePinyinSwitch.Register(e =>
             {
                 e.Handled = true;
@@ -129,12 +130,12 @@ namespace Metatool.MetaKeyboard
                     }
                 }.Start();
             });
-
-            // hotKeys.StartTaskExplorer.Register(e =>
-            // {
-            //     e.Handled = true;
-            //     _commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
-            // });
+            software.KeyAliases["SW"].ToHotkey().Handled();
+            hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).Register(e =>
+            {
+                e.Handled = true;
+                _commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
+            });
 
         }
 

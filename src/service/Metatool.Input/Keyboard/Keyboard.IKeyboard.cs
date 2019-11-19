@@ -273,9 +273,9 @@ namespace Metatool.Input
                 .Start(h => KeyUp += h, h => KeyUp -= h, token == default ? CancellationToken.None : token);
         }
 
-        readonly IDictionary<string, IHotkey> _aliases = new Dictionary<string, IHotkey>();
-        readonly IDictionary<string, string> _aliasesRaw = new Dictionary<string, string>();
-        public Dictionary<string, IHotkey> Aliases => _aliases as Dictionary<string, IHotkey>;
+        readonly IDictionary<string, IHotkey> _aliases    = new Dictionary<string, IHotkey>();
+        readonly IDictionary<string, string>  _aliasesRaw = new Dictionary<string, string>();
+        public   Dictionary<string, IHotkey>  Aliases => _aliases as Dictionary<string, IHotkey>;
 
         public bool AddAliases(IDictionary<string, string> aliases)
         {
@@ -291,6 +291,7 @@ namespace Metatool.Input
                     Services.CommonLogger.LogError($"Could not parse {alias.Value} of alias: {alias.Key}");
                     continue;
                 }
+
                 _aliasesRaw.Add(alias.Key, alias.Value);
                 _aliases.Add(alias.Key, key);
             }
@@ -301,14 +302,16 @@ namespace Metatool.Input
         public string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalAliasesDics)
         {
             var aliases = new Dictionary<string, string>(_aliasesRaw);
+            if (additionalAliasesDics != null)
                 foreach (var aliasesDic in additionalAliasesDics)
                 {
-                if(aliasesDic == null) continue;
+                    if (aliasesDic == null) continue;
                     foreach (var alias in aliasesDic)
                     {
                         aliases[alias.Key] = alias.Value;
                     }
                 }
+
             foreach (var alias in aliases.Reverse())
             {
                 hotkey = hotkey.Replace(alias.Key, alias.Value);
@@ -320,7 +323,6 @@ namespace Metatool.Input
         public bool RegisterKeyMaps(IDictionary<string, string> maps,
             IDictionary<string, string> additionalAliases = null)
         {
-
             var hasError = false;
             foreach (var map in maps)
             {

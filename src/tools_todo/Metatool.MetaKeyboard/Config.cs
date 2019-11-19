@@ -46,6 +46,7 @@ namespace Metatool.MetaKeyboard
 
     public class SoftwarePackage
     {
+        public IDictionary<string,string> KeyAliases { get; set; }
         public SoftwareHotKeys HotKeys { get; set; }
     }
 
@@ -81,7 +82,7 @@ namespace Metatool.MetaKeyboard
             get => _config;
         }
 
-        public Dictionary<string, string> KeyAliases { get; set; }
+        public IDictionary<string, string> KeyAliases { get; set; }
         public Keyboard61Package Keyboard61Package { get; set; }
 
         public FileExplorerPackage FileExplorerPackage { get; set; }

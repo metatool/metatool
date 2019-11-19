@@ -20,7 +20,7 @@ namespace Metatool.Service
         {
             get
             {
-                var hotkey = Keyboard.ReplaceAlias(HotKey);
+                var hotkey = Keyboard.ReplaceAlias(HotKey, _additionalAliasesDics);
                 return Sequence.Parse(hotkey);
             }
         }
@@ -42,10 +42,11 @@ namespace Metatool.Service
             return token;
         }
 
-        // public HotkeyConfig WithAliases(IDictionary<string, string> additionalAliases)
-        // {
-        //     additionalAliases
-        //     return this;
-        // }
+        private IDictionary<string, string>[] _additionalAliasesDics;
+        public HotkeyConfig WithAliases(params IDictionary<string, string>[] additionalAliasesDics)
+        {
+            _additionalAliasesDics = additionalAliasesDics;
+            return this;
+        }
     }
 }
