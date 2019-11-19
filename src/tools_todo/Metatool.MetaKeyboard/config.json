@@ -86,34 +86,34 @@
         }
       },
       "SoftwarePackage": {
-        "SoftwareHotKeys": {
+
+        "HotKeys": {
           "DoublePinyinSwitch": {
             "HotKey": "Pipe + P",
             "KeyEvent": "Down",
             "Description": "Toggle Double &Pinyin(Microsoft)"
+          },
+          "Find": {
+            "HotKey": "AK + F",
+            "KeyEvent": "Down",
+            "Description": "&Find with Everything"
+          },
+          "OpenTerminal": {
+            "HotKey": "AK + T",
+            "KeyEvent": "Down",
+            "Description": "Open &Terminal"
+          },
+          "OpenCodeEditor": {
+            "HotKey": "AK + C",
+            "KeyEvent": "Down",
+            "Description": "Open &Code Editor"
+          },
+          "WebSearch": {
+            "HotKey": "AK + W",
+            "KeyEvent": "Down",
+            "Description": "&Web Search(Alt: second)"
           }
-        },
-        "Find": {
-          "HotKey": "AK + F",
-          "KeyEvent": "Down",
-          "Description": "&Find with Everything"
-        },
-        "OpenTerminal": {
-          "HotKey": "AK + T",
-          "KeyEvent": "Down",
-          "Description": "Open &Terminal"
-        },
-        "OpenCodeEditor": {
-          "HotKey": "AK + C",
-          "KeyEvent": "Down",
-          "Description": "Open &Code Editor"
-        },
-        "WebSearch": {
-          "HotKey": "AK + W",
-          "KeyEvent": "Down",
-          "Description":  "&Web Search(Alt: second)" 
-
-        } 
+        }
       },
       "Settings": {
         "RemoteDesktopEnable": false
