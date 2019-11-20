@@ -21,7 +21,6 @@ namespace Metatool.Service{
             get => this.Last().TriggerKey.Handled;
             set => this.Last().TriggerKey.Handled = value;
         }
-
         public ISequence ToSequence() => this;
     }
 }

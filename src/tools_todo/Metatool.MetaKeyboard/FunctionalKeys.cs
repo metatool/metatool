@@ -10,8 +10,6 @@ namespace Metatool.MetaKeyboard
             RegisterCommands();
         }
 
-        public IKeyCommand CloseMetaKeysCommand = (LWin + L).Handled().Down(null);
-
         public IKeyCommand CloseMetaKeyCommand = (LCtrl + LWin + LAlt + C).Down(e =>
         {
             var notify = Services.Get<INotify>();

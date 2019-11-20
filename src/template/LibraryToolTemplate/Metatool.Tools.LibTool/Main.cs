@@ -1,7 +1,7 @@
 ﻿using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using static Metatool.Service.Key;
-
+using static Metatool.Tools.LibToolDemo.KeyboardConfig;
 namespace Metatool.Tools.LibToolDemo
 {
     public class ToolDemo : ToolBase
@@ -11,7 +11,7 @@ namespace Metatool.Tools.LibToolDemo
 
         public ToolDemo(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config)
         {
-            CommandA = commandManager.Add(keyboard.Down(Caps + A),
+            CommandA = commandManager.Add(keyboard.Down(AK + A),
                 e => { Logger.LogInformation($"{nameof(ToolDemo)}: Caps+A triggered!!!!!!!"); });
             CommandB = (Caps + B).Down(e => Logger.LogWarning("Caps+B pressed!!!"));
 

@@ -21,6 +21,23 @@ namespace Metatool.MetaKeyboard
         public Dictionary<string,string> KeyMaps { get; set; }
     }
 
+    public class KeyboardMousePackage
+    {
+        public Dictionary<string, string> KeyMaps { get; set; }
+
+        public MouseKeyboardHotKeys HotKeys { get; set; }
+    }
+
+    public class MouseKeyboardHotKeys
+    {
+        public HotkeyConfig MouseToFocus { get; set; }
+        public HotkeyConfig MouseScrollUp { get; set; }
+        public HotkeyConfig MouseScrollDown { get; set; }
+        public HotkeyConfig MouseLeftClick { get; set; }
+        public HotkeyConfig MouseLeftClickLast { get; set; }
+
+    }
+
     public class Tools
     {
         public string Everything            { get; set; }
@@ -73,6 +90,7 @@ namespace Metatool.MetaKeyboard
         public HotkeyConfig StartNotepad { get; set; }
         public HotkeyConfig StartVisualStudio { get; set; }
         public HotkeyConfig StartGifRecord { get; set; }
+        public HotkeyConfig ToggleDictionary { get; set; }
 
     }
 
@@ -92,6 +110,7 @@ namespace Metatool.MetaKeyboard
         public Keyboard61Package Keyboard61Package { get; set; }
 
         public FileExplorerPackage FileExplorerPackage { get; set; }
+        public KeyboardMousePackage KeyboardMousePackage { get; set; }
 
         public SoftwarePackage SoftwarePackage { get; set; }
 

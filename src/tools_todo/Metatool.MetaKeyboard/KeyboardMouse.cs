@@ -1,39 +1,51 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Automation;
-using static Metatool.MetaKeyboard.KeyboardConfig;
 using static Metatool.Service.Key;
 using Metatool.Service;
 using Point = System.Drawing.Point;
 
 namespace Metatool.MetaKeyboard
 {
-    public class MouseViaKeyboard : CommandPackage
+    public class KeyboardMouse : CommandPackage
     {
         private readonly IMouse         _mouse;
         private static   IWindowManager _windowManager;
 
-        public MouseViaKeyboard(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager)
+        public KeyboardMouse(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard)
         {
             _windowManager = windowManager;
             _mouse = mouse;
-            MouseLeftClick = (GK + C).Down(e =>
+
+            RegisterCommands();
+            var conf = Config.Current;
+            var maps = conf.KeyboardMousePackage.KeyMaps;
+            keyboard.RegisterKeyMaps(maps);
+
+            var hotkeys = conf.KeyboardMousePackage.HotKeys;
+            hotkeys.MouseToFocus.Event(e => e.BeginInvoke(MoveCursorToActiveControl));
+            hotkeys.MouseScrollUp.Event(e =>
+            {
+                var mouse = Services.Get<IMouse>();
+                mouse.VerticalScroll(1);
+            });
+            hotkeys.MouseScrollDown.Event(e =>
+            {
+                var mouse = Services.Get<IMouse>();
+                mouse.VerticalScroll(-1);
+            });
+            hotkeys.MouseLeftClick.Event(e =>
             {
                 e.Handled = true;
                 e.BeginInvoke(() => screenHint.Show(DoMouseLeftClick));
             });
-            MouseLeftClickLast = (GK + LShift + C).Down(e =>
+            hotkeys.MouseLeftClickLast.Event(e =>
             {
                 e.Handled = true;
                 e.BeginInvoke(() => screenHint.Show(DoMouseLeftClick, false));
             });
-            RegisterCommands();
         }
 
-        // static readonly Hint Hint= new Hint();
-        // LButton & RButton
-        public IKeyCommand MouseLB = (GK + OpenBrackets).Map(LButton);
-        public IKeyCommand MouseRB = (GK + CloseBrackets).Map(RButton);
 
         static void MoveCursorToActiveControl()
         {
@@ -52,22 +64,6 @@ namespace Metatool.MetaKeyboard
             var mouse = Services.Get<IMouse>();
             mouse.MoveToLikeUser(x, y);
         }
-
-        // Scroll up/down (reading, one hand)
-        public IKeyCommand MouseToFocus = (GK + F).Handled().Down(e => { e.BeginInvoke(MoveCursorToActiveControl); });
-
-        // Scroll up/down (reading, one hand)
-        public IKeyCommand MouseScrollUp = (GK + W).Handled().Down(e =>
-        {
-            var mouse = Services.Get<IMouse>();
-            mouse.VerticalScroll(1);
-        });
-
-        public IKeyCommand MouseScrollDown = (GK + S).Handled().Down(e =>
-        {
-            var mouse = Services.Get<IMouse>();
-            mouse.VerticalScroll(-1);
-        });
 
         public IKeyCommand MouseLeftClick;
         public IKeyCommand MouseLeftClickLast;

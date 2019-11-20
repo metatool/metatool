@@ -52,12 +52,46 @@
           "GK + SemiColon": "Apps"
         }
       },
+      "KeyboardMousePackage": {
+        "KeyMaps": {
+          "GK + OpenBrackets": "LButton",
+          "GK + CloseBrackets": "RButton"
+
+        },
+        "HotKeys": {
+          "MouseToFocus": {
+            "HotKey": "GK + F",
+            "KeyEvent": "Down",
+            "Description": "Focus Mouse To Active Control"
+          },
+          "MouseScrollUp": {
+            "HotKey": "GK + W",
+            "KeyEvent": "Down",
+            "Description": "Scroll Up with Mouse"
+          },
+          "MouseScrollDown": {
+            "HotKey": "GK + S",
+            "KeyEvent": "Down",
+            "Description": "Scroll Down with Mouse"
+          },
+          "MouseLeftClick": {
+            "HotKey": "GK + S",
+            "KeyEvent": "Down",
+            "Description": "Scroll Down with Mouse"
+          },
+          "MouseLeftClickLast": {
+            "HotKey": "GK + S",
+            "KeyEvent": "Down",
+            "Description": "Scroll Down with Mouse"
+          }
+
+        }
+      },
       "FileExplorerPackage": {
         "HotKeys": {
           //  "FocusItemsView": null to disable it
           "FocusItemsView": {
             // "Enabled": false, to disable it
-            // "Handled": true, to mark the HotKey handle, useful for async call
             // "StateTree": "Default", "Map"...
             "HotKey": "LWin + F",
             "KeyEvent": "Down",
@@ -87,9 +121,10 @@
       },
       "SoftwarePackage": {
         "KeyAliases": {
-          "SW": "AK + Space*" 
+          "SW": "AK + Space*"
         },
         "HotKeys": {
+
           "StartGifRecord": {
             "HotKey": "SW, G",
             "KeyEvent": "Down",
@@ -124,6 +159,11 @@
             "HotKey": "Pipe + P",
             "KeyEvent": "Down",
             "Description": "Toggle Double &Pinyin(Microsoft)"
+          },
+          "ToggleDictionary": {
+            "HotKey": "AK + D",
+            "KeyEvent": "Down",
+            "Description": "Toggle &Dictionary"
           },
           "Find": {
             "HotKey": "AK + F",

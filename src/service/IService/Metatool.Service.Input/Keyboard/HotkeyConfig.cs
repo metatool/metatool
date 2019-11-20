@@ -30,16 +30,20 @@ namespace Metatool.Service
         public KeyEvent KeyEvent    { get; set; }
         public string   Description { get; set; }
         public string   StateTree   { get; set; } = KeyStateTrees.Default;
-        public bool Handled { get; set; } = false;
         public bool     Enabled     { get; set; } = true;
 
-        public IKeyCommand Register(Action<IKeyEventArgs> execute,
+        public IKeyCommand Event(Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null)
         {
-            if (Handled) HotKeyTrigger.Handled(KeyEvent);
             var trigger = Keyboard.Event(HotKeyTrigger, KeyEvent, StateTree);
                                     var token   = trigger.Register(execute, canExecute, Description);
             return token;
+        }
+
+        public IKeyCommand MapOnHit(ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
+        {
+            return Keyboard.MapOnHit(HotKeyTrigger, target, predicate, allUp);
         }
 
         private IDictionary<string, string>[] _tempAliasesDics;

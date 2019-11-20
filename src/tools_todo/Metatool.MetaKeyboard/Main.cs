@@ -14,9 +14,8 @@ namespace Metatool.MetaKeyboard
 
         public override bool OnLoaded()
         {
-            var keyConfig    = new KeyboardConfig();
             var keyboard61 = Services.GetOrCreate<Keyboard61>();
-            var mouse        = Services.GetOrCreate<MouseViaKeyboard>();
+            var mouse        = Services.GetOrCreate<KeyboardMouse>();
             var fun          = new FunctionalKeys();
             var fileExplorer = Services.GetOrCreate<FileExplorer>();
             var hotstrings   = new HostStrings();

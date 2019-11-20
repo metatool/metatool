@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using Metatool.Service;
 using Microsoft.Win32;
 using static Metatool.Service.Key;
-using static Metatool.MetaKeyboard.KeyboardConfig;
 
 namespace Metatool.MetaKeyboard
 {
@@ -18,7 +17,7 @@ namespace Metatool.MetaKeyboard
             RegisterCommands();
             var software = config.CurrentValue.SoftwarePackage;
             var hotKeys = software.HotKeys;
-            hotKeys.DoublePinyinSwitch.Register(e =>
+            hotKeys.DoublePinyinSwitch.Event(e =>
             {
                 e.Handled = true;
                 const string keyName   = @"HKEYCURRENTUSER\Software\Microsoft\InputMethod\Settings\CHS";
@@ -36,7 +35,7 @@ namespace Metatool.MetaKeyboard
                 }
             });
 
-            hotKeys.Find.Register(async e =>
+            hotKeys.Find.Event(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Shift);
@@ -57,7 +56,7 @@ namespace Metatool.MetaKeyboard
                 commandRunner.RunWithCmd(commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
             });
 
-            hotKeys.OpenTerminal.Register(async e =>
+            hotKeys.OpenTerminal.Event(async e =>
             {
                 e.Handled = true;
                 var    shiftDown = e.KeyboardState.IsDown(Shift);
@@ -71,7 +70,7 @@ namespace Metatool.MetaKeyboard
                 else commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
             });
 
-            hotKeys.OpenCodeEditor.Register(async e =>
+            hotKeys.OpenCodeEditor.Event(async e =>
             {
                 if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
                 {
@@ -93,7 +92,7 @@ namespace Metatool.MetaKeyboard
                     commandRunner.RunWithCmd(commandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
                 }
             });
-            hotKeys.WebSearch.Register(async e =>
+            hotKeys.WebSearch.Event(async e =>
             {
                 e.Handled = true;
 
@@ -120,19 +119,19 @@ namespace Metatool.MetaKeyboard
                     }
                 }.Start();
             });
-            hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).Register(e =>
+            hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).Event(e =>
             {
                 e.Handled = true;
                 commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
             });
 
-            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Register(e =>
+            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Event(e =>
             {
                 e.Handled = true;
                 commandRunner.RunWithCmd(Config.Current.Tools.Ruler);
             });
 
-            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Register(async e =>
+            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Event(async e =>
             {
                 var exeName = "Inspect";
 
@@ -152,7 +151,7 @@ namespace Metatool.MetaKeyboard
                 commandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
             });
 
-            hotKeys.StartNotepad.WithAliases(software.KeyAliases).Register(async e =>
+            hotKeys.StartNotepad.WithAliases(software.KeyAliases).Event(async e =>
             {
                 e.Handled = true;
                 var exeName = "Notepad";
@@ -174,7 +173,7 @@ namespace Metatool.MetaKeyboard
                 commandRunner.RunWithCmd("Notepad");
             });
 
-            hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).Register(async e =>
+            hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).Event(async e =>
             {
                 if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
 
@@ -194,15 +193,14 @@ namespace Metatool.MetaKeyboard
                 });
             });
 
-            hotKeys.StartGifRecord.WithAliases(software.KeyAliases).Register(e =>
+            hotKeys.StartGifRecord.WithAliases(software.KeyAliases).Event(e =>
             {
                 e.Handled = true;
                 commandRunner.RunWithCmd(Config.Current.Tools.GifTool);
             });
 
+            hotKeys.ToggleDictionary.MapOnHit(Shift + LAlt + D);
         }
-
-        public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
 
     }
 }
