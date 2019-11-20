@@ -8,70 +8,73 @@ namespace Metatool.Service
     public partial class Key
     {
         // const                  Keys AnyKeyCode    = Keys.KeyCode;
-        public static readonly Key  None          = new Key(Keys.None);
+        public static readonly Key None = new Key(Keys.None);
+
         // public static readonly Key  Any           = new Key(AnyKeyCode);
-        public static readonly Key  Caps          = new Key(Keys.CapsLock);
-        public static readonly Key  LCtrl         = new Key(Keys.LControlKey);
-        public static readonly Key  RCtrl         = new Key(Keys.RControlKey);
-        public static readonly Key  CtrlKey       = new Key(Keys.ControlKey);
-        public static readonly Key  Ctrl          = new Key(Keys.LControlKey, Keys.RControlKey);
-        public static readonly Key  CtrlChord     = new Key(Keys.Control);
-        public static readonly Key  LShift        = new Key(Keys.LShiftKey);
-        public static readonly Key  RShift        = new Key(Keys.RShiftKey);
-        public static readonly Key  ShiftKey      = new Key(Keys.ShiftKey);
-        public static readonly Key  Shift         = new Key(Keys.LShiftKey, Keys.RShiftKey);
-        public static readonly Key  ShiftChord    = new Key(Keys.Shift);
-        public static readonly Key  LAlt          = new Key(Keys.LMenu);
-        public static readonly Key  LMenu         = LAlt;
-        public static readonly Key  RAlt          = new Key(Keys.RMenu);
-        public static readonly Key  RMenu         = RAlt;
-        public static readonly Key  AltKey        = new Key(Keys.Menu);
-        public static readonly Key  Alt           = new Key(Keys.LMenu, Keys.RMenu);
-        public static readonly Key  Menu          = AltKey;
-        public static readonly Key  AltChord      = new Key(Keys.Alt);
-        public static readonly Key  Enter         = new Key(Keys.Enter);
-        public static readonly Key  Return        = Enter;
-        public static readonly Key  Tab           = new Key(Keys.Tab);
-        public static readonly Key  LWin          = new Key(Keys.LWin);
-        public static readonly Key  RWin          = new Key(Keys.RWin);
-        public static readonly Key  Win           = new Key(Keys.LWin, Keys.RWin);
-        public static readonly Key  Apps          = new Key(Keys.Apps);
-        public static readonly Key  Back          = new Key(Keys.Back);
-        public static readonly Key  Space         = new Key(Keys.Space);
-        public static readonly Key  A             = new Key(Keys.A);
-        public static readonly Key  B             = new Key(Keys.B);
-        public static readonly Key  C             = new Key(Keys.C);
-        public static readonly Key  D             = new Key(Keys.D);
-        public static readonly Key  E             = new Key(Keys.E);
-        public static readonly Key  F             = new Key(Keys.F);
-        public static readonly Key  G             = new Key(Keys.G);
-        public static readonly Key  H             = new Key(Keys.H);
-        public static readonly Key  I             = new Key(Keys.I);
-        public static readonly Key  J             = new Key(Keys.J);
-        public static readonly Key  K             = new Key(Keys.K);
-        public static readonly Key  L             = new Key(Keys.L);
-        public static readonly Key  M             = new Key(Keys.M);
-        public static readonly Key  N             = new Key(Keys.N);
-        public static readonly Key  O             = new Key(Keys.O);
-        public static readonly Key  P             = new Key(Keys.P);
-        public static readonly Key  Q             = new Key(Keys.Q);
-        public static readonly Key  R             = new Key(Keys.R);
-        public static readonly Key  S             = new Key(Keys.S);
-        public static readonly Key  T             = new Key(Keys.T);
-        public static readonly Key  U             = new Key(Keys.U);
-        public static readonly Key  V             = new Key(Keys.V);
-        public static readonly Key  W             = new Key(Keys.W);
-        public static readonly Key  X             = new Key(Keys.X);
-        public static readonly Key  Y             = new Key(Keys.Y);
-        public static readonly Key  Z             = new Key(Keys.Z);
-        public static readonly Key  Period        = new Key(Keys.OemPeriod);
-        public static readonly Key  Comma         = new Key(Keys.Oemcomma);
-        public static readonly Key  Question      = new Key(Keys.OemQuestion);
-        public static readonly Key  Slash         = Question;
-        public static readonly Key  Quotes        = new Key(Keys.OemQuotes);
-        public static readonly Key  SemiColon     = new Key(Keys.OemSemicolon);
-        public static readonly Key  OpenBrackets  = new Key(Keys.OemOpenBrackets);
-        public static readonly Key  CloseBrackets = new Key(Keys.OemCloseBrackets);
+        public static readonly Key Caps          = new Key(Keys.CapsLock);
+        public static readonly Key CapsLock      = Caps;
+        public static readonly Key LCtrl         = new Key(Keys.LControlKey);
+        public static readonly Key RCtrl         = new Key(Keys.RControlKey);
+        public static readonly Key CtrlKey       = new Key(Keys.ControlKey);
+        public static readonly Key Ctrl          = new Key(Keys.LControlKey, Keys.RControlKey);
+        public static readonly Key CtrlChord     = new Key(Keys.Control);
+        public static readonly Key LShift        = new Key(Keys.LShiftKey);
+        public static readonly Key RShift        = new Key(Keys.RShiftKey);
+        public static readonly Key ShiftKey      = new Key(Keys.ShiftKey);
+        public static readonly Key Shift         = new Key(Keys.LShiftKey, Keys.RShiftKey);
+        public static readonly Key ShiftChord    = new Key(Keys.Shift);
+        public static readonly Key LAlt          = new Key(Keys.LMenu);
+        public static readonly Key LMenu         = LAlt;
+        public static readonly Key RAlt          = new Key(Keys.RMenu);
+        public static readonly Key RMenu         = RAlt;
+        public static readonly Key AltKey        = new Key(Keys.Menu);
+        public static readonly Key Alt           = new Key(Keys.LMenu, Keys.RMenu);
+        public static readonly Key Menu          = AltKey;
+        public static readonly Key AltChord      = new Key(Keys.Alt);
+        public static readonly Key Enter         = new Key(Keys.Enter);
+        public static readonly Key Return        = Enter;
+        public static readonly Key Tab           = new Key(Keys.Tab);
+        public static readonly Key LWin          = new Key(Keys.LWin);
+        public static readonly Key RWin          = new Key(Keys.RWin);
+        public static readonly Key Win           = new Key(Keys.LWin, Keys.RWin);
+        public static readonly Key Apps          = new Key(Keys.Apps);
+        public static readonly Key Back          = new Key(Keys.Back);
+        public static readonly Key Backspace     = Back;
+        public static readonly Key Space         = new Key(Keys.Space);
+        public static readonly Key A             = new Key(Keys.A);
+        public static readonly Key B             = new Key(Keys.B);
+        public static readonly Key C             = new Key(Keys.C);
+        public static readonly Key D             = new Key(Keys.D);
+        public static readonly Key E             = new Key(Keys.E);
+        public static readonly Key F             = new Key(Keys.F);
+        public static readonly Key G             = new Key(Keys.G);
+        public static readonly Key H             = new Key(Keys.H);
+        public static readonly Key I             = new Key(Keys.I);
+        public static readonly Key J             = new Key(Keys.J);
+        public static readonly Key K             = new Key(Keys.K);
+        public static readonly Key L             = new Key(Keys.L);
+        public static readonly Key M             = new Key(Keys.M);
+        public static readonly Key N             = new Key(Keys.N);
+        public static readonly Key O             = new Key(Keys.O);
+        public static readonly Key P             = new Key(Keys.P);
+        public static readonly Key Q             = new Key(Keys.Q);
+        public static readonly Key R             = new Key(Keys.R);
+        public static readonly Key S             = new Key(Keys.S);
+        public static readonly Key T             = new Key(Keys.T);
+        public static readonly Key U             = new Key(Keys.U);
+        public static readonly Key V             = new Key(Keys.V);
+        public static readonly Key W             = new Key(Keys.W);
+        public static readonly Key X             = new Key(Keys.X);
+        public static readonly Key Y             = new Key(Keys.Y);
+        public static readonly Key Z             = new Key(Keys.Z);
+        public static readonly Key Period        = new Key(Keys.OemPeriod);
+        public static readonly Key Comma         = new Key(Keys.Oemcomma);
+        public static readonly Key Question      = new Key(Keys.OemQuestion);
+        public static readonly Key Slash         = Question;
+        public static readonly Key Quotes        = new Key(Keys.OemQuotes);
+        public static readonly Key SemiColon     = new Key(Keys.OemSemicolon);
+        public static readonly Key OpenBrackets  = new Key(Keys.OemOpenBrackets);
+        public static readonly Key CloseBrackets = new Key(Keys.OemCloseBrackets);
 
         /// <summary>
         /// On US keyboard please use Pipe
@@ -122,17 +125,19 @@ namespace Metatool.Service
         public static readonly Key PageDown    = new Key(Keys.PageDown);
         public static readonly Key Next        = PageDown;
         public static readonly Key PrintScreen = new Key(Keys.PrintScreen);
+        public static readonly Key Print       = PrintScreen;
         public static readonly Key Snapshot    = PrintScreen;
         public static readonly Key Scroll      = new Key(Keys.Scroll);
+        public static readonly Key ScrollLock  = Scroll;
 
         /// <summary>
         /// Pause the current state or application (as appropriate).
         /// Do not use this value for the Pause button on media controllers. Use "MediaPause" instead.
         /// </summary>
         public static readonly Key Pause = new Key(Keys.Pause);
-
         public static readonly Key Break            = Pause;
         public static readonly Key Num              = new Key(Keys.NumLock);
+        public static readonly Key NumLock = Num;
         public static readonly Key Num0             = new Key(Keys.NumPad0);
         public static readonly Key Num1             = new Key(Keys.NumPad1);
         public static readonly Key Num2             = new Key(Keys.NumPad2);
@@ -240,24 +245,26 @@ namespace Metatool.Service
         public static readonly Key IMEAccept     = new Key(Keys.IMEAccept);
         public static readonly Key IMEModeChange = new Key(Keys.IMEModeChange);
 
-        public static readonly Key[] CommonChordKeys = new Key[] {LCtrl, RCtrl, CtrlKey, LShift, RShift, ShiftKey, LMenu, RMenu, Menu, LWin, RWin, Win };
+        public static readonly Key[] CommonChordKeys = new Key[]
+            {LCtrl, RCtrl, CtrlKey, LShift, RShift, ShiftKey, LMenu, RMenu, Menu, LWin, RWin, Win};
 
         public bool IsCommonChordKey()
         {
             return CommonChordKeys.Any(chord => this == chord);
         }
 
-         private static readonly IDictionary<string, Key> _all;
+        private static readonly IDictionary<string, Key> _all;
 
-         public static readonly IDictionary<string, Key> All= _all ??= typeof(Key)
-             .GetFields(BindingFlags.Static | BindingFlags.Public)
-             .Where(f => typeof(Key).IsAssignableFrom(f.FieldType)).ToDictionary(f=>f.Name.ToUpper(), fi => fi.GetValue(null) as Key);
+        public static readonly IDictionary<string, Key> All = _all ??= typeof(Key)
+            .GetFields(BindingFlags.Static | BindingFlags.Public)
+            .Where(f => typeof(Key).IsAssignableFrom(f.FieldType))
+            .ToDictionary(f => f.Name.ToUpper(), fi => fi.GetValue(null) as Key);
 
-         private static readonly IEnumerable<Key> _allKeys;
+        private static readonly IEnumerable<Key> _allKeys;
 
-         public static readonly IEnumerable<Key> AllKeys = _allKeys??=All.Values;
-         private static readonly IEnumerable<string> _allNames;
+        public static readonly  IEnumerable<Key>    AllKeys = _allKeys??=All.Values;
+        private static readonly IEnumerable<string> _allNames;
 
-         public static readonly IEnumerable<string> AllNames = _allNames ??= All.Keys;
+        public static readonly IEnumerable<string> AllNames = _allNames ??= All.Keys;
     }
 }

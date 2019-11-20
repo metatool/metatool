@@ -10,7 +10,7 @@
       "Keyboard61Package": {
         "HotKeys": {
           "ToggleCaps": {
-            "HotKey": "Caps + Tilde*",
+            "HotKey": "Caps + `*",
             "KeyEvent": "Down",
             "Description": "Toggle CapsLock"
           } 
@@ -108,7 +108,7 @@
             "Description": "Focus &Navigation Tree View"
           },
           "CopySelectedPath": {
-            "HotKey": "Caps + Pipe",
+            "HotKey": "Caps + \\",
             "KeyEvent": "Down",
             "Description": "Copy Selected Files Path"
           },
