@@ -130,94 +130,89 @@ namespace Metatool.MetaKeyboard
                     }
                 }.Start();
             });
-            software.KeyAliases["SW"].ToHotkey().Handled();
             hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).Register(e =>
             {
                 e.Handled = true;
                 _commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
             });
 
-        }
-
-        public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
-
-        private static readonly IHotkey softwareTrigger = (AK + Space).Handled();
-
-        public IKeyCommand OpenScreenRuler = (softwareTrigger, R).Down(
-            e =>
+            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Register(e =>
             {
                 e.Handled = true;
                 _commandRunner.RunWithCmd(Config.Current.Tools.Ruler);
-            }, null, "Screen &Ruler");
+            });
 
-        public IKeyCommand StartGifRecord = (softwareTrigger, G).Down(
-            e =>
+            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Register(async e =>
+            {
+                var exeName = "Inspect";
+
+                var processes = await
+                    _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName);
+
+                var process = processes.FirstOrDefault();
+
+                var hWnd = process?.MainWindowHandle;
+
+                if (hWnd != null)
+                {
+                    _windowManager.Show(hWnd.Value);
+                    return;
+                }
+
+                _commandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
+            });
+
+            hotKeys.StartNotepad.WithAliases(software.KeyAliases).Register(async e =>
+            {
+                e.Handled = true;
+                var exeName = "Notepad";
+
+                var notePads = await
+                    _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
+                        p => p.MainWindowTitle == "Untitled - Notepad");
+
+                var notePad = notePads.FirstOrDefault();
+
+                var hWnd = notePad?.MainWindowHandle;
+
+                if (hWnd != null)
+                {
+                    _windowManager.Show(hWnd.Value);
+                    return;
+                }
+
+                _commandRunner.RunWithCmd("Notepad");
+            });
+
+            hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).Register(async e =>
+            {
+                if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
+
+                e.Handled = true;
+
+                var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
+                if (string.IsNullOrEmpty(path))
+                {
+                    _commandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
+                    return;
+                }
+
+                Directory.CreateDirectory(path).EnumerateFiles("*.sln").Select(f => f.FullName).AsParallel().ForAll(s =>
+                {
+                    Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
+                        {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
+                });
+            });
+
+            hotKeys.StartGifRecord.WithAliases(software.KeyAliases).Register(e =>
             {
                 e.Handled = true;
                 _commandRunner.RunWithCmd(Config.Current.Tools.GifTool);
-            }, null, "&Gif Record ");
-
-        public IKeyCommand StartNotepad = (softwareTrigger, N).Down(async e =>
-        {
-            e.Handled = true;
-            var exeName = "Notepad";
-
-            var notePads = await
-                _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
-                    p => p.MainWindowTitle == "Untitled - Notepad");
-
-            var notePad = notePads.FirstOrDefault();
-
-            var hWnd = notePad?.MainWindowHandle;
-
-            if (hWnd != null)
-            {
-                _windowManager.Show(hWnd.Value);
-                return;
-            }
-
-            _commandRunner.RunWithCmd("Notepad");
-        }, null, "&Notepad");
-
-        public IKeyCommand StartVisualStudio = (softwareTrigger, V).Down(async e =>
-        {
-            if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
-
-            e.Handled = true;
-
-            var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
-            if (string.IsNullOrEmpty(path))
-            {
-                _commandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
-                return;
-            }
-
-            Directory.CreateDirectory(path).EnumerateFiles("*.sln").Select(f => f.FullName).AsParallel().ForAll(s =>
-            {
-                Process.Start(new ProcessStartInfo(Config.Current.Tools.VisualStudio)
-                    {UseShellExecute = true, Arguments = s, WorkingDirectory = path});
             });
-        }, null, "&VisualStudio");
 
-        public IKeyCommand StartInspect = (softwareTrigger, I).Down(async e =>
-        {
-            var exeName = "Inspect";
+        }
 
-            var processes = await
-                _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName);
-
-            var process = processes.FirstOrDefault();
-
-            var hWnd = process?.MainWindowHandle;
-
-            if (hWnd != null)
-            {
-                _windowManager.Show(hWnd.Value);
-                return;
-            }
-
-            _commandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
-        }, null, "&Inspect");
+        public IKeyCommand ToggleDictionary = (AK + D).MapOnHit(Shift + LAlt + D);
 
     }
 }

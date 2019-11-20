@@ -77,7 +77,11 @@ namespace Metatool.DataStructures
 
         protected override TrieNodeBase<TKey, TValue> GetOrCreateChild(TKey key)
         {
-            if (_children.TryGetValue(key, out var child)) return child;
+            if (_children.TryGetValue(key, out var child))
+            {
+                child.Key.TriggerKey.Handled = key.TriggerKey.Handled;
+                return child;
+            }
 
             child        = new TrieNode<TKey, TValue>(key);
             child.Parent = this;

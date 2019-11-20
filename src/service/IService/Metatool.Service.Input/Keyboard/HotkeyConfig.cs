@@ -20,7 +20,7 @@ namespace Metatool.Service
         {
             get
             {
-                var hotkey = Keyboard.ReplaceAlias(HotKey, _additionalAliasesDics);
+                var hotkey = Keyboard.ReplaceAlias(HotKey, _tempAliasesDics);
                 return Sequence.Parse(hotkey);
             }
         }
@@ -38,14 +38,14 @@ namespace Metatool.Service
         {
             if (Handled) HotKeyTrigger.Handled(KeyEvent);
             var trigger = Keyboard.Event(HotKeyTrigger, KeyEvent, StateTree);
-            var token   = trigger.Register(execute, canExecute, Description);
+                                    var token   = trigger.Register(execute, canExecute, Description);
             return token;
         }
 
-        private IDictionary<string, string>[] _additionalAliasesDics;
-        public HotkeyConfig WithAliases(params IDictionary<string, string>[] additionalAliasesDics)
+        private IDictionary<string, string>[] _tempAliasesDics;
+        public HotkeyConfig WithAliases(params IDictionary<string, string>[] tempAliasesDics)
         {
-            _additionalAliasesDics = additionalAliasesDics;
+            _tempAliasesDics = tempAliasesDics;
             return this;
         }
     }

@@ -71,7 +71,6 @@ namespace Metatool.Service
             return false;
         }
 
-        public ICombination ToCombination() => this;
 
         public override string ToString()
         {

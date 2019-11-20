@@ -68,6 +68,12 @@ namespace Metatool.MetaKeyboard
         public HotkeyConfig OpenCodeEditor { get; set; }
         public HotkeyConfig WebSearch { get; set; }
         public HotkeyConfig StartTaskExplorer { get; set; }
+        public HotkeyConfig OpenScreenRuler { get; set; }
+        public HotkeyConfig StartInspect { get; set; }
+        public HotkeyConfig StartNotepad { get; set; }
+        public HotkeyConfig StartVisualStudio { get; set; }
+        public HotkeyConfig StartGifRecord { get; set; }
+
     }
 
     [ToolConfig]

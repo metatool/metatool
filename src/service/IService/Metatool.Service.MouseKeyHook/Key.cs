@@ -10,7 +10,7 @@ namespace Metatool.Service
     /// https://www.w3.org/TR/uievents-key/
     /// </summary>
     // [DebuggerDisplay("{this}")]
-    public partial class Key : IComparable, IComparable<Key>, ISequenceUnit, ISequencable
+    public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, ISequencable
     {
         private SortedSet<Keys> _codes;
         private int             _val;
@@ -29,24 +29,35 @@ namespace Metatool.Service
         {
             Codes = new SortedSet<Keys>(keyCodes);
         }
+
         public Key(params Key[] keys)
         {
-            Codes = new SortedSet<Keys>(keys.SelectMany(k=>k.Codes));
+            Codes   = new SortedSet<Keys>(keys.SelectMany(k => k.Codes));
+            keys.Aggregate(Handled, (a, c)=>a |= c.Handled);
         }
 
         public static Key Parse(string str)
         {
+            var handled = KeyEvent.None;
             var keys = str.Split("|", StringSplitOptions.RemoveEmptyEntries).Select(s =>
             {
-                var keyName = s.Trim().ToUpper();
+                s = s.Trim();
+                if (s.EndsWith('*'))
+                {
+                    handled = KeyEvent.All;
+                    s       = s.TrimEnd('*').TrimEnd();
+                }
+
+                var keyName = s.ToUpper();
                 var r       = All.TryGetValue(keyName, out var key);
                 if (r) return key;
 
                 throw new Exception($"Could not parse Key {str}");
             }).ToArray();
 
-            return new Key(keys);
+            return new Key(keys) {Handled = handled};
         }
+
         public static bool TryParse(string str, out Key value)
         {
             try
@@ -56,7 +67,8 @@ namespace Metatool.Service
             }
             catch (Exception e)
             {
-                Services.CommonLogger?.LogError(e.Message + $"{Environment.NewLine} Please use the following Keys: {string.Join(",",AllNames)}");
+                Services.CommonLogger?.LogError(
+                    e.Message + $"{Environment.NewLine} Please use the following Keys: {string.Join(",", AllNames)}");
                 value = null;
                 return false;
             }
@@ -64,8 +76,7 @@ namespace Metatool.Service
 
         public override string ToString()
         {
-            return  $"{string.Join("|", Codes)}";
+            return $"{string.Join("|", Codes)}{(Handled !=KeyEvent.None ? "*" : "")}";
         }
-
     }
 }

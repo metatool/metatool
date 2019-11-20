@@ -16,6 +16,12 @@ namespace Metatool.Service{
             return this;
         }
 
+        public KeyEvent Handled
+        {
+            get => this.Last().TriggerKey.Handled;
+            set => this.Last().TriggerKey.Handled = value;
+        }
+
         public ISequence ToSequence() => this;
     }
 }

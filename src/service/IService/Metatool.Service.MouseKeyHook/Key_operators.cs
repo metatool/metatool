@@ -26,11 +26,6 @@ namespace Metatool.Service
             return new Combination(keyB, keyA);
         }
 
-        public ICombination ToCombination()
-        {
-            return (Combination) this;
-        }
-
         public static bool operator ==(Key keyA, Key keyB)
         {
             return object.Equals(keyB, keyA);

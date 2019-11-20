@@ -87,9 +87,34 @@
       },
       "SoftwarePackage": {
         "KeyAliases": {
-          "SW": "AK + Space" 
+          "SW": "AK + Space*" 
         },
         "HotKeys": {
+          "StartGifRecord": {
+            "HotKey": "SW, G",
+            "KeyEvent": "Down",
+            "Description": "&Gif Record"
+          },
+          "StartVisualStudio": {
+            "HotKey": "SW, V",
+            "KeyEvent": "Down",
+            "Description": "&VisualStudio"
+          },
+          "StartNotepad": {
+            "HotKey": "SW, N",
+            "KeyEvent": "Down",
+            "Description": "&Notepad"
+          },
+          "StartInspect": {
+            "HotKey": "SW, I",
+            "KeyEvent": "Down",
+            "Description": "&Inspect"
+          },
+          "OpenScreenRuler": {
+            "HotKey": "SW, R",
+            "KeyEvent": "Down",
+            "Description": "Screen &Ruler"
+          },
           "StartTaskExplorer": {
             "HotKey": "SW, T",
             "KeyEvent": "Down",

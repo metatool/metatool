@@ -82,14 +82,15 @@ namespace Metatool.Service
 
         // if the handler async run, this is needed.
         public static IHotkey Handled(this IHotkey hotkey,
-            KeyEvent keyEvent = KeyEvent.Down | KeyEvent.Up | KeyEvent.AllUp)
+            KeyEvent keyEvent = KeyEvent.All)
         {
-            if ((keyEvent & KeyEvent.Down) == KeyEvent.Down)
-                hotkey.Down(e => e.Handled = true);
-            if ((keyEvent & KeyEvent.Up) == KeyEvent.Up)
-                hotkey.Up(e => e.Handled = true);
-            if ((keyEvent & KeyEvent.AllUp) == KeyEvent.AllUp)
-                hotkey.AllUp(e => e.Handled = true);
+            hotkey.Handled = keyEvent;
+            // if ((keyEvent & KeyEvent.Down) == KeyEvent.Down)
+            //     hotkey.Down(e => e.Handled = true);
+            // if ((keyEvent & KeyEvent.Up) == KeyEvent.Up)
+            //     hotkey.Up(e => e.Handled = true);
+            // if ((keyEvent & KeyEvent.AllUp) == KeyEvent.AllUp)
+            //     hotkey.AllUp(e => e.Handled = true);
             return hotkey;
         }
 
