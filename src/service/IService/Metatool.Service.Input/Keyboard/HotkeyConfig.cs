@@ -7,7 +7,6 @@ namespace Metatool.Service
     public class HotkeyConfig
     {
         private static IKeyboard _keyboard;
-
         private static IKeyboard Keyboard =>
             _keyboard ??= Services.Get<IKeyboard>();
 

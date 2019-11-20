@@ -12,21 +12,22 @@ namespace ConsoleApp1
             ToggleKeys.CapsLock.AlwaysOff();
             SetupWinLock();
             RegisterCommands();
-            var conf    = config.CurrentValue;
-            var maps = conf.Keyboard61Package.KeyMaps;
+            var cfg  = config.CurrentValue.Keyboard61Package;
+            var maps = cfg.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
+            var hotKeys = cfg.HotKeys;
+
+            hotKeys.ToggleCaps.Event(e =>
+            {
+                e.Handled = true;
+                var state = ToggleKeys.CapsLock.State;
+                if (state == ToggleKeyState.AlwaysOff)
+                    ToggleKeys.CapsLock.AlwaysOn();
+                else if (state == ToggleKeyState.AlwaysOn)
+                    ToggleKeys.CapsLock.AlwaysOff();
+            });
         }
 
         public IKeyCommand Esc = Caps.MapOnHit(Key.Esc, e => !e.IsVirtual, false);
-
-        public IKeyCommand ToggleCaps = (Caps + Tilde).Down(e =>
-        {
-            e.Handled = true;
-            var state = ToggleKeys.CapsLock.State;
-            if (state == ToggleKeyState.AlwaysOff)
-                ToggleKeys.CapsLock.AlwaysOn();
-            else if (state == ToggleKeyState.AlwaysOn)
-                ToggleKeys.CapsLock.AlwaysOff();
-        }, null, "Toggle CapsLock");
     }
 }

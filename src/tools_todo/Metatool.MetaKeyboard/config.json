@@ -8,6 +8,13 @@
         }
       },
       "Keyboard61Package": {
+        "HotKeys": {
+          "ToggleCaps": {
+            "HotKey": "Caps + Tilde*",
+            "KeyEvent": "Down",
+            "Description": "Toggle CapsLock"
+          } 
+        },
         "KeyMaps": {
           // note: in user config.json
           // add: "source":"target",

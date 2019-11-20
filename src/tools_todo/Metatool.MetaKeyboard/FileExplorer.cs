@@ -9,27 +9,23 @@ namespace Metatool.MetaKeyboard
 {
     public class FileExplorer : CommandPackage
     {
-        private static IWindowManager _windowManager;
-        private static IFileExplorer  _fileExplorer;
 
         public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IConfig<Config> config)
         {
-            _windowManager = windowManager;
-            _fileExplorer  = fileExplorer;
             RegisterCommands();
             var hotKeys = config.CurrentValue.FileExplorerPackage.HotKeys;
             hotKeys.FocusItemsView.Event(e =>
             {
-                var listBoxEle   = _windowManager.CurrentWindow?.FirstDescendant(c => c.ByClassName("UIItemsView"));
+                var listBoxEle   = windowManager.CurrentWindow?.FirstDescendant(c => c.ByClassName("UIItemsView"));
                 var selectedItem = listBoxEle?.SelectedItems()?.FirstOrDefault();
                 if (selectedItem != null) selectedItem.SetFocus();
                 else listBoxEle.FirstChild(c => c.ByClassName("UIItem"))?.Select();
                 e.Handled = true;
-            }, _ => _windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
+            }, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
 
             hotKeys.FocusNavigationTreeView.Event(e =>
             {
-                var winEle       = _windowManager.CurrentWindow?.FirstDescendant(cf => cf.ByClassName("SysTreeView32"));
+                var winEle       = windowManager.CurrentWindow?.FirstDescendant(cf => cf.ByClassName("SysTreeView32"));
                 var selectedItem = winEle?.SelectedItems().FirstOrDefault();
                 if (selectedItem != null)
                     selectedItem.SetFocus();
@@ -37,23 +33,23 @@ namespace Metatool.MetaKeyboard
                     winEle?.FirstDecendent(c => c.ByControlType(ControlType.TreeItem))?.Select();
 
                 e.Handled = true;
-            }, _ => _windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
+            }, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
 
             hotKeys.CopySelectedPath.Event(async e =>
             {
-                var handle = _windowManager.CurrentWindow.Handle;
-                var paths  = await _fileExplorer.GetSelectedPath(handle);
+                var handle = windowManager.CurrentWindow.Handle;
+                var paths  = await fileExplorer.GetSelectedPath(handle);
                 var r      = string.Join(';', paths);
                 System.Windows.Clipboard.SetText(r);
                 e.Handled = true;
-            }, _ => _windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
+            }, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
 
             hotKeys.NewFile.Event(async e =>
             {
                 e.Handled = true;
                 const string newFileName = "NewFile";
-                var          handle      = _windowManager.CurrentWindow.Handle;
-                var          fullPath    = await _fileExplorer.Path(handle);
+                var          handle      = windowManager.CurrentWindow.Handle;
+                var          fullPath    = await fileExplorer.Path(handle);
                 var          fileName    = newFileName;
                 var          i           = 1;
                 while (File.Exists(fullPath + "\\" + fileName))
@@ -64,13 +60,13 @@ namespace Metatool.MetaKeyboard
                 var file = File.Create(fullPath + "\\" + fileName);
                 file.Close();
                 var keyboard = Services.Get<IKeyboard>();
-                _fileExplorer.Select(handle, new[] {fileName});
+                fileExplorer.Select(handle, new[] {fileName});
                 keyboard.Type(Keys.F2);
-            }, _ => _windowManager.CurrentWindow.IsExplorer);
+            }, _ => windowManager.CurrentWindow.IsExplorer);
 
             hotKeys.ShowDesktopFolder.Event(e =>
             {
-                _fileExplorer.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                fileExplorer.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 e.Handled = true;
             });
         }

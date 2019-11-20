@@ -16,8 +16,14 @@ namespace Metatool.MetaKeyboard
 
     public class Keyboard61Package
     {
-
+        public Keyboard61HotKeys HotKeys { get; set; }
         public Dictionary<string,string> KeyMaps { get; set; }
+    }
+
+    public class Keyboard61HotKeys
+    {
+        public HotkeyConfig ToggleCaps { get; set; }
+
     }
 
     public class KeyboardMousePackage
