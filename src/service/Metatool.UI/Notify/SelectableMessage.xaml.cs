@@ -44,9 +44,13 @@ namespace Metatool.Utils.Notify
                 else
                 {
                     Close();
+                    var virtualkeyCode = KeyInterop.VirtualKeyFromKey(e.Key);
+                    CloseViaKey?.Invoke(virtualkeyCode);
                 }
             };
         }
+
+        public event Action<int> CloseViaKey;
 
         public TipItem SelectedItem { get; set; }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Automation;
-using static Metatool.Service.Key;
 using Metatool.Service;
 using Point = System.Drawing.Point;
 

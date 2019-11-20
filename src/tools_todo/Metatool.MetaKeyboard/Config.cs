@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Metatool.Service;
-using Metatool.UI;
 
 namespace Metatool.MetaKeyboard
 {
@@ -98,6 +97,11 @@ namespace Metatool.MetaKeyboard
 
     }
 
+    public class HotStringPackage
+    {
+        public IDictionary<string, string[]> HotStrings { get; set; }
+    }
+
     public class SoftwareHotKeys
     {
         public HotkeyConfig DoublePinyinSwitch { get; set; }
@@ -123,6 +127,7 @@ namespace Metatool.MetaKeyboard
         public FileExplorerPackage FileExplorerPackage { get; set; }
         public KeyboardMousePackage KeyboardMousePackage { get; set; }
 
+        public HotStringPackage HotStringPackage { get; set; }
         public SoftwarePackage SoftwarePackage { get; set; }
 
         public Settings  Settings  { get; set; }

@@ -2,14 +2,21 @@
 
 namespace Metatool.MetaKeyboard
 {
-    public class HostStrings : CommandPackage
+    public class HotStrings : CommandPackage
     {
-        public HostStrings()
+        public HotStrings(IConfig<Config> config)
         {
             RegisterCommands();
+            var hotStrings = config.CurrentValue.HotStringPackage.HotStrings;
+            foreach (var hotStr in hotStrings)
+            {
+                var key = hotStr.Key;
+
+                foreach (var str in hotStr.Value)
+                {
+                    key.HotString(str);
+                }
+            }
         }
-        public IKeyCommand Tks = "tks".HotString("thank you very much");
-        public IKeyCommand hh  = "hh".HotString("0哈哈😊");
-        public IKeyCommand hh1 = "hh".HotString("1😊SSSS");
     }
 }

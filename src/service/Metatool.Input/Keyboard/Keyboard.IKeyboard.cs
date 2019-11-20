@@ -137,6 +137,9 @@ namespace Metatool.Input
                                         InputSimu.Inst.Keyboard.Type(target);
                                     }
                                 ))
+                        }, k =>
+                        {
+                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)k);
                         });
                     }
                 );

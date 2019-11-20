@@ -25,6 +25,6 @@ namespace Metatool.Service
 
         void CloseKeysTip();
 
-        MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips);
+        MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips, Action<int> closeViaKey=null);
     }
 }

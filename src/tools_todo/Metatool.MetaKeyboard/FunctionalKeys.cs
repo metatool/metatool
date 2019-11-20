@@ -10,14 +10,14 @@ namespace Metatool.MetaKeyboard
             RegisterCommands();
         }
 
-        public IKeyCommand CloseMetaKeyCommand = (LCtrl + LWin + LAlt + C).Down(e =>
+        public IKeyCommand CloseMetaKeyCommand = (LCtrl + LWin + C).Down(e =>
         {
             var notify = Services.Get<INotify>();
             notify.ShowMessage("MetaKeyBoard Closing...");
             Context.Exit(0);
         }, null, "Close");
 
-        public IKeyCommand RestartMetatoolAdmin = (LCtrl + LWin + LAlt + X).Down(e =>
+        public IKeyCommand RestartMetatoolAdmin = (LCtrl + LWin + X).Down(e =>
         {
             var notify = Services.Get<INotify>();
             notify.ShowMessage("MetaKeyBoard Restarting...");

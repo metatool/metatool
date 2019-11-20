@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Markup;
-using ConsoleApp1;
+﻿using ConsoleApp1;
 using Metatool.Service;
-using Microsoft.Extensions.Logging;
 
 namespace Metatool.MetaKeyboard
 {
@@ -18,7 +14,7 @@ namespace Metatool.MetaKeyboard
             var mouse        = Services.GetOrCreate<KeyboardMouse>();
             var fun          = new FunctionalKeys();
             var fileExplorer = Services.GetOrCreate<FileExplorer>();
-            var hotstrings   = new HostStrings();
+            var hotstrings   = Services.GetOrCreate<HotStrings>();
             var software     = Services.GetOrCreate<Software>();
             return base.OnLoaded();
         }

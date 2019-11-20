@@ -124,7 +124,7 @@ namespace Metatool.UI
         private  ObservableCollection<TipItem> selectActions;
         public MessageToken<TipItem> SelectionToken;
 
-        public MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips)
+        public MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips, Action<int> closeViaKey=null)
         {
             var valueTuples = tips.ToArray();
             var description =
@@ -148,6 +148,7 @@ namespace Metatool.UI
             {
                 selectActions = new ObservableCollection<TipItem>(description);
                 var b = new SelectableMessage();
+                b.CloseViaKey += closeViaKey;
                 return SelectionToken = ShowMessage(b, selectActions, 8888, NotifyPosition.Caret);
             }
             else

@@ -1,7 +1,12 @@
 ﻿{
-
   "Tools": {
     "Metatool.MetaKeyboard": {
+      "HotStringPackage": {
+        "HotStrings": {
+          "tks": [ "thank you very much" ],
+          "hh": [ "哈哈😊", "ha ha!" ]
+       }
+      },
       "Keyboard61Package": {
         "KeyMaps": {
           // note: in user config.json
