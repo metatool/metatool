@@ -3,9 +3,9 @@
     "Metatool.MetaKeyboard": {
       "HotStringPackage": {
         "HotStrings": {
-          "tks": [ "thank you very much" ],
-          "hh": [ "哈哈😊", "ha ha!" ]
-       }
+          "tks": ["thank you very much"],
+          "hh": ["哈哈😊", "ha ha!"]
+        }
       },
       "Keyboard61Package": {
         "KeyMaps": {
@@ -138,7 +138,6 @@
           "Inspect": ".\\software\\inspect.lnk"
         },
         "HotKeys": {
-
           "StartGifRecord": {
             "HotKey": "SW, G",
             "KeyEvent": "Down",
