@@ -118,7 +118,6 @@ namespace Metatool.MetaKeyboard
     [ToolConfig]
     public class Config
     {
-        public IDictionary<string, string> KeyAliases { get; set; }
         public Keyboard61Package Keyboard61Package { get; set; }
 
         public FileExplorerPackage FileExplorerPackage { get; set; }

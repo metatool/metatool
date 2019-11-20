@@ -1,14 +1,7 @@
 ﻿{
+
   "Tools": {
     "Metatool.MetaKeyboard": {
-      "KeyAliases": {
-        // global key
-        "GK": "Space",
-        // context key
-        "CK": "Caps|Enter",
-        // apps key
-        "AK": "Apps|Tab"
-      },
       "Keyboard61Package": {
         "KeyMaps": {
           // note: in user config.json
@@ -206,7 +199,7 @@
       "Settings": {
         "RemoteDesktopEnable": false
       },
-     
+
       "Registers": {
         "WorkDir": "M:\\Workspace"
       }

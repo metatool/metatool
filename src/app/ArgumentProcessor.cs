@@ -42,6 +42,8 @@ namespace Metaseed.Metatool
                 // without command
                 var application   = new App();
                 Context.Dispatcher = application.Dispatcher;
+                var config = Services.Get<MetatoolConfig>();
+
                 var pluginManager = Services.GetOrCreate<PluginManager>();
                 pluginManager.InitPlugins();
                 application.RunApp();

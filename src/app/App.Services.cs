@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Metaseed.Metatool.Service;
@@ -46,8 +47,11 @@ namespace Metaseed.Metatool
                 .AddSingleton<INotify, Notify>()
                 .AddSingleton<IScreenHint, ScreenHint>()
                 .AddMetatoolUtils()
+                .Configure<Config>(configuration)
+                .AddSingleton<MetatoolConfig>()
                 // .AddSingleton<IServiceCollection>(services)
                 .AddSingleton<IConfiguration>(configuration);
+
         }
 
         internal static ServiceProvider InitServices()
@@ -71,5 +75,7 @@ namespace Metaseed.Metatool
             Services.SetDefaultProvider(provider);
             return provider;
         }
+
+
     }
 }
