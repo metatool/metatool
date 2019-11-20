@@ -12,36 +12,26 @@ namespace Metatool.MetaKeyboard
 {
     public sealed class Software : CommandPackage
     {
-        private static ICommandRunner _commandRunner;
-        private static INotify _notify;
-        private static IWindowManager _windowManager;
-        private static IVirtualDesktopManager _virtualDesktopManager;
-        private static IFileExplorer _fileExplorer;
 
         public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager, IFileExplorer fileExplorer, IConfig<Config> config)
         {
-            _commandRunner = commandRunner;
-            _virtualDesktopManager = virtualDesktopManager;
-            _fileExplorer = fileExplorer;
-            _windowManager = windowManager;
-            _notify = notify;
             RegisterCommands();
             var software = config.CurrentValue.SoftwarePackage;
             var hotKeys = software.HotKeys;
             hotKeys.DoublePinyinSwitch.Register(e =>
             {
                 e.Handled = true;
-                const string keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
+                const string keyName   = @"HKEYCURRENTUSER\Software\Microsoft\InputMethod\Settings\CHS";
                 const string valueName = "Enable Double Pinyin";
                 var          k         = (int) Registry.GetValue(keyName, valueName, -1);
                 if (k == 0)
                 {
-                    _notify.ShowMessage("Double Pinyin Enabled");
+                    notify.ShowMessage("Double Pinyin Enabled");
                     Registry.SetValue(keyName, valueName, 1);
                 }
                 else if (k == 1)
                 {
-                    _notify.ShowMessage("Full Pinyin Enabled");
+                    notify.ShowMessage("Full Pinyin Enabled");
                     Registry.SetValue(keyName, valueName, 0);
                 }
             });
@@ -51,20 +41,20 @@ namespace Metatool.MetaKeyboard
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Shift);
 
-                var c = _windowManager.CurrentWindow.Class;
+                var c = windowManager.CurrentWindow.Class;
                 var arg = shiftDown
                     ? "-newwindow"
                     : "-toggle-window";
 
                 if ("CabinetWClass" == c)
                 {
-                    var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
-                    _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path",
+                    var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
+                    commandRunner.RunWithCmd(commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg, "-path",
                         path));
                     return;
                 }
 
-                _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
+                commandRunner.RunWithCmd(commandRunner.NormalizeCmd(Config.Current.Tools.Everything, arg));
             });
 
             hotKeys.OpenTerminal.Register(async e =>
@@ -72,35 +62,35 @@ namespace Metatool.MetaKeyboard
                 e.Handled = true;
                 var    shiftDown = e.KeyboardState.IsDown(Shift);
                 string path;
-                var    c = _windowManager.CurrentWindow.Class;
+                var    c = windowManager.CurrentWindow.Class;
                 if ("CabinetWClass" != c)
                     path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 else
-                    path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
-                if (shiftDown) _commandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
-                else _commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
+                    path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
+                if (shiftDown) commandRunner.RunWithCmd(Config.Current.Tools.Terminal, true);
+                else commandRunner.RunWithExplorer(Config.Current.Tools.Terminal);
             });
 
             hotKeys.OpenCodeEditor.Register(async e =>
             {
-                if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
                 {
-                    _commandRunner.RunWithExplorer(Config.Current.Tools.Code);
+                    commandRunner.RunWithExplorer(Config.Current.Tools.Code);
                     return;
                 }
 
-                var paths = await _fileExplorer.GetSelectedPath(_windowManager.CurrentWindow.Handle);
+                var paths = await fileExplorer.GetSelectedPath(windowManager.CurrentWindow.Handle);
 
                 if (paths.Length == 0)
                 {
-                    var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
-                    _commandRunner.RunWithExplorer(Config.Current.Tools.Code, path);
+                    var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
+                    commandRunner.RunWithExplorer(Config.Current.Tools.Code, path);
                     return;
                 }
 
                 foreach (var path in paths)
                 {
-                    _commandRunner.RunWithCmd(_commandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
+                    commandRunner.RunWithCmd(commandRunner.NormalizeCmd(Config.Current.Tools.Code, path));
                 }
             });
             hotKeys.WebSearch.Register(async e =>
@@ -114,10 +104,10 @@ namespace Metatool.MetaKeyboard
 
                 var defaultPath = Browser.DefaultPath;
                 var exeName     = Path.GetFileNameWithoutExtension(defaultPath);
-                var process     = await _virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
+                var process     = await virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
                 if (process == null)
                 {
-                    _commandRunner.RunAsNormalUser(defaultPath, url, "--new-window", "--new-instance");
+                    commandRunner.RunAsNormalUser(defaultPath, url, "--new-window", "--new-instance");
                     return;
                 }
 
@@ -133,13 +123,13 @@ namespace Metatool.MetaKeyboard
             hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).Register(e =>
             {
                 e.Handled = true;
-                _commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
+                commandRunner.RunWithCmd(Config.Current.Tools.ProcessExplorer);
             });
 
             hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Register(e =>
             {
                 e.Handled = true;
-                _commandRunner.RunWithCmd(Config.Current.Tools.Ruler);
+                commandRunner.RunWithCmd(Config.Current.Tools.Ruler);
             });
 
             hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Register(async e =>
@@ -147,7 +137,7 @@ namespace Metatool.MetaKeyboard
                 var exeName = "Inspect";
 
                 var processes = await
-                    _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName);
+                    virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName);
 
                 var process = processes.FirstOrDefault();
 
@@ -155,11 +145,11 @@ namespace Metatool.MetaKeyboard
 
                 if (hWnd != null)
                 {
-                    _windowManager.Show(hWnd.Value);
+                    windowManager.Show(hWnd.Value);
                     return;
                 }
 
-                _commandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
+                commandRunner.RunWithExplorer(Config.Current.Tools.Inspect);
             });
 
             hotKeys.StartNotepad.WithAliases(software.KeyAliases).Register(async e =>
@@ -168,7 +158,7 @@ namespace Metatool.MetaKeyboard
                 var exeName = "Notepad";
 
                 var notePads = await
-                    _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
+                    virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
                         p => p.MainWindowTitle == "Untitled - Notepad");
 
                 var notePad = notePads.FirstOrDefault();
@@ -177,23 +167,23 @@ namespace Metatool.MetaKeyboard
 
                 if (hWnd != null)
                 {
-                    _windowManager.Show(hWnd.Value);
+                    windowManager.Show(hWnd.Value);
                     return;
                 }
 
-                _commandRunner.RunWithCmd("Notepad");
+                commandRunner.RunWithCmd("Notepad");
             });
 
             hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).Register(async e =>
             {
-                if (!_windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
+                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
 
                 e.Handled = true;
 
-                var path = await _fileExplorer.Path(_windowManager.CurrentWindow.Handle);
+                var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
                 if (string.IsNullOrEmpty(path))
                 {
-                    _commandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
+                    commandRunner.RunWithExplorer(Config.Current.Tools.VisualStudio);
                     return;
                 }
 
@@ -207,7 +197,7 @@ namespace Metatool.MetaKeyboard
             hotKeys.StartGifRecord.WithAliases(software.KeyAliases).Register(e =>
             {
                 e.Handled = true;
-                _commandRunner.RunWithCmd(Config.Current.Tools.GifTool);
+                commandRunner.RunWithCmd(Config.Current.Tools.GifTool);
             });
 
         }
