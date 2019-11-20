@@ -12,7 +12,7 @@ namespace ConsoleApp1
             ToggleKeys.CapsLock.AlwaysOff();
             SetupWinLock();
             RegisterCommands();
-            var conf    = Config.Current;
+            var conf    = config.CurrentValue;
             var maps = conf.Keyboard61Package.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
         }

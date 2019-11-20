@@ -38,7 +38,7 @@ namespace Metatool.MetaKeyboard
 
     }
 
-    public class Tools
+    public class SoftwarePaths
     {
         public string Everything            { get; set; }
         public string GifTool               { get; set; }
@@ -65,6 +65,27 @@ namespace Metatool.MetaKeyboard
     {
         public IDictionary<string,string> KeyAliases { get; set; }
         public SoftwareHotKeys HotKeys { get; set; }
+        private SoftwarePaths _softwarePaths;
+
+        public SoftwarePaths SoftwarePaths
+        {
+            get => _softwarePaths;
+            set
+            {
+                var baseDir = Context.ToolDir<KeyboardTool>();
+
+                foreach (var info in value.GetType().GetProperties())
+                {
+                    if (info.GetValue(value) is string v && v.StartsWith('.'))
+                    {
+                        var abs = Path.GetFullPath(Path.Combine(baseDir, v));
+                        info.SetValue(value, abs);
+                    }
+                }
+
+                _softwarePaths = value;
+            }
+        }
     }
 
     public class FileExplorerHotKeys
@@ -97,15 +118,6 @@ namespace Metatool.MetaKeyboard
     [ToolConfig]
     public class Config
     {
-        private static Config _config;
-        private Tools _tools;
-
-        public static Config Current
-        {
-            internal set => _config = value;
-            get => _config;
-        }
-
         public IDictionary<string, string> KeyAliases { get; set; }
         public Keyboard61Package Keyboard61Package { get; set; }
 
@@ -115,26 +127,6 @@ namespace Metatool.MetaKeyboard
         public SoftwarePackage SoftwarePackage { get; set; }
 
         public Settings  Settings  { get; set; }
-
-        public Tools Tools
-        {
-            get => _tools;
-            set
-            {
-                var baseDir = Context.ToolDir<KeyboardTool>();
-
-                foreach (var info in value.GetType().GetProperties())
-                {
-                    if (info.GetValue(value) is string v && v.StartsWith('.'))
-                    {
-                        var abs = Path.GetFullPath(Path.Combine(baseDir, v));
-                        info.SetValue(value, abs);
-                    }
-                }
-
-                _tools = value;
-            }
-        }
 
         public Registers Registers { get; set; }
     }

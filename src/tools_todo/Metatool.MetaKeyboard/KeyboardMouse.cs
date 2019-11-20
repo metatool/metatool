@@ -12,13 +12,13 @@ namespace Metatool.MetaKeyboard
         private readonly IMouse         _mouse;
         private static   IWindowManager _windowManager;
 
-        public KeyboardMouse(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard)
+        public KeyboardMouse(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard, IConfig<Config> config)
         {
             _windowManager = windowManager;
             _mouse = mouse;
 
             RegisterCommands();
-            var conf = Config.Current;
+            var conf = config.CurrentValue;
             var maps = conf.KeyboardMousePackage.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
 
