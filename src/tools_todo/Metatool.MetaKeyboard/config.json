@@ -53,29 +53,29 @@
         },
         "HotKeys": {
           "MouseToFocus": {
-            "HotKey": "GK + F",
+            "HotKey": "GK + F*",
             "KeyEvent": "Down",
             "Description": "Focus Mouse To Active Control"
           },
           "MouseScrollUp": {
-            "HotKey": "GK + W",
+            "HotKey": "GK + W*",
             "KeyEvent": "Down",
             "Description": "Scroll Up with Mouse"
           },
           "MouseScrollDown": {
-            "HotKey": "GK + S",
+            "HotKey": "GK + S*",
             "KeyEvent": "Down",
             "Description": "Scroll Down with Mouse"
           },
           "MouseLeftClick": {
-            "HotKey": "GK + S",
+            "HotKey": "GK + C*",
             "KeyEvent": "Down",
-            "Description": "Scroll Down with Mouse"
+            "Description": "Mouse Left Click"
           },
           "MouseLeftClickLast": {
-            "HotKey": "GK + S",
+            "HotKey": "GK + X*",
             "KeyEvent": "Down",
-            "Description": "Scroll Down with Mouse"
+            "Description": "Mouse Left Click via Last Hint"
           }
 
         }
