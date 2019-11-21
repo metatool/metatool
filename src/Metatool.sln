@@ -103,7 +103,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.UI", "service\Meta
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.MouseKeyHook", "lib\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj", "{033580A1-96B1-400E-84F1-28D1954C6F38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Utils", "service\Metatool.Utils\Metatool.Utils.csproj", "{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Utils", "service\Metatool.Utils\Metatool.Utils.csproj", "{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.InputTests", "service\Metatool.InputTests\Metatool.InputTests.csproj", "{CA487117-379B-406C-A627-425D64BF75A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -427,6 +429,18 @@ Global
 		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|x64.Build.0 = Release|Any CPU
 		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{F74016DB-2D0C-4E2D-A696-6A0CD70499D1}.Release|x86.Build.0 = Release|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Release|x64.Build.0 = Release|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA487117-379B-406C-A627-425D64BF75A9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

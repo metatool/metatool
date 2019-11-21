@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -315,9 +316,19 @@ namespace Metatool.Input
                     }
                 }
 
+
+            string replaceComma(string str)
+            {
+                const string comma = "Comma";
+                str =Regex.Replace(str, @"^\s*,\s*$", comma);
+                str = Regex.Replace(str, @"\+\s*,", $"+ {comma}");
+                str = Regex.Replace(str, @",\s*,", $", {comma}");
+                return str;
+            }
             foreach (var alias in aliases.Reverse())
             {
-                hotkey = hotkey.Replace(alias.Key, alias.Value);
+                hotkey = replaceComma(hotkey);
+                hotkey = Regex.Replace(hotkey, @$"(?:(?<=[\s,+])|^){Regex.Escape(alias.Key)}(?:(?=[\s,+*])|$)", alias.Value);
             }
 
             return hotkey;

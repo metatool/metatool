@@ -59,8 +59,8 @@
       },
       "KeyboardMousePackage": {
         "KeyMaps": {
-          "GK + OpenBrackets": "LButton",
-          "GK + CloseBrackets": "RButton"
+          "GK + [": "LButton",
+          "GK + ]": "RButton"
 
         },
         "HotKeys": {

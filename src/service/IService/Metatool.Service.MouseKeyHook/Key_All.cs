@@ -41,6 +41,7 @@ namespace Metatool.Service
         public static readonly Key Back          = new Key(Keys.Back);
         public static readonly Key Backspace     = Back;
         public static readonly Key Space         = new Key(Keys.Space);
+        public static readonly Key SpaceBar      = Space;
         public static readonly Key A             = new Key(Keys.A);
         public static readonly Key B             = new Key(Keys.B);
         public static readonly Key C             = new Key(Keys.C);
@@ -125,7 +126,6 @@ namespace Metatool.Service
         public static readonly Key PageDown    = new Key(Keys.PageDown);
         public static readonly Key Next        = PageDown;
         public static readonly Key PrintScreen = new Key(Keys.PrintScreen);
-        public static readonly Key Print       = PrintScreen;
         public static readonly Key Snapshot    = PrintScreen;
         public static readonly Key Scroll      = new Key(Keys.Scroll);
         public static readonly Key ScrollLock  = Scroll;
@@ -135,9 +135,10 @@ namespace Metatool.Service
         /// Do not use this value for the Pause button on media controllers. Use "MediaPause" instead.
         /// </summary>
         public static readonly Key Pause = new Key(Keys.Pause);
+
         public static readonly Key Break            = Pause;
         public static readonly Key Num              = new Key(Keys.NumLock);
-        public static readonly Key NumLock = Num;
+        public static readonly Key NumLock          = Num;
         public static readonly Key Num0             = new Key(Keys.NumPad0);
         public static readonly Key Num1             = new Key(Keys.NumPad1);
         public static readonly Key Num2             = new Key(Keys.NumPad2);
