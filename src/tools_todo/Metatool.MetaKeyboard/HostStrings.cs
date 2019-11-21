@@ -8,11 +8,9 @@ namespace Metatool.MetaKeyboard
         {
             RegisterCommands();
             var hotStrings = config.CurrentValue.HotStringPackage.HotStrings;
-            foreach (var hotStr in hotStrings)
+            foreach (var (key, strings) in hotStrings)
             {
-                var key = hotStr.Key;
-
-                foreach (var str in hotStr.Value)
+                foreach (var str in strings)
                 {
                     key.HotString(str);
                 }
