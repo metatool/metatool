@@ -259,7 +259,7 @@ namespace Metatool.Service
         public static readonly IDictionary<string, Key> All = _all ??= typeof(Key)
             .GetFields(BindingFlags.Static | BindingFlags.Public)
             .Where(f => typeof(Key).IsAssignableFrom(f.FieldType))
-            .ToDictionary(f => f.Name.ToUpper(), fi => fi.GetValue(null) as Key);
+            .ToDictionary(f => f.Name, fi => fi.GetValue(null) as Key);
 
         private static readonly IEnumerable<Key> _allKeys;
 

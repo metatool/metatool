@@ -42,14 +42,12 @@ namespace Metatool.Service
             var keys = str.Split("|", StringSplitOptions.RemoveEmptyEntries).Select(s =>
             {
                 s = s.Trim();
-                if (s.EndsWith('*'))
+                if (s.EndsWith('*')) // todo: *{Up&Down} only mark Up and Down event handled
                 {
                     handled = KeyEvent.All;
                     s       = s.TrimEnd('*').TrimEnd();
                 }
-
-                var keyName = s.ToUpper();
-                var r       = All.TryGetValue(keyName, out var key);
+                var r       = All.TryGetValue(s, out var key);
                 if (r) return key;
 
                 throw new Exception($"Could not parse Key {str}");
@@ -76,7 +74,7 @@ namespace Metatool.Service
 
         public override string ToString()
         {
-            return $"{string.Join("|", Codes)}{(Handled !=KeyEvent.None ? "*" : "")}";
+            return $"{string.Join("|", Codes)}{(Handled !=KeyEvent.None ? $"*{{{Handled.ToString()}}}" : "")}";
         }
     }
 }

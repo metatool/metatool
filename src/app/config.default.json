@@ -18,7 +18,7 @@
     "\\": "Pipe",
     ";": "SemiColon",
     "'": "Quotes",
-    //",": "Comma",
+    //",": "Comma", is handled internally
     ".": "Period",
     "/": "Slash"
   },
