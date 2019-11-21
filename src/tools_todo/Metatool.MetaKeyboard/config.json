@@ -11,7 +11,6 @@
         "HotKeys": {
           "ToggleCaps": {
             "HotKey": "Caps + `*",
-            "KeyEvent": "Down",
             "Description": "Toggle CapsLock"
           } 
         },
@@ -66,27 +65,22 @@
         "HotKeys": {
           "MouseToFocus": {
             "HotKey": "GK + F*", // * behind the trigger key to mark all KeyEvent handled
-            "KeyEvent": "Down",
             "Description": "Focus Mouse To Active Control"
           },
           "MouseScrollUp": {
             "HotKey": "GK + W*",
-            "KeyEvent": "Down",
             "Description": "Scroll Up with Mouse"
           },
           "MouseScrollDown": {
             "HotKey": "GK + S*",
-            "KeyEvent": "Down",
             "Description": "Scroll Down with Mouse"
           },
           "MouseLeftClick": {
             "HotKey": "GK + C*",
-            "KeyEvent": "Down",
             "Description": "Mouse Left Click"
           },
           "MouseLeftClickLast": {
             "HotKey": "GK + X*",
-            "KeyEvent": "Down",
             "Description": "Mouse Left Click via Last Hint"
           }
 
@@ -99,27 +93,23 @@
             // "Enabled": false, to disable it
             // "StateTree": "Default", "Map"...
             "HotKey": "LWin + F",
-            "KeyEvent": "Down",
+            // "KeyEvent":  "Down", // default is Down
             "Description": "Focus &File Items View"
           },
           "FocusNavigationTreeView": {
             "HotKey": "LWin + N",
-            "KeyEvent": "Down",
             "Description": "Focus &Navigation Tree View"
           },
           "CopySelectedPath": {
             "HotKey": "Caps + \\",
-            "KeyEvent": "Down",
             "Description": "Copy Selected Files Path"
           },
           "NewFile": {
             "HotKey": "Ctrl + Alt + N",
-            "KeyEvent": "Down",
             "Description": "&New File"
           },
           "ShowDesktopFolder": {
             "HotKey": "LWin + D",
-            "KeyEvent": "Down",
             "Description": "Show &Desktop Folder"
           }
         }
@@ -147,62 +137,50 @@
         "HotKeys": {
           "StartGifRecord": {
             "HotKey": "SW, G",
-            "KeyEvent": "Down",
             "Description": "&Gif Record"
           },
           "StartVisualStudio": {
             "HotKey": "SW, V",
-            "KeyEvent": "Down",
             "Description": "&VisualStudio"
           },
           "StartNotepad": {
             "HotKey": "SW, N",
-            "KeyEvent": "Down",
             "Description": "&Notepad"
           },
           "StartInspect": {
             "HotKey": "SW, I",
-            "KeyEvent": "Down",
             "Description": "&Inspect"
           },
           "OpenScreenRuler": {
             "HotKey": "SW, R",
-            "KeyEvent": "Down",
             "Description": "Screen &Ruler"
           },
           "StartTaskExplorer": {
             "HotKey": "SW, T",
-            "KeyEvent": "Down",
             "Description": "&Task Explorer"
           },
           "DoublePinyinSwitch": {
             "HotKey": "Pipe + P",
-            "KeyEvent": "Down",
             "Description": "Toggle Double &Pinyin(Microsoft)"
           },
           "ToggleDictionary": {
             "HotKey": "AK + D",
-            "KeyEvent": "Down",
             "Description": "Toggle &Dictionary"
           },
           "Find": {
             "HotKey": "AK + F",
-            "KeyEvent": "Down",
             "Description": "&Find with Everything"
           },
           "OpenTerminal": {
             "HotKey": "AK + T",
-            "KeyEvent": "Down",
             "Description": "Open &Terminal"
           },
           "OpenCodeEditor": {
             "HotKey": "AK + C",
-            "KeyEvent": "Down",
             "Description": "Open &Code Editor"
           },
           "WebSearch": {
             "HotKey": "AK + W",
-            "KeyEvent": "Down",
             "Description": "&Web Search(Alt: second)"
           }
         }

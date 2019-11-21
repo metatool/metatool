@@ -26,7 +26,7 @@ namespace Metatool.Service
 
         public string HotKey { get; set; }
 
-        public KeyEvent KeyEvent    { get; set; }
+        public KeyEvent KeyEvent { get; set; } = KeyEvent.Down;
         public string   Description { get; set; }
         public string   StateTree   { get; set; } = KeyStateTrees.Default;
         public bool     Enabled     { get; set; } = true;
