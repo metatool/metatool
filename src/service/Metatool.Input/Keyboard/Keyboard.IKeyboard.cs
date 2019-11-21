@@ -44,12 +44,6 @@ namespace Metatool.Input
         {
             return Event(hotkey, KeyEvent.Up, stateTree);
         }
-
-        public IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
-        {
-            return Event(hotkey, KeyEvent.AllUp, stateTree);
-        }
-
         public IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
             var trigger = new KeyboardCommandTrigger();
@@ -59,9 +53,19 @@ namespace Metatool.Input
             return trigger;
         }
 
+        public IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+        {
+            return Event(hotkey, KeyEvent.AllUp, stateTree);
+        }
+
         public IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent,
             string stateTree = KeyStateTrees.Default)
         {
+            if (keyEvent == KeyEvent.Hit)
+            {
+                return Hit(hotkey, stateTree);
+            }
+
             var sequence = hotkey switch
             {
                 ISequenceUnit sequenceUnit => new List<ICombination>() {sequenceUnit.ToCombination().ToCombination()},
@@ -74,51 +78,6 @@ namespace Metatool.Input
             trigger._metaKey = metaKey;
             return trigger;
         }
-
-        public IKeyCommand HardMap(IHotkey source, ICombination target,
-            Predicate<IKeyEventArgs> predicate = null)
-        {
-            var handled = false;
-            return new KeyCommandTokens()
-            {
-                source.Down(e =>
-                {
-                    handled            = true;
-                    e.Handled          = true;
-                    e.NoFurtherProcess = true;
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                        target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, predicate, "", KeyStateTrees.HardMap),
-                source.Up(e =>
-                {
-                    handled = false;
-
-                    e.Handled          = true;
-                    e.NoFurtherProcess = true;
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(target.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) target.TriggerKey);
-                }, e =>
-                {
-                    if (!handled)
-                    {
-                        Console.WriteLine("\t/!Handling:false");
-                        return false;
-                    }
-
-                    if (predicate != null && !predicate(e))
-                    {
-                        Console.WriteLine("\t/!predicate(e):false");
-                        return false;
-                    }
-
-                    return true;
-                }, "", KeyStateTrees.HardMap)
-            };
-        }
-
 
         public IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null)
         {
@@ -147,9 +106,54 @@ namespace Metatool.Input
             }, predicate, "", KeyStateTrees.HotString);
         }
 
+        public IKeyCommand HardMap(IHotkey source, ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate = null)
+        {
+            var handled = false;
+            var comb    = target.ToCombination();
+            return new KeyCommandTokens()
+            {
+                source.Down(e =>
+                {
+                    handled            = true;
+                    e.Handled          = true;
+                    e.NoFurtherProcess = true;
+
+                    InputSimu.Inst.Keyboard.ModifiedKeyDown(
+                        comb.Chord.Cast<VirtualKeyCode>(),
+                        (VirtualKeyCode) (Keys) comb.TriggerKey);
+                }, predicate, "", KeyStateTrees.HardMap),
+                source.Up(e =>
+                {
+                    handled = false;
+
+                    e.Handled          = true;
+                    e.NoFurtherProcess = true;
+
+                    InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Cast<VirtualKeyCode>(),
+                        (VirtualKeyCode) (Keys) comb.TriggerKey);
+                }, e =>
+                {
+                    if (!handled)
+                    {
+                        Console.WriteLine("\t/!Handling:false");
+                        return false;
+                    }
+
+                    if (predicate != null && !predicate(e))
+                    {
+                        Console.WriteLine("\t/!predicate(e):false");
+                        return false;
+                    }
+
+                    return true;
+                }, "", KeyStateTrees.HardMap)
+            };
+        }
+
 
         public IKeyCommand Map(IHotkey source, ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate = null, int repeat = 1)
+            Predicate<IKeyEventArgs> predicate = null)
         {
             var handled     = false;
             var combination = target.ToCombination();
@@ -162,18 +166,18 @@ namespace Metatool.Input
 
                     if (combination.TriggerKey == Keys.LButton)
                     {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.LeftDown()));
+                        Async(() => InputSimu.Inst.Mouse.LeftDown());
                     }
                     else if (combination.TriggerKey == Keys.RButton)
                     {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Mouse.RightDown()));
+                        Async( () => InputSimu.Inst.Mouse.RightDown());
                     }
                     else
                     {
-                        Async(Repeat(repeat, () => InputSimu.Inst.Keyboard.ModifiedKeyDown(
+                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(
                             combination.Chord.Cast<VirtualKeyCode>(),
                             (VirtualKeyCode) (Keys) combination.TriggerKey)
-                        ));
+                        );
                     }
                 }, predicate, "", KeyStateTrees.Map),
                 source.Up(e =>

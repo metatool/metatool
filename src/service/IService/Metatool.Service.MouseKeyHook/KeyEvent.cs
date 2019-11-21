@@ -9,6 +9,7 @@ namespace Metatool.Service
         All   = -1,
         Down  = 1,
         Up    = 2,
-        AllUp = 8
+        Hit   = 8,
+        AllUp = 16
     }
 }

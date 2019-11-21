@@ -53,10 +53,9 @@ namespace Metatool.Service
             return Keyboard.MapOnHit(key, target, canExecute, allUp);
         }
 
-        public static IKeyCommand Map(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null,
-            int repeat = 1)
+        public static IKeyCommand Map(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null)
         {
-            return Keyboard.Map(key, target, canExecute, repeat);
+            return Keyboard.Map(key, target, canExecute);
         }
         public static IKeyCommand HardMap(this IHotkey key, Key target, Predicate<IKeyEventArgs> canExecute = null)
         {

@@ -10,12 +10,12 @@ namespace Metatool.Service
     {
         IKeyboardCommandTrigger Down(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger Up(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
-        IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
+        IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent, string stateTree = KeyStateTrees.Default);
 
-        IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, int repeat = 1);
-        IKeyCommand HardMap(IHotkey source, ICombination target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
         IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, bool allUp = true);
 
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);

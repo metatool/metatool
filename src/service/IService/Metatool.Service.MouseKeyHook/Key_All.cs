@@ -174,8 +174,8 @@ namespace Metatool.Service
         public static readonly Key LineFeed         = new Key(Keys.LineFeed);
         public static readonly Key LButton          = new Key(Keys.LButton);
         public static readonly Key RButton          = new Key(Keys.RButton);
-        public static readonly Key XButton1         = new Key(Keys.XButton1);
         public static readonly Key MButton          = new Key(Keys.MButton);
+        public static readonly Key XButton1         = new Key(Keys.XButton1);
         public static readonly Key XButton2         = new Key(Keys.XButton2);
         public static readonly Key Mail             = new Key(Keys.LaunchMail);
         public static readonly Key App1             = new Key(Keys.LaunchApplication1);
