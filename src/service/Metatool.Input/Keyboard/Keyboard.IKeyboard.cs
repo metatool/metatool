@@ -97,10 +97,7 @@ namespace Metatool.Input
                                         InputSimu.Inst.Keyboard.Type(target);
                                     }
                                 ))
-                        }, k =>
-                        {
-                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)k);
-                        });
+                        }, k => { InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) k); });
                     }
                 );
             }, predicate, "", KeyStateTrees.HotString);
@@ -170,14 +167,11 @@ namespace Metatool.Input
                     }
                     else if (combination.TriggerKey == Keys.RButton)
                     {
-                        Async( () => InputSimu.Inst.Mouse.RightDown());
+                        Async(() => InputSimu.Inst.Mouse.RightDown());
                     }
                     else
                     {
-                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                            combination.Chord.Cast<VirtualKeyCode>(),
-                            (VirtualKeyCode) (Keys) combination.TriggerKey)
-                        );
+                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(combination.Chord.Cast<VirtualKeyCode>(), (VirtualKeyCode) (Keys) combination.TriggerKey));
                     }
                 }, predicate, "", KeyStateTrees.Map),
                 source.Up(e =>
@@ -188,17 +182,16 @@ namespace Metatool.Input
                     if (combination.TriggerKey == Keys.LButton)
                     {
                         Async(() => InputSimu.Inst.Mouse.LeftUp());
-                        return;
                     }
 
-                    if (combination.TriggerKey == Keys.RButton)
+                    else if (combination.TriggerKey == Keys.RButton)
                     {
                         Async(() => InputSimu.Inst.Mouse.RightUp());
-                        return;
                     }
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) combination.TriggerKey);
+                    else
+                    {
+                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Cast<VirtualKeyCode>(), (VirtualKeyCode) (Keys) combination.TriggerKey));
+                    }
                 }, predicate, "", KeyStateTrees.Map)
             };
         }
@@ -324,15 +317,17 @@ namespace Metatool.Input
             string replaceComma(string str)
             {
                 const string comma = "Comma";
-                str =Regex.Replace(str, @"^\s*,\s*$", comma);
+                str = Regex.Replace(str, @"^\s*,\s*$", comma);
                 str = Regex.Replace(str, @"\+\s*,", $"+ {comma}");
                 str = Regex.Replace(str, @",\s*,", $", {comma}");
                 return str;
             }
+
             foreach (var alias in aliases.Reverse())
             {
                 hotkey = replaceComma(hotkey);
-                hotkey = Regex.Replace(hotkey, @$"(?:(?<=[\s,+])|^){Regex.Escape(alias.Key)}(?:(?=[\s,+*])|$)", alias.Value);
+                hotkey = Regex.Replace(hotkey,  @$"(?:(?<=[\s,+])|^){Regex.Escape(alias.Key)}(?:(?=[\s,+*])|$)", alias
+                    .Value);
             }
 
             return hotkey;

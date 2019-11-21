@@ -199,6 +199,7 @@ namespace Metatool.Input
             return new SelectionResult(this, candidateNode, downInChord);
         }
 
+        //eventType is only Down or Up
         internal KeyProcessState Climb(KeyEvent eventType, IKeyEventArgs iargs,
             TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
         {
@@ -289,7 +290,7 @@ namespace Metatool.Input
             Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
             // execute
-            var handled = candidateNode.Key.TriggerKey.Handled;
+            var handled     = candidateNode.Key.TriggerKey.Handled;
             var oneExecuted = false;
             foreach (var keyCommand in actionList[eventType])
             {
@@ -300,15 +301,15 @@ namespace Metatool.Input
                 }
 
                 oneExecuted = true;
-                var execute     = keyCommand.Execute;
-                if ((eventType & handled) != 0) 
+                var execute = keyCommand.Execute;
+                if ((eventType & handled) != 0)
                     args.Handled = true;
                 var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
                 Console.WriteLine(
                     $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
                 try
                 {
-                        execute?.Invoke(args);
+                    execute?.Invoke(args);
                 }
                 catch (Exception e) when (!Debugger.IsAttached)
                 {

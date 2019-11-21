@@ -14,7 +14,7 @@ namespace Metatool.Input.MouseKeyHook
 
     public class KeyboardHook
     {
-        public INotify Notify { get; }
+        public           INotify               Notify { get; }
         private readonly ILogger<KeyboardHook> _logger;
         private readonly IKeyboardMouseEvents  _eventSource;
         public           bool                  IsRuning { get; set; }
@@ -22,10 +22,10 @@ namespace Metatool.Input.MouseKeyHook
 
         public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
         {
-            Notify = notify;
+            Notify              = notify;
             KeyStateTree.Notify = notify;
-            _logger      = logger;
-            _eventSource = Hook.GlobalEvents();
+            _logger             = logger;
+            _eventSource        = Hook.GlobalEvents();
         }
 
         public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command,
@@ -78,9 +78,10 @@ namespace Metatool.Input.MouseKeyHook
             var access = System.Windows.Application.Current.Dispatcher.CheckAccess();
             if (!access)
             {
-                System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)Run);
+                System.Windows.Application.Current.Dispatcher.BeginInvoke((Action) Run);
                 return;
             }
+
             IsRuning = true;
             _logger.LogInformation($"Keyboard hook is running...");
 
@@ -88,6 +89,7 @@ namespace Metatool.Input.MouseKeyHook
 
             var selectTrees = new List<KeyStateTree.SelectionResult>();
 
+            //eventType is only Down or Up
             void ClimbTree(KeyEvent eventType, IKeyEventArgs args)
             {
                 // if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed

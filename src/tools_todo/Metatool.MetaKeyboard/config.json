@@ -63,6 +63,10 @@
 
         },
         "HotKeys": {
+          "LButton": {
+            "HotKey": "LButton",
+            "Description": "Mouse LButton Click"
+          },
           "MouseToFocus": {
             "HotKey": "GK + F*", // * behind the trigger key to mark all KeyEvent handled
             "Description": "Focus Mouse To Active Control"

@@ -9,7 +9,7 @@ namespace Metatool.Service
         All   = -1,
         Down  = 1,
         Up    = 2,
-        Hit   = 8,
-        AllUp = 16
+        Hit   = 0xF,
+        AllUp = 0x1F
     }
 }
