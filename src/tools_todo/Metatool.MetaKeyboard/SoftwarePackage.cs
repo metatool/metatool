@@ -11,7 +11,6 @@ namespace Metatool.MetaKeyboard
 {
     public sealed class Software : CommandPackage
     {
-
         public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager, IFileExplorer fileExplorer, IConfig<Config> config)
         {
             RegisterCommands();
