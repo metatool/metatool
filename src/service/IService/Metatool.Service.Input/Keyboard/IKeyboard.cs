@@ -14,8 +14,7 @@ namespace Metatool.Service
         IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent, string stateTree = KeyStateTrees.Default);
 
-        IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
-        IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, bool isHardMap = false);
         IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, bool allUp = true);
 
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);

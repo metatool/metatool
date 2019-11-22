@@ -44,6 +44,7 @@ namespace Metatool.Input
         {
             return Event(hotkey, KeyEvent.Up, stateTree);
         }
+
         public IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
             var trigger = new KeyboardCommandTrigger();
@@ -103,32 +104,53 @@ namespace Metatool.Input
             }, predicate, "", KeyStateTrees.HotString);
         }
 
-        public IKeyCommand HardMap(IHotkey source, ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate = null)
+        public IKeyCommand Map(IHotkey source, ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate = null, bool isHardMap = false)
         {
-            var handled = false;
-            var comb    = target.ToCombination();
+            var handled     = false;
+            var combination = target.ToCombination();
             return new KeyCommandTokens()
             {
                 source.Down(e =>
                 {
-                    handled            = true;
-                    e.Handled          = true;
-                    e.NoFurtherProcess = true;
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                        comb.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) comb.TriggerKey);
-                }, predicate, "", KeyStateTrees.HardMap),
+                    handled   = true;
+                    e.Handled = true;
+                    if (isHardMap) e.NoFurtherProcess = true;
+                    if (combination.TriggerKey == Keys.LButton)
+                    {
+                        e.BeginInvoke(() => InputSimu.Inst.Mouse.LeftDown());
+                    }
+                    else if (combination.TriggerKey == Keys.RButton)
+                    {
+                        e.BeginInvoke(() => InputSimu.Inst.Mouse.RightDown());
+                    }
+                    else
+                    {
+                        e.BeginInvoke(() =>
+                            InputSimu.Inst.Keyboard.ModifiedKeyDown(combination.Chord.Cast<VirtualKeyCode>(),
+                                (VirtualKeyCode) (Keys) combination.TriggerKey));
+                    }
+                }, predicate, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
                 source.Up(e =>
                 {
-                    handled = false;
+                    handled   = false;
+                    e.Handled = true;
+                    if (isHardMap) e.NoFurtherProcess = true;
+                    if (combination.TriggerKey == Keys.LButton)
+                    {
+                        e.BeginInvoke(() => InputSimu.Inst.Mouse.LeftUp());
+                    }
 
-                    e.Handled          = true;
-                    e.NoFurtherProcess = true;
-
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Cast<VirtualKeyCode>(),
-                        (VirtualKeyCode) (Keys) comb.TriggerKey);
+                    else if (combination.TriggerKey == Keys.RButton)
+                    {
+                        e.BeginInvoke(() => InputSimu.Inst.Mouse.RightUp());
+                    }
+                    else
+                    {
+                        e.BeginInvoke(() =>
+                            InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Cast<VirtualKeyCode>(),
+                                (VirtualKeyCode) (Keys) combination.TriggerKey));
+                    }
                 }, e =>
                 {
                     if (!handled)
@@ -144,55 +166,7 @@ namespace Metatool.Input
                     }
 
                     return true;
-                }, "", KeyStateTrees.HardMap)
-            };
-        }
-
-
-        public IKeyCommand Map(IHotkey source, ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate = null)
-        {
-            var handled     = false;
-            var combination = target.ToCombination();
-            return new KeyCommandTokens()
-            {
-                source.Down(e =>
-                {
-                    handled   = true;
-                    e.Handled = true;
-
-                    if (combination.TriggerKey == Keys.LButton)
-                    {
-                        Async(() => InputSimu.Inst.Mouse.LeftDown());
-                    }
-                    else if (combination.TriggerKey == Keys.RButton)
-                    {
-                        Async(() => InputSimu.Inst.Mouse.RightDown());
-                    }
-                    else
-                    {
-                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyDown(combination.Chord.Cast<VirtualKeyCode>(), (VirtualKeyCode) (Keys) combination.TriggerKey));
-                    }
-                }, predicate, "", KeyStateTrees.Map),
-                source.Up(e =>
-                {
-                    if (!handled) return;
-                    handled   = false;
-                    e.Handled = true;
-                    if (combination.TriggerKey == Keys.LButton)
-                    {
-                        Async(() => InputSimu.Inst.Mouse.LeftUp());
-                    }
-
-                    else if (combination.TriggerKey == Keys.RButton)
-                    {
-                        Async(() => InputSimu.Inst.Mouse.RightUp());
-                    }
-                    else
-                    {
-                        Async(() => InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Cast<VirtualKeyCode>(), (VirtualKeyCode) (Keys) combination.TriggerKey));
-                    }
-                }, predicate, "", KeyStateTrees.Map)
+                }, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map)
             };
         }
 
@@ -203,7 +177,7 @@ namespace Metatool.Input
             IKeyEventArgs keyDownEvent = null;
             var           combination  = target.ToCombination();
 
-            void AsyncCall(IKeyEventArgs e)
+            void KeyUpAsyncCall(IKeyEventArgs e)
             {
                 e.Handled = true;
                 e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
@@ -211,27 +185,20 @@ namespace Metatool.Input
                     (VirtualKeyCode) (Keys) combination.TriggerKey));
             }
 
-            // if not: A+B -> C become A+C
             bool KeyUpPredicate(IKeyEventArgs e)
             {
                 if (!handling)
                 {
-                    Console.WriteLine("\t/!Handling:false");
+                    Console.WriteLine("\t/!Predicate Handling:false");
                     return false;
                 }
 
                 handling = false;
-
-                if (!allUp && keyDownEvent != e.LastKeyDownEvent
-                ) // should not use LastKeyEvent for 2 fast key strokes, a_down b_down a_up b_up, then the a_keyAsChord would not fire 
+                if (keyDownEvent != e.LastKeyDownEvent)
                 {
-                    Console.WriteLine("\t/!up: keyDownEvent != e.LastKeyDownEvent");
-                    return false;
-                }
-
-                if (allUp && keyDownEvent != e.LastKeyDownEvent)
-                {
-                    Console.WriteLine("\t/!allUp: keyDownEvent != e.LastKeyDownEvent");
+                    Console.WriteLine(allUp
+                        ? "\t/!allUp: keyDownEvent != e.LastKeyDownEvent"
+                        : "\t/!up: keyDownEvent != e.LastKeyDownEvent");
                     return false;
                 }
 
@@ -245,10 +212,15 @@ namespace Metatool.Input
                     handling     = true;
                     keyDownEvent = e;
                     e.Handled    = true;
-                }, predicate, "", KeyStateTrees.ChordMap),
+                }, e =>
+                {
+                    handling = false;
+                    return predicate != null && predicate(e);
+                }, "", KeyStateTrees.ChordMap),
+                // if not: A+B -> C become A+C
                 allUp
-                    ? source.AllUp(AsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
-                    : source.Up(AsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
+                    ? source.AllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
+                    : source.Up(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
             };
         }
 
