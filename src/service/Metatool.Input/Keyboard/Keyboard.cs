@@ -9,6 +9,7 @@ using Metatool.Command;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.Internal;
 using Metatool.Service.MouseKeyHook;
 using Metatool.Service.MouseKeyHook.Implementation;
 using Metatool.UI;
@@ -108,27 +109,6 @@ namespace Metatool.Input
             return token;
         }
 
-        public void Hit(Keys key, IEnumerable<Keys> modifierKeys = null, bool isAsync = false)
-        {
-            if (isAsync)
-            {
-                Async(() => Hit(key, modifierKeys));
-                return;
-            }
-
-            if (modifierKeys == null) InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) key);
-            InputSimu.Inst.Keyboard.ModifiedKeyStroke(modifierKeys.Cast<VirtualKeyCode>(),
-                (VirtualKeyCode) key);
-        }
-
-        private Action Repeat(int repeat, Action action)
-        {
-            return () =>
-            {
-                while (repeat-- > 0) action();
-            };
-        }
-
         public event KeyPressEventHandler KeyPress
         {
             add => _hook.KeyPress += value;
@@ -145,11 +125,6 @@ namespace Metatool.Input
         {
             add => _hook.KeyUp += value;
             remove => _hook.KeyUp -= value;
-        }
-
-        private void Async(Action action, DispatcherPriority priority = DispatcherPriority.Send)
-        {
-            _dispatcher.BeginInvoke(priority, action);
         }
 
         private void Hook()

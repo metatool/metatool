@@ -35,17 +35,17 @@ namespace Metatool.Input
 
     public partial class Keyboard
     {
-        public IKeyboardCommandTrigger Down(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            return Event(hotkey, KeyEvent.Down, stateTree);
+            return OnEvent(hotkey, KeyEvent.Down, stateTree);
         }
 
-        public IKeyboardCommandTrigger Up(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            return Event(hotkey, KeyEvent.Up, stateTree);
+            return OnEvent(hotkey, KeyEvent.Up, stateTree);
         }
 
-        public IKeyboardCommandTrigger Hit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
             var trigger = new KeyboardCommandTrigger();
             var token = Hit(hotkey,
@@ -54,17 +54,17 @@ namespace Metatool.Input
             return trigger;
         }
 
-        public IKeyboardCommandTrigger AllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+        public IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
         {
-            return Event(hotkey, KeyEvent.AllUp, stateTree);
+            return OnEvent(hotkey, KeyEvent.AllUp, stateTree);
         }
 
-        public IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent,
+        public IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEvent keyEvent,
             string stateTree = KeyStateTrees.Default)
         {
             if (keyEvent == KeyEvent.Hit)
             {
-                return Hit(hotkey, stateTree);
+                return OnHit(hotkey, stateTree);
             }
 
             var sequence = hotkey switch
@@ -124,11 +124,13 @@ namespace Metatool.Input
                     {
                         e.BeginInvoke(() => InputSimu.Inst.Mouse.RightDown());
                     }
+                    else if (combination.TriggerKey == Keys.MButton)
+                    {
+                        e.BeginInvoke(() => InputSimu.Inst.Mouse.MiddleDown());
+                    }
                     else
                     {
-                        e.BeginInvoke(() =>
-                            InputSimu.Inst.Keyboard.ModifiedKeyDown(combination.Chord.Cast<VirtualKeyCode>(),
-                                (VirtualKeyCode) (Keys) combination.TriggerKey));
+                        e.BeginInvoke(() => Down(combination));
                     }
                 }, predicate, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
                 source.Up(e =>
@@ -145,11 +147,13 @@ namespace Metatool.Input
                     {
                         e.BeginInvoke(() => InputSimu.Inst.Mouse.RightUp());
                     }
+                    else if (combination.TriggerKey == Keys.MButton)
+                    {
+                        e.BeginInvoke(() => InputSimu.Inst.Mouse.MiddleUp());
+                    }
                     else
                     {
-                        e.BeginInvoke(() =>
-                            InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Cast<VirtualKeyCode>(),
-                                (VirtualKeyCode) (Keys) combination.TriggerKey));
+                        e.BeginInvoke(() =>Up(combination));
                     }
                 }, e =>
                 {
@@ -169,31 +173,30 @@ namespace Metatool.Input
                 }, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map)
             };
         }
-
-        public IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target,
+        /// <summary>
+        ///  Note: A+B -> C become A+C 
+        /// </summary>
+        public IKeyCommand MapOnHit(IHotkey source, IHotkey target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             return MapOnHitOrAllUp(source, target, predicate, false);
         }
 
-        public IKeyCommand MapOnAllUp(IHotkey source, ISequenceUnit target,
+        public IKeyCommand MapOnAllUp(IHotkey source, IHotkey target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             return MapOnHitOrAllUp(source, target, predicate, true);
         }
-        private IKeyCommand MapOnHitOrAllUp(IHotkey source, ISequenceUnit target,
+        private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = false)
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
-            var           combination  = target.ToCombination();
 
             void KeyUpAsyncCall(IKeyEventArgs e)
             {
                 e.Handled = true;
-                e.BeginInvoke(() => InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                    combination.Chord.Select(k => (VirtualKeyCode) (Keys) k),
-                    (VirtualKeyCode) (Keys) combination.TriggerKey));
+                e.BeginInvoke(() => Type(target));
             }
 
             bool KeyUpPredicate(IKeyEventArgs e)
@@ -228,7 +231,6 @@ namespace Metatool.Input
                     handling = false;
                     return predicate != null && predicate(e);
                 }, "", KeyStateTrees.ChordMap),
-                // if not: A+B -> C become A+C
                 allUp
                     ? source.AllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
                     : source.Up(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
@@ -272,7 +274,7 @@ namespace Metatool.Input
                 if (!r)
                 {
                     re = false;
-                    Services.CommonLogger.LogError($"Could not parse {alias.Value} of alias: {alias.Key}");
+                   _logger?.LogError($"Could not parse {alias.Value} of alias: {alias.Key}");
                     continue;
                 }
 
@@ -326,7 +328,7 @@ namespace Metatool.Input
                 {
                     if (string.IsNullOrEmpty(map.Value))
                     {
-                        Services.CommonLogger.LogInformation($"Key map: {map.Key} is disabled.");
+                       _logger?.LogInformation($"Key map: {map.Key} is disabled.");
                         continue;
                     }
 
@@ -339,7 +341,7 @@ namespace Metatool.Input
                 catch (Exception e)
                 {
                     hasError = true;
-                    Services.CommonLogger.LogError("KeyMappings: " + e.Message);
+                   _logger?.LogError("KeyMappings: " + e.Message);
                 }
             }
 

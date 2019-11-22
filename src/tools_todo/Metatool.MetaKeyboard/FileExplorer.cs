@@ -61,7 +61,7 @@ namespace Metatool.MetaKeyboard
                 file.Close();
                 var keyboard = Services.Get<IKeyboard>();
                 fileExplorer.Select(handle, new[] {fileName});
-                keyboard.Type(Keys.F2);
+                keyboard.Type(Key.F2);
             }, _ => windowManager.CurrentWindow.IsExplorer);
 
             hotKeys.ShowDesktopFolder.Event(e =>

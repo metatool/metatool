@@ -1,6 +1,6 @@
 ﻿using Metatool.Command;
 
-namespace Metatool.Service
+namespace Metatool.Service.Internal
 {
     public interface IKeyboardInternal
     {

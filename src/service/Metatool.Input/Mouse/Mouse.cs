@@ -20,6 +20,12 @@ namespace Metatool.Input
             return this;
         }
 
+        public IMouse RightClick()
+        {
+            Simu.RightClick();
+            return this;
+        }
+
         public IMouse MoveToLikeUser(int x, int y)
         {
             Simu.MoveToLikeUser(x, y);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Metatool.Command;
+using Metatool.Service.Internal;
 
 namespace Metatool.Service
 {
@@ -25,26 +26,26 @@ namespace Metatool.Service
         public static IKeyCommand Down(this IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
-            var trigger = Keyboard.Down(hotkey, stateTree);
+            var trigger = Keyboard.OnDown(hotkey, stateTree);
             return trigger.Register(execute, canExecute, description);
         }
 
         public static IKeyCommand Up(this IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
-            var trigger = Keyboard.Up(hotkey, stateTree);
+            var trigger = Keyboard.OnUp(hotkey, stateTree);
             return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand AllUp(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
-            var trigger          = Keyboard.AllUp(sequenceUnit, stateTree);
+            var trigger          = Keyboard.OnAllUp(sequenceUnit, stateTree);
             return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand Hit(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute, string description, string stateTree = KeyStateTrees.Default)
         {
-            var trigger          = Keyboard.Hit(sequenceUnit, stateTree);
+            var trigger          = Keyboard.OnHit(sequenceUnit, stateTree);
             return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand MapOnHit(this IHotkey key, ISequenceUnit target,

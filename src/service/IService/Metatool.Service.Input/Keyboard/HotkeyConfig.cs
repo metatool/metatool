@@ -34,7 +34,7 @@ namespace Metatool.Service
         public IKeyCommand Event(Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null)
         {
-            var trigger = Keyboard.Event(HotKeyTrigger, KeyEvent, StateTree);
+            var trigger = Keyboard.OnEvent(HotKeyTrigger, KeyEvent, StateTree);
                                     var token   = trigger.Register(execute, canExecute, Description);
             return token;
         }
