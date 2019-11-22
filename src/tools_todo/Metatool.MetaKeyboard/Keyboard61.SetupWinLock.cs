@@ -4,7 +4,7 @@ using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
-namespace ConsoleApp1
+namespace Metatool.MetaKeyboard
 {
     partial class Keyboard61
     {

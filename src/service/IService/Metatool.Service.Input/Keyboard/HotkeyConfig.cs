@@ -40,11 +40,15 @@ namespace Metatool.Service
         }
 
         public IKeyCommand MapOnHit(ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
+            Predicate<IKeyEventArgs> predicate = null )
         {
-            return Keyboard.MapOnHit(HotKeyTrigger, target, predicate, allUp);
+            return Keyboard.MapOnHit(HotKeyTrigger, target, predicate);
         }
-
+        public IKeyCommand MapOnAllUp(ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate = null)
+        {
+            return Keyboard.MapOnAllUp(HotKeyTrigger, target, predicate);
+        }
         private IDictionary<string, string>[] _tempAliasesDics;
         public HotkeyConfig WithAliases(params IDictionary<string, string>[] tempAliasesDics)
         {

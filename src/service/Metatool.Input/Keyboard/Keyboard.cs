@@ -53,7 +53,7 @@ namespace Metatool.Input
                         {
                             var keyStateTree = KeyStateTree.GetOrCreateStateTree(KeyStateTrees.ChordMap);
                             if (!keyStateTree.Contains(key))
-                                MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, false);
+                                MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual);
                         }
                     }
                 }

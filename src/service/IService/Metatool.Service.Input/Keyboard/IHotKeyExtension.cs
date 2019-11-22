@@ -48,18 +48,22 @@ namespace Metatool.Service
             return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand MapOnHit(this IHotkey key, ISequenceUnit target,
-            Predicate<IKeyEventArgs> canExecute = null, bool allUp = true)
+            Predicate<IKeyEventArgs> canExecute = null)
         {
-            return Keyboard.MapOnHit(key, target, canExecute, allUp);
+            return Keyboard.MapOnHit(key, target, canExecute);
         }
-
+        public static IKeyCommand MapOnAllUp(this IHotkey key, ISequenceUnit target,
+            Predicate<IKeyEventArgs> canExecute = null)
+        {
+            return Keyboard.MapOnAllUp(key, target, canExecute);
+        }
         public static IKeyCommand Map(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null)
         {
             return Keyboard.Map(key, target, canExecute);
         }
         public static IKeyCommand HardMap(this IHotkey key, Key target, Predicate<IKeyEventArgs> canExecute = null)
         {
-            return Keyboard.HardMap(key, new Combination(target), canExecute);
+            return Keyboard.Map(key, new Combination(target), canExecute,true);
         }
         /// <summary>
         /// register the key to the state tree, and wait the down event;

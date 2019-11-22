@@ -199,7 +199,7 @@ namespace Metatool.MetaKeyboard
                 commandRunner.RunWithCmd(swPaths.GifTool);
             });
 
-            hotKeys.ToggleDictionary.MapOnHit(Shift + LAlt + D);
+            hotKeys.ToggleDictionary.MapOnAllUp(Shift + LAlt + D);
         }
 
     }

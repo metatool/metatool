@@ -15,8 +15,8 @@ namespace Metatool.Service
         IKeyboardCommandTrigger Event(IHotkey hotkey, KeyEvent keyEvent, string stateTree = KeyStateTrees.Default);
 
         IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, bool isHardMap = false);
-        IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, bool allUp = true);
-
+        IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand MapOnAllUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);
 
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);

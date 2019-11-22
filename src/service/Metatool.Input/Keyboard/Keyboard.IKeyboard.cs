@@ -171,7 +171,18 @@ namespace Metatool.Input
         }
 
         public IKeyCommand MapOnHit(IHotkey source, ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate = null, bool allUp = true)
+            Predicate<IKeyEventArgs> predicate = null)
+        {
+            return MapOnHitOrAllUp(source, target, predicate, false);
+        }
+
+        public IKeyCommand MapOnAllUp(IHotkey source, ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate = null)
+        {
+            return MapOnHitOrAllUp(source, target, predicate, true);
+        }
+        private IKeyCommand MapOnHitOrAllUp(IHotkey source, ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate = null, bool allUp = false)
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;

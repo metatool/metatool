@@ -1,8 +1,7 @@
-﻿using Metatool.MetaKeyboard;
-using Metatool.Service;
+﻿using Metatool.Service;
 using static Metatool.Service.Key;
 
-namespace ConsoleApp1
+namespace Metatool.MetaKeyboard
 {
     partial class Keyboard61 : CommandPackage
     {
@@ -28,6 +27,6 @@ namespace ConsoleApp1
             });
         }
 
-        public IKeyCommand Esc = Caps.MapOnHit(Key.Esc, e => !e.IsVirtual, false);
+        public IKeyCommand Esc = Caps.MapOnHit(Key.Esc, e => !e.IsVirtual);
     }
 }
