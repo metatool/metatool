@@ -16,7 +16,7 @@ namespace Metatool.MetaKeyboard
             keyboard.RegisterKeyMaps(maps);
             var hotKeys = cfg.HotKeys;
 
-            hotKeys.ToggleCaps.Event(e =>
+            hotKeys.ToggleCaps.OnEvent(e =>
             {
                 e.Handled = true;
                 var state = ToggleKeys.CapsLock.State;

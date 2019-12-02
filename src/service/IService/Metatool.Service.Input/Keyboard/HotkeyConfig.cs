@@ -31,7 +31,7 @@ namespace Metatool.Service
         public string   StateTree   { get; set; } = KeyStateTrees.Default;
         public bool     Enabled     { get; set; } = true;
 
-        public IKeyCommand Event(Action<IKeyEventArgs> execute,
+        public IKeyCommand OnEvent(Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null)
         {
             var trigger = Keyboard.OnEvent(HotKeyTrigger, KeyEvent, StateTree);

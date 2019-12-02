@@ -17,7 +17,7 @@ namespace Metatool.MetaKeyboard
             var software = config.CurrentValue.SoftwarePackage;
             var hotKeys = software.HotKeys;
             var swPaths = software.SoftwarePaths;
-            hotKeys.DoublePinyinSwitch.Event(e =>
+            hotKeys.DoublePinyinSwitch.OnEvent(e =>
             {
                 e.Handled = true;
                 const string keyName   = @"HKEYCURRENTUSER\Software\Microsoft\InputMethod\Settings\CHS";
@@ -35,7 +35,7 @@ namespace Metatool.MetaKeyboard
                 }
             });
 
-            hotKeys.Find.Event(async e =>
+            hotKeys.Find.OnEvent(async e =>
             {
                 e.Handled = true;
                 var shiftDown = e.KeyboardState.IsDown(Shift);
@@ -56,7 +56,7 @@ namespace Metatool.MetaKeyboard
                 commandRunner.RunWithCmd(commandRunner.NormalizeCmd(swPaths.Everything, arg));
             });
 
-            hotKeys.OpenTerminal.Event(async e =>
+            hotKeys.OpenTerminal.OnEvent(async e =>
             {
                 e.Handled = true;
                 var    shiftDown = e.KeyboardState.IsDown(Shift);
@@ -70,7 +70,7 @@ namespace Metatool.MetaKeyboard
                 else commandRunner.RunWithExplorer(swPaths.Terminal);
             });
 
-            hotKeys.OpenCodeEditor.Event(async e =>
+            hotKeys.OpenCodeEditor.OnEvent(async e =>
             {
                 if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
                 {
@@ -92,7 +92,7 @@ namespace Metatool.MetaKeyboard
                     commandRunner.RunWithCmd(commandRunner.NormalizeCmd(swPaths.Code, path));
                 }
             });
-            hotKeys.WebSearch.Event(async e =>
+            hotKeys.WebSearch.OnEvent(async e =>
             {
                 e.Handled = true;
 
@@ -119,19 +119,19 @@ namespace Metatool.MetaKeyboard
                     }
                 }.Start();
             });
-            hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).Event(e =>
+            hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).OnEvent(e =>
             {
                 e.Handled = true;
                 commandRunner.RunWithCmd(swPaths.ProcessExplorer);
             });
 
-            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Event(e =>
+            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(e =>
             {
                 e.Handled = true;
                 commandRunner.RunWithCmd(swPaths.Ruler);
             });
 
-            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).Event(async e =>
+            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(async e =>
             {
                 var exeName = "Inspect";
 
@@ -151,7 +151,7 @@ namespace Metatool.MetaKeyboard
                 commandRunner.RunWithExplorer(swPaths.Inspect);
             });
 
-            hotKeys.StartNotepad.WithAliases(software.KeyAliases).Event(async e =>
+            hotKeys.StartNotepad.WithAliases(software.KeyAliases).OnEvent(async e =>
             {
                 e.Handled = true;
                 var exeName = "Notepad";
@@ -173,7 +173,7 @@ namespace Metatool.MetaKeyboard
                 commandRunner.RunWithCmd("Notepad");
             });
 
-            hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).Event(async e =>
+            hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).OnEvent(async e =>
             {
                 if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
 
@@ -193,7 +193,7 @@ namespace Metatool.MetaKeyboard
                 });
             });
 
-            hotKeys.StartGifRecord.WithAliases(software.KeyAliases).Event(e =>
+            hotKeys.StartGifRecord.WithAliases(software.KeyAliases).OnEvent(e =>
             {
                 e.Handled = true;
                 commandRunner.RunWithCmd(swPaths.GifTool);

@@ -18,26 +18,26 @@ namespace Metatool.MetaKeyboard
 
             var hotkeys = conf.KeyboardMousePackage.HotKeys;
 
-            hotkeys.MouseToFocus.Event(e => e.BeginInvoke(MoveCursorToActiveControl));
+            hotkeys.MouseToFocus.OnEvent(e => e.BeginInvoke(MoveCursorToActiveControl));
 
-            hotkeys.MouseScrollUp.Event(e =>
+            hotkeys.MouseScrollUp.OnEvent(e =>
             {
                 var mouse = Services.Get<IMouse>();
                 mouse.VerticalScroll(1);
             });
 
-            hotkeys.MouseScrollDown.Event(e =>
+            hotkeys.MouseScrollDown.OnEvent(e =>
             {
                 mouse.VerticalScroll(-1);
             });
 
-            hotkeys.MouseLeftClick.Event(e =>
+            hotkeys.MouseLeftClick.OnEvent(e =>
             {
                 e.Handled = true;
                 e.BeginInvoke(() => screenHint.Show(DoMouseLeftClick));
             });
 
-            hotkeys.MouseLeftClickLast.Event(e =>
+            hotkeys.MouseLeftClickLast.OnEvent(e =>
             {
                 e.Handled = true;
                 e.BeginInvoke(() => screenHint.Show(DoMouseLeftClick, false));
