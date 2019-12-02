@@ -107,6 +107,15 @@ namespace Metatool.Input
         public IKeyCommand Map(IHotkey source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null, bool isHardMap = false)
         {
+            void Call(IKeyEventArgs e, Action action)
+            {
+                if (isHardMap)
+                {
+                    action();
+                    return;
+                }
+                e.BeginInvoke(action);
+            }
             var handled     = false;
             var combination = target.ToCombination();
             return new KeyCommandTokens()
@@ -118,19 +127,19 @@ namespace Metatool.Input
                     if (isHardMap) e.NoFurtherProcess = true;
                     if (combination.TriggerKey == Keys.LButton)
                     {
-                        e.BeginInvoke(() => InputSimu.Inst.Mouse.LeftDown());
+                       Call(e, () => InputSimu.Inst.Mouse.LeftDown());
                     }
                     else if (combination.TriggerKey == Keys.RButton)
                     {
-                        e.BeginInvoke(() => InputSimu.Inst.Mouse.RightDown());
+                       Call(e, () => InputSimu.Inst.Mouse.RightDown());
                     }
                     else if (combination.TriggerKey == Keys.MButton)
                     {
-                        e.BeginInvoke(() => InputSimu.Inst.Mouse.MiddleDown());
+                       Call(e, () => InputSimu.Inst.Mouse.MiddleDown());
                     }
                     else
                     {
-                        e.BeginInvoke(() => Down(combination));
+                       Call(e, () => Down(combination));
                     }
                 }, predicate, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
                 source.Up(e =>
@@ -140,20 +149,20 @@ namespace Metatool.Input
                     if (isHardMap) e.NoFurtherProcess = true;
                     if (combination.TriggerKey == Keys.LButton)
                     {
-                        e.BeginInvoke(() => InputSimu.Inst.Mouse.LeftUp());
+                       Call(e, () => InputSimu.Inst.Mouse.LeftUp());
                     }
 
                     else if (combination.TriggerKey == Keys.RButton)
                     {
-                        e.BeginInvoke(() => InputSimu.Inst.Mouse.RightUp());
+                       Call(e, () => InputSimu.Inst.Mouse.RightUp());
                     }
                     else if (combination.TriggerKey == Keys.MButton)
                     {
-                        e.BeginInvoke(() => InputSimu.Inst.Mouse.MiddleUp());
+                       Call(e, () => InputSimu.Inst.Mouse.MiddleUp());
                     }
                     else
                     {
-                        e.BeginInvoke(() =>Up(combination));
+                       Call(e, () =>Up(combination));
                     }
                 }, e =>
                 {
