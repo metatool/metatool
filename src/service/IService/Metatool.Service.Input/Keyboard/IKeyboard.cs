@@ -15,8 +15,8 @@ namespace Metatool.Service
         IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
         IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEvent keyEvent, string stateTree = KeyStateTrees.Default);
 
-        IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null,
-            bool isHardMap = false);
+        IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
         IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
         IKeyCommand MapOnAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
 

@@ -104,18 +104,31 @@ namespace Metatool.Input
             }, predicate, "", KeyStateTrees.HotString);
         }
 
+        public IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
+        {
+            return HotKeyMap(source, target, predicate, true);
+        }
+
         public IKeyCommand Map(IHotkey source, ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate = null, bool isHardMap = false)
+            Predicate<IKeyEventArgs> predicate = null, bool isAsync = true)
+        {
+            return HotKeyMap(source, target, predicate, false, false);
+        }
+
+        IKeyCommand HotKeyMap(IHotkey source, ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate, bool isHardMap, bool isAsync= false)
         {
             void Call(IKeyEventArgs e, Action action)
             {
-                if (isHardMap)
+                if (isAsync)
                 {
-                    action();
+                    e.BeginInvoke(action);
                     return;
                 }
-                e.BeginInvoke(action);
+
+                action();
             }
+
             var handled     = false;
             var combination = target.ToCombination();
             return new KeyCommandTokens()
@@ -124,45 +137,45 @@ namespace Metatool.Input
                 {
                     handled   = true;
                     e.Handled = true;
-                    if (isHardMap) e.NoFurtherProcess = true;
+                    if (isAsync) e.NoFurtherProcess = true;
                     if (combination.TriggerKey == Keys.LButton)
                     {
-                       Call(e, () => InputSimu.Inst.Mouse.LeftDown());
+                        Call(e, () => InputSimu.Inst.Mouse.LeftDown());
                     }
                     else if (combination.TriggerKey == Keys.RButton)
                     {
-                       Call(e, () => InputSimu.Inst.Mouse.RightDown());
+                        Call(e, () => InputSimu.Inst.Mouse.RightDown());
                     }
                     else if (combination.TriggerKey == Keys.MButton)
                     {
-                       Call(e, () => InputSimu.Inst.Mouse.MiddleDown());
+                        Call(e, () => InputSimu.Inst.Mouse.MiddleDown());
                     }
                     else
                     {
-                       Call(e, () => Down(combination));
+                        Call(e, () => Down(combination));
                     }
                 }, predicate, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
                 source.Up(e =>
                 {
                     handled   = false;
                     e.Handled = true;
-                    if (isHardMap) e.NoFurtherProcess = true;
+                    if (isAsync) e.NoFurtherProcess = true;
                     if (combination.TriggerKey == Keys.LButton)
                     {
-                       Call(e, () => InputSimu.Inst.Mouse.LeftUp());
+                        Call(e, () => InputSimu.Inst.Mouse.LeftUp());
                     }
 
                     else if (combination.TriggerKey == Keys.RButton)
                     {
-                       Call(e, () => InputSimu.Inst.Mouse.RightUp());
+                        Call(e, () => InputSimu.Inst.Mouse.RightUp());
                     }
                     else if (combination.TriggerKey == Keys.MButton)
                     {
-                       Call(e, () => InputSimu.Inst.Mouse.MiddleUp());
+                        Call(e, () => InputSimu.Inst.Mouse.MiddleUp());
                     }
                     else
                     {
-                       Call(e, () =>Up(combination));
+                        Call(e, () => Up(combination));
                     }
                 }, e =>
                 {
@@ -182,6 +195,7 @@ namespace Metatool.Input
                 }, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map)
             };
         }
+
         /// <summary>
         ///  Note: A+B -> C become A+C 
         /// </summary>
@@ -196,6 +210,7 @@ namespace Metatool.Input
         {
             return MapOnHitOrAllUp(source, target, predicate, true);
         }
+
         private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = false)
         {
@@ -283,7 +298,7 @@ namespace Metatool.Input
                 if (!r)
                 {
                     re = false;
-                   _logger?.LogError($"Could not parse {alias.Value} of alias: {alias.Key}");
+                    _logger?.LogError($"Could not parse {alias.Value} of alias: {alias.Key}");
                     continue;
                 }
 
@@ -337,7 +352,7 @@ namespace Metatool.Input
                 {
                     if (string.IsNullOrEmpty(map.Value))
                     {
-                       _logger?.LogInformation($"Key map: {map.Key} is disabled.");
+                        _logger?.LogInformation($"Key map: {map.Key} is disabled.");
                         continue;
                     }
 
@@ -350,7 +365,7 @@ namespace Metatool.Input
                 catch (Exception e)
                 {
                     hasError = true;
-                   _logger?.LogError("KeyMappings: " + e.Message);
+                    _logger?.LogError("KeyMappings: " + e.Message);
                 }
             }
 

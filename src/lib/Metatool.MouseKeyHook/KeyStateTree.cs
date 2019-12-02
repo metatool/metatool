@@ -310,6 +310,10 @@ namespace Metatool.Input
                 try
                 {
                     execute?.Invoke(args);
+                    if (args.NoFurtherProcess)
+                    {
+                        break;
+                    }
                 }
                 catch (Exception e) when (!Debugger.IsAttached)
                 {
