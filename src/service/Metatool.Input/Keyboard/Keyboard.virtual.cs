@@ -18,7 +18,7 @@ namespace Metatool.Input
                     InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) (Keys) k);
                     break;
                 case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyStroke(combination.Chord.Cast<VirtualKeyCode>(),
+                    InputSimu.Inst.Keyboard.ModifiedKeyStroke(combination.Chord.Select(k => (VirtualKeyCode)(Keys)k),
                         (VirtualKeyCode) (Keys) combination.TriggerKey);
                     break;
                 case ISequence sequence:
@@ -44,14 +44,14 @@ namespace Metatool.Input
                     InputSimu.Inst.Keyboard.KeyDown((VirtualKeyCode)(Keys)k);
                     break;
                 case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyDown(combination.Chord.Cast<VirtualKeyCode>(),
+                    InputSimu.Inst.Keyboard.ModifiedKeyDown(combination.Chord.Select(k => (VirtualKeyCode)(Keys)k),
                         (VirtualKeyCode)(Keys)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                 {
                     foreach (var comb in sequence)
                     {
-                        InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Cast<VirtualKeyCode>(),
+                        InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Select(k => (VirtualKeyCode)(Keys)k),
                             (VirtualKeyCode)(Keys)comb.TriggerKey);
                     }
 
@@ -69,14 +69,14 @@ namespace Metatool.Input
                     InputSimu.Inst.Keyboard.KeyUp((VirtualKeyCode)(Keys)k);
                     break;
                 case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Cast<VirtualKeyCode>(),
+                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Select(k => (VirtualKeyCode)(Keys)k),
                         (VirtualKeyCode)(Keys)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                 {
                     foreach (var comb in sequence)
                     {
-                        InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Cast<VirtualKeyCode>(),
+                        InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Select(k => (VirtualKeyCode)(Keys)k),
                             (VirtualKeyCode)(Keys)comb.TriggerKey);
                     }
 

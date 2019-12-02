@@ -56,15 +56,15 @@ namespace Metatool.Service
         public static IKeyCommand MapOnAllUp(this IHotkey key, ISequenceUnit target,
             Predicate<IKeyEventArgs> canExecute = null)
         {
-            return Keyboard.MapOnAllUp(key, target, canExecute);
+            return Keyboard.MapOnHitAndAllUp(key, target, canExecute);
         }
-        public static IKeyCommand Map(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null)
+        public static IKeyCommand MapOnDownUp(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null)
         {
-            return Keyboard.Map(key, target, canExecute);
+            return Keyboard.MapOnDownUp(key, target, canExecute);
         }
         public static IKeyCommand HardMap(this IHotkey key, Key target, Predicate<IKeyEventArgs> canExecute = null)
         {
-            return Keyboard.Map(key, new Combination(target), canExecute,true);
+            return Keyboard.HardMap(key, new Combination(target), canExecute);
         }
         /// <summary>
         /// register the key to the state tree, and wait the down event;

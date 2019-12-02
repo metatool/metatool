@@ -47,7 +47,7 @@ namespace Metatool.Service
         public IKeyCommand MapOnAllUp(ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null)
         {
-            return Keyboard.MapOnAllUp(HotKeyTrigger, target, predicate);
+            return Keyboard.MapOnHitAndAllUp(HotKeyTrigger, target, predicate);
         }
         private IDictionary<string, string>[] _tempAliasesDics;
         public HotkeyConfig WithAliases(params IDictionary<string, string>[] tempAliasesDics)

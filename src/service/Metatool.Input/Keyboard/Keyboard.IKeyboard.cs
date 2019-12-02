@@ -109,14 +109,13 @@ namespace Metatool.Input
             return HotKeyMap(source, target, predicate, true);
         }
 
-        public IKeyCommand Map(IHotkey source, ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate = null, bool isAsync = true)
+        public IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
         {
             return HotKeyMap(source, target, predicate, false, false);
         }
 
         IKeyCommand HotKeyMap(IHotkey source, ISequenceUnit target,
-            Predicate<IKeyEventArgs> predicate, bool isHardMap, bool isAsync= false)
+            Predicate<IKeyEventArgs> predicate, bool isHardMap, bool isAsync = false)
         {
             void Call(IKeyEventArgs e, Action action)
             {
@@ -205,7 +204,7 @@ namespace Metatool.Input
             return MapOnHitOrAllUp(source, target, predicate, false);
         }
 
-        public IKeyCommand MapOnAllUp(IHotkey source, IHotkey target,
+        public IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target,
             Predicate<IKeyEventArgs> predicate = null)
         {
             return MapOnHitOrAllUp(source, target, predicate, true);
@@ -253,11 +252,100 @@ namespace Metatool.Input
                 }, e =>
                 {
                     handling = false;
-                    return predicate != null && predicate(e);
+                    return predicate == null || predicate(e);
                 }, "", KeyStateTrees.ChordMap),
                 allUp
                     ? source.AllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
                     : source.Up(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
+            };
+        }
+
+        public IKeyCommand Map(IHotkey source, IHotkey target, KeyMaps keyMaps,
+            Predicate<IKeyEventArgs> predicate = null)
+        {
+            switch (keyMaps)
+            {
+                case KeyMaps.HardMap:
+                    var t = target as ISequenceUnit;
+                    if (t == null)
+                        throw new ArgumentException(
+                            $"HardMap could only map '{source}' to ISequenceUnit, but currently mapped to {target}");
+                    return HardMap(source, t, predicate);
+                case KeyMaps.MapOnDownUp:
+                    var t1 = target as ISequenceUnit;
+                    if (t1 == null)
+                        throw new ArgumentException(
+                            $"MapOnDownUp could only map '{source}' to ISequenceUnit, but currently mapped to {target}");
+                    return MapOnDownUp(source, t1, predicate);
+                case KeyMaps.MapOnHit:
+                    return MapOnHit(source, target, predicate);
+                case KeyMaps.MapOnHitAndAllUp:
+                    return MapOnHitAndAllUp(source, target, predicate);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(keyMaps), keyMaps, null);
+            }
+        }
+
+        public IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target,
+            Predicate<IKeyEventArgs> predicate = null)
+        {
+            var           handling     = false;
+            IKeyEventArgs keyDownEvent = null;
+            ICombination sourCombination = source.ToCombination();
+            
+            void Handler(Object o, IKeyEventArgs e)
+            {
+                _hook.KeyDown -= Handler;
+                if(sourCombination.IsAnyKey(e.KeyCode)) return;
+                e.Handled    =  true;
+                Down(new Combination(e.KeyCode, target));
+            }
+
+            void KeyUpAsyncCall(IKeyEventArgs e)
+            {
+                e.Handled = true;
+                if (keyDownEvent == e.LastKeyDownEvent_NoneVirtual)
+                {
+                    e.BeginInvoke(() => Type(source));
+                    return;
+                }
+
+                e.BeginInvoke(() => Up(target));
+            }
+
+            bool KeyUpPredicate(IKeyEventArgs e)
+            {
+                if (e.IsVirtual) return false;
+
+                _hook.KeyDown -= Handler;
+                if (!handling)
+                {
+                    Console.WriteLine("\t/!Predicate Handling:false");
+                    return false;
+                }
+
+                handling = false;
+                return true;
+            }
+
+            return new KeyCommandTokens()
+            {
+                source.Down(e =>
+                {
+                    e.Handled = true;
+                    handling     = true;
+                    e.BeginInvoke(() =>
+                        _hook.KeyDown += Handler
+                    );
+                    keyDownEvent = e;
+                }, e =>
+                {
+                    if (e.IsVirtual || handling) return false;
+                    handling = false;
+                    return predicate == null || predicate(e);
+                }, "", KeyStateTrees.ChordMap),
+                source.Up(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
             };
         }
 
@@ -360,7 +448,7 @@ namespace Metatool.Input
                     var target = ReplaceAlias(map.Value, additionalAliases);
                     var t      = Combination.Parse(target);
                     var s      = Sequence.Parse(source);
-                    s.Map(t);
+                    s.MapOnDownUp(t);
                 }
                 catch (Exception e)
                 {

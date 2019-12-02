@@ -16,9 +16,12 @@ namespace Metatool.Service
         IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEvent keyEvent, string stateTree = KeyStateTrees.Default);
 
         IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
-        IKeyCommand Map(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
         IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
-        IKeyCommand MapOnAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand Map(IHotkey source, IHotkey target, KeyMaps keyMaps, Predicate<IKeyEventArgs> predicate = null);
+
+        IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
 
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);
 
@@ -30,6 +33,8 @@ namespace Metatool.Service
         bool RegisterKeyMaps(IDictionary<string, string> maps, IDictionary<string, string> additionalAliases = null);
         string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalAliasesDics);
     }
+
+    public enum KeyMaps { HardMap, MapOnDownUp, MapOnHit, MapOnHitAndAllUp}
 
     public interface IKeyboardVirtual
     {

@@ -47,6 +47,10 @@ namespace Metatool.Service
         {
         }
 
+        public Combination(Key triggerKey, ISequenceUnit sequenceUnit): this(triggerKey, sequenceUnit.ToCombination().AllKeys)
+        {
+        }
+
 
         private Combination(Key triggerKey, Chord chord)
         {
