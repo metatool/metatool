@@ -85,7 +85,7 @@ namespace Metatool.Input
         {
             var sequence = Sequence.FromString(source);
             var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
-            return sequence.Up(e =>
+            return sequence.OnUp(e =>
             {
                 e.BeginInvoke(() =>
                     {
@@ -133,7 +133,7 @@ namespace Metatool.Input
             var combination = target.ToCombination();
             return new KeyCommandTokens()
             {
-                source.Down(e =>
+                source.OnDown(e =>
                 {
                     handled   = true;
                     e.Handled = true;
@@ -155,7 +155,7 @@ namespace Metatool.Input
                         Call(e, () => Down(combination));
                     }
                 }, predicate, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
-                source.Up(e =>
+                source.OnUp(e =>
                 {
                     handled   = false;
                     e.Handled = true;
@@ -245,7 +245,7 @@ namespace Metatool.Input
 
             return new KeyCommandTokens()
             {
-                source.Down(e =>
+                source.OnDown(e =>
                 {
                     handling     = true;
                     keyDownEvent = e;
@@ -256,8 +256,8 @@ namespace Metatool.Input
                     return predicate == null || predicate(e);
                 }, "", KeyStateTrees.ChordMap),
                 allUp
-                    ? source.AllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
-                    : source.Up(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
+                    ? source.OnAllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
+                    : source.OnUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
             };
         }
 
@@ -307,7 +307,7 @@ namespace Metatool.Input
 
             return new KeyCommandTokens()
             {
-                source.Down(e =>
+                source.OnDown(e =>
                 {
                     e.Handled = true;
                     if (handling) return; // repeated long press key, within duration
@@ -327,7 +327,7 @@ namespace Metatool.Input
                     return predicate == null || predicate(e);
                 }, "", KeyStateTrees.ChordMap),
 
-                source.Up(e =>
+                source.OnUp(e =>
                 {
                     e.Handled = true;
                     if (keyDownEvent.KeyCode == e.LastKeyDownEvent_NoneVirtual.KeyCode) // use KeyCode to compare for long press repeating

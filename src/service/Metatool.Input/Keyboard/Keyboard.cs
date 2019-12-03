@@ -83,13 +83,13 @@ namespace Metatool.Input
             IKeyEventArgs keyDownEvent = null;
             var token = new KeyCommandTokens
             {
-                hotkey.Down(e =>
+                hotkey.OnDown(e =>
                 {
                     handling     = true;
                     keyDownEvent = e;
                 }, canExecute, description, stateTree),
 
-                hotkey.Up(e =>
+                hotkey.OnUp(e =>
                 {
                     if (!handling)
                     {

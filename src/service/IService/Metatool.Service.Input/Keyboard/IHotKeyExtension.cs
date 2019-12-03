@@ -23,26 +23,26 @@ namespace Metatool.Service
             return keyboardInternal.GetToken(token, trigger);
         }
 
-        public static IKeyCommand Down(this IHotkey hotkey, Action<IKeyEventArgs> execute,
+        public static IKeyCommand OnDown(this IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var trigger = Keyboard.OnDown(hotkey, stateTree);
             return trigger.Register(execute, canExecute, description);
         }
 
-        public static IKeyCommand Up(this IHotkey hotkey, Action<IKeyEventArgs> execute,
+        public static IKeyCommand OnUp(this IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var trigger = Keyboard.OnUp(hotkey, stateTree);
             return trigger.Register(execute, canExecute, description);
         }
-        public static IKeyCommand AllUp(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
+        public static IKeyCommand OnAllUp(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var trigger          = Keyboard.OnAllUp(sequenceUnit, stateTree);
             return trigger.Register(execute, canExecute, description);
         }
-        public static IKeyCommand Hit(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
+        public static IKeyCommand OnHit(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute, string description, string stateTree = KeyStateTrees.Default)
         {
             var trigger          = Keyboard.OnHit(sequenceUnit, stateTree);
@@ -73,14 +73,14 @@ namespace Metatool.Service
         public static Task<IKeyEventArgs> DownAsync(this IHotkey hotkey, int timeout = -1, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var command = new KeyEventAsync();
-            hotkey.Down(command.OnEvent, null, description, stateTree);
+            hotkey.OnDown(command.OnEvent, null, description, stateTree);
             return command.WaitAsync(timeout);
         }
 
         public static Task<IKeyEventArgs> UpAsync(this IHotkey sequenceUnit, int timeout = -1, string description = "", string stateTree = KeyStateTrees.Default)
         {
             var command = new KeyEventAsync();
-            sequenceUnit.Up(command.OnEvent, null, description, stateTree);
+            sequenceUnit.OnUp(command.OnEvent, null, description, stateTree);
             return command.WaitAsync(timeout);
         }
 

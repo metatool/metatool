@@ -13,7 +13,7 @@ namespace Metatool.Tools.LibToolDemo
         {
             CommandA = commandManager.Add(keyboard.OnDown(AK + A),
                 e => { Logger.LogInformation($"{nameof(ToolDemo)}: Caps+A triggered!!!!!!!"); });
-            CommandB = (Caps + B).Down(e => Logger.LogWarning("Caps+B pressed!!!"));
+            CommandB = (Caps + B).OnDown(e => Logger.LogWarning("Caps+B pressed!!!"));
 
             Logger.LogInformation(config.CurrentValue.Option1);
             Logger.LogInformation(config.CurrentValue.Option2.ToString());

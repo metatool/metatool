@@ -43,13 +43,13 @@ namespace Metatool.MetaKeyboard
             DisableWinLock();
             var winLock   = Key.Win + Key.L;
             var winOrLKey = Key.Win | Key.L;
-            var enableLock = winLock.Down(e =>
+            var enableLock = winLock.OnDown(e =>
             {
                 if (e.KeyboardState.IsOtherDown(winOrLKey)) return;
                 // when LWin+L pressed, enable to lock
                 EnableWinLock();
             });
-            var disableLock = winLock.Up(e =>
+            var disableLock = winLock.OnUp(e =>
             {
                 if (e.KeyboardState.IsOtherDown(winOrLKey)) return;
 

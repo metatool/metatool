@@ -35,7 +35,7 @@ namespace Metatool.Input
         void InstallHook()
         {
             if (_keyCommandDownActionToken == null)
-                _keyCommandDownActionToken = _key.Down(e =>
+                _keyCommandDownActionToken = _key.OnDown(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
@@ -67,7 +67,7 @@ namespace Metatool.Input
                     e.Handled = true;
                 }, e=> !e.IsVirtual);
             if (_keyCommandUpActionToken == null)
-                _keyCommandUpActionToken = _key.Up(e =>
+                _keyCommandUpActionToken = _key.OnUp(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
