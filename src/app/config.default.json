@@ -26,7 +26,7 @@
           ".": "Period",
           "/": "Slash"
         },
-        "RepeatDelay": 3000
+        "RepeatDelay": 2000
       }
     },
     "Logging": {

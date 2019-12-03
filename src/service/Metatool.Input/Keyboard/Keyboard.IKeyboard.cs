@@ -216,6 +216,9 @@ namespace Metatool.Input
         {
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
+            var stopwatch =
+                new Stopwatch(); // within duration could be used as a map source, otherwise as it is. i.e. repeat the down event of the trigger key.
+            var delay = _config.CurrentValue?.Services.Input.Keyboard.RepeatDelay ?? 3000;
 
             void KeyUpAsyncCall(IKeyEventArgs e)
             {
@@ -247,13 +250,17 @@ namespace Metatool.Input
             {
                 source.OnDown(e =>
                 {
-                    handling     = true;
+                    e.Handled = true;
                     keyDownEvent = e;
-                    e.Handled    = true;
+                    if (handling) return; // repeated long press key, within duration
+                    handling     = true;
+                    stopwatch.Restart();
                 }, e =>
                 {
-                    handling = false;
-                    return predicate == null || predicate(e);
+                    if ((!handling ||stopwatch.ElapsedMilliseconds <= delay) && (predicate == null || predicate(e)))
+                        return true;
+                    if(stopwatch.IsRunning) stopwatch.Stop();
+                    return false; // disable map
                 }, "", KeyStateTrees.ChordMap),
                 allUp
                     ? source.OnAllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
@@ -294,8 +301,9 @@ namespace Metatool.Input
             var           handling        = false;
             IKeyEventArgs keyDownEvent    = null;
             ICombination  sourCombination = source.ToCombination();
-            Stopwatch watch = new Stopwatch();
-            int delay = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay??3000;
+            Stopwatch     stopwatch           = new Stopwatch();
+            int           delay           = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay ?? 3000;
+
             void Handler(Object o, IKeyEventArgs e)
             {
                 _hook.KeyDown -= Handler;
@@ -310,27 +318,27 @@ namespace Metatool.Input
                 source.OnDown(e =>
                 {
                     e.Handled = true;
+                    keyDownEvent = e;
                     if (handling) return; // repeated long press key, within duration
 
-                    handling  = true;
-                    watch.Restart();
+                    handling = true;
+                    stopwatch.Restart();
                     e.BeginInvoke(() =>
                         _hook.KeyDown += Handler
                     );
-                    keyDownEvent = e;
                 }, e =>
                 {
-                    var duration = watch.ElapsedMilliseconds;
-                    if (e.IsVirtual || handling&&duration>delay)
-                        return false;
-
-                    return predicate == null || predicate(e);
+                    var duration = stopwatch.ElapsedMilliseconds;
+                    if (!e.IsVirtual && (!handling || duration <= delay) && (predicate == null || predicate(e)))
+                        return true;
+                    if(stopwatch.IsRunning) stopwatch.Stop();
+                    return false;
                 }, "", KeyStateTrees.ChordMap),
 
                 source.OnUp(e =>
                 {
                     e.Handled = true;
-                    if (keyDownEvent.KeyCode == e.LastKeyDownEvent_NoneVirtual.KeyCode) // use KeyCode to compare for long press repeating
+                    if (keyDownEvent == e.LastKeyDownEvent_NoneVirtual)
                     {
                         e.BeginInvoke(() => Type(source));
                         return;
@@ -349,7 +357,7 @@ namespace Metatool.Input
                     }
 
                     handling = false;
-                    watch.Reset();
+                    if(stopwatch.IsRunning) stopwatch.Reset();
                     return true;
                 }, "", KeyStateTrees.ChordMap)
             };
