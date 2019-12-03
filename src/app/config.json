@@ -1,13 +1,17 @@
 ﻿{
-  "KeyAliases": {
-    // global key
-    "GK": "Space",
-    // context key
-    "CK": "Caps|Enter",
-    // apps key
-    "AK": "Apps|Tab"
-  },
   "Services": {
+    "Input": {
+      "Keyboard": {
+        "KeyAliases": {
+          // global key
+          "GK": "Space",
+          // context key
+          "CK": "Caps|Enter",
+          // apps key
+          "AK": "Apps|Tab"
+        }
+      }
+    },
     "Logging": {
       "File": {
         "Enabled": false
@@ -17,7 +21,6 @@
   "Tools": {
     //"Metatool.Tools.LibToolDemo": { "Update": true },
     //"Metatool.Tools.ScriptToolDemo": { "Update": true }
-
     "Metatool.MetaKeyboard": {
     }
 

@@ -38,17 +38,16 @@ namespace Metaseed.Metatool
                     else
                         Console.WriteLine("FileLogger is disabled, modify the config.json to enable it");
                 })
+                .AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>))
                 .Configure<LoggerFilterOptions>(options =>
                     options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)
-                .AddSingleton<IKeyboard, Keyboard>()
+                .AddSingleton<IKeyboard,Keyboard>()
                 .AddSingleton<IMouse, Mouse>()
                 .AddSingleton<ICommandManager, CommandManager>()
-                .AddSingleton(typeof(IConfig<>), typeof(Config<>))
                 .AddSingleton<INotify, Notify>()
                 .AddSingleton<IScreenHint, ScreenHint>()
                 .AddMetatoolUtils()
-                .Configure<Config>(configuration)
-                .AddSingleton<MetatoolConfig>()
+                .Configure<MetatoolConfig>(configuration)
                 // .AddSingleton<IServiceCollection>(services)
                 .AddSingleton<IConfiguration>(configuration);
 

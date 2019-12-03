@@ -318,7 +318,7 @@ namespace Metatool.Plugin
 
             IServiceProviderDisposable provider   = null;
             var                        allTypes   = loader.MainAssembly.GetTypes();
-            var                        optionType = ToolConfig.GetConfigType(allTypes);
+            var                        optionType = ToolConfigAttribute.GetConfigType(allTypes);
             if (optionType != null)
             {
                 var services = new ServiceCollection();

@@ -22,14 +22,18 @@ namespace Metatool.Input
     public partial class Keyboard : IKeyboard, IKeyboardInternal
     {
         private readonly ILogger<Keyboard> _logger;
+        private readonly IConfig<MetatoolConfig> _config;
         private static   Keyboard          _default;
 
         public static Keyboard Default =>
             _default ??= Services.Get<IKeyboard, Keyboard>();
 
-        public Keyboard(ILogger<Keyboard> logger)
+        public Keyboard(ILogger<Keyboard> logger, IConfig<MetatoolConfig> config)
         {
             _logger = logger;
+            _config = config;
+            var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
+            AddAliases(aliases);
             Hook();
         }
 

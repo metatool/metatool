@@ -32,6 +32,7 @@ namespace Metatool.Service
         Dictionary<string, IHotkey> Aliases { get; }
         bool RegisterKeyMaps(IDictionary<string, string> maps, IDictionary<string, string> additionalAliases = null);
         string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalAliasesDics);
+
     }
 
     public enum KeyMaps { HardMap, MapOnDownUp, MapOnHit, MapOnHitAndAllUp}

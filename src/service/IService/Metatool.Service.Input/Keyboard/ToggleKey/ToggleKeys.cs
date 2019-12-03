@@ -7,7 +7,7 @@ namespace Metatool.Service
         private static IKeyboardInternal _keyboard;
 
         private static IKeyboardInternal Keyboard =>
-            _keyboard ??= Services.Get<IKeyboard, IKeyboardInternal>();
+            _keyboard ??= (IKeyboardInternal)Services.Get<IKeyboard, IKeyboard>();
 
         public static IToggleKey NumLock    = Keyboard.GeToggleKey(Key.Num);
         public static IToggleKey CapsLock   = Keyboard.GeToggleKey(Key.Caps);

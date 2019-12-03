@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -290,43 +291,18 @@ namespace Metatool.Input
         public IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null)
         {
-            var           handling     = false;
-            IKeyEventArgs keyDownEvent = null;
-            ICombination sourCombination = source.ToCombination();
-            
+            var           handling        = false;
+            IKeyEventArgs keyDownEvent    = null;
+            ICombination  sourCombination = source.ToCombination();
+            Stopwatch watch = new Stopwatch();
+            int delay = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay??3000;
             void Handler(Object o, IKeyEventArgs e)
             {
                 _hook.KeyDown -= Handler;
-                if(sourCombination.IsAnyKey(e.KeyCode)) return;
-                e.Handled    =  true;
-                Down(new Combination(e.KeyCode, target));
-            }
+                if (sourCombination.IsAnyKey(e.KeyCode)) return; // repeated long press key, > duration
 
-            void KeyUpAsyncCall(IKeyEventArgs e)
-            {
                 e.Handled = true;
-                if (keyDownEvent == e.LastKeyDownEvent_NoneVirtual)
-                {
-                    e.BeginInvoke(() => Type(source));
-                    return;
-                }
-
-                e.BeginInvoke(() => Up(target));
-            }
-
-            bool KeyUpPredicate(IKeyEventArgs e)
-            {
-                if (e.IsVirtual) return false;
-
-                _hook.KeyDown -= Handler;
-                if (!handling)
-                {
-                    Console.WriteLine("\t/!Predicate Handling:false");
-                    return false;
-                }
-
-                handling = false;
-                return true;
+                Down(new Combination(e.KeyCode, target));
             }
 
             return new KeyCommandTokens()
@@ -334,18 +310,48 @@ namespace Metatool.Input
                 source.Down(e =>
                 {
                     e.Handled = true;
-                    handling     = true;
+                    if (handling) return; // repeated long press key, within duration
+
+                    handling  = true;
+                    watch.Restart();
                     e.BeginInvoke(() =>
                         _hook.KeyDown += Handler
                     );
                     keyDownEvent = e;
                 }, e =>
                 {
-                    if (e.IsVirtual || handling) return false;
-                    handling = false;
+                    var duration = watch.ElapsedMilliseconds;
+                    if (e.IsVirtual || handling&&duration>delay)
+                        return false;
+
                     return predicate == null || predicate(e);
                 }, "", KeyStateTrees.ChordMap),
-                source.Up(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
+
+                source.Up(e =>
+                {
+                    e.Handled = true;
+                    if (keyDownEvent.KeyCode == e.LastKeyDownEvent_NoneVirtual.KeyCode) // use KeyCode to compare for long press repeating
+                    {
+                        e.BeginInvoke(() => Type(source));
+                        return;
+                    }
+
+                    e.BeginInvoke(() => Up(target));
+                }, e =>
+                {
+                    if (e.IsVirtual) return false;
+
+                    _hook.KeyDown -= Handler;
+                    if (!handling)
+                    {
+                        Console.WriteLine("\t/!Predicate Handling:false");
+                        return false;
+                    }
+
+                    handling = false;
+                    watch.Reset();
+                    return true;
+                }, "", KeyStateTrees.ChordMap)
             };
         }
 

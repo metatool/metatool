@@ -7,13 +7,13 @@ using System.Text;
 namespace Metatool.Service
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class ToolConfig : Attribute
+    public class ToolConfigAttribute : Attribute
     {
         public static Type GetConfigType(Assembly assembly) =>
             GetConfigType(assembly
                 .GetTypes());
 
         public static Type GetConfigType(IEnumerable<Type> types) =>
-            types.FirstOrDefault(t => t.GetCustomAttributes(typeof(ToolConfig), true).Length > 0 && !t.IsAbstract);
+            types.FirstOrDefault(t => t.GetCustomAttributes(typeof(ToolConfigAttribute), true).Length > 0 && !t.IsAbstract);
     }
 }

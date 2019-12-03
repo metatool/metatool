@@ -6,11 +6,11 @@ using Microsoft.Extensions.Options;
 
 namespace Metaseed.Metatool.Service
 {
-    internal class Config<T>: IConfig<T>
+    internal class ToolConfig<T>: IConfig<T>
     {
         private readonly IOptionsMonitor<T> _optionsAccessor;
 
-        public Config()
+        public ToolConfig()
         {
 
             _optionsAccessor = Services.Get<IOptionsMonitor<T>>();

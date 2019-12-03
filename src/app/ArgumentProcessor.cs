@@ -42,7 +42,7 @@ namespace Metaseed.Metatool
                 // without command
                 var application   = new App();
                 Context.Dispatcher = application.Dispatcher;
-                var config = Services.Get<MetatoolConfig>();
+                var config = Services.Get<IConfig<MetatoolConfig>>(); // workaround to create the single instance of IConfig<MetatoolConfig> before load the tools, at that time the provider is modified to query the child first
 
                 var pluginManager = Services.GetOrCreate<PluginManager>();
                 pluginManager.InitPlugins();

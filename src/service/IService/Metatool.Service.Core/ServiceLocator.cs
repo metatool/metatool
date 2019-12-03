@@ -111,14 +111,23 @@ namespace Metatool.Service
             return (T) ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
         }
 
-        public static TOut Get<T, TOut>()
+        public static TImpl Get<T, TImpl>()
+            where TImpl : class, T
+
         {
-            return _provider.Get<T, TOut>();
+            return _provider.Get<T, TImpl>();
         }
 
-        public static TOut Get<T, TOut>(this IServiceProvider provider)
+        public static TImpl Get<T, TImpl>(this IServiceProvider provider)
+            where TImpl : class, T
         {
-            return (TOut) Get(typeof(T));
+            return (TImpl) Get(typeof(T));
+        }
+
+        public static TImpl GetOrCreate<T, TImpl>(this IServiceProvider provider, params object[] parameters) 
+            where TImpl : class, T
+        {
+            return (TImpl)GetOrCreate<T>(parameters);
         }
     }
 }
