@@ -289,7 +289,19 @@ namespace Metatool.Input
                     return MapOnHit(source, target, predicate);
                 case KeyMaps.MapOnHitAndAllUp:
                     return MapOnHitAndAllUp(source, target, predicate);
+                case KeyMaps.ChordMap:
+                {
+                        var src = source as ISequenceUnit;
+                        if (src == null)
+                            throw new ArgumentException(
+                                $"ChordMap could only use ISequenceUnit as it's source,  but currently the source is {source}");
+                        var tgt = target as ISequenceUnit;
+                        if (tgt == null)
+                            throw new ArgumentException(
+                                $"ChordMap could only use ISequenceUnit as it's target,  but currently the source is {target}");
 
+                        return ChordMap(src, tgt, predicate);
+                }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(keyMaps), keyMaps, null);
             }

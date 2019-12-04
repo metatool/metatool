@@ -19,9 +19,17 @@ namespace Metatool.Service
         IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
         IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
         IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
-        IKeyCommand Map(IHotkey source, IHotkey target, KeyMaps keyMaps, Predicate<IKeyEventArgs> predicate = null);
-
+        /// <summary>
+        /// i.e. Z: LCtrl+LShift, then press Z+A = LCtrl+LShift+A
+        /// if Z pressed and then release, z would be typed
+        /// if Z is long time pressed(2s by default), it would be repeated
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
         IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
+        IKeyCommand Map(IHotkey source, IHotkey target, KeyMaps keyMaps, Predicate<IKeyEventArgs> predicate = null);
 
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);
         void AddHotStrings(IDictionary<string, HotStringDef> hotStrings);
@@ -36,7 +44,7 @@ namespace Metatool.Service
 
     }
 
-    public enum KeyMaps { HardMap, MapOnDownUp, MapOnHit, MapOnHitAndAllUp}
+    public enum KeyMaps { MapOnDownUp, HardMap, MapOnHit, MapOnHitAndAllUp, ChordMap}
 
     public interface IKeyboardVirtual
     {
