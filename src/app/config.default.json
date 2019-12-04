@@ -1,5 +1,10 @@
 ﻿{
   "CtrlCExit": false,
+  "HotKeys": {
+    "Exit": "Alt + Space + C",
+    "Restart": "Alt + Space + X",
+    "RestartAsAdmin":  "Alt +Space + A" 
+  },
   "Services": {
     "Input": {
       "Keyboard": {
