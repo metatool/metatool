@@ -9,6 +9,10 @@
           "CK": "Caps|Enter",
           // apps key
           "AK": "Apps|Tab"
+        },
+        "HotStrings": {
+          "tks": "thank you very much",
+          "hh": [ "哈哈😊", "ha ha!" ]
         }
       }
     },

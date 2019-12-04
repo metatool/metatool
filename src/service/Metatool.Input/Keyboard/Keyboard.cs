@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Windows.Threading;
-using Metatool.Command;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.Service.Internal;
-using Metatool.Service.MouseKeyHook;
-using Metatool.Service.MouseKeyHook.Implementation;
-using Metatool.UI;
-using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
-using KeyEventHandler = Metatool.Input.MouseKeyHook.KeyEventHandler;
 
 namespace Metatool.Input
 {
@@ -35,14 +27,26 @@ namespace Metatool.Input
             var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
             AddAliases(aliases);
             Hook();
+            Debug.Assert(System.Windows.Application.Current.Dispatcher != null, "System.Windows.Application.Current.Dispatcher != null");
+            System.Windows.Application.Current.Dispatcher.BeginInvoke((Action) (() => InitService(config))); // workaround to use the Keyboard Service itself via DI in initService
+        } 
+
+        private void InitService(IConfig<MetatoolConfig> config)
+        {
+            var hotStrings = config.CurrentValue.Services.Input.Keyboard.HotStrings;
+            foreach (var (key, strings) in hotStrings)
+            {
+                foreach (var str in strings)
+                {
+                    HotString(key, str);
+                }
+            }
         }
 
         public IKeyPath Root = null;
 
         readonly KeyboardHook _hook =
             new KeyboardHook(Services.Get<ILogger<KeyboardHook>>(), Services.Get<INotify>());
-
-        readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
         internal IMetaKey Add(IList<ICombination> sequence, KeyEvent keyEvent, KeyCommand command,
             string stateTree = KeyStateTrees.Default)

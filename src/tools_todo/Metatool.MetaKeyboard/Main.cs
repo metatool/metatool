@@ -10,13 +10,13 @@ namespace Metatool.MetaKeyboard
             var mouse        = Services.GetOrCreate<KeyboardMouse>();
             var fun          = new FunctionalKeys();
             var fileExplorer = Services.GetOrCreate<FileExplorer>();
-            var hotstrings   = Services.GetOrCreate<HotStrings>();
             var software     = Services.GetOrCreate<Software>();
             return base.OnLoaded();
         }
 
         public KeyboardTool(ICommandManager commandManager, IConfig<Config> config)
         {
+            //var a = config.CurrentValue.Test.Values;
             RegisterCommands();
         }
     }

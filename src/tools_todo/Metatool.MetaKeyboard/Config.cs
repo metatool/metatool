@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using Metatool.Service;
 
@@ -68,8 +72,9 @@ namespace Metatool.MetaKeyboard
 
     public class SoftwarePackage
     {
-        public IDictionary<string,string> KeyAliases { get; set; }
-        public SoftwareHotKeys HotKeys { get; set; }
+        public List<KeyValuePair<string, string>> KeyAliases1 { get; set; }
+        public IDictionary<string,string> KeyAliases { get; set; } // List<KeyValuePair<string,string>>  keep the order of keys
+    public SoftwareHotKeys HotKeys { get; set; }
         private SoftwarePaths _softwarePaths;
 
         public SoftwarePaths SoftwarePaths
@@ -103,12 +108,7 @@ namespace Metatool.MetaKeyboard
 
     }
 
-    public class HotStringPackage
-    {
-        public IDictionary<string, string[]> HotStrings { get; set; }
-    }
-
-    public class SoftwareHotKeys
+          public class SoftwareHotKeys
     {
         public HotkeyConfig DoublePinyinSwitch { get; set; }
         public HotkeyConfig  Find { get; set; }
@@ -133,11 +133,11 @@ namespace Metatool.MetaKeyboard
         public FileExplorerPackage FileExplorerPackage { get; set; }
         public KeyboardMousePackage KeyboardMousePackage { get; set; }
 
-        public HotStringPackage HotStringPackage { get; set; }
         public SoftwarePackage SoftwarePackage { get; set; }
 
         public Settings  Settings  { get; set; }
 
         public Registers Registers { get; set; }
+        public IDictionary<string,Sequence> Test { get; set; }
     }
 }

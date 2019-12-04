@@ -6,17 +6,17 @@ namespace Metatool.Service
     {
         public IDictionary<string, string> KeyAliases { get; set; }
         public int RepeatDelay { get; set; } = 3000;
-
+        public IDictionary<string, HotStringDef> HotStrings { get; set; }
     }
 
-    public class InputConfig
+    public class InputServiceConfig
     {
         public KeyboardConfig Keyboard { get; set; }
 
     }
     public class ServicesConfig
     {
-       public  InputConfig  Input { get; set; }
+       public  InputServiceConfig  Input { get; set; }
     }
 
     public class MetatoolConfig
