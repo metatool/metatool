@@ -163,7 +163,7 @@ namespace Metatool.Input.MouseKeyHook
             _eventSource.KeyUp += (sender, args) =>
             {
                 ClimbTree(KeyEvent.Up, args);
-                var handlers = new List<KeyEventHandler>(_keyDownHandlers); // a copy
+                var handlers = new List<KeyEventHandler>(_keyUpHandlers); // a copy
                 handlers.ForEach(h => h?.Invoke(sender, args));
             };
         }
