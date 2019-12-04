@@ -34,6 +34,11 @@ namespace Metatool.Input
         private void InitService(IConfig<MetatoolConfig> config)
         {
             var hotStrings = config.CurrentValue.Services.Input.Keyboard.HotStrings;
+            AddHotStrings(hotStrings);
+        }
+
+        public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
+        {
             foreach (var (key, strings) in hotStrings)
             {
                 foreach (var str in strings)

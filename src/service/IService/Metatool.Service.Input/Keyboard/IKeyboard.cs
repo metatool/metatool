@@ -24,6 +24,7 @@ namespace Metatool.Service
         IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
 
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);
+        void AddHotStrings(IDictionary<string, HotStringDef> hotStrings);
 
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);
         Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default);
