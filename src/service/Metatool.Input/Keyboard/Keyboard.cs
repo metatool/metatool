@@ -33,8 +33,12 @@ namespace Metatool.Input
 
         private void InitService(IConfig<MetatoolConfig> config)
         {
-            var hotStrings = config.CurrentValue.Services.Input.Keyboard.HotStrings;
+            var keyboard = config.CurrentValue.Services.Input.Keyboard;
+            var hotStrings =keyboard.HotStrings;
             AddHotStrings(hotStrings);
+
+            keyboard.HotKeys.TryGetValue("Reset", out var resetTrigger);
+            resetTrigger?.OnEvent(_ => ReleaseDownKeys());
         }
 
         public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)

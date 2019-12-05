@@ -7,6 +7,7 @@ namespace Metatool.Service
         public OrderedDictionary<string, string> KeyAliases { get; set; }
         public int RepeatDelay { get; set; } = 3000;
         public OrderedDictionary<string, HotStringDef> HotStrings { get; set; }
+        public OrderedDictionary<string, HotkeyTrigger> HotKeys { get; set; }
     }
 
     public class InputServiceConfig

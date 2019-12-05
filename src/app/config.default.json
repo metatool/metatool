@@ -8,6 +8,9 @@
   "Services": {
     "Input": {
       "Keyboard": {
+        "HotKeys": {
+          "Reset": "MT + R" 
+        },
         "KeyAliases": {
           "`": "Tilde",
           "0": "D0",
