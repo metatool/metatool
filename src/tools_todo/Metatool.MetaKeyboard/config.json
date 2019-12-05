@@ -59,7 +59,7 @@
         },
         "HotKeys": {
           "MouseToFocus": {
-            "HotKey": "GK + F*", // * behind the trigger key to mark all KeyEvent handled
+            "HotKey": "GK + F*", // * behind the trigger key to mark down/up KeyEvent handled
             "Description": "Focus Mouse To Active Control"
           },
           "MouseScrollUp": {
