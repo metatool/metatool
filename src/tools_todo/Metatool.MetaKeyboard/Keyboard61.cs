@@ -11,10 +11,6 @@ namespace Metatool.MetaKeyboard
             ToggleKeys.CapsLock.AlwaysOff();
             SetupWinLock();
             RegisterCommands();
-            keyboard.ChordMap(Z, CtrlKey + ShiftKey);
-            keyboard.ChordMap(X, Win + ShiftKey);
-            keyboard.ChordMap(C, AltKey + ShiftKey);
-            keyboard.ChordMap(Slash, CtrlKey + AltKey);
 
             var cfg  = config.CurrentValue.Keyboard61Package;
             var maps = cfg.KeyMaps;

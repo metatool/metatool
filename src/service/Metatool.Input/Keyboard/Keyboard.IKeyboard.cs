@@ -337,7 +337,7 @@ namespace Metatool.Input
 
                     handling = true;
                     stopwatch.Restart();
-                    _hook.KeyDown += Handler;
+                    e.BeginInvoke(()=>_hook.KeyDown += Handler); //have to be async to handle next key down event, otherwise can't capture it.
                 }, e =>
                 {
                     var duration = stopwatch.ElapsedMilliseconds;
@@ -349,15 +349,19 @@ namespace Metatool.Input
 
                 source.OnUp(e =>
                 {
-                    e.Handled = true;
                     if (keyDownEvent == e.LastKeyDownEvent_NoneVirtual)
                     {
+                        e.Handled = true;
                         if (targetDown) Up(target); // fix: for logic wrong, if typing fast, the up event of source is not fired but another key down happens.
                         targetDown = false;
                         Type(source);
                         return;
                     }
 
+                    if (!targetDown)
+                        return;
+                    
+                    e.Handled = true;
                     Up(target);
                     targetDown = false;
                 }, e =>

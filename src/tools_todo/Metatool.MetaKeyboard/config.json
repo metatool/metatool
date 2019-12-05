@@ -15,6 +15,23 @@
           // delete: "GK + D1": null or "" to disable it
           // modify: "GK + D1": "F2" to remap it to F2
           // Fn
+          "Z": {
+            "Target": "Ctrl + Shift",
+            "Type": "ChordMap"
+          },
+          "X": {
+            "Target": "Win + Shift",
+            "Type": "ChordMap"
+          },
+          "C": {
+            "Target": "Alt + Shift",
+            "Type": "ChordMap"
+          },
+          "/": {
+            "Target": "Ctrl + Alt",
+            "Type": "ChordMap"
+          },
+
           "GK + D1": "F1",
           "GK + D2": "F2",
           "GK + D3": "F3",
