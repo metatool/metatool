@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
     ///     This class is basically a managed wrapper of GetKeyboardState API function
     ///     http://msdn.microsoft.com/en-us/library/ms646299
     /// </remarks>
-    public class KeyboardState: IKeyboardState
+    public class KeyboardState : IKeyboardState
     {
         private static MemoryMappedViewAccessor accessor;
 
@@ -43,9 +42,9 @@ namespace Metatool.Input.MouseKeyHook.Implementation
                 sb.Append(HandledDownKeys.ToString() + "|");
             for (var i = 0; i < 256; i++)
             {
-                 var key = (Keys) i;
-                  if (_keyboardStateNative[i] != 0)
-                  {
+                var key = (Keys) i;
+                if (_keyboardStateNative[i] != 0)
+                {
                     if (IsDown(key)) sb.Append($"{key}↓ ");
                     if (IsToggled(key)) sb.Append($"{key}~ ");
                 }
@@ -215,8 +214,8 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             var keyState  = GetKeyState(key);
             var isToggled = GetLowBit(keyState);
             return isToggled;
-
         }
+
         public bool IsToggled(Key key)
         {
             return key.Codes.Any(IsToggled);

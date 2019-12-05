@@ -46,6 +46,8 @@ namespace Metatool.Service
         bool IsUp(IKey key);
         bool IsToggled(IKey key);
 
+        bool Disable { get; set; }
+
     }
 
     public enum KeyMaps { MapOnDownUp, HardMap, MapOnHit, MapOnHitAndAllUp, ChordMap}

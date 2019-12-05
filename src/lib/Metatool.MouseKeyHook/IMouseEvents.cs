@@ -8,7 +8,7 @@ namespace Metatool.Input.MouseKeyHook
     /// <summary>
     ///     Provides all mouse events.
     /// </summary>
-    public interface IMouseEvents
+    public interface IMouseEvents: IEvents
     {
         /// <summary>
         ///     Occurs when the mouse pointer is moved.

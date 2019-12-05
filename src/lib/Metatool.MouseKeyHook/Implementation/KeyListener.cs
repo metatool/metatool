@@ -20,7 +20,6 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         public event KeyEventHandler      KeyDown;
         public event KeyPressEventHandler KeyPress;
         public event KeyEventHandler      KeyUp;
-
         public void InvokeKeyDown(IKeyEventArgs e)
         {
             var handler = KeyDown;
@@ -55,6 +54,8 @@ namespace Metatool.Input.MouseKeyHook.Implementation
 
         protected override bool Callback(CallbackData data)
         {
+            if (Disable) return true;
+
             var eDownUp = GetDownUpEventArgs(data);
 
             _logger.LogDebug(new String('\t', _indentCounter++) + "→" + eDownUp.ToString());
@@ -70,7 +71,6 @@ namespace Metatool.Input.MouseKeyHook.Implementation
 
             InvokeKeyUp(eDownUp);
             _logger.LogDebug(new String('\t', --_indentCounter) + "←" + eDownUp.ToString());
-            //Console.Write(Environment.NewLine);
 
             return !eDownUp.Handled;
         }

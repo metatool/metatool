@@ -19,6 +19,11 @@ namespace Metatool.Input.MouseKeyHook
         private readonly IKeyboardMouseEvents  _eventSource;
         public           bool                  IsRuning { get; set; }
 
+        public bool Disable
+        {
+            get => _eventSource.Disable;
+            set => _eventSource.Disable = value;
+        }
 
         public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
         {

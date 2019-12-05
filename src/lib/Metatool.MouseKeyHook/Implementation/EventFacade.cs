@@ -112,6 +112,15 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             remove => GetMouseListener().MouseDragFinishedExt -= value;
         }
 
+        public bool Disable
+        {
+            get => GetMouseListener().Disable && GetKeyListener().Disable;
+            set
+            {
+                GetMouseListener().Disable = value;
+                GetKeyListener().Disable = value;
+            }
+        }
         public void Dispose()
         {
             if (m_MouseListenerCache != null) m_MouseListenerCache.Dispose();

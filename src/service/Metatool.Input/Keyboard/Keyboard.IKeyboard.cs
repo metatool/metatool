@@ -504,5 +504,10 @@ namespace Metatool.Input
             var state = KeyboardState.GetCurrent();
             return state.IsToggled((Key)key);
         }
+        public bool Disable
+        {
+            get => _hook.Disable;
+            set => _hook.Disable = value;
+        }
     }
 }

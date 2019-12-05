@@ -75,6 +75,8 @@ namespace Metatool.Input.MouseKeyHook.Implementation
 
         protected override bool Callback(CallbackData data)
         {
+            if (Disable) return true;
+
             var e = GetEventArgs(data);
 
             if (e.IsMouseButtonDown)

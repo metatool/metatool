@@ -13,6 +13,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         }
 
         protected HookResult Handle { get; set; }
+        public bool Disable { get; set; }
 
         public void Dispose()
         {

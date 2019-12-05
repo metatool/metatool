@@ -4,10 +4,14 @@ using System.Windows.Forms;
 
 namespace Metatool.Input.MouseKeyHook
 {
+    public interface IEvents
+    {
+        bool Disable { get; set; }
+    }
     /// <summary>
     ///     Provides keyboard events
     /// </summary>
-    public interface IKeyboardEvents
+    public interface IKeyboardEvents: IEvents
     {
         /// <summary>
         ///     Occurs when a key is pressed.
@@ -37,5 +41,6 @@ namespace Metatool.Input.MouseKeyHook
         ///     Occurs when a key is released.
         /// </summary>
         event KeyEventHandler KeyUp;
+
     }
 }

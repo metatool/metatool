@@ -13,6 +13,7 @@ namespace Metaseed.Metatool
             exitTrigger??=new HotkeyTrigger(Caps + C);
             exitTrigger.OnEvent(e =>
             {
+                Services.Get<IKeyboard>().Disable = true;
                 var notify = Services.Get<INotify>();
                 notify.ShowMessage("MetaKeyBoard Closing...");
                 Context.Exit(0);
@@ -20,6 +21,7 @@ namespace Metaseed.Metatool
 
             void Restart(IKeyEventArgs e, bool isAdmin)
             {
+                Services.Get<IKeyboard>().Disable = true;
                 var notify = Services.Get<INotify>();
                 notify.ShowMessage($"MetaKeyBoard Restarting{(isAdmin?"(admin)":"")}...");
                 Context.Restart(0, isAdmin);
