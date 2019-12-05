@@ -15,11 +15,6 @@
           "hh": [ "哈哈😊", "ha ha!" ]
         }
       }
-    },
-    "Logging": {
-      "File": {
-        "Enabled": false
-      }
     }
   },
   "Tools": {

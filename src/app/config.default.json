@@ -3,7 +3,7 @@
   "HotKeys": {
     "Exit": "Alt + Space + C",
     "Restart": "Alt + Space + X",
-    "RestartAsAdmin":  "Alt +Space + A" 
+    "RestartAsAdmin": "Alt +Space + A"
   },
   "Services": {
     "Input": {
@@ -57,11 +57,12 @@
             "Path": "default-<counter>.log" // "default-000.log"
           },
           {
-            "Path": "<date:yyyy>/<date:MM>/other-<counter>.log", // "2019/08/other-00.log"
-            // second-level filters
-            "MinLevel": {
-              "MyApp.SomeClass": "Warning",
-              "Default": "Trace" // this has no effect as second-level filters can only be more restrictive than first-level filters!
+            "Path": "<date:yyyy>/<date:MM>/metatool-<counter>.log", // "2019/08/metatool-00.log"
+            "MinLevel": { // second-level filters
+              "Metatool.Input.MouseKeyHook.Implementation.KeyListener":
+                "Information", // use Debug if want to log the key typing events
+              "Default":
+                "Trace" // this has no effect as second-level filters can only be more restrictive than first-level filters!
             },
             "CounterFormat": "00"
           }
