@@ -13,9 +13,9 @@ namespace Metatool.Input
 {
     public partial class Keyboard : IKeyboard, IKeyboardInternal
     {
-        private readonly ILogger<Keyboard> _logger;
+        private readonly ILogger<Keyboard>       _logger;
         private readonly IConfig<MetatoolConfig> _config;
-        private static   Keyboard          _default;
+        private static   Keyboard                _default;
 
         public static Keyboard Default =>
             _default ??= Services.Get<IKeyboard, Keyboard>();
@@ -27,18 +27,21 @@ namespace Metatool.Input
             var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
             AddAliases(aliases);
             Hook();
-            Debug.Assert(System.Windows.Application.Current.Dispatcher != null, "System.Windows.Application.Current.Dispatcher != null");
-            System.Windows.Application.Current.Dispatcher.BeginInvoke((Action) (() => InitService(config))); // workaround to use the Keyboard Service itself via DI in initService
-        } 
+            Debug.Assert(System.Windows.Application.Current.Dispatcher != null,
+                "System.Windows.Application.Current.Dispatcher != null");
+            System.Windows.Application.Current.Dispatcher.BeginInvoke((Action) (() =>
+                InitService(config))); // workaround to use the Keyboard Service itself via DI in initService
+        }
 
         private void InitService(IConfig<MetatoolConfig> config)
         {
-            var keyboard = config.CurrentValue.Services.Input.Keyboard;
-            var hotStrings =keyboard.HotStrings;
+            var keyboard   = config.CurrentValue.Services.Input.Keyboard;
+            var hotStrings = keyboard.HotStrings;
             AddHotStrings(hotStrings);
 
             keyboard.HotKeys.TryGetValue("Reset", out var resetTrigger);
-            resetTrigger?.OnEvent(_ => ReleaseDownKeys());
+            resetTrigger??= new HotkeyTrigger(Key.Caps + Key.R);
+            resetTrigger.OnEvent(_ => ReleaseDownKeys());
         }
 
         public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
