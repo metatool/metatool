@@ -250,16 +250,16 @@ namespace Metatool.Input
             {
                 source.OnDown(e =>
                 {
-                    e.Handled = true;
+                    e.Handled    = true;
                     keyDownEvent = e;
                     if (handling) return; // repeated long press key, within duration
-                    handling     = true;
+                    handling = true;
                     stopwatch.Restart();
                 }, e =>
                 {
-                    if ((!handling ||stopwatch.ElapsedMilliseconds <= delay) && (predicate == null || predicate(e)))
+                    if ((!handling || stopwatch.ElapsedMilliseconds <= delay) && (predicate == null || predicate(e)))
                         return true;
-                    if(stopwatch.IsRunning) stopwatch.Stop();
+                    if (stopwatch.IsRunning) stopwatch.Stop();
                     return false; // disable map
                 }, "", KeyStateTrees.ChordMap),
                 allUp
@@ -291,16 +291,16 @@ namespace Metatool.Input
                     return MapOnHitAndAllUp(source, target, predicate);
                 case KeyMaps.ChordMap:
                 {
-                        var src = source as ISequenceUnit;
-                        if (src == null)
-                            throw new ArgumentException(
-                                $"ChordMap could only use ISequenceUnit as it's source,  but currently the source is {source}");
-                        var tgt = target as ISequenceUnit;
-                        if (tgt == null)
-                            throw new ArgumentException(
-                                $"ChordMap could only use ISequenceUnit as it's target,  but currently the source is {target}");
+                    var src = source as ISequenceUnit;
+                    if (src == null)
+                        throw new ArgumentException(
+                            $"ChordMap could only use ISequenceUnit as it's source,  but currently the source is {source}");
+                    var tgt = target as ISequenceUnit;
+                    if (tgt == null)
+                        throw new ArgumentException(
+                            $"ChordMap could only use ISequenceUnit as it's target,  but currently the source is {target}");
 
-                        return ChordMap(src, tgt, predicate);
+                    return ChordMap(src, tgt, predicate);
                 }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(keyMaps), keyMaps, null);
@@ -313,7 +313,7 @@ namespace Metatool.Input
             var           handling        = false;
             IKeyEventArgs keyDownEvent    = null;
             ICombination  sourCombination = source.ToCombination();
-            Stopwatch     stopwatch           = new Stopwatch();
+            Stopwatch     stopwatch       = new Stopwatch();
             int           delay           = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay ?? 3000;
 
             void Handler(Object o, IKeyEventArgs e)
@@ -329,7 +329,7 @@ namespace Metatool.Input
             {
                 source.OnDown(e =>
                 {
-                    e.Handled = true;
+                    e.Handled    = true;
                     keyDownEvent = e;
                     if (handling) return; // repeated long press key, within duration
 
@@ -343,7 +343,7 @@ namespace Metatool.Input
                     var duration = stopwatch.ElapsedMilliseconds;
                     if (!e.IsVirtual && (!handling || duration <= delay) && (predicate == null || predicate(e)))
                         return true;
-                    if(stopwatch.IsRunning) stopwatch.Stop();
+                    if (stopwatch.IsRunning) stopwatch.Stop();
                     return false;
                 }, "", KeyStateTrees.ChordMap),
 
@@ -369,7 +369,7 @@ namespace Metatool.Input
                     }
 
                     handling = false;
-                    if(stopwatch.IsRunning) stopwatch.Reset();
+                    if (stopwatch.IsRunning) stopwatch.Reset();
                     return true;
                 }, "", KeyStateTrees.ChordMap)
             };
@@ -423,11 +423,11 @@ namespace Metatool.Input
             return re;
         }
 
-        public string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalAliasesDics)
+        public string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalTempAliasesDics)
         {
             var aliasesRaw = new Dictionary<string, string>(_aliasesRaw);
-            if (additionalAliasesDics != null)
-                foreach (var aliasesDic in additionalAliasesDics)
+            if (additionalTempAliasesDics != null)
+                foreach (var aliasesDic in additionalTempAliasesDics)
                 {
                     if (aliasesDic == null) continue;
                     foreach (var alias in aliasesDic)
