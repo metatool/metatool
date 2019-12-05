@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using Metatool.UI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -141,11 +142,17 @@ namespace Metatool.Service
 
         [DllImport("user32.dll")]
         public static extern bool ShowWindowAsync(IntPtr hWnd, SW nCmdShow);
-        public static void InitialConsole(bool disableCloseButton = false)
+        public static void InitialConsole(bool disableCloseButton = false, bool isAdmin=false)
         {
             AllocConsole();
 
             var handle = GetConsoleWindow();
+            if (isAdmin)
+            {
+                var sb = new StringBuilder(100);
+                GetWindowText(handle, sb, 100);
+                SetWindowText(handle, sb.ToString() + "(Admin)");
+            }
 #if !DEBUG
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
             if(disableCloseButton)  DisableCloseButton();
@@ -183,6 +190,10 @@ namespace Metatool.Service
 
             ShowWindowAsync(handle, SW.Show);
         }
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool SetWindowText(IntPtr hwnd, String lpString);
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         public static void HideConsole()
         {

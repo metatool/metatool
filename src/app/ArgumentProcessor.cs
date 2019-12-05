@@ -20,7 +20,7 @@ namespace Metaseed.Metatool
         {
             _args = args;
             if(args.Length == 0 || args[0] == "run")
-                ConsoleExt.InitialConsole(true);
+                ConsoleExt.InitialConsole(true, Context.IsElevated);
             App.InitServices();
             _logger = Services.Get<ILogger<ArgumentProcessor>>();
         }
