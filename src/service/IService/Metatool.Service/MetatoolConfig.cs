@@ -4,9 +4,9 @@ namespace Metatool.Service
 {
     public class KeyboardConfig
     {
-        public IDictionary<string, string> KeyAliases { get; set; }
+        public OrderedDictionary<string, string> KeyAliases { get; set; }
         public int RepeatDelay { get; set; } = 3000;
-        public IDictionary<string, HotStringDef> HotStrings { get; set; }
+        public OrderedDictionary<string, HotStringDef> HotStrings { get; set; }
     }
 
     public class InputServiceConfig

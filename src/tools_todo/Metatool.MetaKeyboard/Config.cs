@@ -72,7 +72,7 @@ namespace Metatool.MetaKeyboard
 
     public class SoftwarePackage
     {
-        public IDictionary<string,string> KeyAliases { get; set; } // List<KeyValuePair<string,string>>  keep the order of keys
+        public OrderedDictionary<string,string> KeyAliases { get; set; } // List<KeyValuePair<string,string>>  keep the order of keys
     public SoftwareHotKeys HotKeys { get; set; }
         private SoftwarePaths _softwarePaths;
 

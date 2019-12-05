@@ -425,19 +425,19 @@ namespace Metatool.Input
 
         public string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalAliasesDics)
         {
-            var aliases = new Dictionary<string, string>(_aliasesRaw);
+            var aliasesRaw = new Dictionary<string, string>(_aliasesRaw);
             if (additionalAliasesDics != null)
                 foreach (var aliasesDic in additionalAliasesDics)
                 {
                     if (aliasesDic == null) continue;
                     foreach (var alias in aliasesDic)
                     {
-                        aliases[alias.Key] = alias.Value;
+                        aliasesRaw[alias.Key] = alias.Value;
                     }
                 }
 
 
-            string replaceComma(string str)
+            static string ReplaceComma(string str)
             {
                 const string comma = "Comma";
                 str = Regex.Replace(str, @"^\s*,\s*$", comma);
@@ -446,9 +446,9 @@ namespace Metatool.Input
                 return str;
             }
 
-            foreach (var alias in aliases.Reverse())
+            foreach (var alias in aliasesRaw.Reverse())
             {
-                hotkey = replaceComma(hotkey);
+                hotkey = ReplaceComma(hotkey);
                 hotkey = Regex.Replace(hotkey,  @$"(?:(?<=[\s,+])|^){Regex.Escape(alias.Key)}(?:(?=[\s,+*])|$)", alias
                     .Value);
             }
