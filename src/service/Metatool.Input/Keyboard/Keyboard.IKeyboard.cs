@@ -312,9 +312,10 @@ namespace Metatool.Input
         {
             var           handling        = false;
             IKeyEventArgs keyDownEvent    = null;
-            ICombination  sourCombination = source.ToCombination();
-            Stopwatch     stopwatch       = new Stopwatch();
-            int           delay           = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay ?? 3000;
+            var           sourCombination = source.ToCombination();
+            var           stopwatch       = new Stopwatch();
+            var           delay           = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay ?? 3000;
+            var           targetDown      = false;
 
             void Handler(Object o, IKeyEventArgs e)
             {
@@ -323,6 +324,7 @@ namespace Metatool.Input
 
                 e.Handled = true;
                 Down(new Combination(e.KeyCode, target));
+                targetDown = true;
             }
 
             return new KeyCommandTokens()
@@ -335,9 +337,7 @@ namespace Metatool.Input
 
                     handling = true;
                     stopwatch.Restart();
-                    e.BeginInvoke(() =>
-                        _hook.KeyDown += Handler
-                    );
+                    _hook.KeyDown += Handler;
                 }, e =>
                 {
                     var duration = stopwatch.ElapsedMilliseconds;
@@ -352,11 +352,14 @@ namespace Metatool.Input
                     e.Handled = true;
                     if (keyDownEvent == e.LastKeyDownEvent_NoneVirtual)
                     {
-                        e.BeginInvoke(() => Type(source));
+                        if (targetDown) Up(target); // fix: for logic wrong, if typing fast, the up event of source is not fired but another key down happens.
+                        targetDown = false;
+                        Type(source);
                         return;
                     }
 
-                    e.BeginInvoke(() => Up(target));
+                    Up(target);
+                    targetDown = false;
                 }, e =>
                 {
                     if (e.IsVirtual) return false;
