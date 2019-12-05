@@ -39,7 +39,7 @@ namespace Metatool.Service
 
         bool AddAliases(IDictionary<string, string> aliases);
         Dictionary<string, IHotkey> Aliases { get; }
-        bool RegisterKeyMaps(IDictionary<string, string> maps, IDictionary<string, string> additionalAliases = null);
+        bool RegisterKeyMaps(IDictionary<string, KeyMapDef> maps, IDictionary<string, string> additionalAliases = null);
         string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalTempAliasesDics);
 
         bool IsDown(IKey key);

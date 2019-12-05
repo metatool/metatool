@@ -71,7 +71,7 @@ namespace Metatool.Service
             return new Sequence(parts.ToArray());
         }
 
-        public static bool TryParse(string str, out Sequence value)
+        public static bool TryParse(string str, out Sequence value, bool log = true)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Metatool.Service
             }
             catch (Exception e)
             {
-                Services.CommonLogger?.LogError(e.Message);
+                if(log) Services.CommonLogger?.LogError(e.Message);
                 value = null;
                 return false;
             }

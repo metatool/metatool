@@ -56,7 +56,7 @@ namespace Metatool.Service
             return new Key(keys) {Handled = handled};
         }
 
-        public static bool TryParse(string str, out Key value)
+        public static bool TryParse(string str, out Key value, bool log=true)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Metatool.Service
             }
             catch (Exception e)
             {
-                Services.CommonLogger?.LogError(
+                if(log) Services.CommonLogger?.LogError(
                     e.Message + $"{Environment.NewLine} Please use the following Keys: {string.Join(",", AllNames)}");
                 value = null;
                 return false;

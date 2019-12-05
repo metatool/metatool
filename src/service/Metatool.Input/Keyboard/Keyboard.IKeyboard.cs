@@ -459,7 +459,7 @@ namespace Metatool.Input
             return hotkey;
         }
 
-        public bool RegisterKeyMaps(IDictionary<string, string> maps,
+        public bool RegisterKeyMaps(IDictionary<string, KeyMapDef> maps,
             IDictionary<string, string> additionalAliases = null)
         {
             var hasError = false;
@@ -467,17 +467,17 @@ namespace Metatool.Input
             {
                 try
                 {
-                    if (string.IsNullOrEmpty(map.Value))
+                    if (string.IsNullOrEmpty(map.Value.Target))
                     {
                         _logger?.LogInformation($"Key map: {map.Key} is disabled.");
                         continue;
                     }
 
                     var source = ReplaceAlias(map.Key, additionalAliases);
-                    var target = ReplaceAlias(map.Value, additionalAliases);
-                    var t      = Combination.Parse(target);
-                    var s      = Sequence.Parse(source);
-                    s.MapOnDownUp(t);
+                    var target = ReplaceAlias(map.Value.Target, additionalAliases);
+                    var t      = HotKey.Parse(target);
+                    var s      = HotKey.Parse(source);
+                    Map(s, t, map.Value.Type);
                 }
                 catch (Exception e)
                 {

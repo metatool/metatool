@@ -91,7 +91,7 @@ namespace Metatool.Service
             return new Combination(triggerKey, stack);
         }
 
-        public static bool TryParse(string str, out Combination value)
+        public static bool TryParse(string str, out Combination value, bool log=true)
         {
             try
             {
@@ -100,7 +100,7 @@ namespace Metatool.Service
             }
             catch (Exception e)
             {
-                Services.CommonLogger?.LogError(e.Message);
+                if(log) Services.CommonLogger?.LogError(e.Message);
                 value = null;
                 return false;
             }

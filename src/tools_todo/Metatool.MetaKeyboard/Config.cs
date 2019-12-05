@@ -20,31 +20,29 @@ namespace Metatool.MetaKeyboard
 
     public class Keyboard61Package
     {
-        public Keyboard61HotKeys HotKeys { get; set; }
-        public Dictionary<string,string> KeyMaps { get; set; }
+        public Keyboard61HotKeys             HotKeys { get; set; }
+        public Dictionary<string, KeyMapDef> KeyMaps { get; set; }
     }
 
     public class Keyboard61HotKeys
     {
         public HotkeyTrigger ToggleCaps { get; set; }
-
     }
 
     public class KeyboardMousePackage
     {
-        public Dictionary<string, string> KeyMaps { get; set; }
+        public IDictionary<string, KeyMapDef> KeyMaps { get; set; }
 
         public MouseKeyboardHotKeys HotKeys { get; set; }
     }
 
     public class MouseKeyboardHotKeys
     {
-        public HotkeyTrigger MouseToFocus { get; set; }
-        public HotkeyTrigger MouseScrollUp { get; set; }
-        public HotkeyTrigger MouseScrollDown { get; set; }
-        public HotkeyTrigger MouseLeftClick { get; set; }
+        public HotkeyTrigger MouseToFocus       { get; set; }
+        public HotkeyTrigger MouseScrollUp      { get; set; }
+        public HotkeyTrigger MouseScrollDown    { get; set; }
+        public HotkeyTrigger MouseLeftClick     { get; set; }
         public HotkeyTrigger MouseLeftClickLast { get; set; }
-
     }
 
     public class SoftwarePaths
@@ -67,14 +65,14 @@ namespace Metatool.MetaKeyboard
     public class FileExplorerPackage
     {
         public FileExplorerHotKeys HotKeys { get; set; }
-        
     }
 
     public class SoftwarePackage
     {
-        public OrderedDictionary<string,string> KeyAliases { get; set; } // List<KeyValuePair<string,string>>  keep the order of keys
-    public SoftwareHotKeys HotKeys { get; set; }
-        private SoftwarePaths _softwarePaths;
+        public OrderedDictionary<string, string> KeyAliases { get; set; }
+
+        public  SoftwareHotKeys HotKeys { get; set; }
+        private SoftwarePaths   _softwarePaths;
 
         public SoftwarePaths SoftwarePaths
         {
@@ -99,29 +97,27 @@ namespace Metatool.MetaKeyboard
 
     public class FileExplorerHotKeys
     {
-        public HotkeyTrigger FocusItemsView { get; set; }
+        public HotkeyTrigger FocusItemsView          { get; set; }
         public HotkeyTrigger FocusNavigationTreeView { get; set; }
-        public HotkeyTrigger CopySelectedPath { get; set; }
-        public HotkeyTrigger NewFile { get; set; }
-        public HotkeyTrigger ShowDesktopFolder { get; set; }
-
+        public HotkeyTrigger CopySelectedPath        { get; set; }
+        public HotkeyTrigger NewFile                 { get; set; }
+        public HotkeyTrigger ShowDesktopFolder       { get; set; }
     }
 
-          public class SoftwareHotKeys
+    public class SoftwareHotKeys
     {
         public HotkeyTrigger DoublePinyinSwitch { get; set; }
-        public HotkeyTrigger  Find { get; set; }
-        public HotkeyTrigger OpenTerminal { get; set; }
-        public HotkeyTrigger OpenCodeEditor { get; set; }
-        public HotkeyTrigger WebSearch { get; set; }
-        public HotkeyTrigger StartTaskExplorer { get; set; }
-        public HotkeyTrigger OpenScreenRuler { get; set; }
-        public HotkeyTrigger StartInspect { get; set; }
-        public HotkeyTrigger StartNotepad { get; set; }
-        public HotkeyTrigger StartVisualStudio { get; set; }
-        public HotkeyTrigger StartGifRecord { get; set; }
-        public HotkeyTrigger ToggleDictionary { get; set; }
-
+        public HotkeyTrigger Find               { get; set; }
+        public HotkeyTrigger OpenTerminal       { get; set; }
+        public HotkeyTrigger OpenCodeEditor     { get; set; }
+        public HotkeyTrigger WebSearch          { get; set; }
+        public HotkeyTrigger StartTaskExplorer  { get; set; }
+        public HotkeyTrigger OpenScreenRuler    { get; set; }
+        public HotkeyTrigger StartInspect       { get; set; }
+        public HotkeyTrigger StartNotepad       { get; set; }
+        public HotkeyTrigger StartVisualStudio  { get; set; }
+        public HotkeyTrigger StartGifRecord     { get; set; }
+        public HotkeyTrigger ToggleDictionary   { get; set; }
     }
 
     [ToolConfig]
@@ -129,14 +125,13 @@ namespace Metatool.MetaKeyboard
     {
         public Keyboard61Package Keyboard61Package { get; set; }
 
-        public FileExplorerPackage FileExplorerPackage { get; set; }
+        public FileExplorerPackage  FileExplorerPackage  { get; set; }
         public KeyboardMousePackage KeyboardMousePackage { get; set; }
 
         public SoftwarePackage SoftwarePackage { get; set; }
 
-        public Settings  Settings  { get; set; }
+        public Settings Settings { get; set; }
 
         public Registers Registers { get; set; }
-        public IDictionary<string,Sequence> Test { get; set; }
     }
 }
