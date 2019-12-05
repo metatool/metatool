@@ -2,8 +2,6 @@
 using System.Windows;
 using Metatool.Core;
 using Metatool.Service;
-using Metatool.UI;
-using Metatool.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool

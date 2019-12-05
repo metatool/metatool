@@ -217,6 +217,10 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             return isToggled;
 
         }
+        public bool IsToggled(Key key)
+        {
+            return key.Codes.Any(IsToggled);
+        }
 
         /// <summary>
         ///     Indicates weather every of specified keys were down at the moment when snapshot was created.

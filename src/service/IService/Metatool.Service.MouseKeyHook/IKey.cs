@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Metatool.Service
 {
-    interface IKey
+    public interface IKey
     {
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,11 @@ namespace Metaseed.Metatool
         {
             try
             {
-                return new ArgumentProcessor(args).ArgumentsProcess();
+                var shiftDown = KeyboardState.GetCurrent().IsDown(Key.Shift);
+                if (shiftDown && !Context.IsElevated)
+                    return Context.Restart(0, true);
+                else
+                    return new ArgumentProcessor(args).ArgumentsProcess();
             }
             catch (Exception e)
             {

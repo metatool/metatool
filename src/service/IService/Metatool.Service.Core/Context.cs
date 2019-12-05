@@ -50,11 +50,11 @@ namespace Metatool.Service
             Dispatcher?.BeginInvoke((Action) (() => Application.Current.Shutdown(code)));
         }
 
-        public static void Restart(int code, bool admin)
+        public static int Restart(int code, bool admin)
         {
-            Dispatcher?.BeginInvoke((Action)(() =>
+            void restart()
             {
-                var p = System.Windows.Forms.Application.ExecutablePath;
+                var p    = System.Windows.Forms.Application.ExecutablePath;
                 var path = Path.GetFileNameWithoutExtension(p);
                 try
                 {
@@ -76,9 +76,11 @@ namespace Metatool.Service
                 {
                     Console.WriteLine(e);
                 }
-            }));
-          
-           
+            }
+            if(Dispatcher==null) restart();
+            else Dispatcher?.BeginInvoke((Action)restart);
+            return code;
+
         }
     }
 }

@@ -6,7 +6,6 @@ using McMaster.Extensions.CommandLineUtils;
 using McMaster.Extensions.CommandLineUtils.Validation;
 using Metatool.Plugin;
 using Metatool.Service;
-using Metatool.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
@@ -44,7 +43,6 @@ namespace Metaseed.Metatool
                 Context.Dispatcher = application.Dispatcher;
                 var pluginManager = Services.GetOrCreate<PluginManager>();
                 pluginManager.InitPlugins();
-
                 application.RunApp();
             });
 

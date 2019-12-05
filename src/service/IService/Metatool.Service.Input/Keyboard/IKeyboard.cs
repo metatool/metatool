@@ -42,6 +42,10 @@ namespace Metatool.Service
         bool RegisterKeyMaps(IDictionary<string, string> maps, IDictionary<string, string> additionalAliases = null);
         string ReplaceAlias(string hotkey, params IDictionary<string, string>[] additionalTempAliasesDics);
 
+        bool IsDown(IKey key);
+        bool IsUp(IKey key);
+        bool IsToggled(IKey key);
+
     }
 
     public enum KeyMaps { MapOnDownUp, HardMap, MapOnHit, MapOnHitAndAllUp, ChordMap}

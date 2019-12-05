@@ -488,5 +488,21 @@ namespace Metatool.Input
 
             return hasError;
         }
+
+        public bool IsDown(IKey key)
+        {
+            var state = KeyboardState.GetCurrent();
+            return state.IsDown((Key)key);
+        }
+        public bool IsUp(IKey key)
+        {
+            var state = KeyboardState.GetCurrent();
+            return state.IsUp((Key)key);
+        }
+        public bool IsToggled(IKey key)
+        {
+            var state = KeyboardState.GetCurrent();
+            return state.IsToggled((Key)key);
+        }
     }
 }
