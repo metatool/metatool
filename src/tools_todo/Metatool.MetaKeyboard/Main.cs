@@ -8,7 +8,6 @@ namespace Metatool.MetaKeyboard
         {
             var keyboard61   = Services.GetOrCreate<Keyboard61>();
             var mouse        = Services.GetOrCreate<KeyboardMouse>();
-            var fun          = new FunctionalKeys();
             var fileExplorer = Services.GetOrCreate<FileExplorer>();
             var software     = Services.GetOrCreate<Software>();
             return base.OnLoaded();

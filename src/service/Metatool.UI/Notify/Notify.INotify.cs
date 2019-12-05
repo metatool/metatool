@@ -19,7 +19,7 @@ namespace Metatool.UI
         public void ShowMessage(string msg)
         {
             if (msg == "") return;
-            TrayIcon.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
+            TrayIcon?.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
         }
 
         public NotifyToken ShowMessage(System.Windows.FrameworkElement control, int? timeout,

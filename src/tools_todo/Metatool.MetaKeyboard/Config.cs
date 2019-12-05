@@ -26,7 +26,7 @@ namespace Metatool.MetaKeyboard
 
     public class Keyboard61HotKeys
     {
-        public HotkeyConfig ToggleCaps { get; set; }
+        public HotkeyTrigger ToggleCaps { get; set; }
 
     }
 
@@ -39,11 +39,11 @@ namespace Metatool.MetaKeyboard
 
     public class MouseKeyboardHotKeys
     {
-        public HotkeyConfig MouseToFocus { get; set; }
-        public HotkeyConfig MouseScrollUp { get; set; }
-        public HotkeyConfig MouseScrollDown { get; set; }
-        public HotkeyConfig MouseLeftClick { get; set; }
-        public HotkeyConfig MouseLeftClickLast { get; set; }
+        public HotkeyTrigger MouseToFocus { get; set; }
+        public HotkeyTrigger MouseScrollUp { get; set; }
+        public HotkeyTrigger MouseScrollDown { get; set; }
+        public HotkeyTrigger MouseLeftClick { get; set; }
+        public HotkeyTrigger MouseLeftClickLast { get; set; }
 
     }
 
@@ -99,28 +99,28 @@ namespace Metatool.MetaKeyboard
 
     public class FileExplorerHotKeys
     {
-        public HotkeyConfig FocusItemsView { get; set; }
-        public HotkeyConfig FocusNavigationTreeView { get; set; }
-        public HotkeyConfig CopySelectedPath { get; set; }
-        public HotkeyConfig NewFile { get; set; }
-        public HotkeyConfig ShowDesktopFolder { get; set; }
+        public HotkeyTrigger FocusItemsView { get; set; }
+        public HotkeyTrigger FocusNavigationTreeView { get; set; }
+        public HotkeyTrigger CopySelectedPath { get; set; }
+        public HotkeyTrigger NewFile { get; set; }
+        public HotkeyTrigger ShowDesktopFolder { get; set; }
 
     }
 
           public class SoftwareHotKeys
     {
-        public HotkeyConfig DoublePinyinSwitch { get; set; }
-        public HotkeyConfig  Find { get; set; }
-        public HotkeyConfig OpenTerminal { get; set; }
-        public HotkeyConfig OpenCodeEditor { get; set; }
-        public HotkeyConfig WebSearch { get; set; }
-        public HotkeyConfig StartTaskExplorer { get; set; }
-        public HotkeyConfig OpenScreenRuler { get; set; }
-        public HotkeyConfig StartInspect { get; set; }
-        public HotkeyConfig StartNotepad { get; set; }
-        public HotkeyConfig StartVisualStudio { get; set; }
-        public HotkeyConfig StartGifRecord { get; set; }
-        public HotkeyConfig ToggleDictionary { get; set; }
+        public HotkeyTrigger DoublePinyinSwitch { get; set; }
+        public HotkeyTrigger  Find { get; set; }
+        public HotkeyTrigger OpenTerminal { get; set; }
+        public HotkeyTrigger OpenCodeEditor { get; set; }
+        public HotkeyTrigger WebSearch { get; set; }
+        public HotkeyTrigger StartTaskExplorer { get; set; }
+        public HotkeyTrigger OpenScreenRuler { get; set; }
+        public HotkeyTrigger StartInspect { get; set; }
+        public HotkeyTrigger StartNotepad { get; set; }
+        public HotkeyTrigger StartVisualStudio { get; set; }
+        public HotkeyTrigger StartGifRecord { get; set; }
+        public HotkeyTrigger ToggleDictionary { get; set; }
 
     }
 

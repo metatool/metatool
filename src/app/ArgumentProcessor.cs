@@ -40,12 +40,11 @@ namespace Metaseed.Metatool
             app.OnExecute(() =>
             {
                 // without command
-                var application   = new App();
+                var application   = new App(Services.Get<IConfig<MetatoolConfig>>());
                 Context.Dispatcher = application.Dispatcher;
-                var config = Services.Get<IConfig<MetatoolConfig>>(); // workaround to create the single instance of IConfig<MetatoolConfig> before load the tools, at that time the provider is modified to query the child first
-
                 var pluginManager = Services.GetOrCreate<PluginManager>();
                 pluginManager.InitPlugins();
+
                 application.RunApp();
             });
 
@@ -106,7 +105,7 @@ namespace Metaseed.Metatool
                 c.HelpOption(HelpOptionTemplate);
                 c.OnExecute(() =>
                 {
-                    var application = new App();
+                    var application = new App(Services.Get<IConfig<MetatoolConfig>>());
                     var fullPath = fileName.Value;
                     if (!File.Exists(fullPath))
                         fullPath = Path.Combine(Context.CurrentDirectory, fullPath);

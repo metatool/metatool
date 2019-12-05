@@ -16,6 +16,7 @@ namespace Metaseed.Metatool
         private readonly ILogger        _logger;
         private readonly IFileExplorer  _fileExplorer;
         private          ICommandRunner _commandRunner;
+        private FunctionalKeys _functions;
 
         public Scaffolder(ILogger logger)
         {
@@ -44,6 +45,11 @@ namespace Metaseed.Metatool
             Environment.SetEnvironmentVariable("MetatoolDir", Context.AppDirectory,
                 EnvironmentVariableTarget.User);
             _logger.LogInformation($"Set User Environment Var: MetatoolDir = {Context.AppDirectory}");
+        }
+
+        public void SetupFunctions(IConfig<MetatoolConfig> config)
+        {
+            _functions = new FunctionalKeys(config);
         }
 
         public string AddToPath(EnvironmentVariableTarget target)

@@ -10,12 +10,16 @@ namespace Metaseed.Metatool
 {
     public partial class App : Application
     {
+        private readonly IConfig<MetatoolConfig> _config;
 #if DEBUG
         private static bool IsDebug = true;
 #else
         private static bool IsDebug = false;
 #endif
-
+        public App(IConfig<MetatoolConfig> config)
+        {
+            _config = config;
+        }
 
         private static void ConfigNotify(INotify notify)
         {
@@ -48,6 +52,7 @@ namespace Metaseed.Metatool
             scaffolder.AddToPath(EnvironmentVariableTarget.User);
             scaffolder.AddToPath(EnvironmentVariableTarget.Machine);
             scaffolder.SetupEnvVar();
+            scaffolder.SetupFunctions(_config);
 
             ConfigNotify(notify);
             logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolPath")}");

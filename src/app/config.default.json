@@ -1,9 +1,9 @@
 ﻿{
   "CtrlCExit": false,
   "HotKeys": {
-    "Exit": "Alt + Space + C",
-    "Restart": "Alt + Space + X",
-    "RestartAsAdmin": "Alt +Space + A"
+    "Exit": "MT + C",
+    "Restart": "MT + X",
+    "RestartAsAdmin": "MT + A"
   },
   "Services": {
     "Input": {
@@ -29,7 +29,8 @@
           "'": "Quotes",
           //",": "Comma", is handled internally
           ".": "Period",
-          "/": "Slash"
+          "/": "Slash",
+          "MT": "Ctrl + Caps|Enter" // metatool key
         },
         "RepeatDelay": 2000
       }

@@ -1,11 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using Metatool.Command;
 
 namespace Metatool.Service
 {
-    public class HotkeyConfig
+    public class AliasedSequenceTriggerConverter : TypeConverter
     {
+        public override bool CanConvertFrom(ITypeDescriptorContext context,
+            Type sourceType)
+        {
+            if (sourceType == typeof(string))
+            {
+                return true;
+            }
+
+            return base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context,
+            CultureInfo culture, object value)
+        {
+            return value switch
+            {
+                string str =>new HotkeyTrigger() { HotKey = str},
+                _ => base.ConvertFrom(context, culture, value)
+            };
+        }
+    }
+
+    [TypeConverter(typeof(AliasedSequenceTriggerConverter))]
+    public class HotkeyTrigger
+    {
+        public HotkeyTrigger() { }
+
+        public HotkeyTrigger(IHotkey hotKey)
+        {
+            _trigger = hotKey;
+        }
+
         private static IKeyboard _keyboard;
         private static IKeyboard Keyboard =>
             _keyboard ??= Services.Get<IKeyboard>();
@@ -15,12 +49,14 @@ namespace Metatool.Service
         private static ICommandManager CommandManager =>
             _commandManager ??= Services.Get<ICommandManager>();
 
-        private ISequence HotKeyTrigger
+        private IHotkey Trigger
         {
             get
             {
+                if (string.IsNullOrEmpty(HotKey)) return _trigger;
                 var hotkey = Keyboard.ReplaceAlias(HotKey, _tempAliasesDics);
-                return Sequence.Parse(hotkey);
+                _trigger = Sequence.Parse(hotkey);
+                return _trigger;
             }
         }
 
@@ -34,7 +70,7 @@ namespace Metatool.Service
         public IKeyCommand OnEvent(Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null)
         {
-            var trigger = Keyboard.OnEvent(HotKeyTrigger, KeyEvent, StateTree);
+            var trigger = Keyboard.OnEvent(Trigger, KeyEvent, StateTree);
                                     var token   = trigger.Register(execute, canExecute, Description);
             return token;
         }
@@ -42,15 +78,17 @@ namespace Metatool.Service
         public IKeyCommand MapOnHit(ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null )
         {
-            return Keyboard.MapOnHit(HotKeyTrigger, target, predicate);
+            return Keyboard.MapOnHit(Trigger, target, predicate);
         }
         public IKeyCommand MapOnAllUp(ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null)
         {
-            return Keyboard.MapOnHitAndAllUp(HotKeyTrigger, target, predicate);
+            return Keyboard.MapOnHitAndAllUp(Trigger, target, predicate);
         }
         private IDictionary<string, string>[] _tempAliasesDics;
-        public HotkeyConfig WithAliases(params IDictionary<string, string>[] tempAliasesDics)
+        private IHotkey _trigger;
+
+        public HotkeyTrigger WithAliases(params IDictionary<string, string>[] tempAliasesDics)
         {
             _tempAliasesDics = tempAliasesDics;
             return this;

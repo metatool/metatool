@@ -72,6 +72,7 @@ namespace Metaseed.Metatool
             ConfigureServices(serviceCollection, configuration);
             var provider = serviceCollection.BuildServiceProvider();
             Services.SetDefaultProvider(provider);
+
             return provider;
         }
 
