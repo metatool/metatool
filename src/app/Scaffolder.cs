@@ -79,7 +79,7 @@ namespace Metaseed.Metatool
             return s;
         }
 
-        void InitTemplate(string toolName, string dir = null, bool isScript = true)
+        public void InitTemplate(string toolName, string dir = null, bool isScript = true)
         {
             var resource = isScript
                 ? "Metaseed.Metatool.Templates.Metatool.Tools.ScriptTool.zip"
