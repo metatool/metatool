@@ -3,7 +3,7 @@
   "HotKeys": {
     "Exit": "MT + C",
     "Restart": "MT + X",
-    "RestartAsAdmin": "MT + A"
+    "RestartAsAdmin": "MT + Z"
   },
   "Services": {
     "Input": {

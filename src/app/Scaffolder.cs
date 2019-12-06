@@ -15,14 +15,14 @@ namespace Metaseed.Metatool
     {
         private readonly ILogger        _logger;
         private readonly IFileExplorer  _fileExplorer;
-        private          ICommandRunner _commandRunner;
-        private FunctionalKeys _functions;
+        private          IShell         _shell;
+        private          FunctionalKeys _functions;
 
         public Scaffolder(ILogger logger)
         {
-            _logger        = logger;
-            _fileExplorer  = Services.Get<IFileExplorer>();
-            _commandRunner = Services.Get<ICommandRunner>();
+            _logger       = logger;
+            _fileExplorer = Services.Get<IFileExplorer>();
+            _shell        = Services.Get<IShell>();
         }
 
         public void RegisterFileHandler()
@@ -30,14 +30,14 @@ namespace Metaseed.Metatool
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // register dotnet-script as the tool to process .csx files
-                var cmdRunner = new CommandRunner();
+                var cmdRunner = new Shell();
                 cmdRunner.Run("reg", @"add HKCU\Software\classes\.csx /f /ve /t REG_SZ /d metatool");
                 cmdRunner.Run("reg",
                     $@"add HKCU\Software\Classes\metatool\Shell\Open\Command /f /ve /t REG_EXPAND_SZ /d ""\""%MetatoolDir%\Metatool.exe\"" \""%1\"" -- %*""");
             }
         }
 
-        public void SetupEnvVar()
+        void SetupEnvVar()
         {
             var value = Environment.GetEnvironmentVariable("MetatoolDir");
             if (value != null && value == Context.AppDirectory) return;
@@ -47,17 +47,22 @@ namespace Metaseed.Metatool
             _logger.LogInformation($"Set User Environment Var: MetatoolDir = {Context.AppDirectory}");
         }
 
-        public void SetupFunctions(IConfig<MetatoolConfig> config)
+        public void CommonSetup(IConfig<MetatoolConfig> config)
         {
             _functions = new FunctionalKeys(config);
+            CreateShortcut();
+            AddToPath(EnvironmentVariableTarget.User);
+            AddToPath(EnvironmentVariableTarget.Machine);
+            SetupEnvVar();
         }
 
-        public string AddToPath(EnvironmentVariableTarget target)
+        string AddToPath(EnvironmentVariableTarget target)
         {
             var s     = System.Environment.GetEnvironmentVariable("PATH", target);
             var paths = s.Split(Path.PathSeparator).ToList();
 
-            if (paths.Any(p=>StringComparer.InvariantCultureIgnoreCase.Compare(Context.AppDirectory, p)!=0)) return s;
+            if (paths.Any(p => StringComparer.InvariantCultureIgnoreCase.Compare(Context.AppDirectory, p) != 0)
+            ) return s;
 
             s = $"{AppContext.BaseDirectory}{Path.PathSeparator}{s}";
 
@@ -74,7 +79,7 @@ namespace Metaseed.Metatool
             return s;
         }
 
-        public void InitTemplate(string toolName, string dir = null, bool isScript = true)
+        void InitTemplate(string toolName, string dir = null, bool isScript = true)
         {
             var resource = isScript
                 ? "Metaseed.Metatool.Templates.Metatool.Tools.ScriptTool.zip"
@@ -96,7 +101,7 @@ namespace Metaseed.Metatool
             _logger.LogInformation($"Metatool: tool {toolName} is created in folder: {dir}");
             try
             {
-                _commandRunner.RunWithCmd($"code {dir}");
+                _shell.RunWithCmd($"code {dir}");
                 _logger.LogInformation("open it with vscode...");
             }
             catch (Exception e)
@@ -104,6 +109,18 @@ namespace Metaseed.Metatool
                 _fileExplorer.Open(dir);
                 _logger.LogWarning(e.Message);
             }
+        }
+
+        void CreateShortcut()
+        {
+            var targetPath        = Path.Combine(Context.AppDirectory, "Metatool.exe");
+            var description       = "Metatool for your professional life";
+            var desktop           = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var shortcutPath      = Path.Combine(desktop, "Metatool.lnk");
+            var shortcutPathAdmin = Path.Combine(desktop, "Metatool (Admin).lnk");
+            var shell             = new Shell();
+            shell.CreateShortcut(targetPath, shortcutPath, "Ctrl+Alt+X", description);
+            shell.CreateShortcut(targetPath, shortcutPathAdmin, "Ctrl+Alt+Z", description + "- Admin", true);
         }
     }
 }

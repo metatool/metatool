@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using IWshRuntimeLibrary;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
+using File = System.IO.File;
 
 namespace Metatool.Utils
 {
-    public class CommandRunner : ICommandRunner
+    public class Shell : IShell
     {
-        private static readonly ILogger _logger = Services.Get<ILogger<CommandRunner>>();
+        private static readonly ILogger _logger = Services.Get<ILogger<Shell>>();
 
 
         public int Run(string commandPath, string arguments = null, string workingDirectory = null)
@@ -160,6 +162,29 @@ namespace Metatool.Utils
                 }
             };
             return process;
+        }
+
+        public void CreateShortcut(string targetPath, string shortcutPath, string hotkey = "",
+            string description = "", bool isAdmin = false)
+        {
+            var exists = System.IO.File.Exists(shortcutPath);
+            if (exists) return;
+
+            var shDesktop       = (object)"Desktop";
+            var shell           = new WshShell();
+            var shortcutAddress = shortcutPath;
+            var shortcut        = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            shortcut.Description = description;
+            shortcut.Hotkey      = hotkey;
+            shortcut.TargetPath  = targetPath;
+            shortcut.Save();
+            if (isAdmin)
+            {
+                // admin hack
+                using var fs = new FileStream(shortcutPath, FileMode.Open, FileAccess.ReadWrite);
+                fs.Seek(21, SeekOrigin.Begin);
+                fs.WriteByte(0x22);
+            }
         }
     }
 }

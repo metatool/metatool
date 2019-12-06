@@ -11,7 +11,7 @@ namespace Metatool.MetaKeyboard
 {
     public sealed class Software : CommandPackage
     {
-        public Software(ICommandRunner commandRunner, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager, IFileExplorer fileExplorer, IConfig<Config> config)
+        public Software(IShell shell, INotify notify, IWindowManager windowManager, IVirtualDesktopManager virtualDesktopManager, IFileExplorer fileExplorer, IConfig<Config> config)
         {
             RegisterCommands();
             var software = config.CurrentValue.SoftwarePackage;
@@ -48,12 +48,12 @@ namespace Metatool.MetaKeyboard
                 if ("CabinetWClass" == c)
                 {
                     var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
-                    commandRunner.RunWithCmd(commandRunner.NormalizeCmd(swPaths.Everything, arg, "-path",
+                    shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg, "-path",
                         path));
                     return;
                 }
 
-                commandRunner.RunWithCmd(commandRunner.NormalizeCmd(swPaths.Everything, arg));
+                shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg));
             });
 
             hotKeys.OpenTerminal.OnEvent(async e =>
@@ -66,15 +66,15 @@ namespace Metatool.MetaKeyboard
                     path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 else
                     path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
-                if (shiftDown) commandRunner.RunWithCmd(swPaths.Terminal, true);
-                else commandRunner.RunWithExplorer(swPaths.Terminal);
+                if (shiftDown) shell.RunWithCmd(swPaths.Terminal, true);
+                else shell.RunWithExplorer(swPaths.Terminal);
             });
 
             hotKeys.OpenCodeEditor.OnEvent(async e =>
             {
                 if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
                 {
-                    commandRunner.RunWithExplorer(swPaths.Code);
+                    shell.RunWithExplorer(swPaths.Code);
                     return;
                 }
 
@@ -83,13 +83,13 @@ namespace Metatool.MetaKeyboard
                 if (paths.Length == 0)
                 {
                     var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
-                    commandRunner.RunWithExplorer(swPaths.Code, path);
+                    shell.RunWithExplorer(swPaths.Code, path);
                     return;
                 }
 
                 foreach (var path in paths)
                 {
-                    commandRunner.RunWithCmd(commandRunner.NormalizeCmd(swPaths.Code, path));
+                    shell.RunWithCmd(shell.NormalizeCmd(swPaths.Code, path));
                 }
             });
             hotKeys.WebSearch.OnEvent(async e =>
@@ -106,7 +106,7 @@ namespace Metatool.MetaKeyboard
                 var process     = await virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
                 if (process == null)
                 {
-                    commandRunner.RunAsNormalUser(defaultPath, url, "--new-window", "--new-instance");
+                    shell.RunAsNormalUser(defaultPath, url, "--new-window", "--new-instance");
                     return;
                 }
 
@@ -122,13 +122,13 @@ namespace Metatool.MetaKeyboard
             hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).OnEvent(e =>
             {
                 e.Handled = true;
-                commandRunner.RunWithCmd(swPaths.ProcessExplorer);
+                shell.RunWithCmd(swPaths.ProcessExplorer);
             });
 
             hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(e =>
             {
                 e.Handled = true;
-                commandRunner.RunWithCmd(swPaths.Ruler);
+                shell.RunWithCmd(swPaths.Ruler);
             });
 
             hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(async e =>
@@ -148,7 +148,7 @@ namespace Metatool.MetaKeyboard
                     return;
                 }
 
-                commandRunner.RunWithExplorer(swPaths.Inspect);
+                shell.RunWithExplorer(swPaths.Inspect);
             });
 
             hotKeys.StartNotepad.WithAliases(software.KeyAliases).OnEvent(async e =>
@@ -170,7 +170,7 @@ namespace Metatool.MetaKeyboard
                     return;
                 }
 
-                commandRunner.RunWithCmd("Notepad");
+                shell.RunWithCmd("Notepad");
             });
 
             hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).OnEvent(async e =>
@@ -182,7 +182,7 @@ namespace Metatool.MetaKeyboard
                 var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
                 if (string.IsNullOrEmpty(path))
                 {
-                    commandRunner.RunWithExplorer(swPaths.VisualStudio);
+                    shell.RunWithExplorer(swPaths.VisualStudio);
                     return;
                 }
 
@@ -196,7 +196,7 @@ namespace Metatool.MetaKeyboard
             hotKeys.StartGifRecord.WithAliases(software.KeyAliases).OnEvent(e =>
             {
                 e.Handled = true;
-                commandRunner.RunWithCmd(swPaths.GifTool);
+                shell.RunWithCmd(swPaths.GifTool);
             });
 
             hotKeys.ToggleDictionary.MapOnAllUp(Shift + LAlt + D);

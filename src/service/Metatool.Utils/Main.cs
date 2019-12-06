@@ -9,7 +9,7 @@ namespace Metatool.Utils
     public static class Main
     {
         public static IServiceCollection AddMetatoolUtils(this IServiceCollection services) =>
-            services.AddSingleton<ICommandRunner, CommandRunner>()
+            services.AddSingleton<IShell, Shell>()
                 .AddSingleton<IWindowManager, WindowManager>()
                 .AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>()
                 .AddSingleton<IFileExplorer,FileExplorer>();

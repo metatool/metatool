@@ -151,7 +151,9 @@ namespace Metatool.Service
             {
                 var sb = new StringBuilder(100);
                 GetWindowText(handle, sb, 100);
-                SetWindowText(handle, sb.ToString() + "(Admin)");
+                var title = sb.ToString();
+                if(!title.EndsWith("(Admin)"))
+                    SetWindowText(handle, title + " (Admin)");
             }
 #if !DEBUG
             PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);

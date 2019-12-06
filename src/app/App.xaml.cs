@@ -47,10 +47,7 @@ namespace Metaseed.Metatool
             var logger = Services.Get<ILogger<App>>();
 
             var scaffolder = new Scaffolder(logger);
-            scaffolder.AddToPath(EnvironmentVariableTarget.User);
-            scaffolder.AddToPath(EnvironmentVariableTarget.Machine);
-            scaffolder.SetupEnvVar();
-            scaffolder.SetupFunctions(_config);
+            scaffolder.CommonSetup(_config);
 
             ConfigNotify(notify);
             logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolPath")}");

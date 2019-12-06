@@ -71,8 +71,5 @@ namespace Metatool.MetaKeyboard
             }
         }
 
-       
-
-       
     }
 }

@@ -27,7 +27,7 @@ namespace Metatool.Service
             return this;
         }
     }
-    public interface ICommandRunner
+    public interface IShell
     {
         int Run(string commandPath, string arguments = null, string workingDirectory = null);
         CommandResult Capture(string commandPath, string arguments, string workingDirectory = null);
@@ -35,5 +35,8 @@ namespace Metatool.Service
         void RunWithCmd(string cmdWithArgs, bool asAdmin = false, string workingDir = null);
         void RunWithExplorer(string filePath, string workingDir = null);
         void RunAsNormalUser(string cmd, params string[] args);
+
+        void CreateShortcut(string targetPath, string shortcutPath, string hotkey = "",
+            string description = "", bool isAdmin = false);
     }
 }
