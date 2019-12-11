@@ -1,4 +1,3 @@
 @echo off
 echo.
-metatool.exe %*
-exit 0
+call metatool.exe %*
