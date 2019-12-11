@@ -88,7 +88,7 @@ namespace Metatool.Service
         private IDictionary<string, string>[] _tempAliasesDics;
         private IHotkey _trigger;
 
-        public HotkeyTrigger WithAliases(params IDictionary<string, string>[] tempAliasesDics)
+        public HotkeyTrigger WithAliases(IDictionary<string, string>[] tempAliasesDics)
         {
             _tempAliasesDics = tempAliasesDics;
             return this;

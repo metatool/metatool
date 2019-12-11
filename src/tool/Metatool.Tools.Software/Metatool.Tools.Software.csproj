@@ -19,7 +19,7 @@
     <IsTool>true</IsTool>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\debug\pkg\$(AssemblyName)</OutputPath>
+    <OutputPath>$(SolutionDir)..\exe\debug\tools\$(AssemblyName)</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <NugetPath>.\tools</NugetPath>

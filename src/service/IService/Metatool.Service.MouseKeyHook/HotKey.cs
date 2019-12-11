@@ -6,7 +6,7 @@ namespace Metatool.Service
 {
     public class HotKey
     {
-        public static IHotkey Parse(string hotkey)
+        public static IHotkey Parse(string hotkey )
         {
             Key.TryParse(hotkey, out var key,false);
             if (key != null) return key;
