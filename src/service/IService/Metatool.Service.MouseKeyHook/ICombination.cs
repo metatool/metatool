@@ -11,6 +11,5 @@ namespace Metatool.Service
         IEnumerable<Key> AllKeys { get; }
 
         bool IsAnyKey(Keys key);
-
     }
 }

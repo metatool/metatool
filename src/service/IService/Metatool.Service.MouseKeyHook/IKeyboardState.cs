@@ -9,5 +9,6 @@ namespace Metatool.Service
         bool IsOtherDown(Key key);
         bool AreAllDown(IEnumerable<Key> keys);
         bool AreAllUp(IEnumerable<Key> keys);
+        IEnumerable<Key> DownKeys { get; }
     }
 }

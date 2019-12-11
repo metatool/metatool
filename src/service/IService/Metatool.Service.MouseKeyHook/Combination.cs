@@ -56,7 +56,7 @@ namespace Metatool.Service
         {
             TriggerKey = triggerKey;
             _chord     = chord ?? new Chord(Enumerable.Empty<Keys>());
-            _key       = TriggerKey;
+            _key = TriggerKey;
         }
 
 

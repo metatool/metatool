@@ -98,7 +98,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             if (key == Key.AltChord) key   = Key.Alt;
             if (key == Key.ShiftChord) key = Key.Shift;
 
-            var downKeys = DownKeys.ToArray();
+            var downKeys = AllDownKeys.ToArray();
             return downKeys.Length > key.Codes.Count || downKeys.Any(k => !key.Codes.Contains(k));
         }
 
@@ -108,11 +108,11 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             if (key == Keys.Control) return IsOtherDown(Key.Ctrl);
             if (key == Keys.Shift) return IsOtherDown(Key.Shift);
 
-            var downKeys = DownKeys.ToArray();
+            var downKeys = AllDownKeys.ToArray();
             return downKeys.Length > 1 || (downKeys.Length == 1 && downKeys[0] != key);
         }
 
-        public IEnumerable<Keys> DownKeys
+        public IEnumerable<Keys> AllDownKeys
         {
             get
             {
@@ -125,11 +125,13 @@ namespace Metatool.Input.MouseKeyHook.Implementation
                     }
                 }
 
-                return this != HandledDownKeys
-                    ? HandledDownKeys.DownKeys.Concat(getDownKeys())
-                    : getDownKeys();
+                return (this != HandledDownKeys
+                    ? HandledDownKeys.AllDownKeys.Concat(getDownKeys())
+                    : getDownKeys()).Distinct();
             }
         }
+
+        public IEnumerable<Key> DownKeys => AllDownKeys.Select(k => new Key(k));
 
         public bool IsDown(Key key)
         {

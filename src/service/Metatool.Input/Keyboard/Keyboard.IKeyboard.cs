@@ -354,7 +354,12 @@ namespace Metatool.Input
                         e.Handled = true;
                         if (targetDown) Up(target); // fix: for logic wrong, if typing fast, the up event of source is not fired but another key down happens.
                         targetDown = false;
-                        Type(source);
+                        var downKeysLast = keyDownEvent.KeyboardState.DownKeys;
+                        var downKeys = e.KeyboardState.DownKeys;
+                        downKeysLast = downKeysLast.Where(k => !downKeys.Contains(k));
+                        var sourceComb = source.ToCombination();
+                        var combination = new Combination(sourceComb.TriggerKey, downKeysLast.Concat(sourceComb.Chord));
+                        Type(combination);
                         return;
                     }
 

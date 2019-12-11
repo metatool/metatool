@@ -13,7 +13,7 @@ namespace Metatool.Input
         public IToggleKey GeToggleKey(Key key) => new ToggleKey(key);
         public void ReleaseDownKeys()
         {
-            var downKeys = KeyboardState.GetCurrent().DownKeys;
+            var downKeys = KeyboardState.GetCurrent().AllDownKeys;
             foreach (var downKey in downKeys)
             {
                 Up((Key)downKey);
