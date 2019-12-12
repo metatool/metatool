@@ -29,8 +29,7 @@ namespace Metatool.Service
     }
     public interface IShell
     {
-        int Run(string commandPath, string arguments = null, string workingDirectory = null);
-        CommandResult Capture(string commandPath, string arguments, string workingDirectory = null);
+        CommandResult Run(string commandPath, string arguments, string workingDirectory = null);
         string NormalizeCmd(params string[] cmdArgsSerials);
         void RunWithCmd(string cmdWithArgs, bool asAdmin = false, string workingDir = null);
         void RunWithExplorer(string filePath, string workingDir = null);

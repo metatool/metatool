@@ -140,6 +140,7 @@ mklink software .\metaKeyboard\software /J
 | Key                    | Note                                                                           |
 | ---------------------- | ------------------------------------------------------------------------------ |
 | `Alt+Tab`              | to switch between open apps, and using `LAlt+h,j,k or l` to select active app. |
+| `Ctrl+Alt+Tab`|switch between opened apps, not close after release these keys|
 | `Ctrl+Z/Y`             | Undo/Redo.                                                                     |
 | `Alt+F4(Alt+CL+4)`     | Close active app.                                                              |
 | `Alt+Space`            | show system menu, n(miNimize),r(Restore),x(maXimize),c(Close) window           |

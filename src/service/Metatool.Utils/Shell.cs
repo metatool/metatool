@@ -12,18 +12,49 @@ namespace Metatool.Utils
 {
     public class Shell : IShell
     {
-        private static readonly ILogger _logger = Services.Get<ILogger<Shell>>();
+        private readonly ILogger _logger = Services.Get<ILogger<Shell>>();
 
-
-        public int Run(string commandPath, string arguments = null, string workingDirectory = null)
+        /// <summary>
+        /// in it's own process without window
+        /// </summary>
+        public CommandResult Run(string commandPath, string arguments, string workingDirectory = null)
         {
-            _logger.LogDebug($"Executing '{commandPath} {arguments}'");
-            var startInformation = CreateProcessStartInfo(commandPath, arguments, workingDirectory);
-            var process          = CreateProcess(startInformation);
-            RunAndWait(process);
-            return process.ExitCode;
-        }
+           var startInformation = new ProcessStartInfo($"{commandPath}")
+            {
+                CreateNoWindow         = true,
+                Arguments              = arguments ?? "",
+                RedirectStandardOutput = true,
+                RedirectStandardError  = true,
+                UseShellExecute        = false,
+                WorkingDirectory       = workingDirectory ?? System.Environment.CurrentDirectory
+            }; ;
+            var process          = new Process { StartInfo = startInformation };
+            process.OutputDataReceived += (s, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                {
+                    _logger.LogDebug(e.Data);
+                }
+            };
+            process.ErrorDataReceived += (s, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                {
+                    _logger.LogDebug(e.Data);
+                }
+            };
+            process.Start();
+            process.BeginErrorReadLine();
+            process.BeginOutputReadLine();
+            var standardOut   = process.StandardOutput.ReadToEnd();
+            if(!string.IsNullOrEmpty(standardOut)) _logger.LogInformation(standardOut);
+            var standardError = process.StandardError.ReadToEnd();
+            if (!string.IsNullOrEmpty(standardError)) _logger.LogWarning(standardError);
 
+            process.WaitForExit();
+            return new CommandResult(process.ExitCode, standardOut, standardError);
+        }
+      
         // i.e. if run as admin Chrome could not load extensions
         public void RunAsNormalUser(string cmd, params string[] args)
         {
@@ -49,19 +80,7 @@ namespace Metatool.Utils
                     }
                 }.Start();
             }
-
            
-        }
-
-        public CommandResult Capture(string commandPath, string arguments, string workingDirectory = null)
-        {
-            var startInformation = CreateProcessStartInfo(commandPath, arguments, workingDirectory);
-            var process          = CreateProcess(startInformation);
-            process.Start();
-            var standardOut   = process.StandardOutput.ReadToEnd();
-            var standardError = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-            return new CommandResult(process.ExitCode, standardOut, standardError);
         }
 
         public string NormalizeCmd(params string[] cmdArgsSerials)
@@ -82,12 +101,12 @@ namespace Metatool.Utils
                 {
                     FileName               = "cmd.exe",
                     Arguments              = "/C \"" + cmdWithArgs + "\"",
-                    RedirectStandardInput  = true,
                     UseShellExecute        = false,
-                    RedirectStandardOutput = true,
                     CreateNoWindow         = true,
                     WindowStyle            = ProcessWindowStyle.Hidden,
                     WorkingDirectory       = workingDir ?? Context.AppDirectory
+                    RedirectStandardInput  = true,
+                    RedirectStandardOutput = true,
                 }
             };
             if (asAdmin) proc.StartInfo.Verb = "runas";
@@ -96,11 +115,10 @@ namespace Metatool.Utils
 
         /// <summary>
         /// Process.Start would keep the process parent/child structure, if the parent exit, the child would exit.
-        /// so we use cmd to make a workaround
+        /// so we use explorer to make a workaround
         ///
         /// this could run *.lnk and *.bat
         /// </summary>
-        /// <param name="filePath"></param>
         public void RunWithExplorer(string filePath, string workingDir = null)
         {
             var proc = new Process
@@ -109,59 +127,14 @@ namespace Metatool.Utils
                 {
                     FileName         = "explorer.exe",
                     ArgumentList     = {filePath},
-                    CreateNoWindow   = true,
                     UseShellExecute  = false,
+                    CreateNoWindow   = true,
                     WindowStyle      = ProcessWindowStyle.Hidden,
                     WorkingDirectory = workingDir ?? Context.AppDirectory
                 }
             };
 
             proc.Start();
-        }
-
-
-        private static ProcessStartInfo CreateProcessStartInfo(string commandPath, string arguments,
-            string workingDirectory)
-        {
-            var startInformation = new ProcessStartInfo($"{commandPath}")
-            {
-                CreateNoWindow         = true,
-                Arguments              = arguments ?? "",
-                RedirectStandardOutput = true,
-                RedirectStandardError  = true,
-                UseShellExecute        = false,
-                WorkingDirectory       = workingDirectory ?? System.Environment.CurrentDirectory
-            };
-
-            return startInformation;
-        }
-
-        private static void RunAndWait(System.Diagnostics.Process process)
-        {
-            process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            process.WaitForExit();
-        }
-
-        private static System.Diagnostics.Process CreateProcess(ProcessStartInfo startInformation)
-        {
-            var process = new System.Diagnostics.Process {StartInfo = startInformation};
-            process.OutputDataReceived += (s, e) =>
-            {
-                if (!string.IsNullOrWhiteSpace(e.Data))
-                {
-                    _logger.LogDebug(e.Data);
-                }
-            };
-            process.ErrorDataReceived += (s, e) =>
-            {
-                if (!string.IsNullOrWhiteSpace(e.Data))
-                {
-                    _logger.LogDebug(e.Data);
-                }
-            };
-            return process;
         }
 
         public void CreateShortcut(string targetPath, string shortcutPath, string hotkey = "",

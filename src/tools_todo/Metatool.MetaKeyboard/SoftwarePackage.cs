@@ -92,6 +92,7 @@ namespace Metatool.MetaKeyboard
                     shell.RunWithCmd(shell.NormalizeCmd(swPaths.Code, path));
                 }
             });
+
             hotKeys.WebSearch.OnEvent(async e =>
             {
                 e.Handled = true;
