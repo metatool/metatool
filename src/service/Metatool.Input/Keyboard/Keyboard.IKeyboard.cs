@@ -484,8 +484,8 @@ namespace Metatool.Input
 
                     var source = ReplaceAlias(map.Key, additionalAliases);
                     var target = ReplaceAlias(map.Value.Target, additionalAliases);
-                    var t      = HotKey.Parse(target);
-                    var s      = HotKey.Parse(source);
+                    var t      = Hotkey.Parse(target);
+                    var s      = Hotkey.Parse(source);
                     Map(s, t, map.Value.Type);
                 }
                 catch (Exception e)

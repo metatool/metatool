@@ -15,7 +15,7 @@ namespace Metatool.MetaKeyboard
             var cfg  = config.CurrentValue.Keyboard61Package;
             var maps = cfg.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
-            var hotKeys = cfg.HotKeys;
+            var hotKeys = cfg.Hotkeys;
 
             hotKeys.ToggleCaps.OnEvent(e =>
             {

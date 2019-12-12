@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Automation;
 using System.Windows.Forms;
 using Metatool.Service;
@@ -13,7 +14,7 @@ namespace Metatool.MetaKeyboard
         public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IConfig<Config> config)
         {
             RegisterCommands();
-            var hotKeys = config.CurrentValue.FileExplorerPackage.HotKeys;
+            var hotKeys = config.CurrentValue.FileExplorerPackage.Hotkeys;
             hotKeys.FocusItemsView.OnEvent(e =>
             {
                 var listBoxEle   = windowManager.CurrentWindow?.FirstDescendant(c => c.ByClassName("UIItemsView"));
@@ -38,7 +39,7 @@ namespace Metatool.MetaKeyboard
             hotKeys.CopySelectedPath.OnEvent(async e =>
             {
                 var handle = windowManager.CurrentWindow.Handle;
-                var paths  = await fileExplorer.GetSelectedPath(handle);
+                var paths  = await fileExplorer.GetSelectedPaths(handle);
                 var r      = string.Join(';', paths);
                 System.Windows.Clipboard.SetText(r);
                 e.Handled = true;
@@ -61,7 +62,7 @@ namespace Metatool.MetaKeyboard
                 file.Close();
                 var keyboard = Services.Get<IKeyboard>();
                 fileExplorer.Select(handle, new[] {fileName});
-                keyboard.Type(Key.F2);
+                e.BeginInvoke(()=>keyboard.Type(Key.F2));
             }, _ => windowManager.CurrentWindow.IsExplorer);
 
             hotKeys.ShowDesktopFolder.OnEvent(e =>

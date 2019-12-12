@@ -2,9 +2,9 @@
   "Tools": {
     "Metatool.MetaKeyboard": {
       "Keyboard61Package": {
-        "HotKeys": {
+        "Hotkeys": {
           "ToggleCaps": {
-            "HotKey": "Caps + `*",
+            "Hotkey": "Caps + `*",
             "Description": "Toggle CapsLock"
           }
         },
@@ -74,54 +74,55 @@
           "GK + ]": "RButton"
 
         },
-        "HotKeys": {
+        "Hotkeys": {
           "MouseToFocus": {
-            "HotKey": "GK + F*", // * behind the trigger key to mark down/up KeyEvent handled
+            "Hotkey": "GK + F*", // * behind the trigger key to mark down/up Event handled
             "Description": "Focus Mouse To Active Control"
           },
           "MouseScrollUp": {
-            "HotKey": "GK + W*",
+            "Hotkey": "GK + W*",
             "Description": "Scroll Up with Mouse"
           },
           "MouseScrollDown": {
-            "HotKey": "GK + S*",
+            "Hotkey": "GK + S*",
             "Description": "Scroll Down with Mouse"
           },
           "MouseLeftClick": {
-            "HotKey": "GK + C*",
+            "Hotkey": "GK + C*",
             "Description": "Mouse Left Click"
           },
           "MouseLeftClickLast": {
-            "HotKey": "GK + X*",
+            "Hotkey": "GK + X*",
             "Description": "Mouse Left Click via Last Hint"
           }
 
         }
       },
       "FileExplorerPackage": {
-        "HotKeys": {
+        "Hotkeys": {
           //  "FocusItemsView": null to disable it
           "FocusItemsView": {
             // "Enabled": false, to disable it
             // "StateTree": "Default", "Map"...
-            "HotKey": "LWin + F",
-            // "KeyEvent":  "Down", // default is Down
+            "Hotkey": "LWin + F",
+            // "Event":  "Down", // default is Down
             "Description": "Focus &File Items View"
           },
           "FocusNavigationTreeView": {
-            "HotKey": "LWin + N",
+            "Hotkey": "LWin + N",
             "Description": "Focus &Navigation Tree View"
           },
           "CopySelectedPath": {
-            "HotKey": "Caps + \\",
+            "Hotkey": "Caps + \\",
             "Description": "Copy Selected Files Path"
           },
           "NewFile": {
-            "HotKey": "Ctrl + Alt + N",
-            "Description": "&New File"
-          },
+              "Hotkey": "Ctrl + Alt + N",
+              "Event": "AllUp",
+              "Description": "&New File"
+            },
           "ShowDesktopFolder": {
-            "HotKey": "LWin + D",
+            "Hotkey": "LWin + D",
             "Description": "Show &Desktop Folder"
           }
         }
@@ -146,53 +147,53 @@
           "VirtualMachineManager": ".\\software\\Hyper-V Manager.lnk",
           "Inspect": ".\\software\\inspect.lnk"
         },
-        "HotKeys": {
+        "Hotkeys": {
           "StartGifRecord": {
-            "HotKey": "SW, G",
+            "Hotkey": "SW, G",
             "Description": "&Gif Record"
           },
           "StartVisualStudio": {
-            "HotKey": "SW, V",
+            "Hotkey": "SW, V",
             "Description": "&VisualStudio"
           },
           "StartNotepad": {
-            "HotKey": "SW, N",
+            "Hotkey": "SW, N",
             "Description": "&Notepad"
           },
           "StartInspect": {
-            "HotKey": "SW, I",
+            "Hotkey": "SW, I",
             "Description": "&Inspect"
           },
           "OpenScreenRuler": {
-            "HotKey": "SW, R",
+            "Hotkey": "SW, R",
             "Description": "Screen &Ruler"
           },
           "StartTaskExplorer": {
-            "HotKey": "SW, T",
+            "Hotkey": "SW, T",
             "Description": "&Task Explorer"
           },
           "DoublePinyinSwitch": {
-            "HotKey": "Pipe + P",
+            "Hotkey": "Pipe + P",
             "Description": "Toggle Double &Pinyin(Microsoft)"
           },
           "ToggleDictionary": {
-            "HotKey": "AK + D",
+            "Hotkey": "AK + D",
             "Description": "Toggle &Dictionary"
           },
           "Find": {
-            "HotKey": "AK + F",
+            "Hotkey": "AK + F",
             "Description": "&Find with Everything"
           },
           "OpenTerminal": {
-            "HotKey": "AK + T",
+            "Hotkey": "AK + T",
             "Description": "Open &Terminal"
           },
           "OpenCodeEditor": {
-            "HotKey": "AK + C",
+            "Hotkey": "AK + C",
             "Description": "Open &Code Editor"
           },
           "WebSearch": {
-            "HotKey": "AK + W",
+            "Hotkey": "AK + W",
             "Description": "&Web Search(Alt: second)"
           }
         }

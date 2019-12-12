@@ -83,9 +83,10 @@ namespace Metatool.Utils
            
         }
 
+        private readonly char[] _specialChars = new[] {' ', '&', '<', '>', '[', ']', '{', '}', '^', '=', ';', '!', '\'', '+',',', '`', '~'};
         public string NormalizeCmd(params string[] cmdArgsSerials)
         {
-            return string.Join(" ", cmdArgsSerials.Select(arg => arg.Any(char.IsWhiteSpace) ? $"\"{arg}\"" : arg));
+            return string.Join(" ", cmdArgsSerials.Select(arg => arg.Any(_specialChars.Contains) ? $"\"{arg}\"" : arg));
         }
 
         // Process.Start would keep the process parent/child structure, if the parent exit, the child would exit.
@@ -104,7 +105,7 @@ namespace Metatool.Utils
                     UseShellExecute        = false,
                     CreateNoWindow         = true,
                     WindowStyle            = ProcessWindowStyle.Hidden,
-                    WorkingDirectory       = workingDir ?? Context.AppDirectory
+                    WorkingDirectory       = workingDir ?? Context.AppDirectory,
                     RedirectStandardInput  = true,
                     RedirectStandardOutput = true,
                 }

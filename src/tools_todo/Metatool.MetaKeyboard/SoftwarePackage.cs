@@ -15,7 +15,7 @@ namespace Metatool.MetaKeyboard
         {
             RegisterCommands();
             var software = config.CurrentValue.SoftwarePackage;
-            var hotKeys = software.HotKeys;
+            var hotKeys = software.Hotkeys;
             var swPaths = software.SoftwarePaths;
             hotKeys.DoublePinyinSwitch.OnEvent(e =>
             {
@@ -70,28 +70,29 @@ namespace Metatool.MetaKeyboard
                 else shell.RunWithExplorer(swPaths.Terminal);
             });
 
-            hotKeys.OpenCodeEditor.OnEvent(async e =>
-            {
-                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
-                {
-                    shell.RunWithExplorer(swPaths.Code);
-                    return;
-                }
-
-                var paths = await fileExplorer.GetSelectedPath(windowManager.CurrentWindow.Handle);
-
-                if (paths.Length == 0)
-                {
-                    var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
-                    shell.RunWithExplorer(swPaths.Code, path);
-                    return;
-                }
-
-                foreach (var path in paths)
-                {
-                    shell.RunWithCmd(shell.NormalizeCmd(swPaths.Code, path));
-                }
-            });
+            // hotKeys.OpenCodeEditor.OnEvent(async e =>
+            // {
+            //     e.Handled = true;
+            //     if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+            //     {
+            //         shell.RunWithExplorer(swPaths.Code);
+            //         return;
+            //     }
+            //
+            //     var paths = await fileExplorer.GetSelectedPaths(windowManager.CurrentWindow.Handle);
+            //
+            //     if (paths.Length == 0)
+            //     {
+            //         var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
+            //         shell.RunWithCmd(shell.NormalizeCmd(swPaths.Code, path));
+            //         return;
+            //     }
+            //
+            //     foreach (var path in paths)
+            //     {
+            //         shell.RunWithCmd(shell.NormalizeCmd(swPaths.Code, path));
+            //     }
+            // });
 
             hotKeys.WebSearch.OnEvent(async e =>
             {
@@ -120,17 +121,17 @@ namespace Metatool.MetaKeyboard
                     }
                 }.Start();
             });
-            hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).OnEvent(e =>
-            {
-                e.Handled = true;
-                shell.RunWithCmd(swPaths.ProcessExplorer);
-            });
-
-            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(e =>
-            {
-                e.Handled = true;
-                shell.RunWithCmd(swPaths.Ruler);
-            });
+            // hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).OnEvent(e =>
+            // {
+            //     e.Handled = true;
+            //     shell.RunWithCmd(swPaths.ProcessExplorer);
+            // });
+            //
+            // hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(e =>
+            // {
+            //     e.Handled = true;
+            //     shell.RunWithCmd(swPaths.Ruler);
+            // });
 
             hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(async e =>
             {

@@ -10,7 +10,7 @@ namespace Metatool.Service
 {
     public class FileExplorer : IFileExplorer
     {
-        public  async Task<string[]> GetSelectedPath(IntPtr hWnd)
+        public  async Task<string[]> GetSelectedPaths(IntPtr hWnd)
         {
             return await UiDispacher.DispatchAsync<string[]>(() =>
                 {

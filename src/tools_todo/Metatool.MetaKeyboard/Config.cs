@@ -20,7 +20,7 @@ namespace Metatool.MetaKeyboard
 
     public class Keyboard61Package
     {
-        public Keyboard61HotKeys             HotKeys { get; set; }
+        public Keyboard61HotKeys             Hotkeys { get; set; }
         public Dictionary<string, KeyMapDef> KeyMaps { get; set; }
     }
 
@@ -33,7 +33,7 @@ namespace Metatool.MetaKeyboard
     {
         public IDictionary<string, KeyMapDef> KeyMaps { get; set; }
 
-        public MouseKeyboardHotKeys HotKeys { get; set; }
+        public MouseKeyboardHotKeys Hotkeys { get; set; }
     }
 
     public class MouseKeyboardHotKeys
@@ -64,14 +64,14 @@ namespace Metatool.MetaKeyboard
 
     public class FileExplorerPackage
     {
-        public FileExplorerHotKeys HotKeys { get; set; }
+        public FileExplorerHotKeys Hotkeys { get; set; }
     }
 
     public class SoftwarePackage
     {
         public OrderedDictionary<string, string> KeyAliases { get; set; }
 
-        public  SoftwareHotKeys HotKeys { get; set; }
+        public  SoftwareHotKeys Hotkeys { get; set; }
         private SoftwarePaths   _softwarePaths;
 
         public SoftwarePaths SoftwarePaths

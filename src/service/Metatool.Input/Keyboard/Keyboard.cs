@@ -39,7 +39,7 @@ namespace Metatool.Input
             var hotStrings = keyboard.HotStrings;
             AddHotStrings(hotStrings);
 
-            keyboard.HotKeys.TryGetValue("Reset", out var resetTrigger);
+            keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
             resetTrigger??= new HotkeyTrigger(Key.Caps + Key.R);
             resetTrigger.OnEvent(_ => ReleaseDownKeys());
         }

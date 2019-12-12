@@ -1,6 +1,6 @@
 ﻿{
   "CtrlCExit": false,
-  "HotKeys": {
+  "Hotkeys": {
     "Exit": "MT + C",
     "Restart": "MT + X",
     "RestartAsAdmin": "MT + Z"
@@ -8,7 +8,7 @@
   "Services": {
     "Input": {
       "Keyboard": {
-        "HotKeys": {
+        "Hotkeys": {
           "Reset": "MT + R" 
         },
         "KeyAliases": {

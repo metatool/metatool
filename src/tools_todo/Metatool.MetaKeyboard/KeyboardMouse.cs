@@ -16,7 +16,7 @@ namespace Metatool.MetaKeyboard
             var maps = conf.KeyboardMousePackage.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
 
-            var hotkeys = conf.KeyboardMousePackage.HotKeys;
+            var hotkeys = conf.KeyboardMousePackage.Hotkeys;
 
             hotkeys.MouseToFocus.OnEvent(e => e.BeginInvoke(MoveCursorToActiveControl));
 

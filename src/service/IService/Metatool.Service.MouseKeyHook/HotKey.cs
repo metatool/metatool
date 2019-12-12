@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Metatool.Service
 {
-    public class HotKey
+    public class Hotkey
     {
         public static IHotkey Parse(string hotkey )
         {

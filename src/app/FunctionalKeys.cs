@@ -7,7 +7,7 @@ namespace Metaseed.Metatool
     {
         public FunctionalKeys(IConfig<MetatoolConfig> config)
         {
-            var hotKeys = config.CurrentValue.HotKeys;
+            var hotKeys = config.CurrentValue.Hotkeys;
 
             hotKeys.TryGetValue("Exit", out var exitTrigger);
             exitTrigger??=new HotkeyTrigger(Caps + C);
