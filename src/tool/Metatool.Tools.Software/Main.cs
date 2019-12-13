@@ -77,7 +77,7 @@ namespace Metatool.Tools.Software
         {
             public bool Handled { get; set; } = true;
             public string ActionId { get; set; } = "ShortcutLaunch";
-            public string Param1 { get; set; }
+            public string Args { get; set; }
 
             public static SoftwareActionConfig Parse(IDictionary<string, string> prop)
             {
@@ -91,8 +91,8 @@ namespace Metatool.Tools.Software
                     if (prop.TryGetValue(d, out var des)) config.ActionId = des;
                     d = nameof(SoftwareActionConfig.Handled);
                     if (prop.TryGetValue(d, out des)) config.Handled = bool.Parse(des);
-                    d = nameof(SoftwareActionConfig.Param1);
-                    if (prop.TryGetValue(d, out des)) config.Param1 = des;
+                    d = nameof(SoftwareActionConfig.Args);
+                    if (prop.TryGetValue(d, out des)) config.Args = des;
                 }
                 catch (Exception e)
                 {
@@ -108,14 +108,14 @@ namespace Metatool.Tools.Software
         {
             e.Handled = config.Handled;
             var shell = Services.Get<IShell>();
-            if (string.IsNullOrEmpty(config.Param1))
+            if (string.IsNullOrEmpty(config.Args))
             {
                 shell.RunWithExplorer(shortcut);
                 return;
             }
 
             // todo: if ActionId != "ShortcutLaunch
-            if (Enum.TryParse(config.Param1, out ExplorerPathPara explorerPath))
+            if (Enum.TryParse(config.Args, out ExplorerPathPara explorerPath))
             {
                 var windowManager = Services.Get<IWindowManager>();
                 if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)

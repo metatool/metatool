@@ -141,7 +141,7 @@ namespace Metatool.Utils
         public void CreateShortcut(string targetPath, string shortcutPath, string hotkey = "",
             string description = "", bool isAdmin = false)
         {
-            var exists = System.IO.File.Exists(shortcutPath);
+            var exists = File.Exists(shortcutPath);
             if (exists) return;
 
             var shDesktop       = (object)"Desktop";
@@ -159,6 +159,11 @@ namespace Metatool.Utils
                 fs.Seek(21, SeekOrigin.Begin);
                 fs.WriteByte(0x22);
             }
+        }
+
+        public void ReadShortcut(string shortcutPath)
+        {
+
         }
     }
 }

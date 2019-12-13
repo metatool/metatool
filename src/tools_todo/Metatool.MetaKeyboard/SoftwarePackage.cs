@@ -66,7 +66,8 @@ namespace Metatool.MetaKeyboard
                     path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 else
                     path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
-                if (shiftDown) shell.RunWithCmd(swPaths.Terminal, true);
+                // https://github.com/nt4f04uNd/wt-contextmenu
+                if (shiftDown) shell.RunWithCmd(swPaths.Terminal, true); // powershell -Command "Start-Process shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App -Verb RunAs"
                 else shell.RunWithExplorer(swPaths.Terminal);
             });
 
@@ -195,11 +196,11 @@ namespace Metatool.MetaKeyboard
                 });
             });
 
-            hotKeys.StartGifRecord.WithAliases(software.KeyAliases).OnEvent(e =>
-            {
-                e.Handled = true;
-                shell.RunWithCmd(swPaths.GifTool);
-            });
+            // hotKeys.StartGifRecord.WithAliases(software.KeyAliases).OnEvent(e =>
+            // {
+            //     e.Handled = true;
+            //     shell.RunWithCmd(swPaths.GifTool);
+            // });
 
             hotKeys.ToggleDictionary.MapOnAllUp(Shift + LAlt + D);
         }

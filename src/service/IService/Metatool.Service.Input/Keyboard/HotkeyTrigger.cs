@@ -123,9 +123,9 @@ namespace Metatool.Service
         /// <summary>
         /// 1. Abc => A
         /// 2. A&Bc => B
-        /// 3. Abc#A+B,C%Handled=true, Enabled=true, Description=ab cs ef
-        /// 4. ABC#%Handled=true
-        /// 5. ABC#%%a=b,c=d
+        /// 3. Abc#A+B,C$Handled=true, Enabled=true, Description=ab cs ef
+        /// 4. ABC#$Handled=true
+        /// 5. ABC#$$a=b,c=d
         /// </summary>
         /// <param name="hotkeyTrigger"></param>
         /// <returns></returns>
@@ -147,7 +147,7 @@ namespace Metatool.Service
 
             if (iNum != -1)
             {
-                var keyWithProperties = hotkeyTrigger.Substring(iNum + 1).Split('%').ToList();
+                var keyWithProperties = hotkeyTrigger.Substring(iNum + 1).Split('$').ToList();
                 if (!string.IsNullOrEmpty(keyWithProperties[0]))
                     trigger.Hotkey = keyWithProperties[0];
                 keyWithProperties.RemoveAt(0);
