@@ -47,7 +47,7 @@ namespace Metatool.MetaKeyboard
 
                 if ("CabinetWClass" == c)
                 {
-                    var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
+                    var path = await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
                     shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg, "-path",
                         path));
                     return;
@@ -65,7 +65,7 @@ namespace Metatool.MetaKeyboard
                 if ("CabinetWClass" != c)
                     path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 else
-                    path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
+                    path = await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
                 // https://github.com/nt4f04uNd/wt-contextmenu
                 if (shiftDown) shell.RunWithCmd(swPaths.Terminal, true); // powershell -Command "Start-Process shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App -Verb RunAs"
                 else shell.RunWithExplorer(swPaths.Terminal);
@@ -182,7 +182,7 @@ namespace Metatool.MetaKeyboard
 
                 e.Handled = true;
 
-                var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
+                var path = await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
                 if (string.IsNullOrEmpty(path))
                 {
                     shell.RunWithExplorer(swPaths.VisualStudio);

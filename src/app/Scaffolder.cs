@@ -30,7 +30,7 @@ namespace Metaseed.Metatool
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 // register dotnet-script as the tool to process .csx files
-                var cmdRunner = new Shell();
+                var cmdRunner = _shell;
                 cmdRunner.Run("reg", @"add HKCU\Software\classes\.csx /f /ve /t REG_SZ /d metatool");
                 cmdRunner.Run("reg",
                     $@"add HKCU\Software\Classes\metatool\Shell\Open\Command /f /ve /t REG_EXPAND_SZ /d ""\""%MetatoolDir%\Metatool.exe\"" \""%1\"" -- %*""");
@@ -118,7 +118,7 @@ namespace Metaseed.Metatool
             var desktop           = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var shortcutPath      = Path.Combine(desktop, "Metatool.lnk");
             var shortcutPathAdmin = Path.Combine(desktop, "Metatool (Admin).lnk");
-            var shell             = new Shell();
+            var shell             = _shell;
             shell.CreateShortcut(targetPath, shortcutPath, "Ctrl+Alt+X", description);
             shell.CreateShortcut(targetPath, shortcutPathAdmin, "Ctrl+Alt+Z", description + "- Admin", true);
         }

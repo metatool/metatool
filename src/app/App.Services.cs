@@ -2,6 +2,7 @@
 using System.IO;
 using Metaseed.Metatool.Service;
 using Metatool.Command;
+using Metatool.Core;
 using Metatool.Input;
 using Metatool.Metatool;
 using Metatool.Service;
@@ -36,6 +37,7 @@ namespace Metaseed.Metatool
                     else
                         Console.WriteLine("FileLogger is disabled, modify the config.json to enable it");
                 })
+                .AddSingleton<IContextVariable, ContextVariable>()
                 .AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>))
                 .Configure<LoggerFilterOptions>(options =>
                     options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)

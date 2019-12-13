@@ -11,7 +11,7 @@ namespace Metatool.MetaKeyboard
     public class FileExplorer : CommandPackage
     {
 
-        public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IConfig<Config> config)
+        public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IConfig<Config> config, INotify notify)
         {
             RegisterCommands();
             var hotKeys = config.CurrentValue.FileExplorerPackage.Hotkeys;
@@ -38,11 +38,12 @@ namespace Metatool.MetaKeyboard
 
             hotKeys.CopySelectedPath.OnEvent(async e =>
             {
+                e.Handled = true;
                 var handle = windowManager.CurrentWindow.Handle;
                 var paths  = await fileExplorer.GetSelectedPaths(handle);
                 var r      = string.Join(';', paths);
+                notify.ShowMessage($"Path Copied: {r}");
                 System.Windows.Clipboard.SetText(r);
-                e.Handled = true;
             }, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
 
             hotKeys.NewFile.OnEvent(async e =>
@@ -50,7 +51,7 @@ namespace Metatool.MetaKeyboard
                 e.Handled = true;
                 const string newFileName = "NewFile";
                 var          handle      = windowManager.CurrentWindow.Handle;
-                var          fullPath    = await fileExplorer.Path(handle);
+                var          fullPath    = await fileExplorer.CurrentDirectory(handle);
                 var          fileName    = newFileName;
                 var          i           = 1;
                 while (File.Exists(fullPath + "\\" + fileName))

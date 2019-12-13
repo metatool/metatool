@@ -15,12 +15,15 @@ namespace Metatool.Tools.Software
 {
     public class SoftwareTool : ToolBase
     {
-        public ICommandToken<IKeyEventArgs> CommandA;
-        public IKeyCommand                  CommandB;
+        private readonly IContextVariable             _contextVariable;
+        public           ICommandToken<IKeyEventArgs> CommandA;
+        public           IKeyCommand                  CommandB;
 
 
-        public SoftwareTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config)
+        public SoftwareTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config, IShell shell,
+            IContextVariable contextVariable)
         {
+            _contextVariable = contextVariable;
             var folder = config.CurrentValue.SoftwareFolder;
             var files  = GetFiles(folder);
 
@@ -51,9 +54,27 @@ namespace Metatool.Tools.Software
 
                 hotKeyTrigger.Hotkey = sb.ToString();
                 hotKeys.Add(hotKeyTrigger);
-                var conf = SoftwareActionConfig.Parse(hotKeyTrigger.Context);
-                conf.Handled |= hotKeyTrigger.Handled;
-                hotKeyTrigger.OnEvent( async e =>  await LaunchShortcut(e, file,conf));
+                if (Path.GetExtension(file) == ".lnk")
+                {
+                    var shortcutConfig = shell.ReadShortcut(file);
+
+                    SoftwareActionConfig conf = new SoftwareActionConfig();
+                    if (!string.IsNullOrEmpty(shortcutConfig.Comment))
+                    {
+                        try
+                        {
+                            conf = SoftwareActionConfig.Parse(shortcutConfig.Comment);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.LogError($"Could not parse Commit in file:{file} - {shortcutConfig.Comment} ");
+                        }
+                    }
+
+                    conf.Handled |= hotKeyTrigger.Handled;
+
+                    hotKeyTrigger.OnEvent(async e => await LaunchShortcut(e, file, conf));
+                }
             }
 
 
@@ -65,87 +86,90 @@ namespace Metatool.Tools.Software
             RegisterCommands();
         }
 
-        [Flags]
-        public enum ExplorerPathPara
-        {
-            Selected             = 1,
-            CurrentDir           = 2,
-            SelectedOrCurrentDir = 3
-        }
-
         public class SoftwareActionConfig
         {
-            public bool Handled { get; set; } = true;
+            public bool   Handled  { get; set; } = true;
             public string ActionId { get; set; } = "ShortcutLaunch";
-            public string Args { get; set; }
+            public string Args     { get; set; }
 
-            public static SoftwareActionConfig Parse(IDictionary<string, string> prop)
+            public static SoftwareActionConfig Parse(string jsonString)
             {
-                var config = new SoftwareActionConfig();
-
-                if (prop == null) return config;
+                if (!jsonString.TrimStart().StartsWith('{')||string.IsNullOrEmpty(jsonString)) return new SoftwareActionConfig();
 
                 try
                 {
-                    var d                                                 = nameof(SoftwareActionConfig.ActionId);
-                    if (prop.TryGetValue(d, out var des)) config.ActionId = des;
-                    d = nameof(SoftwareActionConfig.Handled);
-                    if (prop.TryGetValue(d, out des)) config.Handled = bool.Parse(des);
-                    d = nameof(SoftwareActionConfig.Args);
-                    if (prop.TryGetValue(d, out des)) config.Args = des;
+                    return JsonSerializer.Deserialize<SoftwareActionConfig>(jsonString);
                 }
                 catch (Exception e)
                 {
                     Services.CommonLogger.LogError(e,
                         $"SoftwareActionConfig Parse: cannot parse SoftwareActionConfig properties + {e.Message}");
+                    throw;
                 }
-
-                return config;
             }
+        }
+
+        /// <summary>
+        /// "abc${variable}"
+        /// </summary>
+        /// <param name="varString"></param>
+        /// <returns></returns>
+        public async Task<string> ParseVariableString(string varString, Func<object, string> variableConverter)
+        {
+            var sb            = new StringBuilder();
+            var inVariable    = false;
+            int varStartIndex = -1;
+            for (int i = 0; i < varString.Length; i++)
+            {
+                if (i < varString.Length - 3 /*${?}*/ && varString[i] == '$' && varString[i + 1] == '{')
+                {
+                    inVariable    = true;
+                    varStartIndex = i + 2;
+                }
+                if (!inVariable) sb.Append(varString[i]);
+
+                if (inVariable && varString[i] == '}')
+                {
+                    var key      = varString.Substring(varStartIndex, i - varStartIndex);
+
+                    var variable = await _contextVariable.GetVariable<object>(key);
+
+                    var var      = variableConverter(variable);
+                    sb.Append(var);
+                    inVariable    = false;
+                    varStartIndex = -1;
+                }
+            }
+
+            return sb.ToString();
         }
 
         public async Task LaunchShortcut(IKeyEventArgs e, string shortcut, SoftwareActionConfig config)
         {
             e.Handled = config.Handled;
             var shell = Services.Get<IShell>();
+
             if (string.IsNullOrEmpty(config.Args))
             {
                 shell.RunWithExplorer(shortcut);
                 return;
             }
 
-            // todo: if ActionId != "ShortcutLaunch
-            if (Enum.TryParse(config.Args, out ExplorerPathPara explorerPath))
+            _contextVariable.NewGeneration();
+            var arg = await ParseVariableString(config.Args, o =>
             {
-                var windowManager = Services.Get<IWindowManager>();
-                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+                switch (o)
                 {
-                    shell.RunWithExplorer(shortcut);
-                    return;
+                    case string str:
+                        return str;
+                    case string[] strA:
+                        return string.Join(" ", strA);
+                    default:
+                         throw new Exception("unsupported context variable type when parse shortcut arguments");
                 }
+            });
 
-                var fileExplorer = Services.Get<IFileExplorer>();
-                if ((explorerPath & ExplorerPathPara.Selected) == ExplorerPathPara.Selected)
-                {
-                    var paths = await fileExplorer.GetSelectedPaths(windowManager.CurrentWindow.Handle);
-                    if (paths.Length != 0)
-                    {
-                        foreach (var path in paths)
-                        {
-                            shell.RunWithCmd(shell.NormalizeCmd(shortcut, path));
-                        }
-
-                        return;
-                    }
-                }
-
-                if ((explorerPath & ExplorerPathPara.CurrentDir) == ExplorerPathPara.CurrentDir)
-                {
-                    var path = await fileExplorer.Path(windowManager.CurrentWindow.Handle);
-                    shell.RunWithCmd(shell.NormalizeCmd(shortcut, path));
-                    return;
-                }
-            }
+            shell.RunWithCmd(shell.NormalizeCmd(shortcut) + $" {arg}");
         }
 
         public override bool OnLoaded()
@@ -165,7 +189,8 @@ namespace Metatool.Tools.Software
             var dirs = Directory.GetDirectories(path);
             foreach (var dir in dirs)
             {
-                if (dir.StartsWith("_")) continue;
+                var dirName = Path.GetFileName(dir);
+                if (dirName.StartsWith("_")) continue;
 
                 var fs = GetFiles(dir);
                 foreach (var file in fs)

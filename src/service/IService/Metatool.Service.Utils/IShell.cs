@@ -34,8 +34,33 @@ namespace Metatool.Service
         void RunWithCmd(string cmdWithArgs, bool asAdmin = false, string workingDir = null);
         void RunWithExplorer(string filePath, string workingDir = null);
         void RunAsNormalUser(string cmd, params string[] args);
-
         void CreateShortcut(string targetPath, string shortcutPath, string hotkey = "",
             string description = "", bool isAdmin = false);
+        ShortcutLink ReadShortcut(string shortcutPath);
+    }
+
+    public class ShortcutLink
+    {
+        public string TargetPath;
+        public string Arguments;
+        public string Comment;
+        public string FullName;
+        public string IconLocation;
+        public string Hotkey;
+        public int    WindowStyle;
+
+        public ShortcutLink(string targetPath, string arguments, string comment, string fullName, string iconLocation, string hotkey, int windowStyle, string workingDirectory)
+        {
+            TargetPath       = targetPath;
+            Arguments             = arguments;
+            Comment          = comment;
+            FullName         = fullName;
+            IconLocation     = iconLocation;
+            Hotkey           = hotkey;
+            WindowStyle      = windowStyle;
+            WorkingDirectory = workingDirectory;
+        }
+
+        public string WorkingDirectory;
     }
 }

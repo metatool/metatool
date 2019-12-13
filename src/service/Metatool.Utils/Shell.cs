@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IWshRuntimeLibrary;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,45 @@ namespace Metatool.Utils
     public class Shell : IShell
     {
         private readonly ILogger _logger = Services.Get<ILogger<Shell>>();
+
+        public Shell(IContextVariable contextVariable)
+        {
+            contextVariable.AddVariable("IShell.SelectedPaths", async () => await SelectedPaths());
+            contextVariable.AddVariable("IShell.CurrentDirectory", async () => await CurrentDirectory());
+            contextVariable.AddVariable("IShell.SelectedPathsOrCurrentDirectory", async () =>
+            {
+                var paths = await SelectedPaths();
+
+                return (paths != null && paths.Length != 0)
+                    ? paths
+                    : new string[] {await CurrentDirectory()};
+            });
+        }
+
+        public async Task<string[]> SelectedPaths()
+        {
+                var fileExplorer = Services.Get<IFileExplorer>();
+                var windowManager = Services.Get<IWindowManager>();
+                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+                {
+                    return null;
+                }
+
+                var r = await  fileExplorer.GetSelectedPaths(windowManager.CurrentWindow.Handle);
+                return r;
+        }
+
+        public async Task<string> CurrentDirectory()
+        {
+                var fileExplorer  = Services.Get<IFileExplorer>();
+                var windowManager = Services.Get<IWindowManager>();
+                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+                {
+                    return null;
+                }
+
+                return await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
+        }
 
         /// <summary>
         /// in it's own process without window
@@ -161,9 +201,14 @@ namespace Metatool.Utils
             }
         }
 
-        public void ReadShortcut(string shortcutPath)
+        public ShortcutLink ReadShortcut(string shortcutPath)
         {
+            IWshShell    shell = new WshShell();
+                    IWshShortcut lnk   = shell.CreateShortcut(shortcutPath) as IWshShortcut;
+            return new ShortcutLink(lnk.TargetPath, lnk.Arguments, lnk.Description, lnk.FullName, lnk.IconLocation, lnk.Hotkey, lnk.WindowStyle, lnk.WorkingDirectory);
 
         }
     }
+
+   
 }

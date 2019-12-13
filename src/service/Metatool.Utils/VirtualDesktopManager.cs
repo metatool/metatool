@@ -89,7 +89,7 @@ namespace Metatool.Service
 
         public async Task<bool> IsOnCurrentVirtualDesktop(IntPtr hWnd)
         {
-            return await UiDispacher.DispatchAsync<bool>(() =>
+            return await UiDispatcher.DispatchAsync<bool>(() =>
             {
                 int hr;
                 if ((hr = manager.IsWindowOnCurrentVirtualDesktop(hWnd, out var result)) != 0)
@@ -103,7 +103,7 @@ namespace Metatool.Service
 
         public async Task<Guid> GetWindowDesktopId(IntPtr hWnd)
         {
-            return await UiDispacher.DispatchAsync<Guid>(() =>
+            return await UiDispatcher.DispatchAsync<Guid>(() =>
             {
                 int  hr;
                 if ( (hr = manager.GetWindowDesktopId(hWnd, out var result)) != 0)
@@ -117,7 +117,7 @@ namespace Metatool.Service
 
         public async Task MoveWindowToDesktop(IntPtr hWnd, Guid currentDesktop)
         {
-            await UiDispacher.DispatchAsync<object>(() =>
+            await UiDispatcher.DispatchAsync<object>(() =>
             {
                 int hr;
                 if ((hr = manager.MoveWindowToDesktop(hWnd, currentDesktop)) != 0)

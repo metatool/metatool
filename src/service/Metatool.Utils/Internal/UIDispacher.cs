@@ -5,7 +5,7 @@ using System.Windows.Threading;
 
 namespace Metatool.Service
 {
-    public class UiDispacher
+    public class UiDispatcher
     {
         private static readonly Dispatcher Dispatcher = Application.Current.Dispatcher;
 
@@ -21,7 +21,7 @@ namespace Metatool.Service
 
         internal static async Task<T> DispatchAsync<T>(Func<T> action)
         {
-            var o = Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+             var o = Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
             await o;
             return (T) (o.Result);
         }
