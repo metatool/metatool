@@ -92,7 +92,7 @@ namespace Metatool.Input.MouseKeyHook
 
             foreach (var stateTree in KeyStateTree.StateTrees.Values) stateTree.Reset();
 
-            var selectTrees = new List<KeyStateTree.SelectionResult>();
+            var selectedTrees = new List<KeyStateTree.SelectionResult>();
 
             //eventType is only Down or Up
             void ClimbTree(KeyEvent eventType, IKeyEventArgs args)
@@ -107,44 +107,45 @@ namespace Metatool.Input.MouseKeyHook
                 {
                     reprocess = false;
                     var onGround = false;
-                    if (selectTrees.Count == 0)
+                    if (selectedTrees.Count == 0)
                     {
                         onGround    = true;
-                        selectTrees = SelectTree(eventType, args);
+                        selectedTrees = SelectTree(eventType, args);
                     }
 
-                    hasSelectedNodes = selectTrees.Count > 0;
-                    if (selectTrees.Count <= 0) goto @return;
+                    hasSelectedNodes = selectedTrees.Count > 0;
+                    if (selectedTrees.Count <= 0) goto @return;
 
-                    foreach (var c in selectTrees.GetRange(0, selectTrees.Count))
+                    var trees  = selectedTrees.GetRange(0, selectedTrees.Count);
+                    foreach (var c in trees)
                     {
-                        var selectResult = c; // should not remove this line
+                        var selectedTree = c; // should not remove this line
                         if (!onGround)
                         {
-                            var r   = selectResult.Tree.TrySelect(eventType, args);
-                            var ind = selectTrees.IndexOf(selectResult);
-                            selectTrees[ind] = r;
-                            selectResult     = r;
+                            var result   = selectedTree.Tree.TrySelect(eventType, args);
+                            var index = selectedTrees.IndexOf(selectedTree);
+                            selectedTrees[index] = result;
+                            selectedTree     = result;
                         }
 
-                        var rt = selectResult.Tree.Climb(eventType, args, selectResult.CandidateNode,
-                            selectResult.DownInChord);
-                        _logger.LogInformation($"\t={rt}${selectResult.Tree.Name}@{selectResult.Tree.CurrentNode}");
+                        var rt = selectedTree.Tree.Climb(eventType, args, selectedTree.CandidateNode,
+                            selectedTree.DownInChord);
+                        _logger.LogInformation($"\t={rt}${selectedTree.Tree.Name}@{selectedTree.Tree.CurrentNode}");
                         if (rt == KeyProcessState.Continue)
                         {
                         }
                         else if (rt == KeyProcessState.Done)
                         {
-                            selectTrees.Remove(selectResult);
+                            selectedTrees.Remove(selectedTree);
                         }
                         else if (rt == KeyProcessState.NoFurtherProcess)
                         {
-                            selectTrees.Remove(selectResult);
+                            selectedTrees.Remove(selectedTree);
                             goto @return;
                         }
                         else if (rt == KeyProcessState.Reprocess || rt == KeyProcessState.Yield)
                         {
-                            selectTrees.Remove(selectResult);
+                            selectedTrees.Remove(selectedTree);
                             reprocess = true;
                         }
                         else
@@ -152,7 +153,7 @@ namespace Metatool.Input.MouseKeyHook
                             throw new ArgumentOutOfRangeException();
                         }
                     }
-                } while (selectTrees.Count == 0 && /*no KeyProcessState.Continue*/
+                } while (selectedTrees.Count == 0 && /*no KeyProcessState.Continue*/
                          reprocess              && hasSelectedNodes /*Yield or Reprocess*/);
 
                 @return:

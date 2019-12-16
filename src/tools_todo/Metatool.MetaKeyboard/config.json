@@ -1,6 +1,6 @@
 ﻿{
   "Tools": {
-    "Metatool.MetaKeyboard": {
+    "Metatool.Tools.MetaKeyboard": {
       "Keyboard61Package": {
         "Hotkeys": {
           "ToggleCaps": {

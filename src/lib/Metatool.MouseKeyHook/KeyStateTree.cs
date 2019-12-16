@@ -208,7 +208,7 @@ namespace Metatool.Input
             if (args.NoFurtherProcess) return ProcessState = KeyProcessState.NoFurtherProcess;
 
             // no match
-            // Chord_downOrUp? or 
+            // Chord_downOrUp? or
             if (candidateNode == null)
             {
                 if (eventType == KeyEvent.Down)
@@ -229,8 +229,8 @@ namespace Metatool.Input
                 }
 
                 // allUp design goal:
-                // 1. could register allUp event 
-                // 2. navigate when A+B+C_up event not triggered because of chord_up before trigger_up
+                // 1. could register allUp event
+                // 2. still navigate when A+B+C_up event not triggered because of chord_up before trigger_up
                 if (_lastKeyDownNodeForAllUp != null &&
                     _lastKeyDownNodeForAllUp.Key.IsAnyKey(args.KeyCode))
                 {
@@ -253,7 +253,7 @@ namespace Metatool.Input
                         return ProcessState = KeyProcessState.Yield;
                     }
 
-                    // on path, up 
+                    // on path, up
                     if (_treeWalker.ChildrenCount == 0)
                     {
                         // NoChild & NotOnRoot:
@@ -272,7 +272,7 @@ namespace Metatool.Input
                         return ProcessState = KeyProcessState.Continue;
                     }
 
-                    //HaveChild & KeyNotInChord_up: B+D, F when C_up. 
+                    //HaveChild & KeyNotInChord_up: B+D, F when C_up.
                     Reset();
                     return ProcessState = KeyProcessState.Reprocess;
                 }
