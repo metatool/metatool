@@ -20,7 +20,7 @@ namespace Metatool.MetaKeyboard
             hotKeys.DoublePinyinSwitch.OnEvent(e =>
             {
                 e.Handled = true;
-                const string keyName   = @"HKEYCURRENTUSER\Software\Microsoft\InputMethod\Settings\CHS";
+                const string keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
                 const string valueName = "Enable Double Pinyin";
                 var          k         = (int) Registry.GetValue(keyName, valueName, -1);
                 if (k == 0)

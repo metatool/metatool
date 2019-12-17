@@ -211,14 +211,43 @@ namespace Metatool.Input
             return MapOnHitOrAllUp(source, target, predicate, true);
         }
 
+        class NoEventTimer
+        {
+            private readonly long _eventDuration;
+            readonly Stopwatch sw = new Stopwatch();
+
+            public NoEventTimer(long eventDuration = 800)
+            {
+                _eventDuration = eventDuration;
+            }
+
+            public void EventPulse()
+            {
+                sw.Restart();
+            }
+
+            public long NoEventDuration => sw.ElapsedMilliseconds - _eventDuration;
+        }
+
+        private const int StateResetTime = 5000;
+
         private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target,
             Predicate<IKeyEventArgs> predicate = null, bool allUp = false)
         {
+            var delay        = _config.CurrentValue?.Services.Input.Keyboard.RepeatDelay ?? 3000;
+            var noEventTimer = new NoEventTimer();
+            // state
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
             var stopwatch =
                 new Stopwatch(); // within duration could be used as a map source, otherwise as it is. i.e. repeat the down event of the trigger key.
-            var delay = _config.CurrentValue?.Services.Input.Keyboard.RepeatDelay ?? 3000;
+
+            void Reset()
+            {
+                handling = false;
+                keyDownEvent = null;
+                stopwatch.Reset();
+            }
 
             void KeyUpAsyncCall(IKeyEventArgs e)
             {
@@ -257,6 +286,10 @@ namespace Metatool.Input
                     stopwatch.Restart();
                 }, e =>
                 {
+                    var noEventDuration = noEventTimer.NoEventDuration;
+                    if (noEventDuration > StateResetTime) Reset();
+                    noEventTimer.EventPulse();
+
                     if ((!handling || stopwatch.ElapsedMilliseconds <= delay) && (predicate == null || predicate(e)))
                         return true;
                     if (stopwatch.IsRunning) stopwatch.Stop();
@@ -310,13 +343,22 @@ namespace Metatool.Input
         public IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target,
             Predicate<IKeyEventArgs> predicate = null)
         {
+            var           sourCombination = source.ToCombination();
+            var           delay           = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay ?? 3000;
+            // state
             var           handling        = false;
             IKeyEventArgs keyDownEvent    = null;
-            var           sourCombination = source.ToCombination();
             var           stopwatch       = new Stopwatch();
-            var           delay           = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay ?? 3000;
             var           targetDown      = false;
+            var noEventTimer = new NoEventTimer();
 
+            void Reset()
+            {
+                handling     = false;
+                keyDownEvent = null;
+                stopwatch.Reset();
+                targetDown = false;
+            }
             void Handler(Object o, IKeyEventArgs e)
             {
                 _hook.KeyDown -= Handler;
@@ -340,6 +382,10 @@ namespace Metatool.Input
                     e.BeginInvoke(()=>_hook.KeyDown += Handler); //have to be async to handle next key down event, otherwise can't capture it.
                 }, e =>
                 {
+                    var noEventDuration = noEventTimer.NoEventDuration;
+                    if (noEventDuration > StateResetTime) Reset();
+                    noEventTimer.EventPulse();
+
                     var duration = stopwatch.ElapsedMilliseconds;
                     if (!e.IsVirtual && (!handling || duration <= delay) && (predicate == null || predicate(e)))
                         return true;
