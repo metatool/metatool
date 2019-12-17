@@ -31,18 +31,18 @@ namespace Metatool.Script
         private readonly bool                      _allowUnsafe;
         private readonly bool                      _registerDependencies;
 
-        private Func<object[], Task<object>>? _lazyExecutor;
-        private Compilation?                  _lazyCompilation;
+        private Func<object[], Task<object>> _lazyExecutor;
+        private Compilation                  _lazyCompilation;
 
         internal static readonly ImmutableArray<string> PreprocessorSymbols =
             ImmutableArray.CreateRange(new[] {"__DEMO__", "__DEMO_EXPERIMENTAL__", "TRACE", "DEBUG"});
 
-        public ScriptRunner(string? code, ImmutableList<SyntaxTree>? syntaxTrees = null,
-            CSharpParseOptions? parseOptions = null, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary,
-            Platform platform = Platform.AnyCpu, IEnumerable<MetadataReference>? references = null,
-            IEnumerable<string>? usings = null, string? filePath = null, string? workingDirectory = null,
-            MetadataReferenceResolver? metadataResolver = null, SourceReferenceResolver? sourceResolver = null,
-            InteractiveAssemblyLoader? assemblyLoader = null,
+        public ScriptRunner(string code, ImmutableList<SyntaxTree>? syntaxTrees = null,
+            CSharpParseOptions parseOptions = null, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary,
+            Platform platform = Platform.AnyCpu, IEnumerable<MetadataReference> references = null,
+            IEnumerable<string> usings = null, string filePath = null, string workingDirectory = null,
+            MetadataReferenceResolver metadataResolver = null, SourceReferenceResolver sourceResolver = null,
+            InteractiveAssemblyLoader assemblyLoader = null,
             OptimizationLevel optimizationLevel = OptimizationLevel.Debug, bool checkOverflow = false,
             bool allowUnsafe = true,
             bool registerDependencies = false)
@@ -70,7 +70,7 @@ namespace Metatool.Script
                                  : SourceFileResolver.Default);
         }
 
-        public string?                    Code        { get; }
+        public string                    Code        { get; }
         public ImmutableList<SyntaxTree>? SyntaxTrees { get; }
         public OutputKind                 OutputKind  { get; }
         public Platform                   Platform    { get; }
@@ -87,7 +87,7 @@ namespace Metatool.Script
 
         public CSharpParseOptions ParseOptions { get; }
 
-        public ImmutableArray<Diagnostic> Compile(Action<Stream>? peStreamAction,
+        public ImmutableArray<Diagnostic> Compile(Action<Stream> peStreamAction,
             CancellationToken cancellationToken = default)
         {
             try
@@ -149,7 +149,7 @@ namespace Metatool.Script
         private static string GetScriptAssemblyName() =>
             _globalAssemblyNamePrefix + Interlocked.Increment(ref _assemblyNumber);
 
-        private Func<object[], Task<object>>? CreateExecutor(Action<Stream>? peStreamAction,
+        private Func<object[], Task<object>> CreateExecutor(Action<Stream>? peStreamAction,
             CancellationToken cancellationToken)
         {
             var compilation = GetCompilation(GetScriptAssemblyName());

@@ -10,7 +10,7 @@ namespace Metatool.Script
 {
     public partial class ExecutionHost
     {
-        private TextWriter? _processInputStream;
+        private TextWriter _processInputStream;
         public event Action<ResultObject> Dumped;
         public event Action<ExceptionResultObject> Error;
         public event Action                        ReadInput;

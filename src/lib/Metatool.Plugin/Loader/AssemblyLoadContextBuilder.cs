@@ -16,7 +16,7 @@ namespace Metatool.Metatool.Plugin.Loader
         private readonly Dictionary<string, NativeLibrary> _nativeLibraries = new Dictionary<string, NativeLibrary>(StringComparer.Ordinal);
         private readonly HashSet<string> _privateAssemblies = new HashSet<string>(StringComparer.Ordinal);
         private readonly HashSet<string> _defaultAssemblies = new HashSet<string>(StringComparer.Ordinal);
-        private string? _mainAssemblyPath;
+        private string _mainAssemblyPath;
         private bool _preferDefaultLoadContext;
 
         private bool _isCollectible;

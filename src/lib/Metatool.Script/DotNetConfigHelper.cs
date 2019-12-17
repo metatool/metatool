@@ -11,7 +11,7 @@ namespace Metatool.Script
         {
             return new JObject(
                 new JProperty("runtimeOptions", new JObject(
-                    new JProperty("tfm", "netcoreapp3.0"),
+                    new JProperty("tfm", "netcoreapp3.1"),
                     new JProperty("framework", new JObject(
                         new JProperty("name", "Microsoft.WindowsDesktop.App"),
                         new JProperty("version", "3.0.0"))))));

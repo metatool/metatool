@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Commands" Version="5.3.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
-    <PackageReference Include="NuGet.PackageManagement" Version="5.3.1" />
-    <PackageReference Include="NuGet.Resolver" Version="5.3.1" />
+    <PackageReference Include="NuGet.Commands" Version="5.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
+    <PackageReference Include="NuGet.PackageManagement" Version="5.4.0" />
+    <PackageReference Include="NuGet.Resolver" Version="5.4.0" />
 
   </ItemGroup>
   <ItemGroup>

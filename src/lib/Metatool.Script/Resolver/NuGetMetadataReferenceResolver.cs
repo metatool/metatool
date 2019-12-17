@@ -12,7 +12,7 @@ namespace Metatool.Metatool.Script.Resolver
     {
         private readonly bool _useCache;
         private readonly MetadataReferenceResolver _innerReferenceResolver;
-        private readonly ConcurrentDictionary<string, ImmutableArray<PortableExecutableReference>>? _cache;
+        private readonly ConcurrentDictionary<string, ImmutableArray<PortableExecutableReference>> _cache;
 
         public NuGetMetadataReferenceResolver(string workingDirectory,MetadataReferenceResolver innerReferenceResolver=null, bool useCache = false)
         {

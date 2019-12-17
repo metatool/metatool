@@ -1,4 +1,4 @@
-﻿{
+{
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.6": {
@@ -14652,21 +14652,26 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "M:\\Workspace\\MetaKey\\src\\app\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\Clipboard.Shared.csproj",
+      "projectUniqueName": "M:\\Workspace\\metatool\\src\\tools_todo\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\Clipboard.Shared.csproj",
       "projectName": "Clipboard.Shared",
-      "projectPath": "M:\\Workspace\\MetaKey\\src\\app\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\Clipboard.Shared.csproj",
-      "projectJsonPath": "M:\\Workspace\\MetaKey\\src\\app\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\project.json",
+      "projectPath": "M:\\Workspace\\metatool\\src\\tools_todo\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\Clipboard.Shared.csproj",
+      "projectJsonPath": "M:\\Workspace\\metatool\\src\\tools_todo\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\project.json",
       "packagesPath": "C:\\Users\\jsong12\\.nuget\\packages\\",
-      "outputPath": "M:\\Workspace\\MetaKey\\src\\app\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\obj\\",
+      "outputPath": "M:\\Workspace\\metatool\\src\\tools_todo\\Metatool.Clipboard\\Sources\\Clipboard.Shared\\obj\\",
       "projectStyle": "ProjectJson",
       "configFilePaths": [
+        "M:\\Workspace\\metatool\\src\\NuGet.Config",
         "C:\\Users\\jsong12\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "M:\\Workspace\\metatool\\exe\\debug\\.pkg": {},
         "https://api.nuget.org/v3/index.json": {},
-        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/nuget-dev-local": {}
+        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/choco-dev-local": {},
+        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/nuget-dev-local": {},
+        "https://packages.kdsc.swt.slb.com/artifactory/api/nuget/thirdparty-dev-local": {},
+        "https://www.nuget.org/api/v2": {}
       }
     },
     "dependencies": {
