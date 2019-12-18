@@ -16,10 +16,10 @@ namespace Metatool.Input.MouseKeyHook
 
     public class KeyboardHook
     {
-        public           INotify               Notify { get; }
+        private readonly INotify _notify;
         private readonly ILogger<KeyboardHook> _logger;
         private readonly IKeyboardMouseEvents  _eventSource;
-        public           bool                  IsRuning { get; set; }
+        private bool _isRunning;
 
         public bool Disable
         {
@@ -29,7 +29,7 @@ namespace Metatool.Input.MouseKeyHook
 
         public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
         {
-            Notify              = notify;
+            _notify              = notify;
             KeyStateTree.Notify = notify;
             _logger             = logger;
             _eventSource        = Hook.GlobalEvents();
@@ -70,18 +70,17 @@ namespace Metatool.Input.MouseKeyHook
         {
             var tips = KeyStateTree.StateTrees.Values.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
             if (tips.Length > 0)
-                Notify?.ShowKeysTip(tips);
+                _notify?.ShowKeysTip(tips);
             else
             {
-                Notify?.CloseKeysTip();
+                _notify?.CloseKeysTip();
             }
         }
 
-        private const int MaxRecursiveCount = 50;
-
         public void Run()
         {
-            if (IsRuning) return;
+            if (_isRunning) return;
+            Debug.Assert(System.Windows.Application.Current.Dispatcher != null, "System.Windows.Application.Current.Dispatcher != null");
             var access = System.Windows.Application.Current.Dispatcher.CheckAccess();
             if (!access)
             {
@@ -89,15 +88,15 @@ namespace Metatool.Input.MouseKeyHook
                 return;
             }
 
-            IsRuning = true;
+            _isRunning = true;
             _logger.LogInformation($"Keyboard hook is running...");
 
             foreach (var stateTree in KeyStateTree.StateTrees.Values) stateTree.Reset();
+            var selectedTrees = new List<KeyStateTree.SelectionResult>();
 
             //eventType is only Down or Up
-            static void ClimbTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger) // should be static to be as a reentrancy method
+            void ClimbTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger) // should be static to be as a reentrancy method
             {
-                var selectedTrees = new List<KeyStateTree.SelectionResult>();
 
                 // if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed
                 // if machine_1 has A and machine_2 has A, both should be processed.
@@ -175,6 +174,14 @@ namespace Metatool.Input.MouseKeyHook
                 var handlers = new List<KeyEventHandler>(_keyUpHandlers); // a copy
                 handlers.ForEach(h => h?.Invoke(sender, args));
             };
+            if (_keyPressHandlers.Count > 0)
+            {
+                _eventSource.KeyPress += (sender, args) =>
+                {
+                    var handlers = new List<KeyPressEventHandler>(_keyPressHandlers); // a copy
+                    handlers.ForEach(h => h?.Invoke(sender, args));
+                };
+            }
         }
 
         static List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger)
@@ -185,12 +192,10 @@ namespace Metatool.Input.MouseKeyHook
             {
                 Debug.Assert(stateTree.IsOnRoot);
                 if (stateTree.ProcessState == KeyProcessState.Yield) continue;
-
                 var selectionResult = stateTree.TrySelect(eventType, args);
                 if (selectionResult.CandidateNode == null) continue;
 
-                if (selectedNodes.Count                           == 0 ||
-                    selectionResult.CandidateNode.Key.ChordLength == selectedNodes[0].CandidateNode.Key.ChordLength)
+                if (selectedNodes.Count                           == 0)
                 {
                     selectedNodes.Add(selectionResult);
                 }

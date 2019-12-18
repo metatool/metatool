@@ -24,10 +24,7 @@ namespace Metatool.Service
                 case CtrlType.CTRL_LOGOFF_EVENT:
                 case CtrlType.CTRL_SHUTDOWN_EVENT:
                 case CtrlType.CTRL_CLOSE_EVENT:
-                    Exit?.Invoke();
-                    Services.Get<ILogger<Object>>()?.LogInformation("exit: Ctrl Handler");
-                    Context.Exit(0);
-                    return false;
+                    return ExitHandler();
 
                 default:
                     return false;
@@ -160,25 +157,26 @@ namespace Metatool.Service
             if(disableCloseButton)  DisableCloseButton();
 #endif
             SetConsoleCtrlHandler(handlerDelegate, true);
-            Console.CancelKeyPress += (_, __) =>
-            {
-                var config = Services.Get<IConfiguration>();
-                var exit = config.GetValue<bool>("CtrlCExit");
-                if (!exit)
-                {
-                    Services.CommonLogger.LogInformation("Ctrl+C exit disabled, to exit with Ctrl+C,please config CtrlCExit = true ");
-                    return;
-                }
-                Exit?.Invoke();
-                Services.CommonLogger.LogInformation("exist: Ctrl+C");
-                var notify = Services.Get<INotify>();
-                notify.ShowMessage("MetaKeyBoard Closing...");
-                Context.Exit(0);
-            };
+            Console.CancelKeyPress += (_, __) => ExitHandler();
 
         }
+        static bool ExitHandler(){
+            var config = Services.Get<IConfiguration>();
+            var exit   = config.GetValue<bool>("CtrlCExit");
+            if (!exit)
+            {
+                Services.CommonLogger.LogInformation("Ctrl+C exit disabled, to exit with Ctrl+C,please config CtrlCExit = true ");
+                return true;
+            }
 
-        public static void DisableCloseButton() =>
+            Exit?.Invoke();
+            Services.CommonLogger.LogInformation("exist: Ctrl+C");
+            var notify = Services.Get<INotify>();
+            notify.ShowMessage("MetaKeyBoard Closing...");
+            Context.Exit(0);
+            return false;
+        }
+public static void DisableCloseButton() =>
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
 
         public static void ShowConsole()

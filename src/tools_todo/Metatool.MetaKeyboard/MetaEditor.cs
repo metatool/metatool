@@ -19,12 +19,15 @@ namespace Metatool.Tools.MetaKeyboard
                 // charArgs.t.KeyCode
             });
 
-            (Caps+ J).OnDown(e =>
+            (Caps+ J).OnDown(e => // Join lines
             {
                 e.Handled = true;
-                //keyboard.Type(Home);
-                //keyboard.Type(Down,Home,Backspace);
-                Console.WriteLine("lllllllllllllllllllllllllllllllllllllllllllllllllllllll--------------");
+                e.BeginInvoke(()=>keyboard.Type(Down,Home,BS, Space, Left));
+            });
+            (Caps +Shift + C).OnDown(e => // copy line
+            {
+                e.Handled = true;
+                e.BeginInvoke(()=>keyboard.Type(End, Shift+Home, Ctrl+C));
             });
         }
 

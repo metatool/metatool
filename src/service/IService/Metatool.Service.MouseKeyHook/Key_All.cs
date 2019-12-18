@@ -40,6 +40,7 @@ namespace Metatool.Service
         public static readonly Key Apps          = new Key(Keys.Apps);
         public static readonly Key Back          = new Key(Keys.Back);
         public static readonly Key Backspace     = Back;
+        public static readonly Key BS            = Back;
         public static readonly Key Space         = new Key(Keys.Space);
         public static readonly Key SpaceBar      = Space;
         public static readonly Key A             = new Key(Keys.A);
@@ -114,7 +115,7 @@ namespace Metatool.Service
         public static readonly Key F11         = new Key(Keys.F11);
         public static readonly Key F12         = new Key(Keys.F12);
         public static readonly Key Ins         = new Key(Keys.Insert);
-        public static readonly Key Insert = Ins;
+        public static readonly Key Insert      = Ins;
         public static readonly Key Del         = new Key(Keys.Delete);
         public static readonly Key Home        = new Key(Keys.Home);
         public static readonly Key End         = new Key(Keys.End);
@@ -268,6 +269,5 @@ namespace Metatool.Service
         private static readonly IEnumerable<string> _allNames;
 
         public static readonly IEnumerable<string> AllNames = _allNames ??= All.Keys;
-
     }
 }

@@ -32,7 +32,7 @@ namespace Metatool.Input
         Reprocess,
 
         /// <summary>
-        /// could not process the event, try to process this event with other machine, at root. event reschedule(exclude me), state reset
+        /// could not process the event, try to process this event with other trees, at root. event reschedule(exclude me), state reset
         /// </summary>
         Yield,
 
