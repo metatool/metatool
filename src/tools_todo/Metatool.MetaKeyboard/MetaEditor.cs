@@ -15,13 +15,12 @@ namespace Metatool.Tools.MetaKeyboard
             {
                 keyboard.Type(Shift+Home);
                 Text = await clipboard.CopyTextAsync();
-                var charArgs = await keyboard.KeyAsync(true);
+                var charArgs = await keyboard.KeyPressAsync(true);
                 // charArgs.t.KeyCode
             });
 
             (Tab+ J).OnDown(e =>
             {
-                Console.WriteLine("llllllllllllllllllllllll");
                 e.Handled = true;
                 keyboard.Type(Down,Home,Backspace);
             });
