@@ -11,7 +11,9 @@ using Microsoft.Extensions.Logging;
 namespace Metatool.Input.MouseKeyHook
 {
     public delegate void KeyEventHandler(object sender, IKeyEventArgs e);
+
     public delegate void KeyPressEventHandler(object sender, IKeyPressEventArgs e);
+
     public class KeyboardHook
     {
         public           INotify               Notify { get; }
@@ -92,16 +94,15 @@ namespace Metatool.Input.MouseKeyHook
 
             foreach (var stateTree in KeyStateTree.StateTrees.Values) stateTree.Reset();
 
-            var selectedTrees = new List<KeyStateTree.SelectionResult>();
-
             //eventType is only Down or Up
-            void ClimbTree(KeyEvent eventType, IKeyEventArgs args)
+            static void ClimbTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger) // should be static to be as a reentrancy method
             {
+                var selectedTrees = new List<KeyStateTree.SelectionResult>();
+
                 // if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed
                 // if machine_1 has A and machine_2 has A, both should be processed.
                 // runs like all are in the same tree, but provide state jump for every tree
                 // // continue process this event on current machine
-                bool hasSelectedNodes;
                 bool reprocess;
                 do
                 {
@@ -109,28 +110,28 @@ namespace Metatool.Input.MouseKeyHook
                     var onGround = false;
                     if (selectedTrees.Count == 0)
                     {
-                        onGround    = true;
-                        selectedTrees = SelectTree(eventType, args);
+                        onGround      = true;
+                        selectedTrees = SelectTree(eventType, args, logger);
                     }
 
-                    hasSelectedNodes = selectedTrees.Count > 0;
-                    if (selectedTrees.Count <= 0) goto @return;
+                    var hasSelectedNodes = selectedTrees.Count > 0;
+                    if (!hasSelectedNodes) goto @return;
 
-                    var trees  = selectedTrees.GetRange(0, selectedTrees.Count);
+                    var trees = selectedTrees.GetRange(0, selectedTrees.Count);
                     foreach (var c in trees)
                     {
                         var selectedTree = c; // should not remove this line
                         if (!onGround)
                         {
-                            var result   = selectedTree.Tree.TrySelect(eventType, args);
-                            var index = selectedTrees.IndexOf(selectedTree);
+                            var result = selectedTree.Tree.TrySelect(eventType, args);
+                            var index  = selectedTrees.IndexOf(selectedTree);
                             selectedTrees[index] = result;
-                            selectedTree     = result;
+                            selectedTree         = result;
                         }
 
                         var rt = selectedTree.Tree.Climb(eventType, args, selectedTree.CandidateNode,
                             selectedTree.DownInChord);
-                        _logger.LogInformation($"\t={rt}${selectedTree.Tree.Name}@{selectedTree.Tree.CurrentNode}");
+                        logger.LogInformation($"\t={rt}${selectedTree.Tree.Name}@{selectedTree.Tree.CurrentNode}");
                         if (rt == KeyProcessState.Continue)
                         {
                         }
@@ -154,7 +155,7 @@ namespace Metatool.Input.MouseKeyHook
                         }
                     }
                 } while (selectedTrees.Count == 0 && /*no KeyProcessState.Continue*/
-                         reprocess              && hasSelectedNodes /*Yield or Reprocess*/);
+                         reprocess /*Yield or Reprocess*/);
 
                 @return:
                 foreach (var stateTree in KeyStateTree.StateTrees.Values) stateTree.MarkDoneIfYield();
@@ -162,19 +163,21 @@ namespace Metatool.Input.MouseKeyHook
 
             _eventSource.KeyDown += (sender, args) =>
             {
-                ClimbTree(KeyEvent.Down, args);
-                var handlers = new List<KeyEventHandler>(_keyDownHandlers); // a copy, so newly added would be handled in next event.
+                ClimbTree(KeyEvent.Down, args, _logger);
+                var handlers =
+                    new List<KeyEventHandler>(
+                        _keyDownHandlers); // a copy, so newly added would be handled in next event.
                 handlers.ForEach(h => h?.Invoke(sender, args));
             };
             _eventSource.KeyUp += (sender, args) =>
             {
-                ClimbTree(KeyEvent.Up, args);
+                ClimbTree(KeyEvent.Up, args, _logger);
                 var handlers = new List<KeyEventHandler>(_keyUpHandlers); // a copy
                 handlers.ForEach(h => h?.Invoke(sender, args));
             };
         }
 
-        private List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, IKeyEventArgs args)
+        static List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger)
         {
             var selectedNodes = new List<KeyStateTree.SelectionResult>();
             //all on root, find current trees
@@ -199,7 +202,7 @@ namespace Metatool.Input.MouseKeyHook
             }
 
             if (selectedNodes.Count > 0)
-                _logger.LogInformation(
+                logger.LogInformation(
                     $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
             return selectedNodes;
         }
