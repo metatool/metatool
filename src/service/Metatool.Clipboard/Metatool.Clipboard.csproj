@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IService\Metatool.Service.Clipboard\Metatool.Service.Clipboard.csproj" />
+    <ProjectReference Include="..\IService\Metatool.Service.Input\Metatool.Service.Input.csproj" />
+    <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
+  </ItemGroup>
 </Project>

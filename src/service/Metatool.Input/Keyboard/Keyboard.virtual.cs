@@ -11,84 +11,93 @@ namespace Metatool.Input
 {
     public partial class Keyboard
     {
-        public void Type(IHotkey key)
+        public void Type(params IHotkey[] keys)
         {
-            switch (key)
+            foreach (var key in keys)
             {
-                case Key k:
-                    InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) (Keys) k);
-                    break;
-                case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyStroke(combination.Chord.Select(k => (VirtualKeyCode)(Keys)k),
-                        (VirtualKeyCode) (Keys) combination.TriggerKey);
-                    break;
-                case ISequence sequence:
+                switch (key)
                 {
-                    foreach (var comb in sequence)
+                    case Key k:
+                        InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode) (Keys) k);
+                        break;
+                    case ICombination combination:
+                        InputSimu.Inst.Keyboard.ModifiedKeyStroke(
+                            combination.Chord.Select(k => (VirtualKeyCode) (Keys) k),
+                            (VirtualKeyCode) (Keys) combination.TriggerKey);
+                        break;
+                    case ISequence sequence:
                     {
-                        InputSimu.Inst.Keyboard.ModifiedKeyStroke(comb.Chord.Cast<VirtualKeyCode>(),
-                            (VirtualKeyCode) (Keys) comb.TriggerKey);
-                    }
+                        foreach (var comb in sequence)
+                        {
+                            InputSimu.Inst.Keyboard.ModifiedKeyStroke(comb.Chord.Cast<VirtualKeyCode>(),
+                                (VirtualKeyCode) (Keys) comb.TriggerKey);
+                        }
 
-                    break;
+                        break;
+                    }
+                    default:
+                        throw new ArgumentException($"unsupported type:{key.GetType()}, in Keyboard.Type method.");
                 }
-                default:
-                    throw new ArgumentException($"unsupported type:{key.GetType()}, in Keyboard.Type method.");
             }
         }
 
-        public void Down(IHotkey key)
+        public void Down(params IHotkey[] keys)
         {
-            switch (key)
+            foreach (var key in keys)
             {
-                case Key k:
-                    InputSimu.Inst.Keyboard.KeyDown((VirtualKeyCode)(Keys)k);
-                    break;
-                case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyDown(combination.Chord.Select(k => (VirtualKeyCode)(Keys)k),
-                        (VirtualKeyCode)(Keys)combination.TriggerKey);
-                    break;
-                case ISequence sequence:
+                switch (key)
                 {
-                    foreach (var comb in sequence)
+                    case Key k:
+                        InputSimu.Inst.Keyboard.KeyDown((VirtualKeyCode) (Keys) k);
+                        break;
+                    case ICombination combination:
+                        InputSimu.Inst.Keyboard.ModifiedKeyDown(
+                            combination.Chord.Select(k => (VirtualKeyCode) (Keys) k),
+                            (VirtualKeyCode) (Keys) combination.TriggerKey);
+                        break;
+                    case ISequence sequence:
                     {
-                        InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Select(k => (VirtualKeyCode)(Keys)k),
-                            (VirtualKeyCode)(Keys)comb.TriggerKey);
-                    }
+                        foreach (var comb in sequence)
+                        {
+                            InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Select(k => (VirtualKeyCode) (Keys) k),
+                                (VirtualKeyCode) (Keys) comb.TriggerKey);
+                        }
 
-                    break;
+                        break;
+                    }
+                    default:
+                        throw new ArgumentException($"unsupported type:{key.GetType()}, in Keyboard.Type method.");
                 }
-                default:
-                    throw new ArgumentException($"unsupported type:{key.GetType()}, in Keyboard.Type method.");
             }
         }
-        public void Up(IHotkey key)
+        public void Up(params IHotkey[] keys)
         {
-            switch (key)
+            foreach (var key in keys)
             {
-                case Key k:
-                    InputSimu.Inst.Keyboard.KeyUp((VirtualKeyCode)(Keys)k);
-                    break;
-                case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Select(k => (VirtualKeyCode)(Keys)k),
-                        (VirtualKeyCode)(Keys)combination.TriggerKey);
-                    break;
-                case ISequence sequence:
+                switch (key)
                 {
-                    foreach (var comb in sequence)
+                    case Key k:
+                        InputSimu.Inst.Keyboard.KeyUp((VirtualKeyCode) (Keys) k);
+                        break;
+                    case ICombination combination:
+                        InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Select(k => (VirtualKeyCode) (Keys) k),
+                            (VirtualKeyCode) (Keys) combination.TriggerKey);
+                        break;
+                    case ISequence sequence:
                     {
-                        InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Select(k => (VirtualKeyCode)(Keys)k),
-                            (VirtualKeyCode)(Keys)comb.TriggerKey);
-                    }
+                        foreach (var comb in sequence)
+                        {
+                            InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Select(k => (VirtualKeyCode) (Keys) k),
+                                (VirtualKeyCode) (Keys) comb.TriggerKey);
+                        }
 
-                    break;
+                        break;
+                    }
+                    default:
+                        throw new ArgumentException($"unsupported type:{key.GetType()}, in Keyboard.Type method.");
                 }
-                default:
-                    throw new ArgumentException($"unsupported type:{key.GetType()}, in Keyboard.Type method.");
             }
         }
-        public void Type(IEnumerable<Key> keys) =>
-            InputSimu.Inst.Keyboard.KeyPress(keys.Select(k => (VirtualKeyCode) (Keys) k).ToArray());
 
         public void Type(char character) => InputSimu.Inst.Keyboard.Type(character);
 

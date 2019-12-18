@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Metatool.Input.MouseKeyHook
 {
     public delegate void KeyEventHandler(object sender, IKeyEventArgs e);
-
+    public delegate void KeyPressEventHandler(object sender, IKeyPressEventArgs e);
     public class KeyboardHook
     {
         public           INotify               Notify { get; }

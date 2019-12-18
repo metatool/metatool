@@ -62,6 +62,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\service\IService\Metatool.Service\Metatool.Service.csproj" />
+    <ProjectReference Include="..\service\Metatool.Clipboard\Metatool.Clipboard.csproj" />
     <ProjectReference Include="..\service\Metatool.Command\Metatool.Command.csproj" />
     <ProjectReference Include="..\service\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
     <ProjectReference Include="..\service\Metatool.Core\Metatool.Core.csproj" />

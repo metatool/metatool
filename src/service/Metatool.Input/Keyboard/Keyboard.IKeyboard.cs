@@ -444,6 +444,17 @@ namespace Metatool.Input
                 .Start(h => KeyDown += h, h => KeyDown -= h, token == default ? CancellationToken.None : token);
         }
 
+        public async Task<IKeyPressEventArgs> KeyPressAsync(bool handled = false, CancellationToken token = default)
+        {
+            return await TaskExt.FromEvent<IKeyPressEventArgs>(e =>
+                {
+                    if (handled)
+                        e.Handled = true;
+                })
+                .HandlerConversion(h => new MouseKeyHook.KeyPressEventHandler(h))
+                .Start(h => KeyPress += h, h => KeyPress -= h, token == default ? CancellationToken.None : token);
+        }
+
         public async Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default)
         {
             return await TaskExt.FromEvent<IKeyEventArgs>(e =>

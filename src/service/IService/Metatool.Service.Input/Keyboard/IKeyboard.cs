@@ -35,6 +35,7 @@ namespace Metatool.Service
         void AddHotStrings(IDictionary<string, HotStringDef> hotStrings);
 
         Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);
+        Task<IKeyPressEventArgs> KeyPressAsync(bool handled = false, CancellationToken token = default);
         Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default);
 
         bool AddAliases(IDictionary<string, string> aliases);
@@ -48,15 +49,16 @@ namespace Metatool.Service
 
         bool Disable { get; set; }
 
+
     }
 
     public enum KeyMaps { MapOnDownUp, HardMap, MapOnHit, MapOnHitAndAllUp, ChordMap}
 
     public interface IKeyboardVirtual
     {
-        void Type(IHotkey hotkey);
-        void Down(IHotkey hotkey);
-        void Up(IHotkey hotkey);
+        void Type(params IHotkey[] keys);
+        void Down(params IHotkey[] keys);
+        void Up(params IHotkey[] keys);
         void Type(string text);
         void Type(char character);
     }

@@ -7,6 +7,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Metatool.Service.Clipboard\Metatool.Service.Clipboard.csproj" />
     <ProjectReference Include="..\Metatool.Service.Command\Metatool.Service.Command.csproj" />
     <ProjectReference Include="..\Metatool.Service.Core\Metatool.Service.Core.csproj" />
     <ProjectReference Include="..\Metatool.Service.Input\Metatool.Service.Input.csproj" />

@@ -14,16 +14,17 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         protected KeyListener(Subscribe subscribe)
             : base(subscribe)
         {
-            _logger = Services.Get<ILogger<KeyListener>>();
+            _logger  =  Services.Get<ILogger<KeyListener>>();
         }
 
         public event KeyEventHandler      KeyDown;
         public event KeyPressEventHandler KeyPress;
         public event KeyEventHandler      KeyUp;
+
         public void InvokeKeyDown(IKeyEventArgs e)
         {
             var handler = KeyDown;
-            if (handler == null || e.Handled || !e.IsKeyDown)
+            if (handler == null || !e.IsKeyDown || e.Handled)
                 return;
             handler(this, e);
         }
@@ -40,7 +41,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         public void InvokeKeyUp(IKeyEventArgs e)
         {
             var handler = KeyUp;
-            if (handler == null || e.Handled || !e.IsKeyUp)
+            if (handler == null || !e.IsKeyUp || e.Handled)
                 return;
             if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
             {
@@ -62,12 +63,9 @@ namespace Metatool.Input.MouseKeyHook.Implementation
 
             InvokeKeyDown(eDownUp);
 
-            if (KeyPress != null)
-            {
-                var pressEventArgs = GetPressEventArgs(data);
-                foreach (var pressEventArg in pressEventArgs)
-                    InvokeKeyPress(pressEventArg);
-            }
+            var pressEventArgs = GetPressEventArgs(data);
+            foreach (var pressEventArg in pressEventArgs)
+                InvokeKeyPress(pressEventArg);
 
             InvokeKeyUp(eDownUp);
             _logger.LogDebug(new String('\t', --_indentCounter) + "←" + eDownUp.ToString());

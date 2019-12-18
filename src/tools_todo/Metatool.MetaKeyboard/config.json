@@ -65,6 +65,7 @@
           //
           "GK + Back": "Del",
           "GK + P": "PrintScreen",
+          "GK + Pipe": "Insert",
           "GK + SemiColon": "Apps"
         }
       },

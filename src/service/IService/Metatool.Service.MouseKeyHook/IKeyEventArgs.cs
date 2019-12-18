@@ -4,11 +4,19 @@ using System.Windows.Threading;
 
 namespace Metatool.Service
 {
+    public interface IKeyPressEventArgs
+    {
+        char KeyChar { get; set; }
+        bool Handled { get; set; }
+        bool IsNonChar { get; }
+        int Timestamp { get; }
+    }
     public interface IKeyEventArgs
     {
         bool Handled { get; set; }
         Keys KeyData { get; }
         Keys KeyCode { get; }
+        Key  Key { get; }
         int KeyValue { get; }
         bool Alt { get; }
         bool Control { get; }

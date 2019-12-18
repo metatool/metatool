@@ -8,13 +8,14 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.WinApi;
+using Metatool.Service;
 
 namespace Metatool.Input
 {
     /// <summary>
     ///     Provides extended data for the <see cref='KeyListener.KeyPress' /> event.
     /// </summary>
-    public class KeyPressEventArgsExt : KeyPressEventArgs
+    public class KeyPressEventArgsExt : KeyPressEventArgs, IKeyPressEventArgs
     {
         internal KeyPressEventArgsExt(char keyChar, int timestamp)
             : base(keyChar)

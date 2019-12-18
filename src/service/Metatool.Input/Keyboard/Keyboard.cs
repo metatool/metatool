@@ -31,6 +31,7 @@ namespace Metatool.Input
                 "System.Windows.Application.Current.Dispatcher != null");
             System.Windows.Application.Current.Dispatcher.BeginInvoke((Action) (() =>
                 InitService(config))); // workaround to use the Keyboard Service itself via DI in initService
+
         }
 
         private void InitService(IConfig<MetatoolConfig> config)
@@ -129,7 +130,7 @@ namespace Metatool.Input
             return token;
         }
 
-        public event KeyPressEventHandler KeyPress
+        public event MouseKeyHook.KeyPressEventHandler KeyPress
         {
             add => _hook.KeyPress += value;
             remove => _hook.KeyPress -= value;

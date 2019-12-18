@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using Metatool.Service;
+using Metatool.Tools.MetaKeyboard;
 
 namespace Metatool.MetaKeyboard
 {

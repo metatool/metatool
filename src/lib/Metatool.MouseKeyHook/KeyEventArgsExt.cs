@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -30,17 +28,17 @@ namespace Metatool.Input
             bool isExtendedKey, KeyEventArgsExt lastKeyEvent, KeyboardState keyboardState)
             : this(keyData)
         {
-            ScanCode                           = scanCode;
-            Timestamp                          = timestamp;
-            IsKeyDown                          = isKeyDown;
-            IsKeyUp                            = isKeyUp;
-            IsExtendedKey                      = isExtendedKey;
-            LastKeyEvent                       = lastKeyEvent;
-            LastKeyDownEvent                   = lastKeyEvent.LastKeyDownEvent;
+            ScanCode                                  = scanCode;
+            Timestamp                                 = timestamp;
+            IsKeyDown                                 = isKeyDown;
+            IsKeyUp                                   = isKeyUp;
+            IsExtendedKey                             = isExtendedKey;
+            LastKeyEvent                              = lastKeyEvent;
+            LastKeyDownEvent                          = lastKeyEvent.LastKeyDownEvent;
             LastKeyDownEvent_NoneVirtual              = lastKeyEvent.LastKeyDownEvent_NoneVirtual;
             LastKeyEvent_NoneVirtual                  = lastKeyEvent.LastKeyEvent_NoneVirtual;
-            lastKeyEvent.LastKeyDownEvent      = null;
-            lastKeyEvent.LastKeyEvent          = null;
+            lastKeyEvent.LastKeyDownEvent             = null;
+            lastKeyEvent.LastKeyEvent                 = null;
             lastKeyEvent.LastKeyDownEvent_NoneVirtual = null;
             lastKeyEvent.LastKeyEvent_NoneVirtual     = null;
 
@@ -83,6 +81,9 @@ namespace Metatool.Input
         ///     The hardware scan code.
         /// </summary>
         public int ScanCode { get; }
+
+        private Key _key;
+        public  Key Key => _key??=new Key(KeyCode);
 
         /// <summary>
         /// is it from the keyboard simulator?
@@ -136,7 +137,7 @@ namespace Metatool.Input
         public override string ToString()
         {
             var dt = DateTime.Now;
-             dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
+            dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
             var d = IsKeyUp ? "Up" : "Down";
             return
                 $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}  With: {KeyboardState}";
@@ -204,8 +205,8 @@ namespace Metatool.Input
             var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
                 isKeyUp, isExtendedKey, _lastKeyEventGloable, MouseKeyHook.Implementation.KeyboardState.GetCurrent());
             _lastKeyEventGloable = r;
-            if (isKeyDown) _lastKeyEventGloable.LastKeyDownEvent = r;
-            if (!isVirtual) _lastKeyEventGloable.LastKeyEvent_NoneVirtual = r;
+            if (isKeyDown) _lastKeyEventGloable.LastKeyDownEvent                           = r;
+            if (!isVirtual) _lastKeyEventGloable.LastKeyEvent_NoneVirtual                  = r;
             if (isKeyDown && !isVirtual) _lastKeyEventGloable.LastKeyDownEvent_NoneVirtual = r;
 
             r.IsVirtual = isVirtual;
