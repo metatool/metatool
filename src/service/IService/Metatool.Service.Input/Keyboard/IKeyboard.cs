@@ -48,7 +48,12 @@ namespace Metatool.Service
         bool IsToggled(IKey key);
 
         bool Disable { get; set; }
+        bool DisableDownEvent { get; set; }
+        bool DisableUpEvent { get; set; }
+        bool DisablePressEvent { get; set; }
 
+        bool HandleVirtualKey { get; set; }
+        IKeyboardState State { get; }
 
     }
 

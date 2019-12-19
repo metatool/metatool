@@ -240,7 +240,7 @@ namespace Metatool.Input
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
             var stopwatch =
-                new Stopwatch(); // within duration could be used as a map source, otherwise as it is. i.e. repeat the down event of the trigger key.
+                new Stopwatch(); // used when tartet = source and allUp = false => turn a normal key to the chord, so within the delay it can act as a Chord
 
             void Reset()
             {
@@ -575,7 +575,22 @@ namespace Metatool.Input
             get => _hook.Disable;
             set => _hook.Disable = value;
         }
+        public bool DisableDownEvent
+        {
+            get => _hook.DisableDownEvent;
+            set => _hook.DisableDownEvent = value;
+        }
+        public bool DisableUpEvent
+        {
+            get => _hook.DisableUpEvent;
+            set => _hook.DisableUpEvent = value;
+        }
+        public bool DisablePressEvent
+        {
+            get => _hook.DisablePressEvent;
+            set => _hook.DisablePressEvent = value;
+        }
 
-
+        public IKeyboardState State => KeyboardState.GetCurrent();
     }
 }

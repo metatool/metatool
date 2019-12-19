@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.WinApi;
 using Metatool.Service;
@@ -103,9 +104,16 @@ namespace Metatool.Input
         public IKeyEventArgs LastKeyDownEvent { get; private set; }
         public IKeyEventArgs LastKeyEvent     { get; private set; }
 
-        public IKeyEventArgs LastKeyDownEvent_NoneVirtual { get; private set; }
-        public IKeyEventArgs LastKeyEvent_NoneVirtual     { get; private set; }
+        public   IKeyEventArgs LastKeyDownEvent_NoneVirtual { get; private set; }
+        public   IKeyEventArgs LastKeyEvent_NoneVirtual     { get; private set; }
+        internal KeyListener   listener;
+        internal bool?         HandleVirtualKeyBackup;
 
+        public void DisableVirtualKeyHandlingInThisEvent()
+        {
+            HandleVirtualKeyBackup    = listener.HandleVirtualKey;
+            listener.HandleVirtualKey = false;
+        }
 
         /// <summary>
         ///     True if event signals key up.
@@ -130,9 +138,8 @@ namespace Metatool.Input
             }
         }
 
-        public bool NoFurtherProcess { get; set; }
-
-        public IKeyboardState KeyboardState { get; }
+        public bool           NoFurtherProcess { get; set; }
+        public IKeyboardState KeyboardState    { get; }
 
         public override string ToString()
         {

@@ -31,7 +31,6 @@ namespace Metatool.Input
                 "System.Windows.Application.Current.Dispatcher != null");
             System.Windows.Application.Current.Dispatcher.BeginInvoke((Action) (() =>
                 InitService(config))); // workaround to use the Keyboard Service itself via DI in initService
-
         }
 
         private void InitService(IConfig<MetatoolConfig> config)
@@ -41,7 +40,7 @@ namespace Metatool.Input
             AddHotStrings(hotStrings);
 
             keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
-            resetTrigger??= new HotkeyTrigger(Key.Caps + Key.R);
+            resetTrigger??=new HotkeyTrigger(Key.Caps + Key.R);
             resetTrigger.OnEvent(_ => ReleaseDownKeys());
         }
 
@@ -92,19 +91,35 @@ namespace Metatool.Input
         /// <summary>
         /// down up happened successively
         /// </summary>
-        internal IKeyCommand Hit(IHotkey hotkey, Action<IKeyEventArgs> execute,
+        private IKeyCommand Hit(IHotkey hotkey, Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null, string description = "",
             string stateTree = KeyStateTrees.Default)
         {
+            var noEventTimer = new NoEventTimer();
+            // state
             var           handling     = false;
             IKeyEventArgs keyDownEvent = null;
+
+            void Reset()
+            {
+                handling     = false;
+                keyDownEvent = null;
+            }
+
             var token = new KeyCommandTokens
             {
                 hotkey.OnDown(e =>
                 {
                     handling     = true;
                     keyDownEvent = e;
-                }, canExecute, description, stateTree),
+                }, e =>
+                {
+                    var noEventDuration = noEventTimer.NoEventDuration;
+                    if (noEventDuration > StateResetTime) Reset();
+                    noEventTimer.EventPulse();
+
+                    return canExecute?.Invoke(e) ?? true;
+                }, description, stateTree),
 
                 hotkey.OnUp(e =>
                 {
@@ -118,7 +133,7 @@ namespace Metatool.Input
 
                     if (keyDownEvent == e.LastKeyDownEvent)
                     {
-                        e.BeginInvoke(() => execute(e));
+                        execute(e);
                     }
                     else
                     {
@@ -129,6 +144,13 @@ namespace Metatool.Input
 
             return token;
         }
+
+        public bool HandleVirtualKey
+        {
+            get => _hook.HandleVirtualKey;
+            set => _hook.HandleVirtualKey = value;
+        }
+
 
         public event MouseKeyHook.KeyPressEventHandler KeyPress
         {

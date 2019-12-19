@@ -15,6 +15,11 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             add => GetKeyListener().KeyDown += value;
             remove => GetKeyListener().KeyDown -= value;
         }
+        public bool HandleVirtualKey
+        {
+            get => GetKeyListener().HandleVirtualKey;
+            set => GetKeyListener().HandleVirtualKey = value;
+        }
 
         public event KeyPressEventHandler KeyPress
         {
@@ -120,6 +125,22 @@ namespace Metatool.Input.MouseKeyHook.Implementation
                 GetMouseListener().Disable = value;
                 GetKeyListener().Disable = value;
             }
+        }
+
+        public bool DisableDownEvent
+        {
+            get => GetKeyListener().DisableDownEvent;
+            set => GetKeyListener().DisableDownEvent = value;
+        }
+        public bool DisableUpEvent
+        {
+            get => GetKeyListener().DisableUpEvent;
+            set => GetKeyListener().DisableUpEvent = value;
+        }
+        public bool DisablePressEvent
+        {
+            get => GetKeyListener().DisablePressEvent;
+            set => GetKeyListener().DisablePressEvent = value;
         }
         public void Dispose()
         {

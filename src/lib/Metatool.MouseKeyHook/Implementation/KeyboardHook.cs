@@ -16,20 +16,34 @@ namespace Metatool.Input.MouseKeyHook
 
     public class KeyboardHook
     {
-        private readonly INotify _notify;
+        private readonly INotify               _notify;
         private readonly ILogger<KeyboardHook> _logger;
         private readonly IKeyboardMouseEvents  _eventSource;
-        private bool _isRunning;
+        private          bool                  _isRunning;
 
         public bool Disable
         {
             get => _eventSource.Disable;
             set => _eventSource.Disable = value;
         }
-
+        public bool DisableDownEvent
+        {
+            get => _eventSource.DisableDownEvent;
+            set => _eventSource.DisableDownEvent = value;
+        }
+        public bool DisableUpEvent
+        {
+            get => _eventSource.DisableUpEvent;
+            set => _eventSource.DisableUpEvent = value;
+        }
+        public bool DisablePressEvent
+        {
+            get => _eventSource.DisablePressEvent;
+            set => _eventSource.DisablePressEvent = value;
+        }
         public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
         {
-            _notify              = notify;
+            _notify             = notify;
             KeyStateTree.Notify = notify;
             _logger             = logger;
             _eventSource        = Hook.GlobalEvents();
@@ -58,6 +72,12 @@ namespace Metatool.Input.MouseKeyHook
             remove => _keyPressHandlers.Remove(value);
         }
 
+        public bool HandleVirtualKey
+        {
+            get => _eventSource.HandleVirtualKey;
+            set => _eventSource.HandleVirtualKey = value;
+        }
+
         private readonly List<KeyEventHandler> _keyDownHandlers = new List<KeyEventHandler>();
 
         public event KeyEventHandler KeyDown
@@ -80,7 +100,8 @@ namespace Metatool.Input.MouseKeyHook
         public void Run()
         {
             if (_isRunning) return;
-            Debug.Assert(System.Windows.Application.Current.Dispatcher != null, "System.Windows.Application.Current.Dispatcher != null");
+            Debug.Assert(System.Windows.Application.Current.Dispatcher != null,
+                "System.Windows.Application.Current.Dispatcher != null");
             var access = System.Windows.Application.Current.Dispatcher.CheckAccess();
             if (!access)
             {
@@ -95,9 +116,9 @@ namespace Metatool.Input.MouseKeyHook
             var selectedTrees = new List<KeyStateTree.SelectionResult>();
 
             //eventType is only Down or Up
-            void ClimbTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger) // should be static to be as a reentrancy method
+            void ClimbTree(KeyEvent eventType, IKeyEventArgs args,
+                ILogger logger)
             {
-
                 // if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed
                 // if machine_1 has A and machine_2 has A, both should be processed.
                 // runs like all are in the same tree, but provide state jump for every tree
@@ -163,9 +184,8 @@ namespace Metatool.Input.MouseKeyHook
             _eventSource.KeyDown += (sender, args) =>
             {
                 ClimbTree(KeyEvent.Down, args, _logger);
-                var handlers =
-                    new List<KeyEventHandler>(
-                        _keyDownHandlers); // a copy, so newly added would be handled in next event.
+                // a copy, so newly added would be handled in next event.
+                var handlers = new List<KeyEventHandler>(_keyDownHandlers);
                 handlers.ForEach(h => h?.Invoke(sender, args));
             };
             _eventSource.KeyUp += (sender, args) =>
@@ -174,16 +194,14 @@ namespace Metatool.Input.MouseKeyHook
                 var handlers = new List<KeyEventHandler>(_keyUpHandlers); // a copy
                 handlers.ForEach(h => h?.Invoke(sender, args));
             };
-            if (_keyPressHandlers.Count > 0)
+            _eventSource.KeyPress += (sender, args) =>
             {
-                _eventSource.KeyPress += (sender, args) =>
-                {
-                    var handlers = new List<KeyPressEventHandler>(_keyPressHandlers); // a copy
-                    handlers.ForEach(h => h?.Invoke(sender, args));
-                };
-            }
+                var handlers = new List<KeyPressEventHandler>(_keyPressHandlers); // a copy
+                handlers.ForEach(h => h?.Invoke(sender, args));
+            };
         }
 
+        // the list count is one currently
         static List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger)
         {
             var selectedNodes = new List<KeyStateTree.SelectionResult>();
@@ -195,7 +213,7 @@ namespace Metatool.Input.MouseKeyHook
                 var selectionResult = stateTree.TrySelect(eventType, args);
                 if (selectionResult.CandidateNode == null) continue;
 
-                if (selectedNodes.Count                           == 0)
+                if (selectedNodes.Count == 0)
                 {
                     selectedNodes.Add(selectionResult);
                 }

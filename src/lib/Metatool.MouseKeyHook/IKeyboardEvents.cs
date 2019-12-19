@@ -7,6 +7,7 @@ namespace Metatool.Input.MouseKeyHook
     public interface IEvents
     {
         bool Disable { get; set; }
+
     }
     /// <summary>
     ///     Provides keyboard events
@@ -41,6 +42,9 @@ namespace Metatool.Input.MouseKeyHook
         ///     Occurs when a key is released.
         /// </summary>
         event KeyEventHandler KeyUp;
-
+        bool HandleVirtualKey { get; set; }
+        bool DisableDownEvent  { get; set; }
+        bool DisableUpEvent    { get; set; }
+        bool DisablePressEvent { get; set; }
     }
 }

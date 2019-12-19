@@ -22,6 +22,7 @@ namespace Metatool.Service
         bool Control { get; }
         bool Shift { get; }
         bool NoFurtherProcess { get; set; }
+        void DisableVirtualKeyHandlingInThisEvent();
         int           ScanCode         { get; }
         bool          IsVirtual        { get; }
         int           Timestamp        { get; }

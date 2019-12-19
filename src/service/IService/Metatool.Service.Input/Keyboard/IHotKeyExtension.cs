@@ -43,7 +43,7 @@ namespace Metatool.Service
             return trigger.Register(execute, canExecute, description);
         }
         public static IKeyCommand OnHit(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
-            Predicate<IKeyEventArgs> canExecute, string description, string stateTree = KeyStateTrees.Default)
+            Predicate<IKeyEventArgs> canExecute=null, string description="", string stateTree = KeyStateTrees.Default)
         {
             var trigger          = Keyboard.OnHit(sequenceUnit, stateTree);
             return trigger.Register(execute, canExecute, description);

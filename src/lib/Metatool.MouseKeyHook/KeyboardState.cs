@@ -28,11 +28,11 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         }
 
         public static KeyboardState HandledDownKeys;
-        private       byte[]        _keyboardStateNative;
+        private readonly byte[]        _keyboardStateNative;
 
         private KeyboardState(byte[] keyboardStateNative)
         {
-            this._keyboardStateNative = keyboardStateNative;
+            _keyboardStateNative = keyboardStateNative;
         }
 
         public override string ToString()
