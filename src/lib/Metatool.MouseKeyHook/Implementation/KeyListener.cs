@@ -59,16 +59,21 @@ namespace Metatool.Input.MouseKeyHook.Implementation
 
             if (handler == null || !e.IsKeyUp || e.Handled)
                 return;
-            if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
-            {
-                KeyboardState.HandledDownKeys.SetKeyUp(e.KeyCode);
-            }
+
+
+
             if (DisableUpEvent)
             {
                 _logger.LogDebug("this KeyUp event disabled");
                 return;
             }
+
             handler(this, e);
+
+            if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
+            {
+                KeyboardState.HandledDownKeys.SetKeyUp(e.KeyCode);
+            }
         }
 
         private int _indentCounter = 0;
@@ -131,7 +136,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             _logger.LogDebug(new String('\t', _indentCounter++) + "→" + args.ToString());
             InvokeKeyDown(args);
 
-            var pressEventArgs = GetPressEventArgs(data).ToList();
+            var pressEventArgs = GetPressEventArgs(data, args).ToList();
             foreach (var pressEventArg in pressEventArgs)
                 InvokeKeyPress(pressEventArg);
             InvokeKeyUp(args);
@@ -145,7 +150,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             return !args.Handled && !pressEventArgs.Any(e => e.Handled);
         }
 
-        protected abstract IEnumerable<KeyPressEventArgsExt> GetPressEventArgs(CallbackData data);
+        protected abstract IEnumerable<KeyPressEventArgsExt> GetPressEventArgs(CallbackData data, IKeyEventArgs arg);
         protected abstract IKeyEventArgs GetDownUpEventArgs(CallbackData data);
     }
 }

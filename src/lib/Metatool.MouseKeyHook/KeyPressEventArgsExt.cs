@@ -17,11 +17,12 @@ namespace Metatool.Input
     /// </summary>
     public class KeyPressEventArgsExt : KeyPressEventArgs, IKeyPressEventArgs
     {
-        internal KeyPressEventArgsExt(char keyChar, int timestamp)
+        internal KeyPressEventArgsExt(char keyChar, IKeyEventArgs arg, int timestamp)
             : base(keyChar)
         {
             IsNonChar = keyChar == (char) 0x0;
             Timestamp = timestamp;
+            EventArgs = arg;
         }
 
         /// <summary>
@@ -31,10 +32,12 @@ namespace Metatool.Input
         ///     Character corresponding to the key pressed. 0 char if represents a system or functional non char
         ///     key.
         /// </param>
-        public KeyPressEventArgsExt(char keyChar)
-            : this(keyChar, Environment.TickCount)
+        public KeyPressEventArgsExt(char keyChar,IKeyEventArgs arg)
+            : this(keyChar, arg, Environment.TickCount)
         {
         }
+        public IKeyEventArgs EventArgs { get; }
+
         public override string ToString()
         {
             var dt = DateTime.Now;
@@ -52,7 +55,7 @@ namespace Metatool.Input
         /// </summary>
         public int Timestamp { get; }
 
-        internal static IEnumerable<KeyPressEventArgsExt> FromRawDataApp(CallbackData data)
+        internal static IEnumerable<KeyPressEventArgsExt> FromRawDataApp(CallbackData data, IKeyEventArgs arg)
         {
             var wParam = data.WParam;
             var lParam = data.LParam;
@@ -82,10 +85,10 @@ namespace Metatool.Input
             KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out chars);
             if (chars == null) yield break;
             foreach (var ch in chars)
-                yield return new KeyPressEventArgsExt(ch);
+                yield return new KeyPressEventArgsExt(ch,arg);
         }
 
-        internal static IEnumerable<KeyPressEventArgsExt> FromRawDataGlobal(CallbackData data)
+        internal static IEnumerable<KeyPressEventArgsExt> FromRawDataGlobal(CallbackData data, IKeyEventArgs arg)
         {
             var wParam = data.WParam;
             var lParam = data.LParam;
@@ -103,7 +106,7 @@ namespace Metatool.Input
             if (virtualKeyCode == KeyboardNativeMethods.VK_PACKET)
             {
                 var ch = (char) scanCode;
-                yield return new KeyPressEventArgsExt(ch, keyboardHookStruct.Time);
+                yield return new KeyPressEventArgsExt(ch, arg, keyboardHookStruct.Time);
             }
             else
             {
@@ -111,7 +114,7 @@ namespace Metatool.Input
                 KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out chars);
                 if (chars == null) yield break;
                 foreach (var current in chars)
-                    yield return new KeyPressEventArgsExt(current, keyboardHookStruct.Time);
+                    yield return new KeyPressEventArgsExt(current,arg, keyboardHookStruct.Time);
             }
         }
     }

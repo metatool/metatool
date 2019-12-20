@@ -34,9 +34,9 @@ namespace Metatool.Service
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);
         void AddHotStrings(IDictionary<string, HotStringDef> hotStrings);
 
-        Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default);
-        Task<IKeyPressEventArgs> KeyPressAsync(bool handled = false, CancellationToken token = default);
-        Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default);
+        Task<IKeyEventArgs> KeyDownAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey=null, CancellationToken token = default);
+        Task<IKeyPressEventArgs> KeyPressAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default);
+        Task<IKeyEventArgs> KeyUpAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default);
 
         bool AddAliases(IDictionary<string, string> aliases);
         Dictionary<string, IHotkey> Aliases { get; }
@@ -54,6 +54,8 @@ namespace Metatool.Service
 
         bool HandleVirtualKey { get; set; }
         IKeyboardState State { get; }
+        void DisableChord(ISequenceUnit chord);
+        void EnableChord(ISequenceUnit chord);
 
     }
 

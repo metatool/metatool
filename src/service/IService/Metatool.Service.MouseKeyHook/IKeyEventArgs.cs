@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Threading;
 
@@ -10,6 +11,8 @@ namespace Metatool.Service
         bool Handled { get; set; }
         bool IsNonChar { get; }
         int Timestamp { get; }
+        IKeyEventArgs EventArgs { get; }
+        bool IsActive(ISequenceUnit hotKey) => EventArgs.IsActive(hotKey);
     }
     public interface IKeyEventArgs
     {
@@ -39,5 +42,10 @@ namespace Metatool.Service
         IKeyEventArgs LastKeyEvent_NoneVirtual     { get; }
         void BeginInvoke(Action<IKeyEventArgs> action, DispatcherPriority priority = DispatcherPriority.Send);
         void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send);
+        bool IsActive(ISequenceUnit hotKey)
+        {
+            var comb = hotKey.ToCombination();
+            return comb.TriggerKey == KeyCode && comb.Chord.All(KeyboardState.IsDown);
+        }
     }
 }

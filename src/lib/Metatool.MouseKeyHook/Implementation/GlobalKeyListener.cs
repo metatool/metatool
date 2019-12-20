@@ -13,9 +13,9 @@ namespace Metatool.Input.MouseKeyHook.Implementation
         {
         }
 
-        protected override IEnumerable<KeyPressEventArgsExt> GetPressEventArgs(CallbackData data)
+        protected override IEnumerable<KeyPressEventArgsExt> GetPressEventArgs(CallbackData data, IKeyEventArgs arg)
         {
-            return KeyPressEventArgsExt.FromRawDataGlobal(data);
+            return KeyPressEventArgsExt.FromRawDataGlobal(data, arg);
         }
 
         protected override IKeyEventArgs GetDownUpEventArgs(CallbackData data)

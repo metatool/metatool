@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKeyHook.Implementation;
 using Metatool.UI;
 using Microsoft.Extensions.Logging;
 
@@ -41,6 +42,35 @@ namespace Metatool.Input.MouseKeyHook
             get => _eventSource.DisablePressEvent;
             set => _eventSource.DisablePressEvent = value;
         }
+
+        internal void DisableChord(Chord chord, string stateTree = null)
+        {
+            if (stateTree == null)
+            {
+                foreach (var tree in KeyStateTree.StateTrees.Values)
+                {
+                    tree.DisableChord(chord);
+                }
+                return;
+            }
+            var tre = KeyStateTree.GetOrCreateStateTree(stateTree);
+            tre.DisableChord(chord);
+        }
+
+        internal void EnableChord(Chord chord, string stateTree = null)
+        {
+            if (stateTree == null)
+            {
+                foreach (var tree in KeyStateTree.StateTrees.Values)
+                {
+                    tree.EnableChord(chord);
+                }
+                return;
+            }
+            var tre = KeyStateTree.GetOrCreateStateTree(stateTree);
+            tre.EnableChord(chord);
+        }
+
         public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
         {
             _notify             = notify;

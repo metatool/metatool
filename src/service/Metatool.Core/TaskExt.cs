@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 
 namespace Metatool.Service
 {
-   
-
     /// <summary>
     /// await TaskExt
     // .FromEvent<WebBrowserDocumentCompletedEventArgs>()
@@ -18,15 +16,17 @@ namespace Metatool.Service
     /// </summary>
     public static class TaskExt
     {
-        public static EAPTask<TEventArgs, EventHandler<TEventArgs>> FromEvent<TEventArgs>(Action<TEventArgs> action=null)
+        public static EAPTask<TEventArgs, EventHandler<TEventArgs>> FromEvent<TEventArgs>(
+            int timeout = Timeout.Infinite,
+            Action<TEventArgs> action = null, Predicate<TEventArgs> predicate = null)
         {
-            var tcs     = new TaskCompletionSource<TEventArgs>();
-            var handler = new EventHandler<TEventArgs>((s, e) =>
+            var tcs = new TaskCompletionSource<TEventArgs>(timeout);
+            return new EAPTask<TEventArgs, EventHandler<TEventArgs>>(tcs, (s, e) =>
             {
+                if (!(predicate?.Invoke(e) ?? true)) return;
                 action?.Invoke(e);
                 tcs.TrySetResult(e);
             });
-            return new EAPTask<TEventArgs, EventHandler<TEventArgs>>(tcs, handler);
         }
     }
 
@@ -37,9 +37,7 @@ namespace Metatool.Service
         private readonly TaskCompletionSource<TEventArgs> _completionSource;
         private readonly TEventHandler                    _eventHandler;
 
-        public EAPTask(
-            TaskCompletionSource<TEventArgs> completionSource,
-            TEventHandler eventHandler)
+        public EAPTask(TaskCompletionSource<TEventArgs> completionSource, TEventHandler eventHandler)
         {
             _completionSource = completionSource;
             _eventHandler     = eventHandler;
@@ -58,12 +56,12 @@ namespace Metatool.Service
             Action<TEventHandler> unsubscribe,
             CancellationToken cancellationToken,
             Action trigger = null
-            )
+        )
         {
             subscribe(_eventHandler);
             try
             {
-                using (cancellationToken.Register(() => _completionSource.SetCanceled()))
+                await using (cancellationToken.Register(() => _completionSource.SetCanceled()))
                 {
                     trigger?.Invoke();
                     return await _completionSource.Task;

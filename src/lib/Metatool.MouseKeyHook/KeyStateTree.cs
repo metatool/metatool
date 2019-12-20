@@ -9,6 +9,7 @@ using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Trie;
 using Metatool.Service;
+using Metatool.Service.MouseKeyHook.Implementation;
 using Metatool.UI;
 using Microsoft.Extensions.Logging;
 
@@ -178,6 +179,16 @@ namespace Metatool.Input
             internal bool                                    DownInChord;
         }
 
+        private readonly HashSet<Chord> _disabledChords= new HashSet<Chord>();
+
+        internal void DisableChord(Chord chord)
+        {
+            _disabledChords.Add(chord);
+        }
+        internal void EnableChord(Chord chord)
+        {
+            _disabledChords.Remove(chord);
+        }
         internal SelectionResult TrySelect(KeyEvent eventType, IKeyEventArgs args)
         {
             // to handle A+B+C(B is down in Chord)
@@ -186,6 +197,7 @@ namespace Metatool.Input
             var type = eventType;
             var candidateNode = _treeWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
             {
+                if (_disabledChords.Contains(combination.Chord)) return acc;
                 // mark down_in_chord and continue try to find trigger
                 if (type == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
 

@@ -433,35 +433,35 @@ namespace Metatool.Input
             };
         }
 
-        public async Task<IKeyEventArgs> KeyDownAsync(bool handled = false, CancellationToken token = default)
+        public async Task<IKeyEventArgs> KeyDownAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default)
         {
-            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
+            return await TaskExt.FromEvent<IKeyEventArgs>(timeout, e =>
                 {
                     if (handled)
                         e.Handled = true;
-                })
+                }, e=>hotkey ==null || e.IsActive(hotkey))
                 .HandlerConversion(h => new MouseKeyHook.KeyEventHandler(h))
                 .Start(h => KeyDown += h, h => KeyDown -= h, token == default ? CancellationToken.None : token);
         }
 
-        public async Task<IKeyPressEventArgs> KeyPressAsync(bool handled = false, CancellationToken token = default)
+        public async Task<IKeyPressEventArgs> KeyPressAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default)
         {
-            return await TaskExt.FromEvent<IKeyPressEventArgs>(e =>
+            return await TaskExt.FromEvent<IKeyPressEventArgs>(timeout, e =>
                 {
                     if (handled)
                         e.Handled = true;
-                })
+                }, e => hotkey == null || e.IsActive(hotkey))
                 .HandlerConversion(h => new MouseKeyHook.KeyPressEventHandler(h))
                 .Start(h => KeyPress += h, h => KeyPress -= h, token == default ? CancellationToken.None : token);
         }
 
-        public async Task<IKeyEventArgs> KeyUpAsync(bool handled = false, CancellationToken token = default)
+        public async Task<IKeyEventArgs> KeyUpAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default)
         {
-            return await TaskExt.FromEvent<IKeyEventArgs>(e =>
+            return await TaskExt.FromEvent<IKeyEventArgs>(timeout, e =>
                 {
                     if (handled)
                         e.Handled = true;
-                })
+                }, e => hotkey == null || e.IsActive(hotkey))
                 .HandlerConversion(h => new MouseKeyHook.KeyEventHandler(h))
                 .Start(h => KeyUp += h, h => KeyUp -= h, token == default ? CancellationToken.None : token);
         }
@@ -589,6 +589,22 @@ namespace Metatool.Input
         {
             get => _hook.DisablePressEvent;
             set => _hook.DisablePressEvent = value;
+        }
+
+        public void DisableChord(ISequenceUnit chord)
+        {
+            var comb = chord.ToCombination() as Combination;
+            Debug.Assert(comb != null, nameof(comb) + " != null");
+            var c = comb.ToChord();
+            _hook.DisableChord(c);
+        }
+
+        public void EnableChord(ISequenceUnit chord)
+        {
+            var comb = chord.ToCombination() as Combination;
+            Debug.Assert(comb != null, nameof(comb) + " != null");
+            var c = comb.ToChord();
+            _hook.EnableChord(c);
         }
 
         public IKeyboardState State => KeyboardState.GetCurrent();

@@ -75,6 +75,8 @@ namespace Metatool.Service
             return false;
         }
 
+        internal Chord ToChord()=>new Chord(AllKeys);
+
 
         public override string ToString()
         {
