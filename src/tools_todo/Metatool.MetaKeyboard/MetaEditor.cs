@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Service;
@@ -27,7 +25,7 @@ namespace Metatool.Tools.MetaKeyboard
             // open line below 
             (Ctrl + Enter).Handled(KeyEvent.All).OnHit(e =>
             {
-                new List<Key> { LCtrl, RCtrl}.ForEach(k =>
+                new List<Key> {LCtrl, RCtrl}.ForEach(k =>
                 {
                     if (e.KeyboardState.IsDown(k))
                     {
@@ -40,14 +38,14 @@ namespace Metatool.Tools.MetaKeyboard
             // open line above
             (Ctrl + Shift + Enter).Handled(KeyEvent.All).OnHit(e =>
             {
-                new List<Key> { LCtrl, RCtrl, LShift, RShift }.ForEach(k =>
+                new List<Key> {LCtrl, RCtrl, LShift, RShift}.ForEach(k =>
                 {
                     if (e.KeyboardState.IsDown(k))
                     {
                         keyboard.Up(k); //todo: add UpAsync here
                     }
                 });
-                
+
                 keyboard.Type(Up, End, Enter);
             });
 
@@ -72,26 +70,40 @@ namespace Metatool.Tools.MetaKeyboard
 
                 var selectKeys = right ? Shift + End : ShiftKey + Home;
                 keyboard.Type(selectKeys);
-                var text = await clipboard.CopyTextAsync();
-                // text = text.Replace("\r\n", "\r");
+                Console.WriteLine(" bnnnaa c============================opy 0");
+
+                var text = await clipboard.CopyTextAsync(100);
+                Console.WriteLine("eeeaa c============================opy 0");
+
+                if (text.Length == 0)
+                {
+                    var select = right ? Shift + PageDown : ShiftKey + PageUp;
+                    keyboard.Type(select);
+                    Console.WriteLine("aa c============================opy 0");
+
+                    text = await clipboard.CopyTextAsync(100);
+                    Console.WriteLine("c============================opy 0");
+
+                    text = text.Replace("\r\n", "\r");
+                }
 
                 if (text.Length == 0)
                     return;
                 keyboard.Type(right ? Left : Right); // unselect
 
                 keyboard.DisableChord(chordKey);
-                var startIndex        = right ? 0 : text.Length - 1;
-                var chordHolding    = false;
-                var lineSearch = true;
+                var startIndex   = right ? 0 : text.Length - 1;
+                var chordHolding = false;
+                var lineSearch   = true;
                 do
                 {
-                    var cs          = new CancellationTokenSource();
+                    var cs               = new CancellationTokenSource();
                     var charToSearchTask = keyboard.KeyPressAsync(true, 5000, null, cs.Token);
 
                     if (chordHolding)
                     {
                         var chordUpTask = keyboard.KeyUpAsync(false, 5000, chordKey, cs.Token);
-                        var i = Task.WaitAny(charToSearchTask, chordUpTask);
+                        var i           = Task.WaitAny(charToSearchTask, chordUpTask);
                         if (!(i == 0 && charToSearchTask.IsCompleted))
                         {
                             cs.Cancel();
@@ -101,7 +113,7 @@ namespace Metatool.Tools.MetaKeyboard
 
                     var charArgs = await charToSearchTask;
                     // if we search the Upper case Shift is pressed
-                    new List<Key>{LShift, RShift}.ForEach(k =>
+                    new List<Key> {LShift, RShift}.ForEach(k =>
                     {
                         if (charArgs.EventArgs.KeyboardState.IsDown(k))
                         {
@@ -115,7 +127,7 @@ namespace Metatool.Tools.MetaKeyboard
                         var cha                           = charArgs.KeyChar.ToString();
                         if (charArgs.KeyChar == '\b') cha = " ";
                         if (charArgs.KeyChar == '\r') cha = "\r\r";
-                        var index                         = Search(cha.ToString(), text, startIndex, right);
+                        var index                         = Search(cha, text, startIndex, right);
                         if (index == -1)
                         {
                             if (lineSearch)
@@ -124,10 +136,13 @@ namespace Metatool.Tools.MetaKeyboard
                                 keyboard.Type(right ? End : Home);
                             }
 
-                            Thread.Sleep(0);
+                            //Thread.Sleep(3);
                             var select = right ? Shift + PageDown : ShiftKey + PageUp;
                             keyboard.Type(select);
-                            text = await clipboard.CopyTextAsync();
+                            Console.WriteLine(" s  co=====================py 1");
+
+                            text = await clipboard.CopyTextAsync(100);
+                            Console.WriteLine("co=====================py 1");
                             text = text.Replace("\r\n", "\r");
 
                             if (text.Length == 0)
@@ -156,6 +171,7 @@ namespace Metatool.Tools.MetaKeyboard
             finally
             {
                 keyboard.HandleVirtualKey = true;
+                            Console.WriteLine(" 3");
                 keyboard.EnableChord(chordKey);
             }
         }

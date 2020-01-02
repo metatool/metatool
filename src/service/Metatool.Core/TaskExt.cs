@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,6 +28,25 @@ namespace Metatool.Service
                 action?.Invoke(e);
                 tcs.TrySetResult(e);
             });
+        }
+
+        public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, int timeout, TResult defaultValue = default) // -1: infinite
+        {
+
+            using (var timeoutCancellationTokenSource = new CancellationTokenSource())
+            {
+
+                var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
+                if (completedTask == task)
+                {
+                    timeoutCancellationTokenSource.Cancel();
+                    return await task; // Very important in order to propagate exceptions
+                }
+
+                if(EqualityComparer<TResult>.Default.Equals(default(TResult)))
+                    throw new TimeoutException("The operation has timed out.");
+                return defaultValue;
+            }
         }
     }
 

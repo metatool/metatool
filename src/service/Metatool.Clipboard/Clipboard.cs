@@ -16,14 +16,23 @@ namespace Metatool.Service
             _keyboard = keyboard;
         }
 
-        public async Task<string> CopyTextAsync(CancellationToken token = default)
+        public async Task<string> CopyTextAsync(int timeout = -1, CancellationToken token = default)
         {
             var task = TaskExt.FromEvent<object>()
                 .Start(h => Cp.ContentChanged += h, h => Cp.ContentChanged -= h,
                     token == default ? CancellationToken.None : token);
 
             _keyboard.Type(Ctrl + C);
-            var o               = await task;
+
+            try
+            {
+                var o = await task.TimeoutAfter(timeout);
+            }
+            catch (TimeoutException)
+            {
+                return "";
+            }
+
             var dataPackageView = Cp.GetContent();
             // foreach (var availableFormat in dataPackageView.AvailableFormats)
             // {

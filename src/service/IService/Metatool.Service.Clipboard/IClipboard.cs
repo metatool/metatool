@@ -6,6 +6,6 @@ namespace Metatool.Service
 {
     public interface IClipboard
     {
-        Task<string> CopyTextAsync(CancellationToken token=default);
+        Task<string> CopyTextAsync(int timeout = -1, CancellationToken token=default);
     }
 }
