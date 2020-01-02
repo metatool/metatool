@@ -60,7 +60,10 @@ namespace Metatool.Input.MouseKeyHook.Implementation
             if (handler == null || !e.IsKeyUp || e.Handled)
                 return;
 
-
+            if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
+            {
+                KeyboardState.HandledDownKeys.SetKeyUp(e.KeyCode);
+            }
 
             if (DisableUpEvent)
             {
@@ -70,10 +73,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation
 
             handler(this, e);
 
-            if (KeyboardState.HandledDownKeys.IsDown(e.KeyCode))
-            {
-                KeyboardState.HandledDownKeys.SetKeyUp(e.KeyCode);
-            }
+
         }
 
         private int _indentCounter = 0;

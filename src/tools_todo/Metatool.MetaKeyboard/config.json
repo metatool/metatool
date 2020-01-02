@@ -44,29 +44,48 @@
           "GK + D0": "F10",
           "GK + Minus": "F11",
           "GK + Plus": "F12",
-          // Move (Vim)
-          "GK + K": "Up",
-          "GK + J": "Down",
-          "GK + H": "Left",
+          // Move
+          "GK + I": "Up",
+          "GK + K": "Down",
+          "GK + J": "Left",
           "GK + L": "Right",
-          "GK + I": "Home",
-          "GK + O": "End",
+          "GK + H": "Home",
+          "GK + ;": "End",
           "GK + U": "PageUp",
-          "GK + N": "PageDown",
+          "GK + O": "PageDown",
           // LAlt + Move
-          "LMenu + K": "Up",
-          "LMenu + J": "Down",
-          "LMenu + H": "Left",
+          "LMenu + I": "Up",
+          "LMenu + K": "Down",
+          "LMenu + J": "Left",
           "LMenu + L": "Right",
-          "LMenu + I": "Home",
-          "LMenu + O": "End",
+          "LMenu + H": "Home",
+          "LMenu + ;": "End",
           "LMenu + U": "PageUp",
-          "LMenu + N": "PageDown",
+          "LMenu + O": "PageDown",
+
+          // Move (Vim)
+          //"GK + K": "Up",
+          //"GK + J": "Down",
+          //"GK + H": "Left",
+          //"GK + L": "Right",
+          //"GK + I": "Home",
+          //"GK + O": "End",
+          //"GK + U": "PageUp",
+          //"GK + N": "PageDown",
+          //// LAlt + Move (Vim)
+          //"LMenu + K": "Up",
+          //"LMenu + J": "Down",
+          //"LMenu + H": "Left",
+          //"LMenu + L": "Right",
+          //"LMenu + I": "Home",
+          //"LMenu + O": "End",
+          //"LMenu + U": "PageUp",
+          //"LMenu + N": "PageDown",
           //
           "GK + Back": "Del",
           "GK + P": "PrintScreen",
           "GK + Pipe": "Insert",
-          "GK + SemiColon": "Apps"
+          "GK + '": "Apps"
         }
       },
       "KeyboardMousePackage": {
