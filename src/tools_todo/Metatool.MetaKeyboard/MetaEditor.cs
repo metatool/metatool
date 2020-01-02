@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,26 +27,27 @@ namespace Metatool.Tools.MetaKeyboard
             // open line below 
             (Ctrl + Enter).Handled(KeyEvent.All).OnHit(e =>
             {
-                if (e.KeyboardState.IsDown(LCtrl))
-                    keyboard.Up(LCtrl);
-                if (e.KeyboardState.IsDown(RCtrl))
-                    keyboard.Up(RCtrl);
+                new List<Key> { LCtrl, RCtrl}.ForEach(k =>
+                {
+                    if (e.KeyboardState.IsDown(k))
+                    {
+                        keyboard.Up(k); //todo: add UpAsync here
+                    }
+                });
                 keyboard.Type(End, Enter);
             });
 
             // open line above
             (Ctrl + Shift + Enter).Handled(KeyEvent.All).OnHit(e =>
             {
-                if (e.KeyboardState.IsDown(LCtrl))
-                    keyboard.Up(LCtrl);
-                if (e.KeyboardState.IsDown(RCtrl))
-                    keyboard.Up(RCtrl);
-
-                if (e.KeyboardState.IsDown(LShift))
-                    keyboard.Up(LShift);
-                if (e.KeyboardState.IsDown(RShift))
-                    keyboard.Up(RShift);
-
+                new List<Key> { LCtrl, RCtrl, LShift, RShift }.ForEach(k =>
+                {
+                    if (e.KeyboardState.IsDown(k))
+                    {
+                        keyboard.Up(k); //todo: add UpAsync here
+                    }
+                });
+                
                 keyboard.Type(Up, End, Enter);
             });
 
@@ -60,62 +62,85 @@ namespace Metatool.Tools.MetaKeyboard
         private async Task GoToChar(IClipboard clipboard, IKeyboard keyboard, IKeyEventArgs e, bool right = true)
         {
             keyboard.HandleVirtualKey = false;
-            var chordKey = Space;
+            var chordKey   = Space;
+            var triggerKey = right ? RAlt : LAlt;
+
             try
             {
-                var triggerKey = right ? RAlt : LAlt;
                 if (e.KeyboardState.IsDown(triggerKey))
                     keyboard.Up(triggerKey); // RAlt is still down in Hit event
 
                 var selectKeys = right ? Shift + End : ShiftKey + Home;
                 keyboard.Type(selectKeys);
                 var text = await clipboard.CopyTextAsync();
-                text = text.Replace("\r\n", "\n");
+                // text = text.Replace("\r\n", "\r");
 
                 if (text.Length == 0)
                     return;
                 keyboard.Type(right ? Left : Right); // unselect
 
                 keyboard.DisableChord(chordKey);
-                var ind     = right ? 0 : text.Length - 1;
-                var pressed = false;
+                var startIndex        = right ? 0 : text.Length - 1;
+                var chordHolding    = false;
+                var lineSearch = true;
                 do
                 {
                     var cs          = new CancellationTokenSource();
-                    var pressedTask = keyboard.KeyPressAsync(true, 5000, null, cs.Token);
+                    var charToSearchTask = keyboard.KeyPressAsync(true, 5000, null, cs.Token);
 
-                    if (pressed)
+                    if (chordHolding)
                     {
-                        var i = Task.WaitAny(pressedTask, keyboard.KeyUpAsync(false, 5000, chordKey, cs.Token));
-                        if (!(i == 0 && pressedTask.IsCompleted))
+                        var chordUpTask = keyboard.KeyUpAsync(false, 5000, chordKey, cs.Token);
+                        var i = Task.WaitAny(charToSearchTask, chordUpTask);
+                        if (!(i == 0 && charToSearchTask.IsCompleted))
                         {
                             cs.Cancel();
                             return;
                         }
                     }
 
-                    var charArgs = await pressedTask;
+                    var charArgs = await charToSearchTask;
                     // if we search the Upper case Shift is pressed
-                    if (charArgs.EventArgs.KeyboardState.IsDown(LShift))
+                    new List<Key>{LShift, RShift}.ForEach(k =>
                     {
-                        keyboard.Up(LShift); //todo: add UpAsync here
-                    }
+                        if (charArgs.EventArgs.KeyboardState.IsDown(k))
+                        {
+                            keyboard.Up(k); //todo: add UpAsync here
+                        }
+                    });
 
-                    if (charArgs.EventArgs.KeyboardState.IsDown(RShift))
+                    if (charToSearchTask.IsCompleted)
                     {
+                        chordHolding = true;
+                        var cha                           = charArgs.KeyChar.ToString();
+                        if (charArgs.KeyChar == '\b') cha = " ";
+                        if (charArgs.KeyChar == '\r') cha = "\r\r";
+                        var index                         = Search(cha.ToString(), text, startIndex, right);
+                        if (index == -1)
+                        {
+                            if (lineSearch)
+                            {
+                                lineSearch = false;
+                                keyboard.Type(right ? End : Home);
+                            }
 
-                        keyboard.Up(RShift);
-                    }
+                            Thread.Sleep(0);
+                            var select = right ? Shift + PageDown : ShiftKey + PageUp;
+                            keyboard.Type(select);
+                            text = await clipboard.CopyTextAsync();
+                            text = text.Replace("\r\n", "\r");
 
-                    if (pressedTask.IsCompleted)
-                    {
-                        pressed = true;
-                        var cha                           = charArgs.KeyChar;
-                        if (charArgs.KeyChar == '\b') cha = ' ';
-                        var index = IntliIntelSearch(cha, text, ind, right);
+                            if (text.Length == 0)
+                                return;
+                            keyboard.Type(right ? PageUp : PageDown); // unselect
+                            startIndex = right ? 0 : text.Length - 1;
+
+                            index = Search(cha, text, startIndex, right);
+                        }
+
                         if (index != -1)
                         {
-                            var count = Math.Abs(index - ind);
+                            var count = Math.Abs(index - startIndex);
                             count++;
                             var moveKey = right ? Right : Left;
                             for (var j = 0; j < count; j++)
@@ -123,19 +148,7 @@ namespace Metatool.Tools.MetaKeyboard
                                 keyboard.Type(moveKey);
                             }
 
-                            ind += (right ? count : (-count));
-                        }
-                        else
-                        {
-                            var select = right ? Shift + PageDown : ShiftKey + PageUp;
-                            keyboard.Type(select);
-                            text = await clipboard.CopyTextAsync();
-                            text = text.Replace("\r\n", "\n");
-
-                            if (text.Length == 0)
-                                return;
-                            keyboard.Type(right ? PageUp : PageDown); // unselect
-                            ind = right ? 0 : text.Length - 1;
+                            startIndex += (right ? count : (-count));
                         }
                     }
                 } while (keyboard.State.IsDown(chordKey));
@@ -147,15 +160,15 @@ namespace Metatool.Tools.MetaKeyboard
             }
         }
 
-        int IntliIntelSearch(char ch, string text, int startIndex = 0, bool right = true)
+        int Search(string ch, string text, int startIndex = 0, bool right = true)
         {
             if (startIndex >= text.Length) return -1;
 
-            var isUpCase = char.IsUpper(ch);
+            var isUpCase = ch.Any(char.IsUpper);
             var option   = isUpCase ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
             var index = right
-                ? text.IndexOf(ch.ToString(), startIndex, option)
-                : text.LastIndexOf(ch.ToString(), startIndex, option);
+                ? text.IndexOf(ch, startIndex, option)
+                : text.LastIndexOf(ch, startIndex, option);
             return index;
         }
     }
