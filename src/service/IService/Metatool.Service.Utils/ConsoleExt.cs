@@ -14,7 +14,7 @@ namespace Metatool.Service
 
         // https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms683242.aspx
         private delegate bool SetConsoleCtrlEventHandler(CtrlType sig);
-        static SetConsoleCtrlEventHandler handlerDelegate = new SetConsoleCtrlEventHandler(Handler);
+        static readonly SetConsoleCtrlEventHandler handlerDelegate = new SetConsoleCtrlEventHandler(Handler);
         private static bool Handler(CtrlType signal)
         {
             switch (signal)
@@ -153,7 +153,7 @@ namespace Metatool.Service
                     SetWindowText(handle, title + " (Admin)");
             }
 #if !DEBUG
-            PInvokes.ShowWindowAsync(handle, PInvokes.SW.Hide);
+            ShowWindowAsync(handle, SW.Hide);
             if(disableCloseButton)  DisableCloseButton();
 #endif
             SetConsoleCtrlHandler(handlerDelegate, true);
