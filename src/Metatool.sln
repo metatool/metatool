@@ -109,9 +109,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.InputTests", "serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.Software", "tool\Metatool.Tools.Software\Metatool.Tools.Software.csproj", "{D950EB77-02D7-455A-A939-792284143F0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Clipboard", "service\Metatool.Clipboard\Metatool.Clipboard.csproj", "{D49E40F8-E81B-4DAB-BCD4-48CC4EAAC86C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Clipboard", "service\Metatool.Clipboard\Metatool.Clipboard.csproj", "{D49E40F8-E81B-4DAB-BCD4-48CC4EAAC86C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Service.Clipboard", "service\IService\Metatool.Service.Clipboard\Metatool.Service.Clipboard.csproj", "{E0D1D6E2-3865-4D3E-A04F-824216405316}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Clipboard", "service\IService\Metatool.Service.Clipboard\Metatool.Service.Clipboard.csproj", "{E0D1D6E2-3865-4D3E-A04F-824216405316}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

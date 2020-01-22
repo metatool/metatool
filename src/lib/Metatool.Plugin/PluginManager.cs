@@ -94,10 +94,12 @@ namespace Metatool.Plugin
             var result = new List<string>()
             {
                 // tools dir with metatool.dll
-                Path.Combine(AppContext.BaseDirectory, "tools"),
+                Path.Combine(Context.AppDirectory, "tools"),
+                Path.Combine(Context.BaseDirectory, "tools"),
                 // tools dir with metatool.exe
                 Path.Combine(Environment.CurrentDirectory, "tools")
             }.Aggregate(new List<string>(), AddToolPath);
+
 
             return result;
         }

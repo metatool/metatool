@@ -30,6 +30,7 @@ namespace Metatool.Service
             }
             catch (TimeoutException)
             {
+                Console.WriteLine("timeout of copy text");
                 return "";
             }
 

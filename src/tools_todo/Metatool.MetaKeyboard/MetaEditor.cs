@@ -70,20 +70,15 @@ namespace Metatool.Tools.MetaKeyboard
 
                 var selectKeys = right ? Shift + End : ShiftKey + Home;
                 keyboard.Type(selectKeys);
-                Console.WriteLine(" bnnnaa c============================opy 0");
 
                 var text = await clipboard.CopyTextAsync(100);
-                Console.WriteLine("eeeaa c============================opy 0");
 
                 if (text.Length == 0)
                 {
                     var select = right ? Shift + PageDown : ShiftKey + PageUp;
                     keyboard.Type(select);
-                    Console.WriteLine("aa c============================opy 0");
 
                     text = await clipboard.CopyTextAsync(100);
-                    Console.WriteLine("c============================opy 0");
-
                     text = text.Replace("\r\n", "\r");
                 }
 
@@ -139,10 +134,8 @@ namespace Metatool.Tools.MetaKeyboard
                             //Thread.Sleep(3);
                             var select = right ? Shift + PageDown : ShiftKey + PageUp;
                             keyboard.Type(select);
-                            Console.WriteLine(" s  co=====================py 1");
 
                             text = await clipboard.CopyTextAsync(100);
-                            Console.WriteLine("co=====================py 1");
                             text = text.Replace("\r\n", "\r");
 
                             if (text.Length == 0)
@@ -178,7 +171,7 @@ namespace Metatool.Tools.MetaKeyboard
 
         int Search(string ch, string text, int startIndex = 0, bool right = true)
         {
-            if (startIndex >= text.Length) return -1;
+            if (startIndex >= text.Length || startIndex < 0) return -1;
 
             var isUpCase = ch.Any(char.IsUpper);
             var option   = isUpCase ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;

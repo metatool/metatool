@@ -46,11 +46,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="4.1.0" />
-    <PackageReference Include="Fody" Version="6.0.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.0.0" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.4.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
@@ -75,10 +70,10 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.deps.json&#xD;&#xA;del $(SolutionDir)..\exe\release\System.Reactive*&#xD;&#xA;del $(SolutionDir)..\exe\release\Metatool.runtimeconfig.dev.json&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />
+    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />
   </Target>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <FluentValidationExcludedCultures Include="be;cs;cs-CZ;da;de;es;fa;fi;fr;ja;it;ko;mk;nl;pl;pt;pt-BR;ru;sv;tr;uk;zh-CN;zh-CHS;zh-CHT;zh-Hant;zh-Hans">
       <InProject>false</InProject>
     </FluentValidationExcludedCultures> 
@@ -86,7 +81,7 @@
 
   <Target Name="RemoveTranslationsAfterBuild" AfterTargets="AfterBuild">
     <RemoveDir Directories="@(FluentValidationExcludedCultures->'$(OutputPath)%(Filename)')" />    
-  </Target>
+  </Target>-->
 
   <ItemGroup>
     <Folder Include="Properties\" />

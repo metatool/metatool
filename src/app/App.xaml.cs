@@ -50,7 +50,7 @@ namespace Metaseed.Metatool
             scaffolder.CommonSetup(_config);
 
             ConfigNotify(notify);
-            logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolPath")}");
+            logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
             logger.LogInformation("Metatool started!");
         }
 
