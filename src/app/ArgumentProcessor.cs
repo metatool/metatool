@@ -18,7 +18,7 @@ namespace Metaseed.Metatool
         public ArgumentProcessor(string[] args)
         {
             _args = args;
-            if(args.Length == 0 || args[0] == "run")
+            if (args.Length == 0 || args[0] == "run")
                 ConsoleExt.InitialConsole(true, Context.IsElevated);
             App.InitServices();
             _logger = Services.Get<ILogger<ArgumentProcessor>>();
@@ -30,8 +30,8 @@ namespace Metaseed.Metatool
         {
             var app = new CommandLineApplication(throwOnUnexpectedArg: false)
             {
-                Name             = "metatool",
-                Description      = "tools for Windows",
+                Name = "metatool",
+                Description = "tools for Windows",
                 ExtendedHelpText = "===Metaseed Metatool==="
             };
             app.HelpOption(inherited: true);
@@ -39,7 +39,7 @@ namespace Metaseed.Metatool
             app.OnExecute(() =>
             {
                 // without command
-                var application   = new App(Services.Get<IConfig<MetatoolConfig>>());
+                var application = new App(Services.Get<IConfig<MetatoolConfig>>());
                 Context.Dispatcher = application.Dispatcher;
                 var pluginManager = Services.GetOrCreate<PluginManager>();
                 pluginManager.InitPlugins();
@@ -61,7 +61,8 @@ namespace Metaseed.Metatool
                         "Creates a sample script tool along with the files needed to launch and debug the script.";
 
                     var fileName = c.Argument("name",
-                        "The name of the tool script to be created.").IsRequired(errorMessage: "please set the tool name \nusage: metatool new script <name>");
+                            "The name of the tool script to be created.")
+                        .IsRequired(errorMessage: "please set the tool name \nusage: metatool new script <name>");
                     var cwd = c.Option("-dir |--directory <dir>",
                         "The directory to initialize the tool scripts. Defaults to current directory.",
                         CommandOptionType.SingleValue).Accepts(v => v.ExistingDirectory());
@@ -128,25 +129,23 @@ namespace Metaseed.Metatool
                         var pluginManager = Services.GetOrCreate<PluginManager>();
                         pluginManager.BuildReload(fullPath, assemblyName, false);
                     }
+
                     application.RunApp();
                 });
             });
 
-            // windows only 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+
+            // on windows we have command to register .csx files to be executed by dotnet-script
+            app.Command("register", c =>
             {
-                // on windows we have command to register .csx files to be executed by dotnet-script
-                app.Command("register", c =>
+                c.Description = "Register .csx file handler to enable running scripts directly";
+                c.HelpOption(HelpOptionTemplate);
+                c.OnExecute(() =>
                 {
-                    c.Description = "Register .csx file handler to enable running scripts directly";
-                    c.HelpOption(HelpOptionTemplate);
-                    c.OnExecute(() =>
-                    {
-                        var scaffolder = new Scaffolder(_logger);
-                        scaffolder.RegisterFileHandler();
-                    });
+                    var scaffolder = new Scaffolder(_logger);
+                    scaffolder.Register();
                 });
-            }
+            });
 
 
             return app.Execute(_args);

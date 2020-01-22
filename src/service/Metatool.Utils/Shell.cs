@@ -31,27 +31,27 @@ namespace Metatool.Utils
 
         public async Task<string[]> SelectedPaths()
         {
-                var fileExplorer = Services.Get<IFileExplorer>();
-                var windowManager = Services.Get<IWindowManager>();
-                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
-                {
-                    return null;
-                }
+            var fileExplorer = Services.Get<IFileExplorer>();
+            var windowManager = Services.Get<IWindowManager>();
+            if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+            {
+                return null;
+            }
 
-                var r = await  fileExplorer.GetSelectedPaths(windowManager.CurrentWindow.Handle);
-                return r;
+            var r = await fileExplorer.GetSelectedPaths(windowManager.CurrentWindow.Handle);
+            return r;
         }
 
         public async Task<string> CurrentDirectory()
         {
-                var fileExplorer  = Services.Get<IFileExplorer>();
-                var windowManager = Services.Get<IWindowManager>();
-                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
-                {
-                    return null;
-                }
+            var fileExplorer = Services.Get<IFileExplorer>();
+            var windowManager = Services.Get<IWindowManager>();
+            if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog)
+            {
+                return null;
+            }
 
-                return await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
+            return await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
         }
 
         /// <summary>
@@ -59,16 +59,17 @@ namespace Metatool.Utils
         /// </summary>
         public CommandResult Run(string commandPath, string arguments, string workingDirectory = null)
         {
-           var startInformation = new ProcessStartInfo($"{commandPath}")
+            var startInformation = new ProcessStartInfo($"{commandPath}")
             {
-                CreateNoWindow         = true,
-                Arguments              = arguments ?? "",
+                CreateNoWindow = true,
+                Arguments = arguments ?? "",
                 RedirectStandardOutput = true,
-                RedirectStandardError  = true,
-                UseShellExecute        = false,
-                WorkingDirectory       = workingDirectory ?? System.Environment.CurrentDirectory
-            }; ;
-            var process          = new Process { StartInfo = startInformation };
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                WorkingDirectory = workingDirectory ?? System.Environment.CurrentDirectory
+            };
+            ;
+            var process = new Process {StartInfo = startInformation};
             process.OutputDataReceived += (s, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.Data))
@@ -84,25 +85,23 @@ namespace Metatool.Utils
                 }
             };
             process.Start();
-            process.BeginErrorReadLine();
-            process.BeginOutputReadLine();
-            var standardOut   = process.StandardOutput.ReadToEnd();
-            if(!string.IsNullOrEmpty(standardOut)) _logger.LogInformation(standardOut);
+            var standardOut = process.StandardOutput.ReadToEnd();
+            if (!string.IsNullOrEmpty(standardOut)) _logger.LogInformation(standardOut);
             var standardError = process.StandardError.ReadToEnd();
             if (!string.IsNullOrEmpty(standardError)) _logger.LogWarning(standardError);
 
             process.WaitForExit();
             return new CommandResult(process.ExitCode, standardOut, standardError);
         }
-      
+
         // i.e. if run as admin Chrome could not load extensions
         public void RunAsNormalUser(string cmd, params string[] args)
         {
             if (Context.IsElevated)
             {
                 var c = args.ToList();
-                    c.Insert(0, cmd);
-                var exeWithArgs =  NormalizeCmd(c.ToArray());
+                c.Insert(0, cmd);
+                var exeWithArgs = NormalizeCmd(c.ToArray());
                 var s = $"start \"\" {exeWithArgs} \n exit 0";
                 var tempBat = Path.Combine(Path.GetTempPath(), "t.bat");
                 File.WriteAllText(tempBat, s);
@@ -115,15 +114,16 @@ namespace Metatool.Utils
                     StartInfo =
                     {
                         UseShellExecute = true,
-                        FileName        = cmd,
-                        Arguments= NormalizeCmd(args)
+                        FileName = cmd,
+                        Arguments = NormalizeCmd(args)
                     }
                 }.Start();
             }
-           
         }
 
-        private readonly char[] _specialChars = new[] {' ', '&', '<', '>', '[', ']', '{', '}', '^', '=', ';', '!', '\'', '+',',', '`', '~'};
+        private readonly char[] _specialChars = new[]
+            {' ', '&', '<', '>', '[', ']', '{', '}', '^', '=', ';', '!', '\'', '+', ',', '`', '~'};
+
         public string NormalizeCmd(params string[] cmdArgsSerials)
         {
             return string.Join(" ", cmdArgsSerials.Select(arg => arg.Any(_specialChars.Contains) ? $"\"{arg}\"" : arg));
@@ -140,13 +140,13 @@ namespace Metatool.Utils
             {
                 StartInfo = new System.Diagnostics.ProcessStartInfo()
                 {
-                    FileName               = "cmd.exe",
-                    Arguments              = "/C \"" + cmdWithArgs + "\"",
-                    UseShellExecute        = false,
-                    CreateNoWindow         = true,
-                    WindowStyle            = ProcessWindowStyle.Hidden,
-                    WorkingDirectory       = workingDir ?? Context.AppDirectory,
-                    RedirectStandardInput  = true,
+                    FileName = "cmd.exe",
+                    Arguments = "/C \"" + cmdWithArgs + "\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    WorkingDirectory = workingDir ?? Context.AppDirectory,
+                    RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                 }
             };
@@ -166,11 +166,11 @@ namespace Metatool.Utils
             {
                 StartInfo = new ProcessStartInfo()
                 {
-                    FileName         = "explorer.exe",
-                    ArgumentList     = {filePath},
-                    UseShellExecute  = false,
-                    CreateNoWindow   = true,
-                    WindowStyle      = ProcessWindowStyle.Hidden,
+                    FileName = "explorer.exe",
+                    ArgumentList = {filePath},
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
                     WorkingDirectory = workingDir ?? Context.AppDirectory
                 }
             };
@@ -184,13 +184,13 @@ namespace Metatool.Utils
             var exists = File.Exists(shortcutPath);
             if (exists) return;
 
-            var shDesktop       = (object)"Desktop";
-            var shell           = new WshShell();
+            var shDesktop = (object) "Desktop";
+            var shell = new WshShell();
             var shortcutAddress = shortcutPath;
-            var shortcut        = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            var shortcut = (IWshShortcut) shell.CreateShortcut(shortcutAddress);
             shortcut.Description = description;
-            shortcut.Hotkey      = hotkey;
-            shortcut.TargetPath  = targetPath;
+            shortcut.Hotkey = hotkey;
+            shortcut.TargetPath = targetPath;
             shortcut.Save();
             if (isAdmin)
             {
@@ -203,12 +203,10 @@ namespace Metatool.Utils
 
         public ShortcutLink ReadShortcut(string shortcutPath)
         {
-            IWshShell    shell = new WshShell();
-                    IWshShortcut lnk   = shell.CreateShortcut(shortcutPath) as IWshShortcut;
-            return new ShortcutLink(lnk.TargetPath, lnk.Arguments, lnk.Description, lnk.FullName, lnk.IconLocation, lnk.Hotkey, lnk.WindowStyle, lnk.WorkingDirectory);
-
+            IWshShell shell = new WshShell();
+            IWshShortcut lnk = shell.CreateShortcut(shortcutPath) as IWshShortcut;
+            return new ShortcutLink(lnk.TargetPath, lnk.Arguments, lnk.Description, lnk.FullName, lnk.IconLocation,
+                lnk.Hotkey, lnk.WindowStyle, lnk.WorkingDirectory);
         }
     }
-
-   
 }

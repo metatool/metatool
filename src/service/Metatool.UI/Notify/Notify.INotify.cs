@@ -97,6 +97,7 @@ namespace Metatool.UI
         public void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
             NotifyPosition position = NotifyPosition.ActiveScreen)
         {
+            if(!tipDictionary.ContainsKey(name)) return;
             tipDictionary.TryGetValue(name, out var tp);
             if (tp != null && tips.SequenceEqual(tp)) return;
 

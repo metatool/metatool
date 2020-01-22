@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
@@ -105,7 +106,7 @@ namespace Metatool.Input
             _lastKeyDownNodeForAllUp = null;
             Console.WriteLine($"${Name}{lastDownHit}");
 
-            Notify?.CloseKeysTip(Name);
+            Task.Run(() => Notify.CloseKeysTip(Name)); // use task here, because the slow startup
             _treeWalker.GoToRoot();
         }
 

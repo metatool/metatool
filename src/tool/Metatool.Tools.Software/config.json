@@ -2,7 +2,7 @@
   "Tools": {
     // the key should be the dll name and it is used as an unique id of the tool
     "Metatool.Tools.Software": {
-      "SoftwareFolder": "M:\\Workspace\\metatool\\exe\\release\\SoftwareConfig"
+      "SoftwareFolder": "M:\\Workspace\\metatool\\exe\\publish\\SoftwareConfig"
     }
   }
 }

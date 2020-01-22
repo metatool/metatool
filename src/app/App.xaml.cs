@@ -19,7 +19,7 @@ namespace Metaseed.Metatool
             _config = config;
         }
 
-        private static void ConfigNotify(INotify notify)
+        private static void ConfigNotify(INotify notify, ILogger logger, Scaffolder scaffolder)
         {
             notify.AddContextMenuItem("Show Log", e =>
             {
@@ -31,6 +31,10 @@ namespace Metaseed.Metatool
 
             notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
                 AutoStartManager.IsAutoStart);
+            notify.AddContextMenuItem("Register", e =>
+            {
+                scaffolder.Register();
+            });
             notify.ShowMessage("Metatool started!");
         }
 
@@ -49,7 +53,7 @@ namespace Metaseed.Metatool
             var scaffolder = new Scaffolder(logger);
             scaffolder.CommonSetup(_config);
 
-            ConfigNotify(notify);
+            ConfigNotify(notify, logger, scaffolder);
             logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
             logger.LogInformation("Metatool started!");
         }
