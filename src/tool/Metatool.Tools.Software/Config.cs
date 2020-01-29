@@ -1,6 +1,6 @@
 ﻿using Metatool.Service;
 
-namespace Metatool.Tools.LibToolDemo
+namespace Metatool.Tools.Software
 {
     [ToolConfig]
     public class Config
