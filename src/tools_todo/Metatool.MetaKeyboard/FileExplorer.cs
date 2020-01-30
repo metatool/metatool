@@ -4,14 +4,16 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
 using System.Windows.Forms;
+using System.Windows.Media.Animation;
 using Metatool.Service;
+using static Metatool.Service.Key;
 
 namespace Metatool.MetaKeyboard
 {
     public class FileExplorer : CommandPackage
     {
 
-        public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IConfig<Config> config, INotify notify)
+        public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IConfig<Config> config, INotify notify, IKeyboard keyboard)
         {
             RegisterCommands();
             var hotKeys = config.CurrentValue.FileExplorerPackage.Hotkeys;
@@ -70,6 +72,17 @@ namespace Metatool.MetaKeyboard
             {
                 fileExplorer.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 e.Handled = true;
+            });
+
+            (Ctrl + Back).OnDown(e =>
+            {
+                if (windowManager.CurrentWindow.IsExplorer) // fix ctrl+back is a box char in explorer
+                {
+                    e.DisableVirtualKeyHandlingInThisEvent();
+                    e.Handled = true;
+                    keyboard.Type(Ctrl+Shift+Left, Back); // Ctrl is up now
+                    keyboard.Down(Ctrl); //to trigger, if user hold ctrl and press back again
+                }
             });
         }
     }

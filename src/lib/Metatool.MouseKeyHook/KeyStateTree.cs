@@ -106,7 +106,7 @@ namespace Metatool.Input
             _lastKeyDownNodeForAllUp = null;
             Console.WriteLine($"${Name}{lastDownHit}");
 
-            Task.Run(() => Notify.CloseKeysTip(Name)); // use task here, because the slow startup
+            Task.Run(() => Notify?.CloseKeysTip(Name)); // use task here, because the slow startup
             _treeWalker.GoToRoot();
         }
 

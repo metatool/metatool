@@ -205,8 +205,16 @@ namespace Metatool.Utils
         {
             IWshShell shell = new WshShell();
             IWshShortcut lnk = shell.CreateShortcut(shortcutPath) as IWshShortcut;
-            return new ShortcutLink(lnk.TargetPath, lnk.Arguments, lnk.Description, lnk.FullName, lnk.IconLocation,
-                lnk.Hotkey, lnk.WindowStyle, lnk.WorkingDirectory);
+            try
+            {
+                return new ShortcutLink(lnk.TargetPath, lnk.Arguments, lnk.Description, lnk.FullName, lnk.IconLocation,
+                    lnk.Hotkey, lnk.WindowStyle, lnk.WorkingDirectory);
+            }
+            catch
+            {
+                _logger.LogWarning($"Can not read shortcut info: {shortcutPath}, make sure it exist.");
+                return null;
+            }
         }
     }
 }

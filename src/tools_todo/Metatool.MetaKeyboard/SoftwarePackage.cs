@@ -35,26 +35,26 @@ namespace Metatool.MetaKeyboard
                 }
             });
 
-            hotKeys.Find.OnEvent(async e =>
-            {
-                e.Handled = true;
-                var shiftDown = e.KeyboardState.IsDown(Shift);
+            //hotKeys.Find.OnEvent(async e =>
+            //{
+            //    e.Handled = true;
+            //    var shiftDown = e.KeyboardState.IsDown(Shift);
 
-                var c = windowManager.CurrentWindow.Class;
-                var arg = shiftDown
-                    ? "-newwindow"
-                    : "-toggle-window";
+            //    var c = windowManager.CurrentWindow.Class;
+            //    var arg = shiftDown
+            //        ? "-newwindow"
+            //        : "-toggle-window";
 
-                if ("CabinetWClass" == c)
-                {
-                    var path = await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
-                    shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg, "-path",
-                        path));
-                    return;
-                }
+            //    if ("CabinetWClass" == c)
+            //    {
+            //        var path = await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
+            //        shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg, "-path",
+            //            path));
+            //        return;
+            //    }
 
-                shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg));
-            });
+            //    shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg));
+            //});
 
             hotKeys.OpenTerminal.OnEvent(async e =>
             {

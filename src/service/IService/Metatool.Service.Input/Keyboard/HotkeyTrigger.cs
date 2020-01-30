@@ -34,12 +34,12 @@ namespace Metatool.Service
 
     public interface IHotkeyTrigger
     {
-        string                      Hotkey  { get; set; }
-        IHotkey                     Key     { get; }
-        KeyEvent                    Event   { get; set; }
-        string                      Tree    { get; set; }
-        bool                        Handled { get; set; }
-        bool                        Enabled { get; set; }
+        string Hotkey { get; set; }
+        IHotkey Key { get; }
+        KeyEvent Event { get; set; }
+        string Tree { get; set; }
+        bool Handled { get; set; }
+        bool Enabled { get; set; }
         IDictionary<string, string> Context { get; set; }
         HotkeyTrigger WithAliases(params IDictionary<string, string>[] tempAliasesDics);
 
@@ -81,21 +81,21 @@ namespace Metatool.Service
             }
         }
 
-        public bool   Handled { get; set; }
-        public string Hotkey  { get; set; }
+        public bool Handled { get; set; }
+        public string Hotkey { get; set; }
 
-        public KeyEvent Event       { get; set; } = KeyEvent.Down;
-        public string   Description { get; set; }
+        public KeyEvent Event { get; set; } = KeyEvent.Down;
+        public string Description { get; set; }
 
-        public string                      Tree    { get; set; } = KeyStateTrees.Default;
-        public bool                        Enabled { get; set; } = true;
+        public string Tree { get; set; } = KeyStateTrees.Default;
+        public bool Enabled { get; set; } = true;
         public IDictionary<string, string> Context { get; set; }
 
         public IKeyCommand OnEvent(Action<IKeyEventArgs> execute,
             Predicate<IKeyEventArgs> canExecute = null)
         {
             var trigger = Keyboard.OnEvent(Key, Event, Tree);
-            var token   = trigger.Register(execute, canExecute, Description);
+            var token = trigger.Register(execute, canExecute, Description);
             return token;
         }
 
@@ -112,7 +112,7 @@ namespace Metatool.Service
         }
 
         private IDictionary<string, string>[] _tempAliasesDics;
-        private IHotkey                       _trigger;
+        private IHotkey _trigger;
 
         public HotkeyTrigger WithAliases(params IDictionary<string, string>[] tempAliasesDics)
         {
@@ -121,9 +121,9 @@ namespace Metatool.Service
         }
 
         /// <summary>
-        /// 1. Abc => A
-        /// 2. A&Bc => B
-        /// 3. Abc#A+B,C$Handled=true, Enabled=true, Description=ab cs ef
+        /// 1. Abc => A : first letter
+        /// 2. A&Bc => B : letter after &
+        /// 3. Abc#A+B,C$Handled=true, Enabled=true, Description=ab cs ef : keyWithProperties, keys after #, and properties after $
         /// 4. ABC#$Handled=true
         /// 5. ABC#$$a=b,c=d
         /// </summary>
@@ -131,16 +131,18 @@ namespace Metatool.Service
         /// <returns></returns>
         public static IHotkeyTrigger Parse(string hotkeyTrigger)
         {
-            var iNum  = hotkeyTrigger.LastIndexOf('#');
+            if (string.IsNullOrEmpty(hotkeyTrigger)) return null;
+
+            var iNum = hotkeyTrigger.LastIndexOf('#');
             var count = iNum == -1 ? hotkeyTrigger.Length : iNum;
 
             var hotChar = hotkeyTrigger[0];
-            var des     = hotkeyTrigger;
-            var iAnd    = hotkeyTrigger.IndexOf('&', 0, count);
+            var des = hotkeyTrigger;
+            var iAnd = hotkeyTrigger.IndexOf('&', 0, count);
             if (iAnd != -1)
             {
                 hotChar = hotkeyTrigger[iAnd + 1];
-                des     = hotkeyTrigger.Remove(iAnd, 1);
+                des = hotkeyTrigger.Remove(iAnd, 1);
             }
 
             var trigger = new HotkeyTrigger() {Hotkey = hotChar.ToString().ToUpper(), Description = des};
@@ -164,7 +166,7 @@ namespace Metatool.Service
                             Services.CommonLogger.LogError($"HotkeyTrigger Parse: format error - {entry}, in  {p}");
                         }
 
-                        d.Add(pair[0], pair[1]);
+                        d.Add(pair[0].Trim(), pair[1].Trim());
                     }
 
                     return d;
@@ -176,7 +178,7 @@ namespace Metatool.Service
                     var prop = properties[0];
                     try
                     {
-                        var d                                                      = nameof(HotkeyTrigger.Description);
+                        var d = nameof(HotkeyTrigger.Description);
                         if (prop.TryGetValue(d, out var desc)) trigger.Description = desc;
                         d = nameof(HotkeyTrigger.Enabled);
                         if (prop.TryGetValue(d, out desc)) trigger.Enabled = bool.Parse(desc);

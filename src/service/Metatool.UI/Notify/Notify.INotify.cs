@@ -23,7 +23,7 @@ namespace Metatool.UI
         }
 
         public NotifyToken ShowMessage(System.Windows.FrameworkElement control, int? timeout,
-           NotifyPosition position = NotifyPosition.ActiveScreen, bool onlyCloseByToken = false)
+            NotifyPosition position = NotifyPosition.ActiveScreen, bool onlyCloseByToken = false)
         {
             TaskbarIcon.GetCustomPopupPosition func = null;
             switch (position)
@@ -34,8 +34,8 @@ namespace Metatool.UI
                         var rect = WindowManager.CurrentWindow.Rect;
                         return new NotifyIcon.Interop.Point()
                         {
-                            X = (int)(rect.X + rect.Width / 2 - control.ActualWidth / 2),
-                            Y = (int)(rect.Y + rect.Height / 2 - control.ActualHeight / 2)
+                            X = (int) (rect.X + rect.Width / 2 - control.ActualWidth / 2),
+                            Y = (int) (rect.Y + rect.Height / 2 - control.ActualHeight / 2)
                         };
                     };
                     break;
@@ -66,14 +66,14 @@ namespace Metatool.UI
             return TrayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
         }
 
-        public  MenuItem AddContextMenuItem(string header, Action<MenuItem> execute,
-          Func<MenuItem, bool> canExecute = null, bool isCheckable = false, bool? isChecked = null)
+        public MenuItem AddContextMenuItem(string header, Action<MenuItem> execute,
+            Func<MenuItem, bool> canExecute = null, bool isCheckable = false, bool? isChecked = null)
         {
-            var item = new MenuItem() { Header = header, IsCheckable = isCheckable };
+            var item = new MenuItem() {Header = header, IsCheckable = isCheckable};
             if (isChecked.HasValue)
                 item.IsChecked = isChecked.Value;
             item.Command = new DelegateCommand<MenuItem>()
-            { CanExecuteFunc = canExecute, CommandAction = execute };
+                {CanExecuteFunc = canExecute, CommandAction = execute};
             item.CommandParameter = item;
             TrayIcon.ContextMenu?.Items.Insert(0, item);
 
@@ -81,27 +81,33 @@ namespace Metatool.UI
         }
 
         public void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
-           NotifyPosition position = NotifyPosition.ActiveScreen)
+            NotifyPosition position = NotifyPosition.ActiveScreen)
         {
             if (tips == null) return;
             var description =
-                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() { Key = t.key, DescriptionInfo = d }));
+                tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {Key = t.key, DescriptionInfo = d}));
             var t = new ObservableCollection<TipItem>(description);
             if (t.Count == 0) return;
-            var keytipsBalloon = new FancyBalloon() { Tips = t };
+            var keytipsBalloon = new FancyBalloon() {Tips = t};
             ShowMessage(keytipsBalloon, 88888);
         }
-        Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> tipDictionary =
+
+        readonly Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> tipDictionary =
             new Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>>();
 
         public void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
             NotifyPosition position = NotifyPosition.ActiveScreen)
         {
-            if(!tipDictionary.ContainsKey(name)) return;
-            tipDictionary.TryGetValue(name, out var tp);
-            if (tp != null && tips.SequenceEqual(tp)) return;
+            var keyAndTips = tips as (string key, IEnumerable<string> descriptions)[] ?? tips.ToArray();
+            if (tipDictionary.Count == 0 && !keyAndTips.Any())
+            {
+                return;
+            }
 
-            tipDictionary[name] = tips;
+            tipDictionary.TryGetValue(name, out var tp);
+            if (tp != null && keyAndTips.SequenceEqual(tp)) return;
+
+            tipDictionary[name] = keyAndTips;
             var t = tipDictionary.SelectMany(pair => pair.Value).ToArray();
             if (t.Any())
                 ShowKeysTip(t, position);
@@ -119,13 +125,17 @@ namespace Metatool.UI
 
         public void CloseKeysTip()
         {
+            if (System.Windows.Application.Current.Dispatcher != null && !System.Windows.Application.Current.Dispatcher.CheckAccess())
+                System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)CloseKeysTip);
+
             TrayIcon?.CloseBalloon();
         }
 
-        private  ObservableCollection<TipItem> selectActions;
+        private ObservableCollection<TipItem> selectActions;
         public MessageToken<TipItem> SelectionToken;
 
-        public MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips, Action<int> closeViaKey=null)
+        public MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips,
+            Action<int> closeViaKey = null)
         {
             var valueTuples = tips.ToArray();
             var description =
@@ -143,7 +153,7 @@ namespace Metatool.UI
                     }
 
                     return new TipItem()
-                    { Key = key, DescriptionInfo = d.des, Action = d.action };
+                        {Key = key, DescriptionInfo = d.des, Action = d.action};
                 });
             if (selectActions == null || (SelectionToken != null && SelectionToken.IsClosed))
             {
