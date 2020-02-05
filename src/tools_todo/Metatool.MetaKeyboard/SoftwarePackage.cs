@@ -23,7 +23,7 @@ namespace Metatool.MetaKeyboard
                 const string keyName   = @"HKEY_CURRENT_USER\Software\Microsoft\InputMethod\Settings\CHS";
                 const string valueName = "Enable Double Pinyin";
                 var          k         = (int) Registry.GetValue(keyName, valueName, -1);
-                if (k == 0)
+                if (k == 0 || k == -1)
                 {
                     notify.ShowMessage("Double Pinyin Enabled");
                     Registry.SetValue(keyName, valueName, 1);
@@ -32,7 +32,7 @@ namespace Metatool.MetaKeyboard
                 {
                     notify.ShowMessage("Full Pinyin Enabled");
                     Registry.SetValue(keyName, valueName, 0);
-                }
+                } 
             });
 
             //hotKeys.Find.OnEvent(async e =>
@@ -56,20 +56,20 @@ namespace Metatool.MetaKeyboard
             //    shell.RunWithCmd(shell.NormalizeCmd(swPaths.Everything, arg));
             //});
 
-            hotKeys.OpenTerminal.OnEvent(async e =>
-            {
-                e.Handled = true;
-                var    shiftDown = e.KeyboardState.IsDown(Shift);
-                string path;
-                var    c = windowManager.CurrentWindow.Class;
-                if ("CabinetWClass" != c)
-                    path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                else
-                    path = await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
-                // https://github.com/nt4f04uNd/wt-contextmenu
-                if (shiftDown) shell.RunWithCmd(swPaths.Terminal, true); // powershell -Command "Start-Process shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App -Verb RunAs"
-                else shell.RunWithExplorer(swPaths.Terminal);
-            });
+            //hotKeys.OpenTerminal.OnEvent(async e =>
+            //{
+            //    e.Handled = true;
+            //    var    shiftDown = e.KeyboardState.IsDown(Shift);
+            //    string path;
+            //    var    c = windowManager.CurrentWindow.Class;
+            //    if ("CabinetWClass" != c)
+            //        path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            //    else
+            //        path = await fileExplorer.CurrentDirectory(windowManager.CurrentWindow.Handle);
+            //    // https://github.com/nt4f04uNd/wt-contextmenu
+            //    if (shiftDown) shell.RunWithCmd(swPaths.Terminal, true); // powershell -Command "Start-Process shell:appsFolder\Microsoft.WindowsTerminal_8wekyb3d8bbwe!App -Verb RunAs"
+            //    else shell.RunWithExplorer(swPaths.Terminal);
+            //});
 
             // hotKeys.OpenCodeEditor.OnEvent(async e =>
             // {
@@ -95,33 +95,33 @@ namespace Metatool.MetaKeyboard
             //     }
             // });
 
-            hotKeys.WebSearch.OnEvent(async e =>
-            {
-                e.Handled = true;
+            //hotKeys.WebSearch.OnEvent(async e =>
+            //{
+            //    e.Handled = true;
 
-                var altDown = e.KeyboardState.IsDown(Keys.Menu);
-                var url = altDown
-                    ? swPaths.SearchEngineSecondary
-                    : swPaths.SearchEngine;
+            //    var altDown = e.KeyboardState.IsDown(Keys.Menu);
+            //    var url = altDown
+            //        ? swPaths.SearchEngineSecondary
+            //        : swPaths.SearchEngine;
 
-                var defaultPath = Browser.DefaultPath;
-                var exeName     = Path.GetFileNameWithoutExtension(defaultPath);
-                var process     = await virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
-                if (process == null)
-                {
-                    shell.RunAsNormalUser(defaultPath, url, "--new-window", "--new-instance");
-                    return;
-                }
+            //    var defaultPath = Browser.DefaultPath;
+            //    var exeName     = Path.GetFileNameWithoutExtension(defaultPath);
+            //    var process     = await virtualDesktopManager.GetFirstProcessOnCurrentVirtualDesktop(exeName);
+            //    if (process == null)
+            //    {
+            //        shell.RunAsNormalUser(defaultPath, url, "--new-window", "--new-instance");
+            //        return;
+            //    }
 
-                new Process
-                {
-                    StartInfo =
-                    {
-                        UseShellExecute = true,
-                        FileName        = url
-                    }
-                }.Start();
-            });
+            //    new Process
+            //    {
+            //        StartInfo =
+            //        {
+            //            UseShellExecute = true,
+            //            FileName        = url
+            //        }
+            //    }.Start();
+            //});
             // hotKeys.StartTaskExplorer.WithAliases(software.KeyAliases).OnEvent(e =>
             // {
             //     e.Handled = true;
@@ -134,51 +134,51 @@ namespace Metatool.MetaKeyboard
             //     shell.RunWithCmd(swPaths.Ruler);
             // });
 
-            hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(async e =>
-            {
-                var exeName = "Inspect";
+            //hotKeys.OpenScreenRuler.WithAliases(software.KeyAliases).OnEvent(async e =>
+            //{
+            //    var exeName = "Inspect";
 
-                var processes = await
-                    virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName);
+            //    var processes = await
+            //        virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName);
 
-                var process = processes.FirstOrDefault();
+            //    var process = processes.FirstOrDefault();
 
-                var hWnd = process?.MainWindowHandle;
+            //    var hWnd = process?.MainWindowHandle;
 
-                if (hWnd != null)
-                {
-                    windowManager.Show(hWnd.Value);
-                    return;
-                }
+            //    if (hWnd != null)
+            //    {
+            //        windowManager.Show(hWnd.Value);     
+            //        return;
+            //    } 
 
-                shell.RunWithExplorer(swPaths.Inspect);
-            });
+            //    shell.RunWithExplorer(swPaths.Inspect);
+            //});
 
-            hotKeys.StartNotepad.WithAliases(software.KeyAliases).OnEvent(async e =>
-            {
-                e.Handled = true;
-                var exeName = "Notepad";
+            //hotKeys.StartNotepad.WithAliases(software.KeyAliases).OnEvent(async e =>
+            //{
+            //    e.Handled = true;
+            //    var exeName = "Notepad";
 
-                var notePads = await
-                    virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
-                        p => p.MainWindowTitle == "Untitled - Notepad");
+            //    var notePads = await
+            //        virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
+            //            p => p.MainWindowTitle == "Untitled - Notepad");
 
-                var notePad = notePads.FirstOrDefault();
+            //    var notePad = notePads.FirstOrDefault();
 
-                var hWnd = notePad?.MainWindowHandle;
+            //    var hWnd = notePad?.MainWindowHandle;
 
-                if (hWnd != null)
-                {
-                    windowManager.Show(hWnd.Value);
-                    return;
-                }
+            //    if (hWnd != null)
+            //    {
+            //        windowManager.Show(hWnd.Value);
+            //        return;
+            //    }
 
-                shell.RunWithCmd("Notepad");
-            });
+            //    shell.RunWithCmd("Notepad");
+            //});
 
             hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).OnEvent(async e =>
             {
-                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
+                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return; 
 
                 e.Handled = true;
 

@@ -89,8 +89,11 @@ namespace Metatool.Service
 
         public async Task<bool> IsOnCurrentVirtualDesktop(IntPtr hWnd)
         {
+            if (hWnd == IntPtr.Zero) return false;
+
             return await UiDispatcher.DispatchAsync<bool>(() =>
             {
+                if (hWnd == IntPtr.Zero) return false;
                 int hr;
                 if ((hr = manager.IsWindowOnCurrentVirtualDesktop(hWnd, out var result)) != 0)
                 {

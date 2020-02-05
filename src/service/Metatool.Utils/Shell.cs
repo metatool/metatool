@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using IWshRuntimeLibrary;
 using Metatool.Service;
@@ -154,6 +156,39 @@ namespace Metatool.Utils
             proc.Start();
         }
 
+        public void RunWithPowershell(string filePath, string args, bool asAdmin = false, string workingDir = null)
+        {
+            var cmd =
+                $"Start-Process -FilePath '{filePath}' {(asAdmin ? "-Verb RunAs" : "")} {(string.IsNullOrEmpty(args) ? "" : $"-ArgumentList \"{args}\"")}";
+            var encodedCmd = Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(cmd));
+            var proc = new Process
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo()
+                {
+                    FileName = "powershell.exe",
+                    Arguments = $"-encodedCommand {encodedCmd} {(string.IsNullOrEmpty(workingDir) ? "" : $"-WorkingDirectory \"{workingDir}\"")}",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    WorkingDirectory = workingDir ?? Context.AppDirectory,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError =  true
+                },
+                EnableRaisingEvents = true
+            };
+            proc.ErrorDataReceived += (s, d) =>
+            {
+                if(d.Data!=null)
+                    _logger.LogInformation(d.Data);
+            };
+            proc.OutputDataReceived += (s, d) => _logger.LogInformation(d.Data);
+
+            if (asAdmin) proc.StartInfo.Verb = "runas";
+            proc.Start();
+            proc.BeginErrorReadLine();
+            proc.BeginOutputReadLine();
+        }
         /// <summary>
         /// Process.Start would keep the process parent/child structure, if the parent exit, the child would exit.
         /// so we use explorer to make a workaround
@@ -204,9 +239,9 @@ namespace Metatool.Utils
         public ShortcutLink ReadShortcut(string shortcutPath)
         {
             IWshShell shell = new WshShell();
-            IWshShortcut lnk = shell.CreateShortcut(shortcutPath) as IWshShortcut;
             try
             {
+                var lnk = shell.CreateShortcut(shortcutPath) as IWshShortcut;
                 return new ShortcutLink(lnk.TargetPath, lnk.Arguments, lnk.Description, lnk.FullName, lnk.IconLocation,
                     lnk.Hotkey, lnk.WindowStyle, lnk.WorkingDirectory);
             }

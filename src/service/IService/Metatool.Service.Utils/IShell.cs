@@ -32,6 +32,7 @@ namespace Metatool.Service
         CommandResult Run(string commandPath, string arguments, string workingDirectory = null);
         string NormalizeCmd(params string[] cmdArgsSerials);
         void RunWithCmd(string cmdWithArgs, bool asAdmin = false, string workingDir = null);
+        void RunWithPowershell(string filePath, string args, bool asAdmin = false, string workingDir = null);
         void RunWithExplorer(string filePath, string workingDir = null);
         void RunAsNormalUser(string cmd, params string[] args);
         void CreateShortcut(string targetPath, string shortcutPath, string hotkey = "",

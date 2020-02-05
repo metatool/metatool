@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
@@ -13,14 +15,19 @@ namespace Metatool.Tools.Software
 {
     public class SoftwareTool : ToolBase
     {
+        private readonly IVirtualDesktopManager _virtualDesktopManager;
+        private readonly IWindowManager _windowManager;
         private readonly IContextVariable _contextVariable;
         public ICommandToken<IKeyEventArgs> CommandA;
         public IKeyCommand CommandB;
 
 
         public SoftwareTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config, IShell shell,
+            IVirtualDesktopManager virtualDesktopManager, IWindowManager windowManager,
             IContextVariable contextVariable)
         {
+            _virtualDesktopManager = virtualDesktopManager;
+            _windowManager = windowManager;
             _contextVariable = contextVariable;
             var folder = config.CurrentValue.SoftwareFolder;
             var files = GetFiles(folder);
@@ -67,7 +74,18 @@ namespace Metatool.Tools.Software
 
                     conf.Handled |= hotKeyTrigger.Handled;
 
-                    hotKeyTrigger.OnEvent(async e => await LaunchShortcut(e, file, conf));
+
+                    hotKeyTrigger.OnEvent(async e =>
+                    {
+                        try
+                        {
+                            await LaunchShortcut(e, file, conf, shortcutConfig);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.LogError(ex, $"Can not run shortcut: {file}");
+                        }
+                    });
                 }
             }
 
@@ -80,20 +98,36 @@ namespace Metatool.Tools.Software
             RegisterCommands();
         }
 
+        public enum RunMode
+        {
+            Inherit,
+            Admin,
+            User
+        }
+
         public class SoftwareActionConfig
         {
             public bool Handled { get; set; } = true;
             public string ActionId { get; set; } = "ShortcutLaunch";
             public string Args { get; set; }
+            public bool ShowIfOpened { get; set; } = true;
+
+            /// <summary>
+            /// regex
+            /// </summary>
+            public string ShowIfOpenedTitle { get; set; }
+
+            public RunMode RunMode { get; set; } = RunMode.Inherit;
 
             public static SoftwareActionConfig Parse(string jsonString)
             {
                 if (!jsonString.TrimStart().StartsWith('{') || string.IsNullOrEmpty(jsonString))
                     return new SoftwareActionConfig();
-
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 try
                 {
-                    return JsonSerializer.Deserialize<SoftwareActionConfig>(jsonString);
+                    return JsonSerializer.Deserialize<SoftwareActionConfig>(jsonString, options);
                 }
                 catch (Exception e)
                 {
@@ -112,6 +146,9 @@ namespace Metatool.Tools.Software
         static async Task<string> ExpandVariableString(IContextVariable contextVariable, string varString,
             Func<object, string> variableConverter)
         {
+            if (string.IsNullOrEmpty(varString))
+                return "";
+
             var sb = new StringBuilder();
             var inVariable = false;
             int varStartIndex = -1;
@@ -141,16 +178,49 @@ namespace Metatool.Tools.Software
             return sb.ToString();
         }
 
-        public async Task LaunchShortcut(IKeyEventArgs e, string shortcut, SoftwareActionConfig config)
+        public async Task LaunchShortcut(IKeyEventArgs e, string shortcut, SoftwareActionConfig config,
+            ShortcutLink shortcutLink)
         {
             e.Handled = config.Handled;
             var shell = Services.Get<IShell>();
 
-            if (string.IsNullOrEmpty(config.Args))
+            if (config.ShowIfOpened && !string.IsNullOrEmpty(shortcutLink.TargetPath) /*winstore app*/)
             {
-                shell.RunWithExplorer(shortcut);
-                return;
+                var exePath = Path.GetFullPath(shortcutLink.TargetPath);
+                var exeName = Path.GetFileNameWithoutExtension(shortcutLink.TargetPath);
+                var processes = await
+                    _virtualDesktopManager.GetProcessesOnCurrentVirtualDesktop(exeName,
+                        p =>
+                        {
+                            if (p.MainModule == null) return false;
+
+                            var processPath = Path.GetFullPath(p.MainModule.FileName);
+                            if (string.Compare(exePath, processPath, StringComparison.InvariantCultureIgnoreCase) != 0)
+                                return false;
+
+                            if (string.IsNullOrEmpty(config.ShowIfOpenedTitle))
+                                return true;
+
+                            var regex = new Regex(config.ShowIfOpenedTitle);
+
+                            return regex.IsMatch(p.MainWindowTitle);
+                        });
+
+                var process = processes.FirstOrDefault();
+
+                var hWnd = process?.MainWindowHandle;
+
+                if (hWnd != null)
+                {
+                    _windowManager.Show(hWnd.Value);
+                    return;
+                }
             }
+
+            //if (string.IsNullOrEmpty(config.Args))
+            //{
+            //    shell.RunWithExplorer(shortcut);
+            //}
 
             _contextVariable.NewGeneration();
             var arg = await ExpandVariableString(_contextVariable, config.Args, o =>
@@ -161,12 +231,32 @@ namespace Metatool.Tools.Software
                         return str;
                     case string[] strA:
                         return string.Join(" ", strA);
+                    case null:
+                        return "";
                     default:
                         throw new Exception("unsupported context variable type when parse shortcut arguments");
                 }
             });
 
-            shell.RunWithCmd(shell.NormalizeCmd(shortcut) + $" {arg}");
+            switch (config.RunMode)
+            {
+                case RunMode.Inherit:
+                    //if(string.IsNullOrEmpty(arg))
+                    //    shell.RunWithExplorer(shortcut);
+                    //else 
+                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), arg);
+
+                    break;
+                case RunMode.Admin:
+                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), arg, true);
+                    //shell.RunWithCmd(shell.NormalizeCmd(shortcut) + $" {arg}", asAdmin: true);
+                    break;
+                case RunMode.User:
+                    shell.RunAsNormalUser(shortcut, arg);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public override bool OnLoaded()
