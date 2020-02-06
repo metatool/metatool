@@ -162,6 +162,7 @@ pkg
 /src/app/Metaseed.Clipboard/packages
 /src/app/Metaseed.Clipboard/passwords.txt
 /src/app/Metaseed.Clipboard/Windows Store/ClipboardApp/win32
-!/exe/[Rr]elease/
+/exe/[Rr]elease/
 /exe/[Rr]elease/win10-x64
 /exe/release/tools/Metatool.MetaKeyboard/software
+!/exe/publish/SoftwareConfig
