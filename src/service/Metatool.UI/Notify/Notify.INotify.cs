@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Metatool.Service;
 using MenuItem = System.Windows.Controls.MenuItem;
+using System.Collections.Generic;
 
 namespace Metatool.UI
 {
@@ -89,7 +90,7 @@ namespace Metatool.UI
             var t = new ObservableCollection<TipItem>(description);
             if (t.Count == 0) return;
             var keytipsBalloon = new FancyBalloon() {Tips = t};
-            ShowMessage(keytipsBalloon, 88888);
+            ShowMessage(keytipsBalloon, 8888);
         }
 
         readonly Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> tipDictionary =
@@ -108,7 +109,8 @@ namespace Metatool.UI
             if (tp != null && keyAndTips.SequenceEqual(tp)) return;
 
             tipDictionary[name] = keyAndTips;
-            var t = tipDictionary.SelectMany(pair => pair.Value).ToArray();
+            var t = tipDictionary.SelectMany(pair => pair.Value).ToList();
+                t.Sort((a,b)=>string.Compare(a.key, b.key, StringComparison.Ordinal));
             if (t.Any())
                 ShowKeysTip(t, position);
             else
