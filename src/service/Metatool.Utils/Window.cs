@@ -33,7 +33,7 @@ namespace Metatool.Service
 
                 PInvokes.ClientToScreen(guiInfo.hwndCaret, out lt);
                 PInvokes.ClientToScreen(guiInfo.hwndCaret, out rb);
-                Console.WriteLine(lt.ToString() + rb.ToString());
+                //Console.WriteLine(lt.ToString() + rb.ToString());
                 //SystemInformation.WorkingArea
                 return new Rect(new System.Windows.Point() {X = lt.X, Y = lt.Y},
                     new System.Windows.Point() {X             = rb.X, Y = rb.Y});

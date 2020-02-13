@@ -141,6 +141,7 @@ namespace Metatool.Service
         public static extern bool ShowWindowAsync(IntPtr hWnd, SW nCmdShow);
         public static void InitialConsole(bool disableCloseButton = false, bool isAdmin=false)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             AllocConsole();
 
             var handle = GetConsoleWindow();
