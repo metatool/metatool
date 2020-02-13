@@ -23,7 +23,12 @@ namespace Metatool.Utils.Notify
                 {
                     CommandAction = ( m) =>
                     {
-                       
+                        if (m == null)
+                        {
+                            Application.Current.MainWindow.Show();
+                            return;
+                        }
+
                         if (Application.Current.MainWindow.IsVisible)
                         {
                             m.Header = "Show Window";

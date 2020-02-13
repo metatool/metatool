@@ -813,7 +813,10 @@ namespace Metatool.NotifyIcon
 
             iconData.BalloonFlags            = flags;
             iconData.CustomBalloonIconHandle = balloonIconHandle;
+            //var w = new System.Diagnostics.Stopwatch();
+            //w.Start();
             Util.WriteIconData(ref iconData, NotifyCommand.Modify, IconDataMembers.Info | IconDataMembers.Icon);
+            //Console.WriteLine($"------ {w.Elapsed}");
         }
 
 

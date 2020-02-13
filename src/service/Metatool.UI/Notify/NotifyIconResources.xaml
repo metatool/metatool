@@ -4,7 +4,7 @@
                     xmlns:notify="clr-namespace:Metatool.Utils.Notify">
 
      <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
-        <MenuItem x:Name="menu" Header="Show Window" Command="{Binding ShowWindowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+        <MenuItem x:Name="Menu" Header="Show Window" Command="{Binding ShowWindowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
         <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
     </ContextMenu>

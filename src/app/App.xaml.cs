@@ -35,6 +35,7 @@ namespace Metaseed.Metatool
             {
                 scaffolder.Register();
             });
+
             notify.ShowMessage("Metatool started!");
         }
 

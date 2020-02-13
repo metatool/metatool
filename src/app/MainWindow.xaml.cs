@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace Metaseed.Metatool
 {
@@ -10,6 +11,13 @@ namespace Metaseed.Metatool
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            this.Hide();
+            e.Cancel = true;
         }
     }
 }
