@@ -32,7 +32,7 @@ namespace Metatool.Utils.Notify
             InitializeComponent();
             TaskbarIcon.AddBalloonClosingHandler(this, OnBalloonClosing);
             listView.SelectedIndex = 0;
-            this.KeyDown += (o, e) =>
+            KeyDown += (o, e) =>
             {
                 var index = e.Key - Key.D0;
                 if (index >= 0 && DataContext is ObservableCollection<TipItem> col && index < col.Count)

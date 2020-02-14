@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Metatool.Input;
+using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 
-namespace Metatool.DataStructures
+namespace Metatool.MouseKeyHook.Implementation.Trie
 {
     public class Trie<TKey,TValue> : TrieNode<TKey,TValue>, ITrie<TKey,TValue> where TKey:ICombination where TValue: KeyEventCommand
     {
@@ -31,9 +30,9 @@ namespace Metatool.DataStructures
             return r;
         }
 
-        public void Clear()
+        public new void Clear()
         {
-            this.Clear();
+            base.Clear();
         }
     }
 }

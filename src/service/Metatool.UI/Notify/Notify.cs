@@ -43,7 +43,7 @@ namespace Metatool.UI
             }
         }
 
-        public static MessageToken<TipItem> ShowMessage(System.Windows.FrameworkElement balloon,
+        public static MessageToken<TipItem> ShowMessage(FrameworkElement balloon,
             ObservableCollection<TipItem> data, int? timeout,
             NotifyPosition position = NotifyPosition.ActiveScreen, PopupAnimation animation = PopupAnimation.None)
         {
@@ -222,8 +222,8 @@ namespace Metatool.UI
 
         private static void CenterWindowOnScreen(Window window)
         {
-            double screenWidth  = System.Windows.SystemParameters.PrimaryScreenWidth;
-            double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+            double screenWidth  = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
             double windowWidth  = window.Width;
             double windowHeight = window.Height;
             window.Left = (screenWidth  / 2) - (windowWidth  / 2);

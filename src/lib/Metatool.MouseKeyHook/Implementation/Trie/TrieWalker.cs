@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Metatool.DataStructures;
+using Metatool.MouseKeyHook.Implementation.Trie;
 using Metatool.Service;
 
 namespace Metatool.Input.MouseKeyHook.Implementation.Trie
@@ -45,7 +46,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation.Trie
 
         public bool TryGoToChild(Func<TKey, TKey, TKey> aggregateFunc, TKey initialKey = default(TKey))
         {
-            var node = CurrentNode.GetChildOrNull(aggregateFunc, initialKey);
+            var node = CurrentNode.GetChildOrNull(initialKey, aggregateFunc);
             if (node == null) return false;
             CurrentNode = node;
             return true;
@@ -54,7 +55,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation.Trie
         internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc,
             TKey initialKey = default(TKey))
         {
-            return CurrentNode.GetChildOrNull(aggregateFunc, initialKey);
+            return CurrentNode.GetChildOrNull(initialKey, aggregateFunc);
         }
 
         internal KeyValuePair<TKey, TrieNode<TKey, TValue>> GetChildOrNull(
@@ -62,7 +63,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation.Trie
                 KeyValuePair<TKey, TrieNode<TKey, TValue>>> aggregateFunc,
             KeyValuePair<TKey, TrieNode<TKey, TValue>> initKey = default(KeyValuePair<TKey, TrieNode<TKey, TValue>>))
         {
-            return CurrentNode.ChildrenPairs.Aggregate(initKey, aggregateFunc);
+            return CurrentNode.ChildrenDictionaryPairs.Aggregate(initKey, aggregateFunc);
         }
 
         public void GoToChild(TrieNode<TKey, TValue> child)

@@ -1,17 +1,13 @@
 ﻿using Metatool.NotifyIcon;
-using Metatool.UI;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Metatool.Utils.Notify;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
-using Metatool.Service;
 using MenuItem = System.Windows.Controls.MenuItem;
-using System.Collections.Generic;
+using Application = System.Windows.Application;
 
 namespace Metatool.UI
 {
@@ -85,31 +81,33 @@ namespace Metatool.UI
             NotifyPosition position = NotifyPosition.ActiveScreen)
         {
             if (tips == null) return;
+            
             var description =
                 tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {Key = t.key, DescriptionInfo = d}));
             var t = new ObservableCollection<TipItem>(description);
             if (t.Count == 0) return;
+
             var keytipsBalloon = new FancyBalloon() {Tips = t};
             ShowMessage(keytipsBalloon, 8888);
         }
 
-        readonly Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> tipDictionary =
+        readonly Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> _tipDictionary =
             new Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>>();
 
         public void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
             NotifyPosition position = NotifyPosition.ActiveScreen)
         {
             var keyAndTips = tips as (string key, IEnumerable<string> descriptions)[] ?? tips.ToArray();
-            if (tipDictionary.Count == 0 && !keyAndTips.Any())
+            if (_tipDictionary.Count == 0 && !keyAndTips.Any())
             {
                 return;
             }
 
-            tipDictionary.TryGetValue(name, out var tp);
+            _tipDictionary.TryGetValue(name, out var tp);
             if (tp != null && keyAndTips.SequenceEqual(tp)) return;
 
-            tipDictionary[name] = keyAndTips;
-            var t = tipDictionary.SelectMany(pair => pair.Value).ToList();
+            _tipDictionary[name] = keyAndTips;
+            var t = _tipDictionary.SelectMany(pair => pair.Value).ToList();
                 t.Sort((a,b)=>string.Compare(a.key, b.key, StringComparison.Ordinal));
             if (t.Any())
                 ShowKeysTip(t, position);
@@ -127,8 +125,8 @@ namespace Metatool.UI
 
         public void CloseKeysTip()
         {
-            if (System.Windows.Application.Current.Dispatcher != null && !System.Windows.Application.Current.Dispatcher.CheckAccess())
-                System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)CloseKeysTip);
+            if (Application.Current.Dispatcher != null && !Application.Current.Dispatcher.CheckAccess())
+                Application.Current.Dispatcher.BeginInvoke((Action)CloseKeysTip);
 
             TrayIcon?.CloseBalloon();
         }

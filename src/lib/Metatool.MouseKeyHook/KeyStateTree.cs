@@ -5,13 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Trie;
+using Metatool.MouseKeyHook.Implementation.Trie;
 using Metatool.Service;
 using Metatool.Service.MouseKeyHook.Implementation;
-using Metatool.UI;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input

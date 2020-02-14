@@ -21,7 +21,7 @@ namespace Metatool.DataStructures
         }
         protected internal abstract IEnumerable<TValue> Values();
 
-        protected abstract IEnumerable<TrieNodeBase<TKey, TValue>> Children();
+        protected abstract IEnumerable<TrieNodeBase<TKey, TValue>> Children { get; }
 
         protected abstract void RemoveChild(TKey key);
         protected internal abstract int ChildrenCount { get; }
@@ -92,7 +92,7 @@ namespace Metatool.DataStructures
         protected abstract TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position);
 
 
-        private static bool EndOfKeySequence(int position, IList<TKey> query)
+        private static bool EndOfKeySequence(int position, ICollection<TKey> query)
         {
             return position >= query.Count;
         }
@@ -104,7 +104,7 @@ namespace Metatool.DataStructures
 
         protected IEnumerable<TrieNodeBase<TKey, TValue>> Subtree()
         {
-            return Enumerable.Repeat(this, 1).Concat(Children().SelectMany(child => child.Subtree()));
+            return Enumerable.Repeat(this, 1).Concat(Children.SelectMany(child => child.Subtree()));
         }
     }
 }
