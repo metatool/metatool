@@ -9,6 +9,7 @@
     <LangVersion>preview</LangVersion>
     <AssemblyName>Metatool</AssemblyName>
     <StartupObject />
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -70,7 +71,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />
+    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />
   </Target>
 
   <!--<ItemGroup>

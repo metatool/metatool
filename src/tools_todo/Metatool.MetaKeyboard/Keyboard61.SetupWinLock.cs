@@ -42,20 +42,17 @@ namespace Metatool.MetaKeyboard
 
             DisableWinLock();
             var winLock   = Key.Win + Key.L;
-            var winOrLKey = Key.Win | Key.L;
+            var winOrLKey = Key.Win | Key.L | Key.Ctrl | Key.Alt | Key.Shift;
             var enableLock = winLock.OnDown(e =>
             {
-                if (e.KeyboardState.IsOtherDown(winOrLKey)) return;
                 // when LWin+L pressed, enable to lock
                 EnableWinLock();
-            });
+            }, e => !e.KeyboardState.IsOtherDown(winOrLKey));
             var disableLock = winLock.OnUp(e =>
             {
-                if (e.KeyboardState.IsOtherDown(winOrLKey)) return;
-
                 // disable again, so when unlocked, *+Win+L would not trigger screen locking
                 DisableWinLock();
-            });
+            },  e => !e.KeyboardState.IsOtherDown(winOrLKey));
             Application.Current.DispatcherUnhandledException += (_, __) => EnableWinLock();
             AppDomain.CurrentDomain.UnhandledException       += (_, __) => EnableWinLock();
             Application.Current.Exit                         += (_, __) => EnableWinLock();

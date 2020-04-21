@@ -59,7 +59,7 @@ namespace Metatool.ScreenPoint
             var dimensions = (int) Math.Ceiling(Math.Log(count, keyLen));
 
             var lowDimCount     = (int) Math.Pow(keyLen, dimensions - 1);
-            var usedInLowDim    = (int) Math.Ceiling(((double) count) / lowDimCount);
+            var usedInLowDim    =  (int) Math.Ceiling(((double) (count - lowDimCount)) / (dimensions - 1));//(int) Math.Ceiling(((double) count) / lowDimCount);
             var notUsedInLowDim = lowDimCount - usedInLowDim;
 
             static string getKeyOfDimension(int index, int dimension, string keys)

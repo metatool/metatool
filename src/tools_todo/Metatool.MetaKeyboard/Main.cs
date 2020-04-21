@@ -8,7 +8,7 @@ namespace Metatool.Tools.MetaKeyboard
         public override bool OnLoaded()
         {
             var keyboard61   = Services.GetOrCreate<Keyboard61>();
-            var metaEditor= Services.GetOrCreate<MetaEditor>();
+            // var metaEditor= Services.GetOrCreate<MetaEditor>(); // may cause problem in vscode
             var mouse        = Services.GetOrCreate<KeyboardMouse>();
             var fileExplorer = Services.GetOrCreate<FileExplorer>();
             var software     = Services.GetOrCreate<Software>();
