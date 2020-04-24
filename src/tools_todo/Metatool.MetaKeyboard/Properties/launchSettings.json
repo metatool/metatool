@@ -1,9 +1,0 @@
-﻿{
-  "profiles": {
-    "Metatool.MetaKeyboard": {
-      "commandName": "Executable",
-      "executablePath": "$(MetatoolDir)\\Metatool.exe",
-      "commandLineArgs": "$(TargetPath)"
-    }
-  }
-}
