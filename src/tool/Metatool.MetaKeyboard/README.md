@@ -12,23 +12,21 @@ MetaKeyboard redefined the CapsLock key as a function key:
 
 # Keyboard Map
 
-> arrow keys are defined same as Vim
-
 ## Direction Keys Mapping Table
 
 | Key  | Map        | Note |
 | ---- | ---------- | ---- |
-| GK+h | `Left`     |
-| GK+j | `Down`     |
-| GK+k | `Up`       |
+| GK+j | `Left`     |
+| GK+k | `Down`     |
+| GK+i | `Up`       |
 | GK+l | `Right`    |
-| GK+i | `Home`     |
-| GK+o | `End`      |
+| GK+h | `Home`     |
+| GK+; | `End`      |
 | GK+u | `PageUp`   |
 | GK+n | `PageDown` |
 
 > The `LAlt(left Alt)` key combined with the keys in this table gives you a shortcut:
-> i.e. if you want to press `Alt+Up` you could just press `LAlt+k`, no need to press `Alt+GK+k` together.
+> i.e. if you want to press `Alt+Up` you could just press `LAlt+i`, no need to press `Alt+GK+i` together.
 
 > Note: the `RAlt` still act as normal `Alt` key.
 
@@ -38,8 +36,7 @@ MetaKeyboard redefined the CapsLock key as a function key:
 | -------------- | -------------------------- | ----------------------------------------------------- |
 | `GK+1..=`      | `F1..F12`                  | F1 -> GK+1 ... F10 -> GK+0, F11 -> GK+ -, F12 -> GK+= |
 | `GK+Backspace` | `Delete`                   |
-| `GK+;`         | `Context Menu`             | show context menu, like mouse right click             |
-| `GK+b`         | `pause/Break`              |
+| `GK+'`         | `Context Menu`             | show context menu, the same as `App` key              |
 | `GK+p`         | `PrintScreen`              |
 | `GK+[`         | mouse `left` button click  |
 | `GK+]`         | mouse `right` button click |

@@ -19,7 +19,7 @@ namespace Metatool.MetaKeyboard
         public string WorkDir { get; set; }
     }
 
-    public class Keyboard61Package
+    public class KeyboardPackage
     {
         public Keyboard61HotKeys             Hotkeys { get; set; }
         public Dictionary<string, KeyMapDef> KeyMaps { get; set; }
@@ -124,7 +124,7 @@ namespace Metatool.MetaKeyboard
     [ToolConfig]
     public class Config
     {
-        public Keyboard61Package Keyboard61Package { get; set; }
+        public KeyboardPackage KeyboardPackage { get; set; }
 
         public FileExplorerPackage  FileExplorerPackage  { get; set; }
         public KeyboardMousePackage KeyboardMousePackage { get; set; }

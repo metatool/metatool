@@ -12,7 +12,7 @@ namespace Metatool.MetaKeyboard
             SetupWinLock();
             RegisterCommands();
 
-            var cfg  = config.CurrentValue.Keyboard61Package;
+            var cfg  = config.CurrentValue.KeyboardPackage;
             var maps = cfg.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
             var hotKeys = cfg.Hotkeys;
