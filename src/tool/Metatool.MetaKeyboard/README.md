@@ -38,6 +38,10 @@ MetaKeyboard redefined the CapsLock key as a function key:
 | `GK+Backspace` | `Delete`                   |
 | `GK+'`         | `Context Menu`             | show context menu, the same as `App` key              |
 | `GK+p`         | `PrintScreen`              |
+
+## KeyboardMouse
+| Key            | Map                        |Note                                                   |
+| -------------- | -------------------------- | ----------------------------------------------------- |
 | `GK+[`         | mouse `left` button click  |
 | `GK+]`         | mouse `right` button click |
 

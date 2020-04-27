@@ -81,7 +81,7 @@ namespace Metatool.MetaKeyboard
                 e.Handled = true;
                 keyboard.Type(Ctrl+Shift+Left, Back); // Ctrl is up now
                 keyboard.Down(Ctrl); //to trigger, if user hold ctrl and press back again
-            }, e => windowManager.CurrentWindow.IsExplorer);
+            }, e => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
         }
     }
 }
