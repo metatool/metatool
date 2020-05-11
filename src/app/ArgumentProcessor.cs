@@ -28,7 +28,7 @@ namespace Metaseed.Metatool
 
         public int ArgumentsProcess()
         {
-            var app = new CommandLineApplication(throwOnUnexpectedArg: false)
+            var app = new CommandLineApplication()
             {
                 Name = "metatool",
                 Description = "tools for Windows",

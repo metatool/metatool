@@ -36,8 +36,12 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PackageReference Include="Metatool.Service" Version="1.4.19" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj">
+    </ProjectReference>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0" />

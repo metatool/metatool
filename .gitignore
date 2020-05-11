@@ -166,3 +166,4 @@ pkg
 /exe/[Rr]elease/win10-x64
 /exe/release/tools/Metatool.MetaKeyboard/software
 !/exe/publish/SoftwareConfig
+/exe/publishing

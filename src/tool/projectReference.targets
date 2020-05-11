@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">    
+  <ItemGroup>
+       <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj"/>
+  </ItemGroup>
+</Project>

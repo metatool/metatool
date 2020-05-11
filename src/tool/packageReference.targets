@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">    
+  <ItemGroup>
+      <PackageReference Include="Metatool.Service" Version="1.4.19" />
+  </ItemGroup>
+</Project>

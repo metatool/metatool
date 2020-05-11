@@ -28,8 +28,13 @@
   <PropertyGroup>
     <NugetPath>.\tools</NugetPath>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
+    <PackageReference Include="Metatool.Service" Version="1.4.19" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj">
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

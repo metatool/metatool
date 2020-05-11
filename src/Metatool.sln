@@ -66,7 +66,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.ScriptTool",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IService", "IService", "{39AB1C15-8D6C-4039-8FF4-B25ADB5A1BA3}"
 	ProjectSection(SolutionItems) = preProject
-		common.props = common.props
+		service\IService\common.props = service\IService\common.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service", "service\IService\Metatool.Service\Metatool.Service.csproj", "{3EE02A16-E2C0-41C5-A6C7-BE9DD6A7672C}"
@@ -111,7 +111,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Clipboard", "servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Clipboard", "service\IService\Metatool.Service.Clipboard\Metatool.Service.Clipboard.csproj", "{E0D1D6E2-3865-4D3E-A04F-824216405316}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.MetaKeyboard", "tool\Metatool.MetaKeyboard\Metatool.Tools.MetaKeyboard.csproj", "{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "others", "others", "{F88A2637-31D7-4442-A2C6-3C8EF5C066C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.MetaKeyboard", "tool\Metatool.Tools.MetaKeyboard\Metatool.Tools.MetaKeyboard.csproj", "{3FBCC029-512A-44A4-8EC3-DE50B68270A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -471,18 +473,18 @@ Global
 		{E0D1D6E2-3865-4D3E-A04F-824216405316}.Release|x64.Build.0 = Release|Any CPU
 		{E0D1D6E2-3865-4D3E-A04F-824216405316}.Release|x86.ActiveCfg = Release|Any CPU
 		{E0D1D6E2-3865-4D3E-A04F-824216405316}.Release|x86.Build.0 = Release|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Debug|x64.Build.0 = Debug|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Debug|x86.Build.0 = Debug|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Release|x64.ActiveCfg = Release|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Release|x64.Build.0 = Release|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Release|x86.ActiveCfg = Release|Any CPU
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5}.Release|x86.Build.0 = Release|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Debug|x64.Build.0 = Debug|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Debug|x86.Build.0 = Debug|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Release|x64.ActiveCfg = Release|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Release|x64.Build.0 = Release|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Release|x86.ActiveCfg = Release|Any CPU
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -520,7 +522,7 @@ Global
 		{D950EB77-02D7-455A-A939-792284143F0A} = {A7DF5514-76E4-4F73-B40C-F1175E5B8B67}
 		{D49E40F8-E81B-4DAB-BCD4-48CC4EAAC86C} = {F04E87E1-835C-41FF-8B17-F488BCEC651A}
 		{E0D1D6E2-3865-4D3E-A04F-824216405316} = {39AB1C15-8D6C-4039-8FF4-B25ADB5A1BA3}
-		{46F649D4-2B40-4AAA-9F94-9B53E6F834A5} = {A7DF5514-76E4-4F73-B40C-F1175E5B8B67}
+		{3FBCC029-512A-44A4-8EC3-DE50B68270A3} = {A7DF5514-76E4-4F73-B40C-F1175E5B8B67}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}
