@@ -36,10 +36,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PackageReference Include="Metatool.Service" Version="1.4.19" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <ItemGroup>
     <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj">
     </ProjectReference>
   </ItemGroup>

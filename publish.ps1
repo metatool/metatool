@@ -19,7 +19,7 @@ if (Test-Path $publish) {
 }
 
 
- msbuild /t:publish "$metatool\src\app\Metaseed.Metatool.csproj"  /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publish" /p:CopyOutputSymbolsToPublishDirectory=false /p:SolutionDir="$metatool\src\" /p:PublishProfile="$metatool\src\app\Properties\PublishProfiles\metatool.pubxml"
+msbuild /t:publish "$metatool\src\app\Metaseed.Metatool.csproj"  /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publish" /p:CopyOutputSymbolsToPublishDirectory=false /p:SolutionDir="$metatool\src\" /p:PublishProfile="$metatool\src\app\Properties\PublishProfiles\metatool.pubxml"
 
 if (Test-Path "$metatool\src\exe") {
     Remove-item "$metatool\src\exe" -Force -Recurse # remove temp files generated in publish

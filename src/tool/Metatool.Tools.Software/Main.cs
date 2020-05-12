@@ -30,6 +30,11 @@ namespace Metatool.Tools.Software
             _windowManager = windowManager;
             _contextVariable = contextVariable;
             var folder = config.CurrentValue.SoftwareFolder;
+            var toolDir = Context.ToolDir<SoftwareTool>();
+            if (folder.StartsWith("."))
+            {
+                folder = Path.GetFullPath(Path.Combine(toolDir, folder));
+            }
             var files = GetFiles(folder);
 
             var hotKeys = new List<IHotkeyTrigger>();
@@ -44,7 +49,6 @@ namespace Metatool.Tools.Software
                 var hotKeyTrigger = HotkeyTrigger.Parse(fileName);
 
                 keys[^1] = hotKeyTrigger.Hotkey;
-
                 var sb = new StringBuilder();
                 foreach (var key in keys)
                 {
