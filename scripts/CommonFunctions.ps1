@@ -1,66 +1,63 @@
-function Replace-TextInFile([ValidateScript({Test-Path $_ -PathType Leaf})][string]$filePath, [string]$textToReplace, [string]$replacementText)
-{
+function Replace-TextInFile([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$filePath, [string]$textToReplace, [string]$replacementText) {
 	$fileContents = [System.IO.File]::ReadAllText($filePath)
 	$newFileContents = $fileContents.Replace($textToReplace, $replacementText)
 	[System.IO.File]::WriteAllText($filePath, $newFileContents)
 }
 
-function Read-MessageBoxDialog([string]$Message, [string]$WindowTitle, [System.Windows.Forms.MessageBoxButtons]$Buttons = [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]$Icon = [System.Windows.Forms.MessageBoxIcon]::None)
-{
+function Read-MessageBoxDialog([string]$Message, [string]$WindowTitle, [System.Windows.Forms.MessageBoxButtons]$Buttons = [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]$Icon = [System.Windows.Forms.MessageBoxIcon]::None) {
 	Add-Type -AssemblyName System.Windows.Forms
 	return [System.Windows.Forms.MessageBox]::Show($Message, $WindowTitle, $Buttons, $Icon)
 }
 
-function Read-InputBoxDialog([string]$Message, [string]$WindowTitle, [string]$DefaultText)
-{    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
-[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+function Read-InputBoxDialog([string]$Message, [string]$WindowTitle) {
+	[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+	[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
 
-$objForm = New-Object System.Windows.Forms.Form
-$objForm.Text = $formTitle
-$objForm.Size = New-Object System.Drawing.Size(300,200)
-$objForm.StartPosition = "CenterScreen"
+	$objForm = New-Object System.Windows.Forms.Form
+	$objForm.Text = $WindowTitle
+	$objForm.Size = New-Object System.Drawing.Size(300, 200)
+	$objForm.StartPosition = "CenterScreen"
 
-$objForm.KeyPreview = $True
-$objForm.Add_KeyDown({if ($_.KeyCode -eq "Enter") {$x=$objTextBox.Text;$objForm.Close()}})
-$objForm.Add_KeyDown({if ($_.KeyCode -eq "Escape") {$objForm.Close()}})
+	$objForm.KeyPreview = $True
+	$objForm.Add_KeyDown( { if ($_.KeyCode -eq "Enter") { $x = $objTextBox.Text; $objForm.Close() } })
+	$objForm.Add_KeyDown( { if ($_.KeyCode -eq "Escape") { $objForm.Close() } })
 
-$OKButton = New-Object System.Windows.Forms.Button
-$OKButton.Location = New-Object System.Drawing.Size(75,120)
-$OKButton.Size = New-Object System.Drawing.Size(75,23)
-$OKButton.Text = "OK"
-$OKButton.Add_Click({$Script:userInput=$objTextBox.Text;$objForm.Close()})
-$objForm.Controls.Add($OKButton)
+	$OKButton = New-Object System.Windows.Forms.Button
+	$OKButton.Location = New-Object System.Drawing.Size(75, 120)
+	$OKButton.Size = New-Object System.Drawing.Size(75, 23)
+	$OKButton.Text = "OK"
+	$OKButton.Add_Click( { $Script:userInput = $objTextBox.Text; $objForm.Close() })
+	$objForm.Controls.Add($OKButton)
 
-$CANCELButton = New-Object System.Windows.Forms.Button
-$CANCELButton.Location = New-Object System.Drawing.Size(150,120)
-$CANCELButton.Size = New-Object System.Drawing.Size(75,23)
-$CANCELButton.Text = "CANCEL"
-$CANCELButton.Add_Click({$objForm.Close()})
-$objForm.Controls.Add($CANCELButton)
+	$CANCELButton = New-Object System.Windows.Forms.Button
+	$CANCELButton.Location = New-Object System.Drawing.Size(150, 120)
+	$CANCELButton.Size = New-Object System.Drawing.Size(75, 23)
+	$CANCELButton.Text = "CANCEL"
+	$CANCELButton.Add_Click( { $objForm.Close() })
+	$objForm.Controls.Add($CANCELButton)
 
-$objLabel = New-Object System.Windows.Forms.Label
-$objLabel.Location = New-Object System.Drawing.Size(10,20)
-$objLabel.Size = New-Object System.Drawing.Size(280,30)
-$objLabel.Text = $textTitle
-$objForm.Controls.Add($objLabel)
+	$objLabel = New-Object System.Windows.Forms.Label
+	$objLabel.Location = New-Object System.Drawing.Size(10, 20)
+	$objLabel.Size = New-Object System.Drawing.Size(280, 30)
+	$objLabel.Text = $Message
+	$objForm.Controls.Add($objLabel)
 
-$objTextBox = New-Object System.Windows.Forms.TextBox
-$objTextBox.Location = New-Object System.Drawing.Size(10,50)
-$objTextBox.Size = New-Object System.Drawing.Size(260,20)
-$objForm.Controls.Add($objTextBox)
+	$objTextBox = New-Object System.Windows.Forms.TextBox
+	$objTextBox.Location = New-Object System.Drawing.Size(10, 50)
+	$objTextBox.Size = New-Object System.Drawing.Size(260, 20)
+	$objForm.Controls.Add($objTextBox)
 
-$objForm.Topmost = $True
+	$objForm.Topmost = $True
 
-$objForm.Add_Shown({$objForm.Activate()})
+	$objForm.Add_Shown( { $objForm.Activate() })
 
-[void] $objForm.ShowDialog()
+	[void] $objForm.ShowDialog()
 
-return $userInput
+	return $userInput
 }
 
-function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [string]$DefaultText)
-{
-<#
+function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [string]$DefaultText) {
+	<#
 	.SYNOPSIS
 	Prompts the user with a multi-line input box and returns the text they enter, or null if they cancelled the prompt.
 	
@@ -115,15 +112,15 @@ function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [s
 	
 	# Create the Label.
 	$label = New-Object System.Windows.Forms.Label
-	$label.Location = New-Object System.Drawing.Size(10,10) 
-	$label.Size = New-Object System.Drawing.Size(280,20)
+	$label.Location = New-Object System.Drawing.Size(10, 10) 
+	$label.Size = New-Object System.Drawing.Size(280, 20)
 	$label.AutoSize = $true
 	$label.Text = $Message
 	
 	# Create the TextBox used to capture the user's text.
 	$textBox = New-Object System.Windows.Forms.TextBox 
-	$textBox.Location = New-Object System.Drawing.Size(10,40) 
-	$textBox.Size = New-Object System.Drawing.Size(575,200)
+	$textBox.Location = New-Object System.Drawing.Size(10, 40) 
+	$textBox.Size = New-Object System.Drawing.Size(575, 200)
 	$textBox.AcceptsReturn = $true
 	$textBox.AcceptsTab = $false
 	$textBox.Multiline = $true
@@ -132,22 +129,22 @@ function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [s
 	
 	# Create the OK button.
 	$okButton = New-Object System.Windows.Forms.Button
-	$okButton.Location = New-Object System.Drawing.Size(415,250)
-	$okButton.Size = New-Object System.Drawing.Size(75,25)
+	$okButton.Location = New-Object System.Drawing.Size(415, 250)
+	$okButton.Size = New-Object System.Drawing.Size(75, 25)
 	$okButton.Text = "OK"
-	$okButton.Add_Click({ $form.Tag = $textBox.Text; $form.Close() })
+	$okButton.Add_Click( { $form.Tag = $textBox.Text; $form.Close() })
 	
 	# Create the Cancel button.
 	$cancelButton = New-Object System.Windows.Forms.Button
-	$cancelButton.Location = New-Object System.Drawing.Size(510,250)
-	$cancelButton.Size = New-Object System.Drawing.Size(75,25)
+	$cancelButton.Location = New-Object System.Drawing.Size(510, 250)
+	$cancelButton.Size = New-Object System.Drawing.Size(75, 25)
 	$cancelButton.Text = "Cancel"
-	$cancelButton.Add_Click({ $form.Tag = $null; $form.Close() })
+	$cancelButton.Add_Click( { $form.Tag = $null; $form.Close() })
 	
 	# Create the form.
 	$form = New-Object System.Windows.Forms.Form 
 	$form.Text = $WindowTitle
-	$form.Size = New-Object System.Drawing.Size(610,320)
+	$form.Size = New-Object System.Drawing.Size(610, 320)
 	$form.FormBorderStyle = 'FixedSingle'
 	$form.StartPosition = "CenterScreen"
 	$form.AutoSizeMode = 'GrowAndShrink'
@@ -163,7 +160,7 @@ function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [s
 	$form.Controls.Add($cancelButton)
 	
 	# Initialize and show the form.
-	$form.Add_Shown({$form.Activate()})
+	$form.Add_Shown( { $form.Activate() })
 	$form.ShowDialog() > $null	# Trash the text of the button that was clicked.
 	
 	# Return the text that the user entered.

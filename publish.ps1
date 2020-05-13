@@ -35,10 +35,10 @@ Set-Location $metatool
 $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$publish\metatool.exe").ProductVersion
 
 $target = "$metatool\exe\published\Metatool.$version.zip"
-$entries = New-Object System.Collections.Generic.List[System.Object]
-Get-ChildItem $publish | ForEach-Object { $entries.Add($_.FullName) }
+# $entries = New-Object System.Collections.Generic.List[System.Object]
+# Get-ChildItem $publish | ForEach-Object { $entries.Add($_.FullName) }
 
-Compress-Archive -LiteralPath $entries -CompressionLevel Optimal -DestinationPath $target -Force
+# Compress-Archive -LiteralPath $entries -CompressionLevel Optimal -DestinationPath $target -Force
 
 
 ## release
@@ -55,8 +55,15 @@ $publishToGitHubScriptFilePath = Join-Path -Path $scripts -ChildPath 'Publish-Ne
 . $commonFunctionsScriptFilePath
 . $publishToGitHubScriptFilePath
 
-
-Read-MessageBoxDialog -WindowTitle "Commit and push changes to GitHub" -Message "Please commit the changes made by this script and push them to GitHub. This will ensure that the GitHub Release about to be created places the Tag on the correct (latest) commit. Click the OK button once that is done." -Buttons OK > $null
+$newReleaseNotes = Read-MultiLineInputBoxDialog -WindowTitle 'Release Notes' -Message 'What release notes should be included with this version?' -DefaultText $currentManifestReleaseNotes
+if ($null -eq $newReleaseNotes) { throw 'You cancelled out of the release notes prompt.' }
+if ($newReleaseNotes.Contains("'"))
+{
+	$errorMessage = 'Single quotes are not allowed in the Release Notes, as they break our ability to parse them with PowerShell. Exiting script.'
+	Read-MessageBoxDialog -Message $errorMessage -WindowTitle 'Single Quotes Not Allowed In Release Notes'
+	throw $errorMessage
+}
+$newReleaseNotes = $newReleaseNotes.Trim()
 
 $versionNumberIsAPreReleaseVersion = $version -match '-+|[a-zA-Z]+' # (e.g. 1.2.3-alpha). i.e. contains a dash or letters.
 $gitHubReleaseParameters =
