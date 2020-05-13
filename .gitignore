@@ -167,3 +167,4 @@ pkg
 /exe/release/tools/Metatool.MetaKeyboard/software
 !/exe/publish/SoftwareConfig
 /exe/publishing
+/exe/published

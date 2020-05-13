@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <Import Project="..\common.props" />
   <PropertyGroup>
     <UseWPF>true</UseWPF>
     <OutputType>Exe</OutputType>
