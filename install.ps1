@@ -41,4 +41,4 @@ $path = $paths -join ";"
 
 [System.Environment]::SetEnvironmentVariable("path", $path, [System.EnvironmentVariableTarget]::User)
 
-Write-Host "Successfully installed version ($tag_name)"
+Write-Host "Successfully installed version ($tag_name): $installationFolder\Metatool.exe "
