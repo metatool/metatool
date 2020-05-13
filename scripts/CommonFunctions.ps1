@@ -12,7 +12,7 @@ function Read-MessageBoxDialog([string]$Message, [string]$WindowTitle, [System.W
 }
 
 function Read-InputBoxDialog([string]$Message, [string]$WindowTitle, [string]$DefaultText)
-{
+{[void][Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic')
 	Add-Type -AssemblyName Microsoft.VisualBasic
 	return [Microsoft.VisualBasic.Interaction]::InputBox($Message, $WindowTitle, $DefaultText)
 }

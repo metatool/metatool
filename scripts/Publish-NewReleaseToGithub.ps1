@@ -5,7 +5,7 @@ function Publish-NewReleaseToGitHub($gitHubReleaseParameters) {
 	$THIS_SCRIPTS_DIRECTORY_PATH = $PSScriptRoot
 	$pathToLocalScript = Join-Path -Path $THIS_SCRIPTS_DIRECTORY_PATH -ChildPath '.\New-GitHubRelease.psm1'
 	$pathToLocalScript = Resolve-Path -Path $pathToLocalScript
-	Import-Module -Name $pathToLocalScript -Force -Scope CurrentUser
+	Import-Module -Name $pathToLocalScript -Force
 	# }
 	# else
 	# {
