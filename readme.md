@@ -7,5 +7,5 @@ The `goal` of MetaKB is described by the below gif:
 ## Installing
 
 ``` powershell
-(new-object Net.WebClient).DownloadString("https://raw.githubusercontent.com/metatool/metatool/master/install/install.ps1") | iex
+(new-object Net.WebClient).DownloadString("https://raw.githubusercontent.com/metatool/metatool/master/install.ps1") | iex
 ```

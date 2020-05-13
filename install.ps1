@@ -23,7 +23,7 @@ $tag_name =  $latestRelease.tag_name
 # Download the zip
 Write-Host "Downloading latest version ($tag_name)"
 $client = New-Object "System.Net.WebClient"
-$url = "https://github.com/metatool/metatool/releases/download/$tag_name/metatool.$tag_name.zip"
+$url = "https://github.com/metatool/metatool/releases/download/$tag_name/metatool_$tag_name.zip"
 $zipFile = Join-Path $tempFolder "metatool.zip"
 $client.DownloadFile($url,$zipFile)
 
