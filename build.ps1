@@ -16,3 +16,6 @@ Set-Location $source
 $target = $rebuild ? "rebuild" : "build"
 $config = $release ? "Release" : "Debug"
 msbuild src\Metatool.sln -t:$target /p:Configuration=$config
+if ( $LASTEXITCODE -ne 0 ) {
+    throw "build fail!"
+}
