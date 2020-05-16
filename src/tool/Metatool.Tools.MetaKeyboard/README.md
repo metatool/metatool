@@ -1,14 +1,18 @@
+If you are like me a geek of preferring to use keyboard to operate your Windows system, then here is the right place for you.
 
+The `goal` of MetaKB is described by the below gif:
+
+![keyboard](./keyboard.gif)
 ## Description
 
 MetaKeyboard redefined the CapsLock key as a function key:
 
 - If you press it, it act like the ESC key;
-- If you hold it and press another key, it acts like another `FUNCTION` key (like: <kbd>ctrl</kbd>, <kbd>alt</kbd>) for you.
+- If you hold it and press another key, it could act like another `FUNCTION` key (like: <kbd>ctrl</kbd>, <kbd>alt</kbd>) for you.
 
-> you can press CapsLock+` to toggle between normal CapsLock function and the new _function key_ function.
+> you can press CapsLock+` to toggle on/off the CapsLock key.
 
-> below we use 'GK' to stands for 'GlobalKey', it could be configured
+> below we use 'GK' to stands for 'GlobalKey', it could be configured, by default it configured as the `Space`.
 
 # Keyboard Map
 

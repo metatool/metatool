@@ -4,9 +4,9 @@
       "Keyboard": {
         "KeyAliases": {
           // global key
-          "GK": "Space",
+          "GK": "Space|Caps",
           // context key
-          "CK": "Caps|Enter",
+          "CK": "Enter",
           // apps key
           "AK": "Apps|Tab"
         },

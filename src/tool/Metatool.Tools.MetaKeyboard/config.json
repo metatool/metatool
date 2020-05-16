@@ -14,14 +14,14 @@
           // add: "source":"target",
           // delete: "GK + D1": null or "" to disable it
           // modify: "GK + D1": "F2" to remap it to F2
-          "Z": {
-            "Target": "Ctrl + Shift",
-            "Type": "ChordMap"
-          },
-          "X": {
-            "Target": "Win + Shift",
-            "Type": "ChordMap"
-          },
+          // "Z": {
+          //   "Target": "Ctrl + Shift",
+          //   "Type": "ChordMap"
+          // },
+          // "X": {
+          //   "Target": "Win + Shift",
+          //   "Type": "ChordMap"
+          // },
           //"C": { // switch input method
           //  "Target": "Alt + Shift",
           //  "Type": "ChordMap"

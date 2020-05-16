@@ -29,9 +29,9 @@ $gitHubUsername = 'metatool'
 $gitHubRepositoryName = 'metatool'
 
 $THIS_SCRIPTS_DIRECTORY = Split-Path $script:MyInvocation.MyCommand.Path
-$scripts = Join-Path -Path $THIS_SCRIPTS_DIRECTORY -ChildPath 'scripts'
-$commonFunctionsScriptFilePath = Join-Path -Path $scripts -ChildPath 'CommonFunctions.ps1'
-$publishToGitHubScriptFilePath = Join-Path -Path $scripts -ChildPath 'Publish-NewReleaseToGitHub.ps1'
+$script = Join-Path -Path $THIS_SCRIPTS_DIRECTORY -ChildPath 'script'
+$commonFunctionsScriptFilePath = Join-Path -Path $script -ChildPath 'CommonFunctions.ps1'
+$publishToGitHubScriptFilePath = Join-Path -Path $script -ChildPath 'Publish-NewReleaseToGitHub.ps1'
 
 . $commonFunctionsScriptFilePath
 . $publishToGitHubScriptFilePath
