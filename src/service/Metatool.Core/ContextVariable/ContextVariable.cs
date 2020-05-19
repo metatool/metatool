@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Metatool.Service;
 
@@ -21,7 +20,7 @@ namespace Metatool.Core
             }
         }
 
-        private int                       _generation = 1;
+        private  int                               _generation = 1;
         readonly Dictionary<string, VariableValue> _variables  = new Dictionary<string, VariableValue>();
 
         public void NewGeneration()
@@ -41,9 +40,9 @@ namespace Metatool.Core
             if (_generation > varValue.Generation || force)
             {
                 varValue.Value = await varValue.Generator();
-
                 varValue.Generation = _generation;
             }
+
             return (T) varValue.Value;
         }
     }

@@ -21,7 +21,6 @@ namespace Metatool.Tools.Software
         public ICommandToken<IKeyEventArgs> CommandA;
         public IKeyCommand CommandB;
 
-
         public SoftwareTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config, IShell shell,
             IVirtualDesktopManager virtualDesktopManager, IWindowManager windowManager,
             IContextVariable contextVariable)
@@ -29,12 +28,25 @@ namespace Metatool.Tools.Software
             _virtualDesktopManager = virtualDesktopManager;
             _windowManager = windowManager;
             _contextVariable = contextVariable;
-            var folder = config.CurrentValue.SoftwareFolder;
-            var toolDir = Context.ToolDir<SoftwareTool>();
-            if (folder.StartsWith("."))
+            var folders = config.CurrentValue.ConfigFolders;
+            foreach (var folder in folders)
             {
-                folder = Path.GetFullPath(Path.Combine(toolDir, folder));
+                loadConfigInFolder(folder, shell);
             }
+
+            CommandA = commandManager.Add(keyboard.OnDown(Caps + A),
+                e => { Logger.LogInformation($"{nameof(SoftwareTool)}: Caps+A triggered!!!!!!!"); });
+            CommandB = (Caps + B).OnDown(e => Logger.LogWarning("Caps+B pressed!!!"));
+
+            Logger.LogInformation(config.CurrentValue.Option2.ToString());
+            RegisterCommands();
+        }
+
+        private void loadConfigInFolder(string folder, IShell shell)
+        {
+            var toolDir = Context.ToolDir<SoftwareTool>();
+
+            folder = Context.ParsePath(folder, toolDir, typeof(SoftwareTool));
             var files = GetFiles(folder);
 
             var hotKeys = new List<IHotkeyTrigger>();
@@ -92,16 +104,7 @@ namespace Metatool.Tools.Software
                     });
                 }
             }
-
-
-            CommandA = commandManager.Add(keyboard.OnDown(Caps + A),
-                e => { Logger.LogInformation($"{nameof(SoftwareTool)}: Caps+A triggered!!!!!!!"); });
-            CommandB = (Caps + B).OnDown(e => Logger.LogWarning("Caps+B pressed!!!"));
-
-            Logger.LogInformation(config.CurrentValue.Option2.ToString());
-            RegisterCommands();
         }
-
         public enum RunMode
         {
             Inherit,
@@ -206,7 +209,6 @@ namespace Metatool.Tools.Software
                                 return true;
 
                             var regex = new Regex(config.ShowIfOpenedTitle);
-
                             return regex.IsMatch(p.MainWindowTitle);
                         });
 

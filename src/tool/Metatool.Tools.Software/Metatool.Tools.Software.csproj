@@ -2,11 +2,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Title>Metatool Tool Demo</Title>
-    <Description>template for create metatool plugin tool</Description>
+    <Title>Metatool Tool Software</Title>
+    <Description>open software quickly</Description>
     <Authors>metasong</Authors>
     <Company>metaseed</Company>
-    <Copyright>2019 metaseed</Copyright>
+    <Copyright>metaseed</Copyright>
     <PackageProjectUrl>https://github.com/metatool/metatool</PackageProjectUrl>
     <RepositoryUrl>https://github.com/metatool/metatool</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Metatool.Service;
+﻿using Metatool.Service;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Metatool.Utils
@@ -12,6 +9,6 @@ namespace Metatool.Utils
             services.AddSingleton<IShell, Shell>()
                 .AddSingleton<IWindowManager, WindowManager>()
                 .AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>()
-                .AddSingleton<IFileExplorer,FileExplorer>();
+                .AddSingleton<IFileExplorer, FileExplorer>();
     }
 }
