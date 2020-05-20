@@ -111,4 +111,4 @@ mklink software .\metaKeyboard\software /J
 1. [ClipJump](https://github.com/aviaryan/Clipjump)
 1. [Git for Windows](https://git-scm.com/download/win), except git tools, it provides a lot useful tools
 
-[## Appendix: Windows Useful Shortcuts](./doc/windows-shortcuts.md)
+## [Appendix: Windows Useful Shortcuts](./doc/windows-shortcuts.md)
