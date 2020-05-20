@@ -64,15 +64,15 @@
 | `Ctrl+Shift+1/2/.../8`                | View modes                                                                                                         | `Ctrl+Shift+3`: icons; `Ctrl+Shift+6`: details;                                                                                             |
 | `F11(GK+-)`                           | Toggle full-screen mode.                                                                                           |
 | `Ctrl+F3(GK+3) or Ctrl+F`             | go to search box, your could then press Tab go to navigation pane, then press Tab go to file list.                 | Note: replaced by everything, but we could use Ctrl+E to use it. note: after press `Ctrl+e` then press `Esc` would go to file list directly |
-| `Ctrl+E or Ctrl+F then Esc`           | select the file pane(works for file explorer and open/save dialog)                                                 |
+| `(Ctrl+E or Ctrl+F) then Esc`           | select the file pane(works for file explorer and open/save dialog)                                                 |
 
 ## Virtual desktops
 
 | Key                           | Function                 | Note |
 | ----------------------------- | ------------------------ | ---- |
-| `Win+Ctrl+d`                  | Add Dessktop             |
-| `Win+Ctrl+F4(GK+4)`           | Close desktop            |
-| `Win+Ctrl+Right/Left(GK+l/j)` | Switch to right/left one |
+| `Win+Ctrl+d`                  | Add virtual desktop             |
+| `Win+Ctrl+F4(GK+4)`           | Close virtual desktop            |
+| `Win+Ctrl+Right/Left` | Switch to right/left one |
 
 ## Dialog box
 
