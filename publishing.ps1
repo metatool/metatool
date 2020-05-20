@@ -22,13 +22,12 @@ msbuild /t:publish "$metatool\src\app\Metaseed.Metatool.csproj"  /p:DeployOnBuil
 if ( $LASTEXITCODE -ne 0 ) {
     throw "publish fail!"
 }
+. ./script/Build-Tool.ps1
+
 "Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {
-    msbuild "$metatool\src\tool\$_\$_.csproj" -t:$target /p:SolutionDir=$metatool\src\ /p:Configuration=Release
-    if ( $LASTEXITCODE -ne 0 ) {
-        throw "build fail!"
-    }
-    Copy-Item "$tools\$_" -Destination "$publish\tools\$_" -Recurse -Exclude *.nupkg, *.pdb, Metatool.Service*.dll
+    Build-Tool $_ $rebuild
 }
+
 $metaSoftware = "$metatool\exe\publish\tools\Metatool.Tools.Software"
 $metaSoftwarePublishing = "$metatool\exe\publishing\tools\Metatool.Tools.Software"
 
