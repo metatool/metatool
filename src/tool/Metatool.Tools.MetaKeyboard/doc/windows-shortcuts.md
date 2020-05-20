@@ -35,7 +35,6 @@
 |`Win+Shift+M`| Restore minimized windows|
 |`Win+Shift+Right`| move window to the right monitor|
 |`Win+Shift+Left`| move window to the left monitor|
-|`Win+Up`| Max window|
 |`Win+Shift+Up`| just Max the height of the window|
 |`Win+Down`|Min Window|
 |`Win+Left/Right`|Snap to the left/right half of the screen. Note: following Win+Up/Down snap it the a quandrant|
@@ -46,17 +45,17 @@
 | Key                                   | Function                                                                                                           | Note                                                                                                                                        |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `F2(GK+2)`                            | Rename.                                                                                                            |
-| `Ctrl+Shift+E`                        | Expand navigation pane to the current folder.                                                                      |
+| `Ctrl+Shift+E`                        | Expand navigation pane to show the current folder.                                                                      |
 | `Ctrl+N`                              | Open a new window of the same folder.                                                                              |
-| `Ctrl+Shift+N`                        | Create a new subfolder in the current folder.                                                                      | _use `Ctrl+Alt+n` to create new file_                                                                                                       |
+| `Ctrl+Shift+N`                        | Create a new sub-folder in the current folder.                                                                      | _use `Ctrl+Alt+n` to create new file_                                                                                                       |
 | `Ctrl+W`                              | Close the current window.                                                                                          |
-| `Alt+Up`                              | Arrow Go up one level.                                                                                             |
-| `Alt+Right`                           | Arrow Go forward.                                                                                                  |
-| `Alt+Left`                            | Arrow Go back.                                                                                                     |
-| `Alt+d`                               | Move the focus to the address bar, and select the current path. (press `Ctrl+c` to copy)                           |
+| `Alt+Up`                              | Go up one level.                                                                                             |
+| `Alt+Right`                           | Go forward.                                                                                                  |
+| `Alt+Left`                            | Go back.                                                                                                     |
+| `Alt+d`                               | Focus the address bar, and select the current path. (press `Ctrl+c` to copy)                           |
 | `Alt+p`                               | Preview panel                                                                                                      | `alt+1` to show navigation pane (when add it to quick access bar)                                                                           |
 | `Ctrl+arrow key` and `Ctrl+ Spacebar` | to move to an item and press Spacebar to select/unselect multiple individual items in window                       | `ctrl+arrow`: move while select; `ctrl+space`: toggle selection                                                                             |
-| `Shift+arrow(Caps+ikjl)`              | continously Select more than one item in a window or on the desktop, or select text in a document                  |
+| `Shift+arrow`              | continuously Select more than one item in a window or on the desktop, or select text in a document                  |
 | `Alt+Spacebar`                        | Show context menu of the active window.                                                                            |
 | `F4(GK+4)`                            | Move the insertion point to the address bar, and display the contents of the drop-down list of previous addresses. |
 | `F5(GK+5)`                            | Refresh.                                                                                                           |
