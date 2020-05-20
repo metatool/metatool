@@ -6,8 +6,10 @@ All notable changes to the "metatool" extension will be documented in this file.
 ---
 ### V1.1.0 - May 20, 2020
 #### Added
+ - [ ] add readme content
 #### Removed
 #### Changed
+ - [ ] make metatool script fast when debug
 #### Fixed
 
 ## Current Version

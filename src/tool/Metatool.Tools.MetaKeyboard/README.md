@@ -2,7 +2,7 @@ If you are like me a geek of preferring to use keyboard to operate your Windows 
 
 The `goal` of MetaKB is described by the below gif:
 
-![keyboard](./keyboard.gif)
+![keyboard](./image/keyboard.gif)
 ## Description
 
 MetaKeyboard redefined the CapsLock key as a function key:
