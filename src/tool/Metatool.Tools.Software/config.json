@@ -2,6 +2,7 @@
   "Tools": {
     // the key should be the dll name and it is used as an unique id of the tool
     "Metatool.Tools.Software": {
+      // we could use ${toolDir}: current tool dir, or ${appDir} metatool.exe dir.
       "ConfigFolders": [ "${toolDir}\\SoftwareConfig"]
     }
   }

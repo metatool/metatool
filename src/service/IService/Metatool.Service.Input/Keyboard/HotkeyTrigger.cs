@@ -26,7 +26,7 @@ namespace Metatool.Service
         {
             return value switch
             {
-                string str => new HotkeyTrigger() {Hotkey = str},
+                string str => new HotkeyTrigger() { Hotkey = str },
                 _ => base.ConvertFrom(context, culture, value)
             };
         }
@@ -40,6 +40,7 @@ namespace Metatool.Service
         string Tree { get; set; }
         bool Handled { get; set; }
         bool Enabled { get; set; }
+        string Description { get; set; }
         IDictionary<string, string> Context { get; set; }
         HotkeyTrigger WithAliases(params IDictionary<string, string>[] tempAliasesDics);
 
@@ -81,7 +82,7 @@ namespace Metatool.Service
             }
         }
 
-        public bool Handled { get; set; }
+        public bool Handled { get; set; } = true;
         public string Hotkey { get; set; }
 
         public KeyEvent Event { get; set; } = KeyEvent.Down;
@@ -145,7 +146,7 @@ namespace Metatool.Service
                 des = hotkeyTrigger.Remove(iAnd, 1);
             }
 
-            var trigger = new HotkeyTrigger() {Hotkey = hotChar.ToString().ToUpper(), Description = des};
+            var trigger = new HotkeyTrigger() { Hotkey = hotChar.ToString().ToUpper(), Description = des };
 
             if (iNum != -1)
             {

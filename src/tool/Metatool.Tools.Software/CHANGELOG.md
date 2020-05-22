@@ -6,7 +6,8 @@ All notable changes to the "Metatool.Tools.Software" plugin will be documented i
 ---
 ### V1.1.0 - May 20, 2020
 #### Added
-    - [x] support private software config location
+ - [x] support private software config location
+ - [ ] add readme
 #### Removed
 #### Changed
 #### Fixed

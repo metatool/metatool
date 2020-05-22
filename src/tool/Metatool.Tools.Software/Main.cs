@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Metatool.Service;
@@ -13,54 +11,52 @@ using static Metatool.Service.Key;
 
 namespace Metatool.Tools.Software
 {
-    public class SoftwareTool : ToolBase
+    public partial class SoftwareTool : ToolBase
     {
+        private readonly IShell _shell;
         private readonly IVirtualDesktopManager _virtualDesktopManager;
         private readonly IWindowManager _windowManager;
         private readonly IContextVariable _contextVariable;
-        public ICommandToken<IKeyEventArgs> CommandA;
-        public IKeyCommand CommandB;
 
         public SoftwareTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config, IShell shell,
             IVirtualDesktopManager virtualDesktopManager, IWindowManager windowManager,
             IContextVariable contextVariable)
         {
+            _shell = shell;
             _virtualDesktopManager = virtualDesktopManager;
             _windowManager = windowManager;
             _contextVariable = contextVariable;
+
             var folders = config.CurrentValue.ConfigFolders;
             foreach (var folder in folders)
             {
-                loadConfigInFolder(folder, shell);
+                loadConfigInFolder(folder);
             }
 
-            CommandA = commandManager.Add(keyboard.OnDown(Caps + A),
-                e => { Logger.LogInformation($"{nameof(SoftwareTool)}: Caps+A triggered!!!!!!!"); });
-            CommandB = (Caps + B).OnDown(e => Logger.LogWarning("Caps+B pressed!!!"));
-
-            Logger.LogInformation(config.CurrentValue.Option2.ToString());
             RegisterCommands();
         }
 
-        private void loadConfigInFolder(string folder, IShell shell)
+        private void loadConfigInFolder(string folder)
         {
             var toolDir = Context.ToolDir<SoftwareTool>();
-
             folder = Context.ParsePath(folder, toolDir, typeof(SoftwareTool));
             var files = GetFiles(folder);
+            ConfigShortcuts(files, folder);
+        }
 
-            var hotKeys = new List<IHotkeyTrigger>();
+        void ConfigShortcuts(IEnumerable<string> files, string rootFolder) {
+                        var hotKeys = new List<IHotkeyTrigger>();
 
             foreach (var file in files)
             {
-                var keys = file.Replace(folder, "").Split(Path.DirectorySeparatorChar).Select(k => k.Trim())
+                var keys = file.Replace(rootFolder, "").Split(Path.DirectorySeparatorChar).Select(k => k.Trim())
                     .Where(k => !string.IsNullOrEmpty(k)).ToArray();
                 var fileName = keys[^1];
 
                 fileName = Path.GetFileNameWithoutExtension(fileName);
-                var hotKeyTrigger = HotkeyTrigger.Parse(fileName);
+                var hotkeyTrigger = HotkeyTrigger.Parse(fileName);
 
-                keys[^1] = hotKeyTrigger.Hotkey;
+                keys[^1] = hotkeyTrigger.Hotkey;
                 var sb = new StringBuilder();
                 foreach (var key in keys)
                 {
@@ -68,81 +64,47 @@ namespace Metatool.Tools.Software
                     if (!key.EndsWith('+')) sb.Append(',');
                 }
 
-                hotKeyTrigger.Hotkey = sb.ToString();
-                hotKeys.Add(hotKeyTrigger);
+                hotkeyTrigger.Hotkey = sb.ToString();
+                hotKeys.Add(hotkeyTrigger);
                 if (Path.GetExtension(file) == ".lnk")
                 {
-                    var shortcutConfig = shell.ReadShortcut(file);
-                    if (shortcutConfig == null) continue;
-
-                    var conf = new SoftwareActionConfig();
-                    if (!string.IsNullOrEmpty(shortcutConfig.Comment))
-                    {
-                        try
-                        {
-                            conf = SoftwareActionConfig.Parse(shortcutConfig.Comment);
-                        }
-                        catch (Exception)
-                        {
-                            Logger.LogError($"Could not parse Commit in file:{file} - {shortcutConfig.Comment} ");
-                        }
-                    }
-
-                    conf.Handled |= hotKeyTrigger.Handled;
-
-
-                    hotKeyTrigger.OnEvent(async e =>
-                    {
-                        try
-                        {
-                            await LaunchShortcut(e, file, conf, shortcutConfig);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.LogError(ex, $"Can not run shortcut: {file}");
-                        }
-                    });
+                    ConfigShortcut(file, hotkeyTrigger);
                 }
             }
         }
-        public enum RunMode
+        bool ConfigShortcut(string file, IHotkeyTrigger hotkeyTrigger)
         {
-            Inherit,
-            Admin,
-            User
-        }
+            var shortcutConfig = _shell.ReadShortcut(file);
+            if (shortcutConfig == null) return false;
 
-        public class SoftwareActionConfig
-        {
-            public bool Handled { get; set; } = true;
-            public string ActionId { get; set; } = "ShortcutLaunch";
-            public string Args { get; set; }
-            public bool ShowIfOpened { get; set; } = true;
-
-            /// <summary>
-            /// regex
-            /// </summary>
-            public string ShowIfOpenedTitle { get; set; }
-
-            public RunMode RunMode { get; set; } = RunMode.Inherit;
-
-            public static SoftwareActionConfig Parse(string jsonString)
+            var conf = new SoftwareActionConfig();
+            if (!string.IsNullOrEmpty(shortcutConfig.Comment.Trim()))
             {
-                if (!jsonString.TrimStart().StartsWith('{') || string.IsNullOrEmpty(jsonString))
-                    return new SoftwareActionConfig();
-                var options = new JsonSerializerOptions();
-                options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 try
                 {
-                    return JsonSerializer.Deserialize<SoftwareActionConfig>(jsonString, options);
+                    conf = SoftwareActionConfig.Parse(shortcutConfig.Comment);
                 }
                 catch (Exception e)
                 {
-                    Services.CommonLogger.LogError(e,
-                        $"SoftwareActionConfig Parse: cannot parse SoftwareActionConfig properties + {e.Message}");
-                    throw;
+                    Logger.LogError(e, $"Could not parse Commit in file:{file} - {shortcutConfig.Comment} ");
+                    return false;
                 }
             }
+
+            conf.Handled &= hotkeyTrigger.Handled;
+
+            hotkeyTrigger.OnEvent(async e =>
+            {
+                try
+                {
+                    await LaunchShortcut(e, file, conf, shortcutConfig);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, $"Can not run shortcut: {file}");
+                }
+            });
+            return true;
         }
 
         /// <summary>
@@ -158,8 +120,8 @@ namespace Metatool.Tools.Software
 
             var sb = new StringBuilder();
             var inVariable = false;
-            int varStartIndex = -1;
-            for (int i = 0; i < varString.Length; i++)
+            var varStartIndex = -1;
+            for (var i = 0; i < varString.Length; i++)
             {
                 if (i < varString.Length - 3 /*${?}*/ && varString[i] == '$' && varString[i + 1] == '{')
                 {
@@ -271,11 +233,6 @@ namespace Metatool.Tools.Software
             return base.OnLoaded();
         }
 
-        public override void OnUnloading()
-        {
-            CommandA.Remove();
-            base.OnUnloading();
-        }
 
         IEnumerable<string> GetFiles(string path)
         {
