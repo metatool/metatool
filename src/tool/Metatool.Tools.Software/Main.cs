@@ -112,13 +112,14 @@ namespace Metatool.Tools.Software
         /// </summary>
         /// <param name="varString"></param>
         /// <returns></returns>
-        static async Task<string> ExpandVariableString(IContextVariable contextVariable, string varString,
+        static async Task<(string, string)> ExpandVariableString(IContextVariable contextVariable, string varString,
             Func<object, string> variableConverter)
         {
             if (string.IsNullOrEmpty(varString))
-                return "";
+                return ("","");
 
             var sb = new StringBuilder();
+            var sbPwsh = new StringBuilder();
             var inVariable = false;
             var varStartIndex = -1;
             for (var i = 0; i < varString.Length; i++)
@@ -129,7 +130,11 @@ namespace Metatool.Tools.Software
                     varStartIndex = i + 2;
                 }
 
-                if (!inVariable) sb.Append(varString[i]);
+                if (!inVariable)
+                {
+                    sb.Append(varString[i]);
+                    sbPwsh.Append(varString[i]);
+                }
 
                 if (inVariable && varString[i] == '}')
                 {
@@ -139,12 +144,14 @@ namespace Metatool.Tools.Software
 
                     var var = variableConverter(variable);
                     sb.Append(var);
+                    sbPwsh.Append(var.Contains(' ') ? $"`\"{var}`\"" : var);
+
                     inVariable = false;
                     varStartIndex = -1;
                 }
             }
 
-            return sb.ToString();
+            return (sb.ToString(), sbPwsh.ToString());
         }
 
         public async Task LaunchShortcut(IKeyEventArgs e, string shortcut, SoftwareActionConfig config,
@@ -191,7 +198,7 @@ namespace Metatool.Tools.Software
             //}
 
             _contextVariable.NewGeneration();
-            var arg = await ExpandVariableString(_contextVariable, config.Args, o =>
+            var (arg,argPwsh) = await ExpandVariableString(_contextVariable, config.Args, o =>
             {
                 switch (o)
                 {
@@ -212,11 +219,11 @@ namespace Metatool.Tools.Software
                     //if(string.IsNullOrEmpty(arg))
                     //    shell.RunWithExplorer(shortcut);
                     //else 
-                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), arg);
+                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), argPwsh);
 
                     break;
                 case RunMode.Admin:
-                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), arg, true);
+                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), argPwsh, true);
                     //shell.RunWithCmd(shell.NormalizeCmd(shortcut) + $" {arg}", asAdmin: true);
                     break;
                 case RunMode.User:

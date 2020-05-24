@@ -165,6 +165,9 @@ pkg
 /exe/[Rr]elease/
 /exe/[Rr]elease/win10-x64
 /exe/release/tools/Metatool.MetaKeyboard/software
-!/exe/publish/SoftwareConfig
+/exe/publish/
+!/exe/publish/tools/Metatool.Tools.Software/softwareConfig
 /exe/publishing
 /exe/published
+exe/publish/tools/Metatool.Tools.Software/software/everything/Run History.csv
+exe/publish/_private/Software/Clipjump_x64/
