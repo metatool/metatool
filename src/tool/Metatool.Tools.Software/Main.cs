@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using static Metatool.Service.Key;
@@ -13,19 +14,20 @@ namespace Metatool.Tools.Software
 {
     public partial class SoftwareTool : ToolBase
     {
-        private readonly IShell _shell;
+        private readonly IShell                 _shell;
         private readonly IVirtualDesktopManager _virtualDesktopManager;
-        private readonly IWindowManager _windowManager;
-        private readonly IContextVariable _contextVariable;
+        private readonly IWindowManager         _windowManager;
+        private readonly IContextVariable       _contextVariable;
 
-        public SoftwareTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config, IShell shell,
-            IVirtualDesktopManager virtualDesktopManager, IWindowManager windowManager,
-            IContextVariable contextVariable)
+        public SoftwareTool(ICommandManager commandManager, IKeyboard keyboard, IConfig<Config> config,
+            IShell                          shell,
+            IVirtualDesktopManager          virtualDesktopManager, IWindowManager windowManager,
+            IContextVariable                contextVariable)
         {
-            _shell = shell;
+            _shell                 = shell;
             _virtualDesktopManager = virtualDesktopManager;
-            _windowManager = windowManager;
-            _contextVariable = contextVariable;
+            _windowManager         = windowManager;
+            _contextVariable       = contextVariable;
 
             var folders = config.CurrentValue.ConfigFolders;
             foreach (var folder in folders)
@@ -44,8 +46,9 @@ namespace Metatool.Tools.Software
             ConfigShortcuts(files, folder);
         }
 
-        void ConfigShortcuts(IEnumerable<string> files, string rootFolder) {
-                        var hotKeys = new List<IHotkeyTrigger>();
+        void ConfigShortcuts(IEnumerable<string> files, string rootFolder)
+        {
+            var hotKeys = new List<IHotkeyTrigger>();
 
             foreach (var file in files)
             {
@@ -72,6 +75,7 @@ namespace Metatool.Tools.Software
                 }
             }
         }
+
         bool ConfigShortcut(string file, IHotkeyTrigger hotkeyTrigger)
         {
             var shortcutConfig = _shell.ReadShortcut(file);
@@ -112,28 +116,26 @@ namespace Metatool.Tools.Software
         /// </summary>
         /// <param name="varString"></param>
         /// <returns></returns>
-        static async Task<(string, string)> ExpandVariableString(IContextVariable contextVariable, string varString,
-            Func<object, string> variableConverter)
+        static async Task<string> ExpandVariableString(IContextVariable contextVariable, string varString,
+            Func<object, string>                                                  variableConverter)
         {
             if (string.IsNullOrEmpty(varString))
-                return ("","");
+                return  "";
 
-            var sb = new StringBuilder();
-            var sbPwsh = new StringBuilder();
-            var inVariable = false;
+            var sb            = new StringBuilder();
+            var inVariable    = false;
             var varStartIndex = -1;
             for (var i = 0; i < varString.Length; i++)
             {
                 if (i < varString.Length - 3 /*${?}*/ && varString[i] == '$' && varString[i + 1] == '{')
                 {
-                    inVariable = true;
+                    inVariable    = true;
                     varStartIndex = i + 2;
                 }
 
                 if (!inVariable)
                 {
                     sb.Append(varString[i]);
-                    sbPwsh.Append(varString[i]);
                 }
 
                 if (inVariable && varString[i] == '}')
@@ -144,18 +146,17 @@ namespace Metatool.Tools.Software
 
                     var var = variableConverter(variable);
                     sb.Append(var);
-                    sbPwsh.Append(var.Contains(' ') ? $"`\"{var}`\"" : var);
 
-                    inVariable = false;
+                    inVariable    = false;
                     varStartIndex = -1;
                 }
             }
 
-            return (sb.ToString(), sbPwsh.ToString());
+            return sb.ToString();
         }
 
         public async Task LaunchShortcut(IKeyEventArgs e, string shortcut, SoftwareActionConfig config,
-            ShortcutLink shortcutLink)
+            ShortcutLink                               shortcutLink)
         {
             e.Handled = config.Handled;
             var shell = Services.Get<IShell>();
@@ -198,20 +199,23 @@ namespace Metatool.Tools.Software
             //}
 
             _contextVariable.NewGeneration();
-            var (arg,argPwsh) = await ExpandVariableString(_contextVariable, config.Args, o =>
+
+            async Task<string> getArg(bool isPwsh)
             {
-                switch (o)
+                var arg = await ExpandVariableString(_contextVariable, config.Args, o =>
                 {
-                    case string str:
-                        return str;
-                    case string[] strA:
-                        return string.Join(" ", strA);
-                    case null:
-                        return "";
-                    default:
-                        throw new Exception("unsupported context variable type when parse shortcut arguments");
-                }
-            });
+                    return o switch
+                    {
+                        string str => str.Contains(' ') && isPwsh ? $"`\"{str}`\"" : str,
+                        string[] strA => string.Join(" ",
+                            strA.Select(str => str.Contains(' ') && isPwsh ? $"`\"{str}`\"" : str)),
+                        null => "",
+                        _ => throw new Exception(
+                            "unsupported context variable type when parse shortcut arguments")
+                    };
+                });
+                return arg;
+            }
 
             switch (config.RunMode)
             {
@@ -219,15 +223,15 @@ namespace Metatool.Tools.Software
                     //if(string.IsNullOrEmpty(arg))
                     //    shell.RunWithExplorer(shortcut);
                     //else 
-                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), argPwsh);
+                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), await getArg(true));
 
                     break;
                 case RunMode.Admin:
-                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), argPwsh, true);
+                    shell.RunWithPowershell(shell.NormalizeCmd(shortcut), await getArg(true), true);
                     //shell.RunWithCmd(shell.NormalizeCmd(shortcut) + $" {arg}", asAdmin: true);
                     break;
                 case RunMode.User:
-                    shell.RunAsNormalUser(shortcut, arg);
+                    shell.RunAsNormalUser(shortcut, await getArg(false));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
