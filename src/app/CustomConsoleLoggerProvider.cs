@@ -13,7 +13,7 @@ namespace Metatool.Metatool
         {
             return new CustomConsoleLogger(categoryName);
         }
-
+        [ProviderAlias("CustomConsole")]
         public class CustomConsoleLogger : ILogger
         {
             private readonly string _categoryName;
@@ -27,6 +27,8 @@ namespace Metatool.Metatool
                 Func<TState, Exception, string> formatter)
             {
                 if (!IsEnabled(logLevel)) return;
+                if (formatter == null)
+                    throw new ArgumentNullException(nameof(formatter));
 
                 var foregroundColor = Console.ForegroundColor;
                 //Console.WriteLine($"{logLevel}: {_categoryName}[{eventId.Id}]: {formatter(state, exception)}");
@@ -52,7 +54,7 @@ namespace Metatool.Metatool
 
             public bool IsEnabled(LogLevel logLevel)
             {
-                return true;
+                return logLevel != LogLevel.None;
             }
 
             public IDisposable BeginScope<TState>(TState state)

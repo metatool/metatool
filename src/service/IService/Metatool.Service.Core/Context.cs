@@ -32,6 +32,8 @@ namespace Metatool.Service
         {
             get
             {
+                if (Debugger.IsAttached) return BaseDirectory;
+
                 if (_appDirectory != null) return _appDirectory;
                 var mainModule = Process.GetCurrentProcess().MainModule;
                 _appDirectory = Path.GetDirectoryName(mainModule?.FileName);
