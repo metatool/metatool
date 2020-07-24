@@ -25,7 +25,7 @@ namespace Metatool.Service
         // real path exe that is running
         public static string BaseDirectory => AppContext.BaseDirectory;
 
-        public static string _appDirectory;
+        static string _appDirectory;
 
         // singleton exe filt path
         public static string AppDirectory

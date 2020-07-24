@@ -25,7 +25,7 @@ if ( $LASTEXITCODE -ne 0 ) {
 . ./script/Build-Tool.ps1
 
 "Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {
-    Build-Tool $_ $rebuild
+    Build-Tool $_ -release: $true -rebuild: $rebuild
 }
 
 $metaSoftware = "$metatool\exe\publish\tools\Metatool.Tools.Software"

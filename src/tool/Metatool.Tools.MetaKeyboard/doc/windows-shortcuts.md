@@ -81,3 +81,9 @@
 | `Ctrl+Tab` `(Ctrl+Shift+Tab)` | to switch tabs     |
 | `spacebar`                    | to toggle checkbox |
 | `Alt+Down`                    | show dropdown list |
+
+## Remote Desktop
+
+| Key                           | Function           | Note |
+| ----------------------------- | ------------------ | ---- |
+| `ctrl+alt+home` | Activate the connection bar | then we could use `alt+tab` to switch to the app in host windows |
