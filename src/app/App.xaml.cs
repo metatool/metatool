@@ -10,9 +10,9 @@ namespace Metaseed.Metatool
     {
         private readonly IConfig<MetatoolConfig> _config;
 #if DEBUG
-        private static bool IsDebug = true;
+        private static bool IsDebugBuild = true;
 #else
-        private static bool IsDebug = false;
+        private static bool IsDebugBuild = false;
 #endif
         public App(IConfig<MetatoolConfig> config)
         {
@@ -27,7 +27,7 @@ namespace Metaseed.Metatool
                     ConsoleExt.ShowConsole();
                 else
                     ConsoleExt.HideConsole();
-            }, null, true, IsDebug);
+            }, null, true, IsDebugBuild);
 
             notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
                 AutoStartManager.IsAutoStart);

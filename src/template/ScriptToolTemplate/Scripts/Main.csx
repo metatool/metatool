@@ -30,7 +30,7 @@ public class MetaScript : ToolBase
     public MetaScript(ICommandManager commandManager, IKeyboard keyboard) 
     {
         Logger.LogInformation("Demo script created");
-        token = commandManager.Add(keyboard.Down(Caps + A), e =>
+        token = commandManager.Add(keyboard.OnDown(Caps + A), e =>
           {
               Logger.LogInformation("Caps+A is triggered!!!!!");
           });

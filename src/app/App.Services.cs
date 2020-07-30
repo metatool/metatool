@@ -40,7 +40,7 @@ namespace Metaseed.Metatool
                 .AddSingleton<IContextVariable, ContextVariable>()
                 .AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>))
                 .Configure<LoggerFilterOptions>(options =>
-                    options.MinLevel = IsDebug ? LogLevel.Trace : LogLevel.Information)
+                    options.MinLevel = IsDebugBuild ? LogLevel.Trace : LogLevel.Information)
                 .AddSingleton<IKeyboard,Keyboard>()
                 .AddSingleton<IClipboard, Clipboard>()
                 .AddSingleton<IMouse, Mouse>()

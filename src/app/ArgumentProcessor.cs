@@ -93,19 +93,19 @@ namespace Metaseed.Metatool
                 });
             });
 
-            app.Command("run", c =>
+            app.Command("run", app =>
             {
-                c.Description = "run the script or lib with metatool ";
+                app.Description = "run the script or lib with metatool";
 
-                var fileName = c.Argument("path",
+                var cmdArg = app.Argument("path",
                     "The name of the tool script to be created.");
-                fileName.Validators.Add(new FileNameValidator());
+                cmdArg.Validators.Add(new FileNameValidator());
 
-                c.HelpOption(HelpOptionTemplate);
-                c.OnExecute(() =>
+                app.HelpOption(HelpOptionTemplate);
+                app.OnExecute(() =>
                 {
                     var application = new App(Services.Get<IConfig<MetatoolConfig>>());
-                    var fullPath = fileName.Value;
+                    var fullPath = cmdArg.Value;
                     if (!File.Exists(fullPath))
                         fullPath = Path.Combine(Context.CurrentDirectory, fullPath);
 

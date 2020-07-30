@@ -4,7 +4,7 @@ All notable changes to the "metatool" extension will be documented in this file.
 ## Todo List:
 ## In Development
 ---
-### V1.1.0 - May 20, 2020
+### V1.1.0 - Aug 20, 2020
 #### Added
  - [ ] add readme content
 #### Removed
