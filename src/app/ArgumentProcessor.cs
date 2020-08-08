@@ -26,7 +26,7 @@ namespace Metaseed.Metatool
 
         const string HelpOptionTemplate = "-? | -h | --help";
 
-        public int ArgumentsProcess()
+        public int Run()
         {
             var app = new CommandLineApplication()
             {

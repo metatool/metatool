@@ -10,7 +10,7 @@ namespace Metaseed.Metatool
     public partial class App
     {
         private const string DebugFlagShort = "-d";
-        private const string DebugFlagLong  = "--debug";
+        private const string DebugFlagLong = "--debug";
         [System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [STAThread]
         public static int Main(string[] args)
@@ -19,9 +19,12 @@ namespace Metaseed.Metatool
             {
                 var shiftDown = KeyboardState.GetCurrent().IsDown(Key.Shift);
                 if (shiftDown && !Context.IsElevated)
-                    return Context.Restart(0, true); // so you could pin metatool to the first windows taskbar shortcut, and use Win+Shift+1 then Alt+Y to launch as admin, note: could not use Win+Alt+1, it's used to do right click on taskbar item
+                    // so you could pin metatool to the first windows taskbar shortcut,
+                    // and use Win+Shift+1 then Alt+Y to launch as admin,
+                    // note: could not use Win+Alt+1, it's used to do right click on the first taskbar item
+                    return Context.Restart(0, true);
                 else
-                    return new ArgumentProcessor(args).ArgumentsProcess();
+                    return new ArgumentProcessor(args).Run();
             }
             catch (Exception e)
             {
@@ -37,7 +40,7 @@ namespace Metaseed.Metatool
                 }
 
                 // Be verbose (stack trace) in debug mode otherwise brief
-                var error = args.Any(arg => arg    == DebugFlagShort
+                var error = args.Any(arg => arg == DebugFlagShort
                                             || arg == DebugFlagLong)
                     ? e.ToString()
                     : e.GetBaseException().Message;

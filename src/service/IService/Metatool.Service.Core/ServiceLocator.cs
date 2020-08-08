@@ -19,13 +19,13 @@ namespace Metatool.Service
             public ChildServiceProvider(IServiceProvider parent, IServiceProvider child)
             {
                 _parent = parent;
-                _child  = child;
+                _child = child;
             }
 
             public ChildServiceProvider(IServiceProvider parent, IServiceCollection services)
             {
                 _parent = parent;
-                _child  = services.BuildServiceProvider();
+                _child = services.BuildServiceProvider();
             }
 
             public void Dispose()
@@ -41,7 +41,7 @@ namespace Metatool.Service
         }
 
         static ILogger commonLogger;
-        public static ILogger CommonLogger => commonLogger??= GetOrCreate<ILogger<Object>>();
+        public static ILogger CommonLogger => commonLogger ??= GetOrCreate<ILogger<Object>>();
 
         static IServiceProvider _provider;
 
@@ -61,7 +61,7 @@ namespace Metatool.Service
 
         public static T Get<T>()
         {
-            return (T) Get(typeof(T));
+            return (T)Get(typeof(T));
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Metatool.Service
         {
             var type = typeof(T);
             // Note: the CreateInstance not take account the sub providers
-            return (T) (Get(type) ?? ActivatorUtilities.CreateInstance(_provider, type, parameters));
+            return (T)(Get(type) ?? ActivatorUtilities.CreateInstance(_provider, type, parameters));
         }
 
         /// <summary>
@@ -98,30 +98,34 @@ namespace Metatool.Service
         public static T Create<T>(Type instanceType, params object[] parameters)
         {
             // Note: the CreateInstance not take account the sub providers
-            return (T) ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
+            return (T)ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
         }
 
         public static T Create<T>(this IServiceProviderDisposable provider, Type instanceType,
             params object[] parameters)
         {
-            return (T) ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
+            return (T)ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
         }
 
-        public static TImpl Get<T, TImpl>()
-            where TImpl : class, T
+        public static TImpl Get<T, TImpl>() where TImpl : T
 
         {
             return _provider.Get<T, TImpl>();
         }
 
         public static TImpl Get<T, TImpl>(this IServiceProvider provider)
-            where TImpl : class, T
+            where TImpl : T
         {
-            return (TImpl) Get(typeof(T));
+            return (TImpl)provider.GetService(typeof(T));
         }
 
-        public static TImpl GetOrCreate<T, TImpl>(this IServiceProvider provider, params object[] parameters) 
-            where TImpl : class, T
+        public static TImpl Get<TImpl>(this IServiceProvider provider)
+        {
+            return (TImpl)provider.GetService(typeof(TImpl));
+        }
+
+        public static TImpl GetOrCreate<T, TImpl>(this IServiceProvider provider, params object[] parameters)
+            where TImpl : T
         {
             return (TImpl)GetOrCreate<T>(parameters);
         }
