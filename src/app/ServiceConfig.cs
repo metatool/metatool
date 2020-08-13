@@ -36,9 +36,9 @@ namespace Metaseed.Metatool
                     // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                     //     new TextWriterTraceListener(writer: Console.Out)));
-                    //logging
+                    logging
                     //.AddProvider(new CustomConsoleLoggerProvider())
-                    //.AddFile(o => o.RootPath = Context.AppDirectory)
+                    .AddFile(o => o.RootPath = Context.AppDirectory)
                     ;
                 })
                 .ConfigureServices((hostContext, services) =>
