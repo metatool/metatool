@@ -7,7 +7,7 @@ namespace Metatool.Metaing
 {
     internal class PluginLoadContext : AssemblyLoadContext
     {
-        private readonly Assembly[]                 _assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        private readonly Assembly[] _assemblies = AppDomain.CurrentDomain.GetAssemblies();
         private readonly AssemblyDependencyResolver _resolver;
 
         public PluginLoadContext(string pluginPath)

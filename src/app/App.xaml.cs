@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 using Metatool.Core;
 using Metatool.Service;
@@ -59,10 +60,23 @@ namespace Metaseed.Metatool
             logger.LogInformation("Metatool started!");
         }
 
-        internal void RunApp()
+        internal static  void RunApp()
         {
-            InitializeComponent();
-            Run();
+            var newWindowThread = new Thread(Start);
+            newWindowThread.SetApartmentState(ApartmentState.STA);
+            newWindowThread.IsBackground = true;
+            newWindowThread.Start();
+
+        }
+
+        private static void Start()
+        { 
+            var application = new App(Services.Get<IConfig<MetatoolConfig>>());
+            Context.Dispatcher = application.Dispatcher;
+
+            application.InitializeComponent();
+            application.Run();
+            //System.Windows.Threading.Dispatcher.Run();
         }
     }
 }

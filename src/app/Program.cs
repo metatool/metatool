@@ -3,16 +3,18 @@ using System.Linq;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
 {
-    public partial class App
+    public static class Program
     {
         private const string DebugFlagShort = "-d";
         private const string DebugFlagLong = "--debug";
-        [System.Diagnostics.DebuggerNonUserCodeAttribute()]
+
         [STAThread]
+        [System.Diagnostics.DebuggerNonUserCode]
         public static int Main(string[] args)
         {
             try
@@ -24,7 +26,8 @@ namespace Metaseed.Metatool
                     // note: could not use Win+Alt+1, it's used to do right click on the first taskbar item
                     return Context.Restart(0, true);
                 else
-                    return new ArgumentProcessor(args).Run();
+                    ServiceConfig.BuildHost(args).Run();
+                    return 0;
             }
             catch (Exception e)
             {

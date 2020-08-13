@@ -33,10 +33,10 @@
    <EmbeddedResource Include="Templates\Metatool.Tools.ScriptTool.zip" />
  </ItemGroup>
   <ItemGroup>
-    <None Update="config.default.json">
+    <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="config.json">
+    <None Update="appsettings.Production.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="mt.bat">

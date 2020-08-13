@@ -20,7 +20,6 @@ namespace Metaseed.Metatool
             _args = args;
             if (args.Length == 0 || args[0] == "run")
                 ConsoleExt.InitialConsole(true, Context.IsElevated);
-            App.InitServices();
             _logger = Services.Get<ILogger<ArgumentProcessor>>();
         }
 
@@ -39,11 +38,9 @@ namespace Metaseed.Metatool
             app.OnExecute(() =>
             {
                 // without command
-                var application = new App(Services.Get<IConfig<MetatoolConfig>>());
-                Context.Dispatcher = application.Dispatcher;
                 var pluginManager = Services.GetOrCreate<PluginManager>();
+                App.RunApp();
                 pluginManager.InitPlugins();
-                application.RunApp();
             });
 
             app.Command("new", configCmd =>
@@ -97,14 +94,12 @@ namespace Metaseed.Metatool
             {
                 app.Description = "run the script or lib with metatool";
 
-                var cmdArg = app.Argument("path",
-                    "The name of the tool script to be created.");
+                var cmdArg = app.Argument("path", "The name of the tool script to be created.");
                 cmdArg.Validators.Add(new FileNameValidator());
 
                 app.HelpOption(HelpOptionTemplate);
                 app.OnExecute(() =>
                 {
-                    var application = new App(Services.Get<IConfig<MetatoolConfig>>());
                     var fullPath = cmdArg.Value;
                     if (!File.Exists(fullPath))
                         fullPath = Path.Combine(Context.CurrentDirectory, fullPath);
@@ -130,7 +125,7 @@ namespace Metaseed.Metatool
                         pluginManager.BuildReload(fullPath, assemblyName, false);
                     }
 
-                    application.RunApp();
+                    App.RunApp();
                 });
             });
 

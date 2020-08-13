@@ -53,11 +53,15 @@ namespace Metatool.MetaKeyboard
                 // disable again, so when unlocked, *+Win+L would not trigger screen locking
                 DisableWinLock();
             },  e => !e.KeyboardState.IsOtherDown(winOrLKey));
-            Application.Current.DispatcherUnhandledException += (_, __) => EnableWinLock();
-            AppDomain.CurrentDomain.UnhandledException       += (_, __) => EnableWinLock();
-            Application.Current.Exit                         += (_, __) => EnableWinLock();
-            Console.CancelKeyPress                           += (_, __) => EnableWinLock();
-            ConsoleExt.Exit                                  += EnableWinLock;
+            Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+            {
+                Application.Current.DispatcherUnhandledException += (_, __) => EnableWinLock();
+                AppDomain.CurrentDomain.UnhandledException       += (_, __) => EnableWinLock();
+                Application.Current.Exit                         += (_, __) => EnableWinLock();
+                Console.CancelKeyPress                           += (_, __) => EnableWinLock();
+                ConsoleExt.Exit                                  += EnableWinLock;
+            }));
+            
 
         }
     }

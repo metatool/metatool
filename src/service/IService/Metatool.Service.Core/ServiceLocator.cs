@@ -104,7 +104,7 @@ namespace Metatool.Service
         public static T Create<T>(this IServiceProviderDisposable provider, Type instanceType,
             params object[] parameters)
         {
-            return (T)ActivatorUtilities.CreateInstance(_provider, instanceType, parameters);
+            return (T)ActivatorUtilities.CreateInstance(provider, instanceType, parameters);
         }
 
         public static TImpl Get<T, TImpl>() where TImpl : T

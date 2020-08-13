@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
-using System.Windows.Threading;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
