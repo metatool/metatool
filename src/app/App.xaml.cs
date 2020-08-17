@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using Metatool.Core;
 using Metatool.Service;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
@@ -10,17 +11,15 @@ namespace Metaseed.Metatool
     public partial class App : Application
     {
         private readonly IConfig<MetatoolConfig> _config;
-#if DEBUG
-        private static bool IsDebugBuild = true;
-#else
-        private static bool IsDebugBuild = false;
-#endif
-        public App(IConfig<MetatoolConfig> config)
+        private readonly IHostEnvironment _hostEnv;
+
+        public App(IConfig<MetatoolConfig> config, IHostEnvironment hostEnv)
         {
             _config = config;
+            _hostEnv = hostEnv;
         }
 
-        private static void ConfigNotify(INotify notify, ILogger logger, Scaffolder scaffolder)
+        private void ConfigNotify(INotify notify, ILogger logger, Scaffolder scaffolder)
         {
             notify.AddContextMenuItem("Show Log", e =>
             {
@@ -28,7 +27,7 @@ namespace Metaseed.Metatool
                     ConsoleExt.ShowConsole();
                 else
                     ConsoleExt.HideConsole();
-            }, null, true, IsDebugBuild);
+            }, null, true, _hostEnv.IsDevelopment());
 
             notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
                 AutoStartManager.IsAutoStart);
@@ -60,7 +59,7 @@ namespace Metaseed.Metatool
             logger.LogInformation("Metatool started!");
         }
 
-        internal static  void RunApp()
+        internal static void RunApp()
         {
             var newWindowThread = new Thread(Start);
             newWindowThread.SetApartmentState(ApartmentState.STA);
@@ -70,8 +69,8 @@ namespace Metaseed.Metatool
         }
 
         private static void Start()
-        { 
-            var application = new App(Services.Get<IConfig<MetatoolConfig>>());
+        {
+            var application = new App(Services.Get<IConfig<MetatoolConfig>>(), Services.Get<IHostEnvironment>());
             Context.Dispatcher = application.Dispatcher;
 
             application.InitializeComponent();
