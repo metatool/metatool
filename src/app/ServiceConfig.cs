@@ -58,7 +58,7 @@ namespace Metaseed.Metatool
                         .AddSingleton<INotify, Notify>()
                         .AddSingleton<IScreenHint, ScreenHint>()
                         .AddMetatoolUtils()
-                        // .AddSingleton<IServiceCollection>(services)
+                        .AddPipelineBuilder()
                         .AddHostedService<StartupService>()
                         .AddHostedService<LifetimeEventsHostedService>()
                         .AddHostedService<ConsoleInputService>();
