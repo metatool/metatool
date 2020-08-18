@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Metatool.Plugin;
+using Metatool.NugetPackage;
 using Metatool.Reactive;
 using Metatool.Script;
 using Metatool.Service;
@@ -22,10 +23,10 @@ namespace Metatool.Plugin
 {
     public class PluginManager
     {
-        const string ScriptBin = "bin";
+        const            string                 ScriptBin = "bin";
         private readonly ILogger<PluginManager> _logger;
 
-        public PluginManager(ILogger<PluginManager>  0, 0, er)
+        public PluginManager(ILogger<PluginManager> logger)
         {
             _logger = logger;
         }
@@ -38,9 +39,9 @@ namespace Metatool.Plugin
             return GetToolsDirectories().SelectMany(Directory.GetDirectories).Where(dir =>
             {
                 var assemblyName = Path.GetFileName(dir);
-                var scriptPath = Path.Combine(dir, "main.csx");
-                var pluginDll = Path.Combine(dir, assemblyName + ".dll");
-                return Fi le.Exists(scriptPath) || File.Exists(pluginDll);
+                var scriptPath   = Path.Combine(dir, "main.csx");
+                var pluginDll    = Path.Combine(dir, assemblyName + ".dll");
+                return File.Exists(scriptPath) || File.Exists(pluginDll);
             });
         }
 
@@ -52,7 +53,7 @@ namespace Metatool.Plugin
                     .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                     .ToUpperInvariant();
             }
-            string
+
             static List<string> AddToolPath(List<string> tools, string path)
             {
                 path = NormalizePath(path);
@@ -68,7 +69,7 @@ namespace Metatool.Plugin
                 Path.Combine(Context.BaseDirectory, "tools"),
                 // tools dir with metatool.exe
                 Path.Combine(Environment.CurrentDirectory, "tools")
-            }.Aggregate(new Lisstring> (), AddToolPath);
+            }.Aggregate(new List<string>(), AddToolPath);
 
 
             return result;
@@ -89,13 +90,13 @@ namespace Metatool.Plugin
             try
             {
                 var scriptPath = Path.Combine(dir, "main.csx");
-                var pluginDll = Path.Combine(dir, assemblyName + ".dll");
+                var pluginDll  = Path.Combine(dir, assemblyName + ".dll");
                 if (File.Exists(scriptPath))
                 {
                     pluginDll = Path.Combine(dir, ScriptBin, assemblyName + ".dll");
                     if (File.Exists(pluginDll))
                     {
-                        var dllInfo = new FileInfo(pluginDll);
+                        var dllInfo    = new FileInfo(pluginDll);
                         var scriptInfo = new FileInfo(scriptPath);
 
                         if (scriptInfo.LastWriteTimeUtc > dllInfo.LastWriteTimeUtc)
@@ -125,7 +126,7 @@ namespace Metatool.Plugin
                         var latestVersionFolder = Directory.EnumerateDirectories(toolDir)
                             .Where(d => verRegex.IsMatch(d))
                             .OrderBy(k => k).LastOrDefault();
-                        if (latestVeonFolder != null)
+                        if (latestVersionFolder != null)
                         {
                             var toolsFolder = Path.Combine(latestVersionFolder, "tools");
                             if (Directory.Exists(toolsFolder))
@@ -233,12 +234,12 @@ namespace Metatool.Plugin
             var toolIds = Services.Get<IConfiguration>().GetSection("Tools").GetChildren()
                 .Where(t => t.GetValue<bool>("Update") == true).Select(t => t.Key);
             var nugetManager = new NugetManager(_logger);
-            var nugetFinder = new PackageFinder();
+            var nugetFinder  = new PackageFinder();
 
             foreach (var toolId in toolIds)
             {
                 var sources = nugetManager.SourceRepositories;
-                var r = await nugetFinder.GetLatestPackage(toolId, sources, false, false, false);
+                var r       = await nugetFinder.GetLatestPackage(toolId, sources, false, false, false);
                 if (r.metadata == null)
                 {
                     _logger.LogDebug($"No Package({toolId}) found in any source!");
@@ -255,12 +256,12 @@ namespace Metatool.Plugin
 
                 _logger.LogInformation($"{toolId}: new version available, updating...");
 
-                nugetManager.Id = toolId + "_Restore";
+                nugetManager.Id          = toolId + "_Restore";
                 nugetManager.RestorePath = Path.Combine(Context.DefaultToolsDirectory, toolId);
 
                 var re = await nugetManager.RefreshPackagesAsync(
-                    new[] { new LibraryRef(toolId, VersionRange.AllFloating) }, CancellationToken.None,
-                    new List<PackageSource>() { r.source });
+                    new[] {new LibraryRef(toolId, VersionRange.AllFloating)}, CancellationToken.None,
+                    new List<PackageSource>() {r.source});
                 if (re.Success)
                 {
                     var toolDir = Path.Combine(Context.DefaultToolsDirectory, toolId);
@@ -286,49 +287,48 @@ namespace Metatool.Plugin
             // var access = Application.Current.Dispatcher.CheckAccess();
             // if (!access)
             // {
-            Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
-            //     return; {  
-            // } 
-
+            //     Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
+            //     return;
+            // }
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
-            var loader = CreatePluginLoader(dllPath);
-            var token = new PluginToken() { Loader = loader, Watcher = lastWatcher };
+            var loader       = CreatePluginLoader(dllPath);
+            var token        = new PluginToken() {Loader = loader, Watcher = lastWatcher};
             _plugins.Add(assemblyName, token);
 
-            IServiceProviderDisposable provider = null;
-            var allTypes = loader.MainAssembly.GetTypes();
-            var optionType = ToolConfigAttribute.GetConfigType(allTypes);
+            IServiceProviderDisposable provider   = null;
+            var                        allTypes   = loader.MainAssembly.GetTypes();
+            var                        optionType = ToolConfigAttribute.GetConfigType(allTypes);
             if (optionType != null)
             {
                 var services = new ServiceCollection();
 
-                var id = loader.MainAssembly.GetName().Name;
+                var id         = loader.MainAssembly.GetName().Name;
                 var configRoot = Services.Get<IConfiguration>();
-                var config = configRoot.GetSection("Tools").GetSection(id);
+                var config     = configRoot.GetSection("Tools").GetSection(id);
                 services.Configure<MetatoolConfig>(configRoot);
 
                 // call services.Configure<optionType>(config);
                 var method = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
                     nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
-                    new[] { typeof(IServiceCollection), typeof(IConfiguration) }).MakeGenericMethod(optionType);
-                method.Invoke(null, new object[] { services, config });
+                    new[] {typeof(IServiceCollection), typeof(IConfiguration)}).MakeGenericMethod(optionType);
+                method.Invoke(null, new object[] {services, config});
 
                 provider = Services.AddServices(services);
             }
 
-            (Assembly y, IEnumerable<Type> types) pluginTypes = (loader.MainAssem bly, GetPluginTypes(allTypes));
+            (Assembly assembly, IEnumerable<Type> types) pluginTypes = (loader.MainAssembly, GetPluginTypes(allTypes));
 
             pluginTypes.assembly.EntryPoint?.Invoke(null, new object[] { });
-            // var plugins = ServiceLocator.Currt.GetServices<IMetaPlugin>(); only get newly added plugins
-            var allTypes);
-            if (er.LogWarning($"{assemblyName}: no tools defined");
+            // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
+            var types = pluginTypes.types.ToList();
+            if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
 
 
             types.ForEach(t =>
             {
-                var tooovider == null ? Services.Create<IPlugin>(t) : provider.Create<IPlugin>(t);
+                var tool = provider == null ? Services.Create<IPlugin>(t) : provider.Create<IPlugin>(t);
                 tool?.OnLoaded();
-                token.Tools = d(tool);
+                token.Tools.Add(tool);
             });
             provider?.Dispose();
             _logger.LogInformation($"Tool Loaded: {assemblyName} - Version: {token.Version}");
@@ -354,9 +354,9 @@ namespace Metatool.Plugin
                 pluginDll,
                 config =>
                 {
-                    config.PreferSharedTypes = true;
-                    config.IsUnloadable = true;
-                    config.SharedAssemblyPrefixes = new List<string>() { "Metatool.Plugin" };
+                    config.PreferSharedTypes      = true;
+                    config.IsUnloadable           = true;
+                    config.SharedAssemblyPrefixes = new List<string>() {"Metatool.Plugin"};
                 });
             return loader;
         }
@@ -364,13 +364,13 @@ namespace Metatool.Plugin
         private void Watch(string scriptPath, string assemblyName)
         {
             var pluginDir = Path.GetDirectoryName(scriptPath);
-            var dllPath = Path.Combine(pluginDir, $"{assemblyName}.dll");
+            var dllPath   = Path.Combine(pluginDir, $"{assemblyName}.dll");
 
             var watcher = new ObservableFileSystemWatcher(c =>
             {
-                c.Path = pluginDir;
+                c.Path         = pluginDir;
                 c.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
-                c.Filter = "*.csx";
+                c.Filter       = "*.csx";
             });
 
             if (_plugins.ContainsKey(assemblyName))
@@ -379,9 +379,8 @@ namespace Metatool.Plugin
             }
             else
             {
-                _plugins.Add(assemblyNamginToken() { Watcher = watcher});
+                _plugins.Add(assemblyName, new PluginToken() {Watcher = watcher});
             }
-            "Metatool.Plugin"
 
             var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(e =>
             {
@@ -400,9 +399,9 @@ namespace Metatool.Plugin
         {
             static void move(string pluginDir1, string assemblyName1, ILogger logger1)
             {
-                var backupDir = Path.Combine(pluginDir1, "backup");
+                var backupDir  = Path.Combine(pluginDir1, "backup");
                 var backupPath = Path.Combine(backupDir, assemblyName1);
-                var dllPath1 = Path.Combine(pluginDir1, assemblyName1);
+                var dllPath1   = Path.Combine(pluginDir1, assemblyName1);
 
                 if (!Directory.Exists(backupDir)) Directory.CreateDirectory(backupDir);
                 if (File.Exists(dllPath1 + ".dll"))
@@ -419,14 +418,14 @@ namespace Metatool.Plugin
             try
             {
                 var scriptHost = new ScriptHost(_logger);
-                var outputDir = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
-                var pluginDll = Path.Combine(outputDir, assemblyName + ".dll");
+                var outputDir  = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
+                var pluginDll  = Path.Combine(outputDir, assemblyName + ".dll");
 
                 move(outputDir, assemblyName, _logger);
                 scriptHost.Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug);
-                scriptHost.NotfyBuildResult += errors =>
+                scriptHost.NotifyBuildResult += errors =>
                 {
-                    if (errorCount > 0)
+                    if (errors.Count > 0)
                     {
                         _logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
                         if (watch) Watch(scriptPath, assemblyName);
