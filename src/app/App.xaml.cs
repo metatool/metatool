@@ -11,11 +11,13 @@ namespace Metaseed.Metatool
     public partial class App : Application
     {
         private readonly IConfig<MetatoolConfig> _config;
+        private readonly ILogger<App> _logger;
         private readonly IHostEnvironment _hostEnv;
 
-        public App(IConfig<MetatoolConfig> config, IHostEnvironment hostEnv)
+        public App(IConfig<MetatoolConfig> config, IHostEnvironment hostEnv, ILogger<App> logger)
         {
             _config = config;
+            _logger = logger;
             _hostEnv = hostEnv;
         }
 
@@ -49,14 +51,13 @@ namespace Metaseed.Metatool
             var notify = Services.Get<INotify>();
             notify.ShowMessage("Metatool starting...");
 
-            var logger = Services.Get<ILogger<App>>();
 
-            var scaffolder = new Scaffolder(logger);
+            var scaffolder = new Scaffolder(_logger);
             scaffolder.CommonSetup(_config);
 
-            ConfigNotify(notify, logger, scaffolder);
-            logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
-            logger.LogInformation("Metatool started!");
+            ConfigNotify(notify, _logger, scaffolder);
+            _logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
+            _logger.LogInformation("Metatool started!");
         }
 
         internal static void RunApp()
@@ -65,12 +66,11 @@ namespace Metaseed.Metatool
             newWindowThread.SetApartmentState(ApartmentState.STA);
             newWindowThread.IsBackground = true;
             newWindowThread.Start();
-
         }
 
         private static void Start()
         {
-            var application = new App(Services.Get<IConfig<MetatoolConfig>>(), Services.Get<IHostEnvironment>());
+            var application = Services.Get<App>();
             Context.Dispatcher = application.Dispatcher;
 
             application.InitializeComponent();

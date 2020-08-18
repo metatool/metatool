@@ -19,9 +19,11 @@ namespace Metaseed.Metatool
     public class ServiceConfig
     {
         private static IHostBuilder ConfigHostBuilder(IHostBuilder builder) =>
-            builder.ConfigureHostConfiguration(configHost =>
+            builder
+                .UseContentRoot(Context.AppDirectory) // needed for locating appsettings.json when currentDir is not the metatool.exe dir, i.e. invoke from commandline
+                .ConfigureHostConfiguration(configHost =>
                 {
-                    //configHost.SetBasePath(Directory.GetCurrentDirectory());
+                    //configHost.SetBasePath(Context.AppDirectory);
                 })
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
@@ -51,6 +53,7 @@ namespace Metaseed.Metatool
                             options.MinLevel = hostContext.HostingEnvironment.IsDevelopment()
                                 ? LogLevel.Trace
                                 : LogLevel.Information)
+                        .AddSingleton<App>()
                         .AddSingleton<IKeyboard, Keyboard>()
                         .AddSingleton<IClipboard, Clipboard>()
                         .AddSingleton<IMouse, Mouse>()
