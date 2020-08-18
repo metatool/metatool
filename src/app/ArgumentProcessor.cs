@@ -37,9 +37,8 @@ namespace Metaseed.Metatool
             app.OnExecute(() =>
             {
                 // without sub command
-                var pluginManager = Services.GetOrCreate<PluginManager>();
                 App.RunApp();
-                pluginManager.InitPlugins();
+                Services.GetOrCreate<PluginManager>().InitPlugins();
             });
 
             app.Command("new", configCmd =>
@@ -93,7 +92,7 @@ namespace Metaseed.Metatool
             {
                 app.Description = "run the script or lib with metatool";
 
-                var cmdArg = app.Argument("path", "The name of the tool script to be created.");
+                var cmdArg = app.Argument("path", "The dir and name of the script(.csx) to be created.");
                 cmdArg.Validators.Add(new FileNameValidator());
 
                 app.HelpOption(HelpOptionTemplate);
@@ -107,8 +106,7 @@ namespace Metaseed.Metatool
                     {
                         try
                         {
-                            var pluginManager = Services.GetOrCreate<PluginManager>();
-                            pluginManager.LoadDll(fullPath);
+                            Services.GetOrCreate<PluginManager>().LoadDll(fullPath);
                         }
                         catch (Exception ex)
                         {
@@ -120,8 +118,7 @@ namespace Metaseed.Metatool
                     {
                         var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
                         _logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
-                        var pluginManager = Services.GetOrCreate<PluginManager>();
-                        pluginManager.BuildReload(fullPath, assemblyName, false);
+                        Services.GetOrCreate<PluginManager>().BuildReload(fullPath, assemblyName, false);
                     }
 
                     App.RunApp();

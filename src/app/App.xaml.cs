@@ -47,10 +47,10 @@ namespace Metaseed.Metatool
             Current.MainWindow = new MainWindow();
             _notify.ShowMessage("Metatool starting...");
 
-            var scaffolder = new Scaffold(_logger);
-            scaffolder.CommonSetup(_config);
+            var scaffold = new Scaffold(_logger);
+            scaffold.CommonSetup(_config);
 
-            ConfigNotify(scaffolder);
+            ConfigNotify(scaffold);
             _logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
             _logger.LogInformation("Metatool started!");
         }

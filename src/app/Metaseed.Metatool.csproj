@@ -21,17 +21,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>$(SolutionDir)..\exe\release</OutputPath>
   </PropertyGroup>
- <ItemGroup>
+  <ItemGroup>
     <ApplicationDefinition Remove="App.xaml" />
   </ItemGroup>
- <ItemGroup>
-   <None Remove="Templates\Metatool.Tools.LibTool.zip" />
-   <None Remove="Templates\Metatool.Tools.ScriptTool.zip" />
- </ItemGroup>
- <ItemGroup>
-   <EmbeddedResource Include="Templates\Metatool.Tools.LibTool.zip" />
-   <EmbeddedResource Include="Templates\Metatool.Tools.ScriptTool.zip" />
- </ItemGroup>
+  <ItemGroup>
+    <None Remove="Templates\Metatool.Tools.LibTool.zip" />
+    <None Remove="Templates\Metatool.Tools.ScriptTool.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Metatool.Tools.LibTool.zip" />
+    <EmbeddedResource Include="Templates\Metatool.Tools.ScriptTool.zip" />
+  </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -50,6 +50,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <!-- <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" /> -->
     <PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.1.1" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.6" />

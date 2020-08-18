@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -9,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Metatool.Plugin;
-using Metatool.NugetPackage;
 using Metatool.Reactive;
 using Metatool.Script;
 using Metatool.Service;
@@ -19,43 +17,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using NuGet.Configuration;
 using NuGet.Versioning;
-using System.Windows;
 
 namespace Metatool.Plugin
 {
-    public class PluginToken
-    {
-        private Version NoneVersion = new Version(0,0,0,0);
-        public PluginLoader                Loader;
-        public ObservableFileSystemWatcher Watcher;
-
-        public Version Version
-        {
-            get
-            {
-                var version = Loader?.MainAssembly.GetName().Version;
-                if (version != NoneVersion) return version;
-                var path = Loader.MainAssembly.Location;
-                var verDir            = new Regex("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var r = verDir.Match(path);
-                if (r.Value == "") return NoneVersion;
-                var v = Version.Parse(r.Value);
-                Func<int,int> e = (int n) => n == -1 ? 0 : n;
-                if (r.Success) return new Version(e(v.Major),e(v.Minor), e(v.Build), e(v.Revision));
-                return null;
-                
-            }
-        }
-
-        public List<IPlugin>               Tools = new List<IPlugin>();
-    }
-
     public class PluginManager
     {
         const            string                 ScriptBin = "bin";
         private readonly ILogger<PluginManager> _logger;
 
-        public PluginManager(ILogger<PluginManager> logger)
+        public PluginManager(ILogger<PluginManager>  0, 0, er)
         {
             _logger = logger;
         }
@@ -70,8 +40,8 @@ namespace Metatool.Plugin
                 var assemblyName = Path.GetFileName(dir);
                 var scriptPath   = Path.Combine(dir, "main.csx");
                 var pluginDll    = Path.Combine(dir, assemblyName + ".dll");
-                return File.Exists(scriptPath) || File.Exists(pluginDll);
-            });
+                return Fi le.Exists(scriptPath) || File.Exists(pluginDll);
+            }); 
         }
 
         private static List<string> GetToolsDirectories()
@@ -82,7 +52,7 @@ namespace Metatool.Plugin
                     .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                     .ToUpperInvariant();
             }
-
+string
             static List<string> AddToolPath(List<string> tools, string path)
             {
                 path = NormalizePath(path);
@@ -98,7 +68,7 @@ namespace Metatool.Plugin
                 Path.Combine(Context.BaseDirectory, "tools"),
                 // tools dir with metatool.exe
                 Path.Combine(Environment.CurrentDirectory, "tools")
-            }.Aggregate(new List<string>(), AddToolPath);
+            }.Aggregate(new Lisstring>(), AddToolPath);
 
 
             return result;
@@ -150,10 +120,12 @@ namespace Metatool.Plugin
                 {
                     static string GetPath(string toolDir)
                     {
-                        var verRegex = new Regex("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                        var latestVersionFolder = Directory.EnumerateDirectories(toolDir).Where(d => verRegex.IsMatch(d))
+                        var verRegex = new Regex("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
+                            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var latestVersionFolder = Directory.EnumerateDirectories(toolDir)
+                            .Where(d => verRegex.IsMatch(d))
                             .OrderBy(k => k).LastOrDefault();
-                        if (latestVersionFolder != null)
+                        if (latestVeonFolder != null)
                         {
                             var toolsFolder = Path.Combine(latestVersionFolder, "tools");
                             if (Directory.Exists(toolsFolder))
@@ -170,6 +142,7 @@ namespace Metatool.Plugin
                                     return toolsFolder;
                             }
                         }
+
                         return null;
                     }
 
@@ -250,11 +223,9 @@ namespace Metatool.Plugin
 
         public void InitPlugins()
         {
-
-            var toolDirs = GetToolsDirectories();//.Where(d => !toolIds.Any(d.EndsWith)).ToList();
+            var toolDirs = GetToolsDirectories(); //.Where(d => !toolIds.Any(d.EndsWith)).ToList();
             toolDirs.ForEach(InitPlugin);
             Task.Run(UpdateTools);
-
         }
 
         private async Task UpdateTools()
@@ -286,9 +257,12 @@ namespace Metatool.Plugin
 
                 nugetManager.Id          = toolId + "_Restore";
                 nugetManager.RestorePath = Path.Combine(Context.DefaultToolsDirectory, toolId);
-               
-                var re = await nugetManager.RefreshPackagesAsync(new [] { new LibraryRef(toolId, VersionRange.AllFloating) }, CancellationToken.None, new List<PackageSource>(){r.source});
-                if(re.Success){
+
+                var re = await nugetManager.RefreshPackagesAsync(
+                    new[] {new LibraryRef(toolId, VersionRange.AllFloating)}, CancellationToken.None,
+                    new List<PackageSource>() {r.source});
+                if (re.Success)
+                {
                     var toolDir = Path.Combine(Context.DefaultToolsDirectory, toolId);
                     MoveDirectory(Path.Combine(Context.PackageDirectory, toolId), toolDir);
                     _logger.LogInformation($"{toolId}: Restore Success");
@@ -300,7 +274,9 @@ namespace Metatool.Plugin
                     {
                         _logger.LogError(error);
                     }
-                };
+                }
+
+                ;
             }
         }
 
@@ -310,9 +286,10 @@ namespace Metatool.Plugin
             // var access = Application.Current.Dispatcher.CheckAccess();
             // if (!access)
             // {
-            //     Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
-            //     return;
-            // }
+   Application.Current.Dispatcher.Invoke(() => LoadDll(dllPath, lastWatcher));
+            //     return; {  
+            // } 
+                
             var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
             var loader       = CreatePluginLoader(dllPath);
             var token        = new PluginToken() {Loader = loader, Watcher = lastWatcher};
@@ -325,9 +302,9 @@ namespace Metatool.Plugin
             {
                 var services = new ServiceCollection();
 
-                var id       = loader.MainAssembly.GetName().Name;
+                var id         = loader.MainAssembly.GetName().Name;
                 var configRoot = Services.Get<IConfiguration>();
-                var config   =configRoot.GetSection("Tools").GetSection(id);
+                var config     = configRoot.GetSection("Tools").GetSection(id);
                 services.Configure<MetatoolConfig>(configRoot);
 
                 // call services.Configure<optionType>(config);
@@ -339,26 +316,26 @@ namespace Metatool.Plugin
                 provider = Services.AddServices(services);
             }
 
-            (Assembly assembly, IEnumerable<Type> types) pluginTypes = (loader.MainAssembly, GetPluginTypes(allTypes));
+            (Assembly y, IEnumerable<Type>  types) pluginTypes = (loader.MainAssem bly, GetPluginTypes(allTypes));
 
             pluginTypes.assembly.EntryPoint?.Invoke(null, new object[] { });
-            // var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
-            var types = pluginTypes.types.ToList();
-            if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
+            // var plugins = ServiceLocator.Currt.GetServices<IMetaPlugin>(); only get newly added plugins
+            var allTypes);
+            if (er.LogWarning($"{assemblyName}: no tools defined");
 
 
             types.ForEach(t =>
             {
-                var tool = provider == null ? Services.Create<IPlugin>(t) : provider.Create<IPlugin>(t);
+                var tooovider == null ? Services.Create<IPlugin>(t) : provider.Create<IPlugin>(t);
                 tool?.OnLoaded();
-                token.Tools.Add(tool);
+                token.Tools= d(tool);
             });
             provider?.Dispose();
             _logger.LogInformation($"Tool Loaded: {assemblyName} - Version: {token.Version}");
         }
 
-        private void Unload(string dllPath)
-        {
+        private void Unload (string dllPath) 
+        {  
             var assemblyName = Path.GetFileName(dllPath);
             _logger.LogInformation($"{assemblyName}: start unloading...");
             //RemoveServices(_servicesCollection, plugin.Loader);
@@ -402,8 +379,8 @@ namespace Metatool.Plugin
             }
             else
             {
-                _plugins.Add(assemblyName, new PluginToken() {Watcher = watcher});
-            }
+                _plugins.Add(assemblyNamginToken() {Watcher = watcher});
+            } "Metatool.Plugin" 
 
             var sub = watcher.Changed.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(e =>
             {
@@ -426,10 +403,10 @@ namespace Metatool.Plugin
                 var backupPath = Path.Combine(backupDir, assemblyName1);
                 var dllPath1   = Path.Combine(pluginDir1, assemblyName1);
 
-                if (!Directory.Exists(backupDir)) Directory.CreateDirectory(backupDir);
+                if (!Directory.Exists(backupDir)) Directory.Cr eateDirectory(bac kupDir);
                 if (File.Exists(dllPath1 + ".dll"))
                 {
-                    File.Move(dllPath1 + ".dll", backupPath       + ".dll", true);
+                    File.Move(dllPath1 + ".dll", backupPath + ".dll", true);
                     File.Move(dllPath1 + ".deps.json", backupPath + ".deps.json", true);
                     // if (!Debugger.IsAttached) for file is locked by vs
                     File.Move(dllPath1 + ".pdb", backupPath + ".pdb", true);
@@ -446,9 +423,9 @@ namespace Metatool.Plugin
 
                 move(outputDir, assemblyName, _logger);
                 scriptHost.Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug);
-                scriptHost.NotifyBuildResult += errors =>
+                scriptHost.NotfyBuildResult += errors =>
                 {
-                    if (errors.Count > 0)
+                    if (errorCount > 0)
                     {
                         _logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
                         if (watch) Watch(scriptPath, assemblyName);
