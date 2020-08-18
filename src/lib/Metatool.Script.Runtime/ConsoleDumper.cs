@@ -10,7 +10,7 @@ namespace Metatool.Script.Runtime
     internal interface IConsoleDumper
     {
         bool SupportsRedirect { get; }
-        TextWriter CreateWriter(string? header = null);
+        TextWriter CreateWriter(string header = null);
         TextReader CreateReader();
         void Dump(DumpData data);
         void DumpException(Exception exception);
@@ -23,7 +23,7 @@ namespace Metatool.Script.Runtime
 
         public bool SupportsRedirect => false;
 
-        public TextWriter CreateWriter(string? header = null)
+        public TextWriter CreateWriter(string header = null)
         {
             throw new NotSupportedException();
         }
@@ -129,7 +129,7 @@ namespace Metatool.Script.Runtime
 
         public bool SupportsRedirect => true;
 
-        public TextWriter CreateWriter(string? header = null)
+        public TextWriter CreateWriter(string header = null)
         {
             return new ConsoleRedirectWriter(this, header);
         }
@@ -328,11 +328,11 @@ namespace Metatool.Script.Runtime
         private class ConsoleRedirectWriter : TextWriter
         {
             private readonly JsonConsoleDumper _dumper;
-            private readonly string? _header;
+            private readonly string _header;
 
             public override Encoding Encoding => Encoding.UTF8;
 
-            public ConsoleRedirectWriter(JsonConsoleDumper dumper, string? header = null)
+            public ConsoleRedirectWriter(JsonConsoleDumper dumper, string header = null)
             {
                 _dumper = dumper;
                 _header = header;
@@ -400,7 +400,7 @@ namespace Metatool.Script.Runtime
             private readonly TextReader _reader;
             private readonly JsonConsoleDumper _dumper;
 
-            private string? _readString;
+            private string _readString;
             private int _readPosition;
 
             public ConsoleReader(JsonConsoleDumper dumper)

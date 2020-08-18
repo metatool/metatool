@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace Metatool.Script.Runtime
 {
     /// <summary>
-    /// This class initializes the RoslynPad standalone host.
+    /// This class initializes the standalone host.
     /// </summary>
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public static class RuntimeInitializer

@@ -4,8 +4,6 @@ using System.Text;
 
 namespace Metatool.Script
 {
-
-
     [DataContract]
     [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
     internal class CompilationErrorResultObject : IResultObject
@@ -45,7 +43,7 @@ namespace Metatool.Script
 
         public override string ToString() => $"{ErrorCode}: {Message}";
 
-        string? IResultObject.Value => ToString();
+        string IResultObject.Value => ToString();
 
         public void WriteTo(StringBuilder builder) => builder.Append(ToString());
     }

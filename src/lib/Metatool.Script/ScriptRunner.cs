@@ -37,7 +37,7 @@ namespace Metatool.Script
         internal static readonly ImmutableArray<string> PreprocessorSymbols =
             ImmutableArray.CreateRange(new[] {"__DEMO__", "__DEMO_EXPERIMENTAL__", "TRACE", "DEBUG"});
 
-        public ScriptRunner(string code, ImmutableList<SyntaxTree>? syntaxTrees = null,
+        public ScriptRunner(string code, ImmutableList<SyntaxTree> syntaxTrees = null,
             CSharpParseOptions parseOptions = null, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary,
             Platform platform = Platform.AnyCpu, IEnumerable<MetadataReference> references = null,
             IEnumerable<string> usings = null, string filePath = null, string workingDirectory = null,
@@ -71,7 +71,7 @@ namespace Metatool.Script
         }
 
         public string                    Code        { get; }
-        public ImmutableList<SyntaxTree>? SyntaxTrees { get; }
+        public ImmutableList<SyntaxTree> SyntaxTrees { get; }
         public OutputKind                 OutputKind  { get; }
         public Platform                   Platform    { get; }
 
@@ -104,7 +104,7 @@ namespace Metatool.Script
             }
         }
 
-        public async Task<object?> RunAsync(CancellationToken cancellationToken = default)
+        public async Task<object> RunAsync(CancellationToken cancellationToken = default)
         {
             var entryPoint = GetExecutor(null, cancellationToken);
             if (entryPoint == null)
@@ -135,7 +135,7 @@ namespace Metatool.Script
             return GetDiagnostics(diagnosticsBag, includeWarnings: true);
         }
 
-        private Func<object[], Task<object>>? GetExecutor(Action<Stream>? peStreamAction,
+        private Func<object[], Task<object>> GetExecutor(Action<Stream> peStreamAction,
             CancellationToken cancellationToken)
         {
             if (_lazyExecutor == null)
@@ -149,7 +149,7 @@ namespace Metatool.Script
         private static string GetScriptAssemblyName() =>
             _globalAssemblyNamePrefix + Interlocked.Increment(ref _assemblyNumber);
 
-        private Func<object[], Task<object>> CreateExecutor(Action<Stream>? peStreamAction,
+        private Func<object[], Task<object>> CreateExecutor(Action<Stream> peStreamAction,
             CancellationToken cancellationToken)
         {
             var compilation = GetCompilation(GetScriptAssemblyName());
@@ -205,7 +205,7 @@ namespace Metatool.Script
             await stream.CopyToAsync(fileStream).ConfigureAwait(false);
         }
 
-        private Func<object[], Task<object>>? Build(Action<Stream>? peStreamAction, Compilation compilation,
+        private Func<object[], Task<object>> Build(Action<Stream> peStreamAction, Compilation compilation,
             DiagnosticBag diagnostics, CancellationToken cancellationToken)
         {
             var entryPoint = compilation.GetEntryPoint(cancellationToken);
@@ -373,7 +373,7 @@ namespace Metatool.Script
 
         private class DiagnosticBag
         {
-            private ConcurrentQueue<Diagnostic>? _lazyBag;
+            private ConcurrentQueue<Diagnostic> _lazyBag;
 
             public bool IsEmptyWithoutResolution
             {

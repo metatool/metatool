@@ -115,7 +115,7 @@ namespace Metatool.Script
         {
             if (displayFilenames && frame.GetILOffset() != -1)
             {
-                string? text = null;
+                string text = null;
                 try
                 {
                     text = frame.GetFileName();

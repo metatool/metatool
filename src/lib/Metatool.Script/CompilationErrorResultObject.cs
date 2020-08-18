@@ -6,7 +6,7 @@ namespace Metatool.Script
 {
     internal interface IResultObject
     {
-        string? Value { get; }
+        string Value { get; }
 
         void WriteTo(StringBuilder builder);
     }
@@ -53,7 +53,7 @@ namespace Metatool.Script
 
         public override string ToString() => $"{Path}@{Line}:{Column}, {Severity} {ErrorCode}: {Message}";
 
-        string? IResultObject.Value => ToString();
+        string IResultObject.Value => ToString();
 
         public void WriteTo(StringBuilder builder) => builder.Append(ToString());
     }
