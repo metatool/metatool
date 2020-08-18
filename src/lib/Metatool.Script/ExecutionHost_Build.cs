@@ -33,24 +33,24 @@ namespace Metatool.Script
         private static readonly SyntaxTree InitHostSyntax = SyntaxFactory.ParseSyntaxTree(
             @"Metatool.Script.Runtime.RuntimeInitializer.Initialize();", ParseOptions);
 
-        private ExecutionHostParameters                          _parameters;
-        private ScriptOptions                                    _scriptOptions;
-        private bool                                             _running;
-        private string                                           _assemblyPath;
-        private string                                           _depsFile;
-        private CancellationTokenSource                          _executeCts;
-        private bool                                             _initializeBuildPathAfterRun;
-        private ILogger                                          _logger;
+        private ExecutionHostParameters _parameters;
+        private ScriptOptions _scriptOptions;
+        private bool _running;
+        private string _assemblyPath;
+        private string _depsFile;
+        private CancellationTokenSource _executeCts;
+        private bool _initializeBuildPathAfterRun;
+        private ILogger _logger;
         public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
         public ExecutionHost(ExecutionHostParameters parameters, string name, ILogger logger)
         {
-            _logger     = logger;
+            _logger = logger;
             _parameters = parameters;
-            Name        = name;
+            Name = name;
 
             Initialize(parameters);
-            // for execu
+            // for executing
             _jsonSerializer = new JsonSerializer
             {
                 TypeNameHandling = TypeNameHandling.Auto
@@ -73,14 +73,14 @@ namespace Metatool.Script
             try
             {
                 _running = true;
-                using var executeCts        = new CancellationTokenSource();
-                var       cancellationToken = executeCts.Token;
+                using var executeCts = new CancellationTokenSource();
+                var cancellationToken = executeCts.Token;
 
                 _assemblyPath = Path.Combine(BuildPath, $"{Name}.dll");
-                _depsFile     = Path.ChangeExtension(_assemblyPath, ".deps.json");
+                _depsFile = Path.ChangeExtension(_assemblyPath, ".deps.json");
 
-                var encoding   = Encoding.UTF8;
-                var buffer     = encoding.GetBytes(code);
+                var encoding = Encoding.UTF8;
+                var buffer = encoding.GetBytes(code);
                 var sourceText = SourceText.From(buffer, buffer.Length, encoding, canBeEmbedded: true);
 
                 var scriptRunner = CreateScriptRunner(sourceText, codePath, optimizationLevel);
@@ -114,7 +114,7 @@ namespace Metatool.Script
             finally
             {
                 _executeCts = null;
-                _running    = false;
+                _running = false;
 
                 if (_initializeBuildPathAfterRun)
                 {
@@ -240,7 +240,7 @@ namespace Metatool.Script
                     .LastOrDefault(m => m.Statement is ExpressionStatementSyntax expr && expr.SemicolonToken.IsMissing);
                 if (lastMissingSemicolon != null)
                 {
-                    var statement = (ExpressionStatementSyntax) lastMissingSemicolon.Statement;
+                    var statement = (ExpressionStatementSyntax)lastMissingSemicolon.Statement;
 
                     members = members.Replace(lastMissingSemicolon,
                         SyntaxFactory.GlobalStatement(
@@ -287,7 +287,7 @@ namespace Metatool.Script
 
         private static bool CopyIfNewer(string source, string destination)
         {
-            var sourceInfo      = new FileInfo(source);
+            var sourceInfo = new FileInfo(source);
             var destinationInfo = new FileInfo(destination);
 
             if (!destinationInfo.Exists || destinationInfo.CreationTimeUtc < sourceInfo.CreationTimeUtc)
@@ -301,7 +301,7 @@ namespace Metatool.Script
 
         private static void FileCopy(string source, string destination, bool overwrite)
         {
-            const int ERROR_ENCRYPTION_FAILED = unchecked((int) 0x80071770);
+            const int ERROR_ENCRYPTION_FAILED = unchecked((int)0x80071770);
 
             try
             {

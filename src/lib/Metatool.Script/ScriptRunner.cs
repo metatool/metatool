@@ -23,19 +23,19 @@ namespace Metatool.Script
     public sealed class ScriptRunner
     {
         private static readonly string _globalAssemblyNamePrefix = "\u211B\u2118-" + Guid.NewGuid() + "-";
-        private static          int    _assemblyNumber;
+        private static int _assemblyNumber;
 
         private readonly InteractiveAssemblyLoader _assemblyLoader;
-        private readonly OptimizationLevel         _optimizationLevel;
-        private readonly bool                      _checkOverflow;
-        private readonly bool                      _allowUnsafe;
-        private readonly bool                      _registerDependencies;
+        private readonly OptimizationLevel _optimizationLevel;
+        private readonly bool _checkOverflow;
+        private readonly bool _allowUnsafe;
+        private readonly bool _registerDependencies;
 
         private Func<object[], Task<object>> _lazyExecutor;
-        private Compilation                  _lazyCompilation;
+        private Compilation _lazyCompilation;
 
         internal static readonly ImmutableArray<string> PreprocessorSymbols =
-            ImmutableArray.CreateRange(new[] {"__DEMO__", "__DEMO_EXPERIMENTAL__", "TRACE", "DEBUG"});
+            ImmutableArray.CreateRange(new[] { "__DEMO__", "__DEMO_EXPERIMENTAL__", "TRACE", "DEBUG" });
 
         public ScriptRunner(string code, ImmutableList<SyntaxTree> syntaxTrees = null,
             CSharpParseOptions parseOptions = null, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary,
@@ -47,21 +47,21 @@ namespace Metatool.Script
             bool allowUnsafe = true,
             bool registerDependencies = false)
         {
-            _optimizationLevel    = optimizationLevel;
-            _checkOverflow        = checkOverflow;
-            _allowUnsafe          = allowUnsafe;
+            _optimizationLevel = optimizationLevel;
+            _checkOverflow = checkOverflow;
+            _allowUnsafe = allowUnsafe;
             _registerDependencies = registerDependencies;
-            Code                  = code;
-            SyntaxTrees           = syntaxTrees;
-            OutputKind            = outputKind;
-            Platform              = platform;
-            _assemblyLoader       = assemblyLoader ?? new InteractiveAssemblyLoader();
+            Code = code;
+            SyntaxTrees = syntaxTrees;
+            OutputKind = outputKind;
+            Platform = platform;
+            _assemblyLoader = assemblyLoader ?? new InteractiveAssemblyLoader();
             ParseOptions = (parseOptions ?? new CSharpParseOptions())
                 .WithKind(SourceCodeKind.Script)
                 .WithPreprocessorSymbols(PreprocessorSymbols);
             References = references?.AsImmutable() ?? ImmutableArray<MetadataReference>.Empty;
-            Usings     = usings?.AsImmutable()     ?? ImmutableArray<string>.Empty;
-            FilePath   = filePath                  ?? string.Empty;
+            Usings = usings?.AsImmutable() ?? ImmutableArray<string>.Empty;
+            FilePath = filePath ?? string.Empty;
             MetadataResolver = metadataResolver ??
                                ScriptMetadataResolver.Default.WithBaseDirectory(workingDirectory);
             SourceResolver = sourceResolver ??
@@ -70,10 +70,10 @@ namespace Metatool.Script
                                  : SourceFileResolver.Default);
         }
 
-        public string                    Code        { get; }
+        public string Code { get; }
         public ImmutableList<SyntaxTree> SyntaxTrees { get; }
-        public OutputKind                 OutputKind  { get; }
-        public Platform                   Platform    { get; }
+        public OutputKind OutputKind { get; }
+        public Platform Platform { get; }
 
         public ImmutableArray<MetadataReference> References { get; }
 
@@ -155,7 +155,7 @@ namespace Metatool.Script
             var compilation = GetCompilation(GetScriptAssemblyName());
 
             var diagnosticFormatter = CSharpDiagnosticFormatter.Instance;
-            var diagnostics         = DiagnoseCompilation(compilation, diagnosticFormatter);
+            var diagnostics = DiagnoseCompilation(compilation, diagnosticFormatter);
 
             var entryPoint = Build(peStreamAction, compilation, diagnostics, cancellationToken);
             ThrowIfAnyCompilationErrors(diagnostics, diagnosticFormatter);
@@ -175,9 +175,9 @@ namespace Metatool.Script
         private static async Task SaveAssembly(string assemblyPath, Compilation compilation, DiagnosticBag diagnostics,
             CancellationToken cancellationToken, IEnumerable<EmbeddedText> embeddedTexts)
         {
-            await using var peStream  = new MemoryStream();
+            await using var peStream = new MemoryStream();
             await using var pdbStream = new MemoryStream();
-            var             pdbPath   = Path.ChangeExtension(assemblyPath, "pdb");
+            var pdbPath = Path.ChangeExtension(assemblyPath, "pdb");
 
             var emitResult = compilation.Emit(peStream, pdbStream, cancellationToken: cancellationToken,
                 embeddedTexts: embeddedTexts,
@@ -189,7 +189,7 @@ namespace Metatool.Script
 
             if (emitResult.Success)
             {
-                peStream.Position  = 0;
+                peStream.Position = 0;
                 pdbStream.Position = 0;
                 // if (!Debugger.IsAttached) for vs lock the pdb file
                 await CopyToFileAsync(pdbPath, pdbStream).ConfigureAwait(false);
@@ -210,7 +210,7 @@ namespace Metatool.Script
         {
             var entryPoint = compilation.GetEntryPoint(cancellationToken);
 
-            using var peStream  = new MemoryStream();
+            using var peStream = new MemoryStream();
             using var pdbStream = new MemoryStream();
             var emitResult = compilation.Emit(
                 peStream: peStream,
@@ -228,7 +228,7 @@ namespace Metatool.Script
             if (_registerDependencies)
             {
                 foreach (var referencedAssembly in compilation.References.Select(
-                    x => new {Key = x, Value = compilation.GetAssemblyOrModuleSymbol(x) as IAssemblySymbol}))
+                    x => new { Key = x, Value = compilation.GetAssemblyOrModuleSymbol(x) as IAssemblySymbol }))
                 {
                     if (referencedAssembly.Value == null) continue;
 
@@ -239,10 +239,10 @@ namespace Metatool.Script
                 }
             }
 
-            peStream.Position  = 0;
+            peStream.Position = 0;
             pdbStream.Position = 0;
 
-            var assembly          = _assemblyLoader.LoadAssemblyFromStream(peStream, pdbStream);
+            var assembly = _assemblyLoader.LoadAssemblyFromStream(peStream, pdbStream);
             var runtimeEntryPoint = GetEntryPointRuntimeMethod(entryPoint, assembly);
 
             if (peStreamAction != null)
@@ -251,7 +251,7 @@ namespace Metatool.Script
                 peStreamAction(peStream);
             }
 
-            return (Func<object[], Task<object>>) runtimeEntryPoint.CreateDelegate(
+            return (Func<object[], Task<object>>)runtimeEntryPoint.CreateDelegate(
                 typeof(Func<object[], Task<object>>));
         }
 

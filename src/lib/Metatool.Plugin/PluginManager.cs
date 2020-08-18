@@ -259,7 +259,7 @@ namespace Metatool.Plugin
                 nugetManager.RestorePath = Path.Combine(Context.DefaultToolsDirectory, toolId);
 
                 var re = await nugetManager.RefreshPackagesAsync(
-                    new[] { new LibraryRef(toolId, VersionRange.AllFloating) }, CancellationToken.None,
+                    new[] { new LibraryRef(toolId, VersionRange.All) }, CancellationToken.None,
                     new List<PackageSource>() { r.source });
                 if (re.Success)
                 {
@@ -389,7 +389,7 @@ namespace Metatool.Plugin
 
         public void BuildReload(string scriptPath, string assemblyName, bool watch = true)
         {
-            static void move(string pluginDir1, string assemblyName1, ILogger logger1)
+            static void backup(string pluginDir1, string assemblyName1, ILogger logger1)
             {
                 var backupDir = Path.Combine(pluginDir1, "backup");
                 var backupPath = Path.Combine(backupDir, assemblyName1);
@@ -411,9 +411,9 @@ namespace Metatool.Plugin
             {
                 var scriptHost = new ScriptHost(_logger);
                 var outputDir = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
-                var pluginDll = Path.Combine(outputDir, assemblyName + ".dll");
+                var dll = Path.Combine(outputDir, assemblyName + ".dll");
 
-                move(outputDir, assemblyName, _logger);
+                backup(outputDir, assemblyName, _logger);
                 scriptHost.Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug);
                 scriptHost.NotifyBuildResult += errors =>
                 {
@@ -425,7 +425,7 @@ namespace Metatool.Plugin
                     else
                     {
                         _logger.LogInformation($"Assembly {assemblyName}: build successfully!");
-                        Load(scriptPath, pluginDll, assemblyName, watch);
+                        Load(scriptPath, dll, assemblyName, watch);
                     }
                 };
             }

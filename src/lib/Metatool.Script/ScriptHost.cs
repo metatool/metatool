@@ -16,9 +16,9 @@ namespace Metatool.Script
 {
     public class ScriptHost
     {
-        private          ILogger                                 _logger;
-        private          MetadataReference[]                     _defaultReferences;
-        private readonly ImmutableArray<string>                  _defaultImports;
+        private ILogger _logger;
+        private MetadataReference[] _defaultReferences;
+        private readonly ImmutableArray<string> _defaultImports;
         public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
         public ScriptHost(ILogger logger)
@@ -82,15 +82,15 @@ namespace Metatool.Script
         public void Build(string codePath, string outputDir, string assemblyName = null,
             OptimizationLevel optimization = OptimizationLevel.Debug)
         {
-            var code         = File.ReadAllText(codePath);
-            var codeDir      = Path.GetDirectoryName(codePath);
-            var refs         = LibRefParser.ParseReference(code, codeDir);
-            var id         = assemblyName ?? Path.GetFileNameWithoutExtension(codePath);
+            var code = File.ReadAllText(codePath);
+            var codeDir = Path.GetDirectoryName(codePath);
+            var refs = LibRefParser.ParseReference(code, codeDir);
+            var id = assemblyName ?? Path.GetFileNameWithoutExtension(codePath);
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var packageManager = new NugetManager(_logger) {Id = id, RestorePath = Path.Combine(outputDir, "nuget")};
+            var packageManager = new NugetManager(_logger) { Id = id, RestorePath = Path.Combine(outputDir, "nuget") };
 
             packageManager.RestoreSuccess += async restoreResult =>
             {
