@@ -80,7 +80,7 @@ namespace Metaseed.Metatool
 
         public static IHost BuildHost(string[] args)
         {
-            var host = ServiceConfig.CreateHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
             Services.SetDefaultProvider(host.Services);
             return host;
         }

@@ -11,19 +11,21 @@ namespace Metaseed.Metatool
     public partial class App : Application
     {
         private readonly IConfig<MetatoolConfig> _config;
-        private readonly ILogger<App> _logger;
-        private readonly IHostEnvironment _hostEnv;
+        private readonly ILogger<App>            _logger;
+        private readonly IHostEnvironment        _hostEnv;
+        private          INotify                 _notify;
 
-        public App(IConfig<MetatoolConfig> config, IHostEnvironment hostEnv, ILogger<App> logger)
+        public App(IConfig<MetatoolConfig> config, IHostEnvironment hostEnv, ILogger<App> logger, INotify notify)
         {
-            _config = config;
-            _logger = logger;
+            _config  = config;
+            _logger  = logger;
             _hostEnv = hostEnv;
+            _notify  = notify;
         }
 
-        private void ConfigNotify(INotify notify, ILogger logger, Scaffolder scaffolder)
+        private void ConfigNotify(Scaffolder scaffolder)
         {
-            notify.AddContextMenuItem("Show Log", e =>
+            _notify.AddContextMenuItem("Show Log", e =>
             {
                 if (e.IsChecked)
                     ConsoleExt.ShowConsole();
@@ -31,14 +33,11 @@ namespace Metaseed.Metatool
                     ConsoleExt.HideConsole();
             }, null, true, _hostEnv.IsDevelopment());
 
-            notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
+            _notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
                 AutoStartManager.IsAutoStart);
-            notify.AddContextMenuItem("Register", e =>
-            {
-                scaffolder.Register();
-            });
+            _notify.AddContextMenuItem("Register", e => { scaffolder.Register(); });
 
-            notify.ShowMessage("Metatool started!");
+            _notify.ShowMessage("Metatool started!");
         }
 
 
@@ -48,14 +47,13 @@ namespace Metaseed.Metatool
 
             Current.MainWindow = new MainWindow();
 
-            var notify = Services.Get<INotify>();
-            notify.ShowMessage("Metatool starting...");
+            _notify.ShowMessage("Metatool starting...");
 
 
             var scaffolder = new Scaffolder(_logger);
             scaffolder.CommonSetup(_config);
 
-            ConfigNotify(notify, _logger, scaffolder);
+            ConfigNotify(scaffolder);
             _logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
             _logger.LogInformation("Metatool started!");
         }
