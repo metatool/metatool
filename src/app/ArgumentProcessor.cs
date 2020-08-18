@@ -36,7 +36,7 @@ namespace Metaseed.Metatool
 
             app.OnExecute(() =>
             {
-                // without command
+                // without sub command
                 var pluginManager = Services.GetOrCreate<PluginManager>();
                 App.RunApp();
                 pluginManager.InitPlugins();

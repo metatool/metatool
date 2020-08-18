@@ -53,7 +53,6 @@ namespace Metaseed.Metatool
                             options.MinLevel = hostContext.HostingEnvironment.IsDevelopment()
                                 ? LogLevel.Trace
                                 : LogLevel.Information)
-                        .AddSingleton<App>()
                         .AddSingleton<IKeyboard, Keyboard>()
                         .AddSingleton<IClipboard, Clipboard>()
                         .AddSingleton<IMouse, Mouse>()

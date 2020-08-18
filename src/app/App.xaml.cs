@@ -70,12 +70,11 @@ namespace Metaseed.Metatool
 
         private static void Start()
         {
-            var application = Services.Get<App>();
+            var application = Services.Create<App>();
             Context.Dispatcher = application.Dispatcher;
 
             application.InitializeComponent();
             application.Run();
-            //System.Windows.Threading.Dispatcher.Run();
         }
     }
 }
