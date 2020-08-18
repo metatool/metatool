@@ -11,14 +11,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
 {
-    public class Scaffolder
+    public class Scaffold
     {
         private readonly ILogger _logger;
         private readonly IFileExplorer _fileExplorer;
         private IShell _shell;
         private FunctionalKeys _functions;
 
-        public Scaffolder(ILogger logger)
+        public Scaffold(ILogger logger)
         {
             _logger = logger;
             _fileExplorer = Services.Get<IFileExplorer>();
@@ -105,7 +105,7 @@ namespace Metaseed.Metatool
             }
 
             using var stream =
-                typeof(Scaffolder).Assembly.GetManifestResourceStream(resource);
+                typeof(Scaffold).Assembly.GetManifestResourceStream(resource);
             new ZipArchive(stream).ExtractToDirectory(dir, true);
             _logger.LogInformation($"Metatool: tool {toolName} is created in folder: {dir}");
             try

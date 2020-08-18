@@ -65,7 +65,7 @@ namespace Metaseed.Metatool
                     c.HelpOption(HelpOptionTemplate);
                     c.OnExecute(() =>
                     {
-                        var scaffolder = new Scaffolder(_logger);
+                        var scaffolder = new Scaffold(_logger);
                         scaffolder.InitTemplate(fileName.Value, cwd.Value());
                     });
                 });
@@ -83,7 +83,7 @@ namespace Metaseed.Metatool
                     c.HelpOption(HelpOptionTemplate);
                     c.OnExecute(() =>
                     {
-                        var scaffolder = new Scaffolder(_logger);
+                        var scaffolder = new Scaffold(_logger);
                         scaffolder.InitTemplate(fileName.Value, cwd.Value(), false);
                     });
                 });
@@ -136,7 +136,7 @@ namespace Metaseed.Metatool
                 c.HelpOption(HelpOptionTemplate);
                 c.OnExecute(() =>
                 {
-                    var scaffolder = new Scaffolder(_logger);
+                    var scaffolder = new Scaffold(_logger);
                     scaffolder.Register();
                 });
             });

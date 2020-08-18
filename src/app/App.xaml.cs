@@ -23,7 +23,7 @@ namespace Metaseed.Metatool
             _notify  = notify;
         }
 
-        private void ConfigNotify(Scaffolder scaffolder)
+        private void ConfigNotify(Scaffold scaffolder)
         {
             _notify.AddContextMenuItem("Show Log", e =>
             {
@@ -44,13 +44,10 @@ namespace Metaseed.Metatool
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
             Current.MainWindow = new MainWindow();
-
             _notify.ShowMessage("Metatool starting...");
 
-
-            var scaffolder = new Scaffolder(_logger);
+            var scaffolder = new Scaffold(_logger);
             scaffolder.CommonSetup(_config);
 
             ConfigNotify(scaffolder);
