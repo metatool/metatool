@@ -13,15 +13,12 @@ namespace Metatool.Script
         private TextWriter _processInputStream;
         public event Action<ResultObject> Dumped;
         public event Action<ExceptionResultObject> Error;
-        public event Action                        ReadInput;
+        public event Action ReadInput;
         private readonly JsonSerializer _jsonSerializer;
 
         private async Task RunProcess(string assemblyPath, CancellationToken cancellationToken)
         {
-            using (var process = new Process
-            {
-                StartInfo = GetProcessStartInfo(assemblyPath)
-            })
+            using (var process = new Process { StartInfo = GetProcessStartInfo(assemblyPath) })
             using (cancellationToken.Register(() =>
             {
                 try
@@ -37,8 +34,8 @@ namespace Metatool.Script
                     _processInputStream = new StreamWriter(process.StandardInput.BaseStream, Encoding.UTF8);
 
                     await Task.WhenAll(
-                        Task.Run(() => ReadObjectProcessStream(process.StandardOutput)),
-                        Task.Run(() => ReadProcessStream(process.StandardError)));
+                        Task.Run(() => ReadObjectProcessStandardOutputStream(process.StandardOutput)),
+                        Task.Run(() => ReadProcessStandardErrorStream(process.StandardError)));
                 }
             }
         }
@@ -56,8 +53,8 @@ namespace Metatool.Script
 
         private ProcessStartInfo GetProcessStartInfo(string assemblyPath)
         {
-            var dotnetPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramW6432")!, "dotnet");
-            var dotnetExe  = Path.Combine(dotnetPath, "dotnet.exe");
+            var dotnetPath = Path.Combine(Environment.GetEnvironmentVariable("ProgramW6432"), "dotnet");
+            var dotnetExe = Path.Combine(dotnetPath, "dotnet.exe");
             return new ProcessStartInfo
             {
                 FileName = dotnetExe,
@@ -73,7 +70,7 @@ namespace Metatool.Script
             };
         }
 
-        private async Task ReadProcessStream(StreamReader reader)
+        private async Task ReadProcessStandardErrorStream(StreamReader reader)
         {
             while (!reader.EndOfStream)
             {
@@ -85,7 +82,7 @@ namespace Metatool.Script
             }
         }
 
-        private void ReadObjectProcessStream(StreamReader reader)
+        private void ReadObjectProcessStandardOutputStream(StreamReader reader)
         {
             using (var jsonReader = new JsonTextReader(reader) { SupportMultipleContent = true })
             {

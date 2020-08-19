@@ -39,7 +39,7 @@ namespace Metaseed.Metatool
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                     //     new TextWriterTraceListener(writer: Console.Out)));
                     logging
-                    //.AddProvider(new CustomConsoleLoggerProvider())
+                    //.AddProvider(new SimpleConsoleLoggerProvider())
                     .AddFile(o => o.RootPath = Context.AppDirectory)
                     ;
                 })

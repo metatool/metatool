@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Metatool.Metatool
 {
-    public class CustomConsoleLoggerProvider : ILoggerProvider
+    public class SimpleConsoleLoggerProvider : ILoggerProvider
     {
         public void Dispose()
         {
@@ -11,14 +11,14 @@ namespace Metatool.Metatool
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new CustomConsoleLogger(categoryName);
+            return new SimpleConsoleLogger(categoryName);
         }
-        [ProviderAlias("CustomConsole")]
-        public class CustomConsoleLogger : ILogger
+        [ProviderAlias("SimpleConsole")]
+        public class SimpleConsoleLogger : ILogger
         {
             private readonly string _categoryName;
 
-            public CustomConsoleLogger(string categoryName)
+            public SimpleConsoleLogger(string categoryName)
             {
                 _categoryName = categoryName;
             }

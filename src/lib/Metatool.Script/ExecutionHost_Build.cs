@@ -263,8 +263,6 @@ namespace Metatool.Script
         private void CopyDependencies()
         {
             var referencesChanged = CopyReferences(_parameters.DirectReferences);
-
-
             FileCopy(Path.Combine(BuildPath, "nuget", "project.assets.json"), _depsFile, overwrite: true);
 
             bool CopyReferences(IEnumerable<string> references)
