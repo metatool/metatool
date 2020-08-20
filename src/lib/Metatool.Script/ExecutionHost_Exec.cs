@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Metatool.Script
@@ -18,6 +19,7 @@ namespace Metatool.Script
 
         private async Task RunProcess(string assemblyPath, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Start to run...");
             using (var process = new Process { StartInfo = GetProcessStartInfo(assemblyPath) })
             using (cancellationToken.Register(() =>
             {

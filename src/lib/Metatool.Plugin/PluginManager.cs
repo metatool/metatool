@@ -414,12 +414,11 @@ namespace Metatool.Plugin
                 var dll = Path.Combine(outputDir, assemblyName + ".dll");
 
                 backup(outputDir, assemblyName, _logger);
-                scriptHost.Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug);
+                Task.Run(()=>scriptHost.Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug));
                 scriptHost.NotifyBuildResult += errors =>
                 {
                     if (errors.Count > 0)
                     {
-                        _logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
                         if (watch) Watch(scriptPath, assemblyName);
                     }
                     else

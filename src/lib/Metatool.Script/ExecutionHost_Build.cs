@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -70,6 +71,8 @@ namespace Metatool.Script
         {
             bool buildResult = true;
             await new NoContextYieldAwaitable();
+            _logger.LogInformation($"{Name}: Start to build...");
+            var sw = Stopwatch.StartNew();
             try
             {
                 _running = true;
@@ -96,7 +99,9 @@ namespace Metatool.Script
                     .ConfigureAwait(false);
                 SendDiagnostics(diagnostics);
 
-                if (diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+                var error = diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error);
+                _logger.LogInformation($"{Name}: Build {(error ?  "error": "successfully")} , time: {sw.ElapsedMilliseconds}ms");
+                if (error)
                 {
                     return false;
                 }

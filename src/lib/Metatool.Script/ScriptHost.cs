@@ -85,12 +85,13 @@ namespace Metatool.Script
             {
                 refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
             }
+            _logger.LogInformation("Start to restore nuget packages...");
             var result = await packageManager.RestoreAsync(refs);
 
             if (result.Success)
             {
                 _logger.LogInformation(
-                     $"{assemblyName}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
+                     $"{id}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
 
                 var executionHostParameters = new ExecutionHostParameters(
                     compileReferences: ImmutableArray<string>.Empty,
@@ -121,7 +122,7 @@ namespace Metatool.Script
                 {
                     if (e.Count > 0)
                     {
-                        _logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, e));
+                        _logger.LogError($"Build Error({id}): " + string.Join(Environment.NewLine, e));
                     }
 
                     NotifyBuildResult?.Invoke(e);
@@ -129,9 +130,7 @@ namespace Metatool.Script
 
                 stopWatch.Restart();
 
-                _logger.LogInformation($"{assemblyName}: Start to build...");
-                var res = await executionHost.BuildAndExecuteAsync(code, optimization, codePath, onlyBuild) ? "successfully" : "error";
-                _logger.LogInformation($"{assemblyName}: Build {res} , time: {stopWatch.ElapsedMilliseconds}ms");
+                var res = await executionHost.BuildAndExecuteAsync(code, optimization, codePath, onlyBuild) ;
             }
             else
             {
