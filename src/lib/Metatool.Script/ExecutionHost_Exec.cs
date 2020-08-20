@@ -84,31 +84,29 @@ namespace Metatool.Script
 
         private void ReadObjectProcessStandardOutputStream(StreamReader reader)
         {
-            using (var jsonReader = new JsonTextReader(reader) { SupportMultipleContent = true })
+            using var jsonReader = new JsonTextReader(reader) { SupportMultipleContent = true };
+            while (jsonReader.Read())
             {
-                while (jsonReader.Read())
+                try
                 {
-                    try
-                    {
-                        var result = _jsonSerializer.Deserialize<ResultObject>(jsonReader);
+                    var result = _jsonSerializer.Deserialize<ResultObject>(jsonReader);
 
-                        switch (result)
-                        {
-                            case ExceptionResultObject exceptionResult:
-                                Error?.Invoke(exceptionResult);
-                                break;
-                            case InputReadRequest _:
-                                ReadInput?.Invoke();
-                                break;
-                            default:
-                                Dumped?.Invoke(result);
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
+                    switch (result)
                     {
-                        Dumped?.Invoke(ResultObject.Create("Error deserializing result: " + ex.Message, DumpQuotas.Default));
+                        case ExceptionResultObject exceptionResult:
+                            Error?.Invoke(exceptionResult);
+                            break;
+                        case InputReadRequest _:
+                            ReadInput?.Invoke();
+                            break;
+                        default:
+                            Dumped?.Invoke(result);
+                            break;
                     }
+                }
+                catch (Exception ex)
+                {
+                    Dumped?.Invoke(ResultObject.Create("Error deserializing result: " + ex.Message, DumpQuotas.Default));
                 }
             }
         }

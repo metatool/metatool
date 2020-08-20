@@ -22,11 +22,7 @@ namespace Metatool.NugetPackage
 
         public static NugetHelper Instance => lazy.Value;
 
-        internal readonly ILogger Logger = new NugetLogger();
-
-        private NugetHelper()
-        {
-        }
+        internal  ILogger Logger;
 
         public IEnumerable<SourceRepository> GetSourceRepos(IList<NugetRepository> repositories)
         {

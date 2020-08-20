@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Metatool.Service;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using ILogger = NuGet.Common.ILogger;
@@ -12,7 +11,12 @@ namespace Metatool.NugetPackage
 {
     internal class NugetLogger: ILogger
     {
-        readonly Microsoft.Extensions.Logging.ILogger _logger = Services.Get<Microsoft.Extensions.Logging.ILogger<NugetLogger>>();
+        readonly Microsoft.Extensions.Logging.ILogger _logger;
+
+        public NugetLogger(Microsoft.Extensions.Logging.ILogger logger)
+        {
+            _logger = logger;
+        }
         public void LogDebug(string data)
         {
             _logger.LogDebug(data);

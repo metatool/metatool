@@ -56,6 +56,7 @@ namespace Metatool.NugetPackage
         public NugetManager(ILogger logger)
         {
             _logger = logger;
+            _packageDownloader = new PackageDownloader(logger);
             var framework = Assembly
                 .GetEntryAssembly()?
                 .GetCustomAttribute<TargetFrameworkAttribute>().FrameworkName;

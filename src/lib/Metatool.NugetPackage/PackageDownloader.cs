@@ -16,9 +16,10 @@ namespace Metatool.NugetPackage
 
         private IList<SourceRepository> _sourceRepos;
 
-        public PackageDownloader()
+        public PackageDownloader(Microsoft.Extensions.Logging.ILogger logger)
         {
-            _logger = NugetHelper.Instance.Logger;
+            _logger = new NugetLogger(logger);
+            NugetHelper.Instance.Logger = _logger;
         }
 
         public async Task<List<DllInfo>> DownloadPackage(PackageWrapper packageWrapper,string folder, bool disableCache = false, bool includePrelease = true, bool allowUnlisted = false)

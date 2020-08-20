@@ -8,7 +8,7 @@ namespace Metatool.NugetPackage
 {
     public partial class NugetManager
     {
-        readonly PackageDownloader _packageDownloader = new PackageDownloader();
+        private readonly PackageDownloader _packageDownloader;
         readonly PackageFinder     _packageFinder      = new PackageFinder();
 
         public List<PackageWrapper> GetListOfPackageIdentities(string packageName, string version,

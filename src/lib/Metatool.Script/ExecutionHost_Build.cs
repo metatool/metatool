@@ -100,6 +100,7 @@ namespace Metatool.Script
                 {
                     return false;
                 }
+                CreateRuntimeConfig();
 
                 _executeCts = executeCts;
 
@@ -139,7 +140,6 @@ namespace Metatool.Script
             }
 
             CleanupBuildPath();
-            CreateRuntimeConfig();
         }
 
         private void CleanupBuildPath()

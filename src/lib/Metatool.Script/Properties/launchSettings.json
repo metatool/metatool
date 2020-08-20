@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Metatool.Script": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\temp\\New folder (3)\\Scripts\\Main.csx\""
+    }
+  }
+}

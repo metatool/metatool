@@ -16,9 +16,8 @@ namespace Metatool.Script
 {
     public class ScriptHost
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
         private MetadataReference[] _defaultReferences;
-        private readonly ImmutableArray<string> _defaultImports;
         public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
         public ScriptHost(ILogger logger)
@@ -79,8 +78,8 @@ namespace Metatool.Script
             return GetReferencePaths(DefaultReferences).Concat(references).ToImmutableArray();
         }
 
-        public void Build(string codePath, string outputDir, string assemblyName = null,
-            OptimizationLevel optimization = OptimizationLevel.Debug)
+        public ScriptHost Build(string codePath, string outputDir, string assemblyName = null,
+            OptimizationLevel optimization = OptimizationLevel.Debug, bool onlyBuild=true)
         {
             var code = File.ReadAllText(codePath);
             var codeDir = Path.GetDirectoryName(codePath);
@@ -119,16 +118,15 @@ namespace Metatool.Script
 
                 var executionHost =
                     new ExecutionHost(executionHostParameters, id, _logger);
-                // executionHost.Dumped            += AddResult;
-                // executionHost.Error             += ExecutionHostOnError;
-                // executionHost.ReadInput         += ExecutionHostOnInputRequest;
-                // executionHost.CompilationErrors += ExecutionHostOnCompilationErrors;
+                executionHost.Dumped += result=>_logger.LogError(result.ToString());
+                executionHost.Error += result => _logger.LogError(result.ToString());
+                executionHost.ReadInput += ()=>_logger.LogInformation("read input");
                 executionHost.NotifyBuildResult += e => NotifyBuildResult?.Invoke(e);
 
                 stopWatch.Restart();
 
                 _logger.LogInformation($"{assemblyName}: Start to build...");
-                var result = await executionHost.BuildAndExecuteAsync(code, optimization, codePath) ? "successfully" : "error";
+                var result = await executionHost.BuildAndExecuteAsync(code, optimization, codePath, onlyBuild) ? "successfully" : "error";
                 _logger.LogInformation($"{assemblyName}: Build {result} , time: {stopWatch.ElapsedMilliseconds}ms");
             };
             if (DefaultReferences.Length > 0)
@@ -143,15 +141,8 @@ namespace Metatool.Script
                     .ToList());
             };
             packageManager.Restore(refs);
+            return this;
         }
 
-        // private void AddResult(IResultObject o)
-        // {
-        //     _dispatcher.InvokeAsync(() =>
-        //     {
-        //         ResultsInternal?.Add(o);
-        //         ResultsAvailable?.Invoke();
-        //     }, AppDispatcherPriority.Low);
-        // }
     }
 }
