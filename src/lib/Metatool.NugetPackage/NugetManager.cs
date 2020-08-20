@@ -20,21 +20,21 @@ namespace Metatool.NugetPackage
 {
     public partial class NugetManager
     {
-        private readonly ILogger                 _logger;
-        private readonly SemaphoreSlim           _restoreLock = new SemaphoreSlim(1, 1);
-        private readonly HashSet<LibraryRef>     _libraries   = new HashSet<LibraryRef>();
-        private          NuGetFramework          _targetFramework;
-        private          CancellationTokenSource _restoreCts;
-        private          string                 _frameworkVersion;
+        private readonly ILogger _logger;
+        private readonly SemaphoreSlim _restoreLock = new SemaphoreSlim(1, 1);
+        private readonly HashSet<LibraryRef> _libraries = new HashSet<LibraryRef>();
+        private NuGetFramework _targetFramework;
+        private CancellationTokenSource _restoreCts;
+        private string _frameworkVersion;
 
-        public ImmutableArray<string>           LocalLibraryPaths { get; private set; } = ImmutableArray<string>.Empty;
+        public ImmutableArray<string> LocalLibraryPaths { get; private set; } = ImmutableArray<string>.Empty;
         public event Action<RestoreSuccessResult> RestoreSuccess;
 
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         public string RestorePath { get; set; }
 
-        public                  string PackageFolder { get; set; } = Context.PackageDirectory;
+        public string PackageFolder { get; set; } = Context.PackageDirectory;
 
         public List<(string name, string source)> AdditionalSources { get; set; } =
             new List<(string name, string source)>()
@@ -46,9 +46,8 @@ namespace Metatool.NugetPackage
         public List<PackageSource> PackageSources => _nugetPackage._packageSources;
         public List<SourceRepository> SourceRepositories => _nugetPackage._sourceRepositories;
 
-        public           bool         IsRestoring   { get; private set; }
-        public           bool         RestoreFailed { get; private set; }
-        public           Task         RestoreTask   { get; private set; }
+        public bool IsRestoring { get; private set; }
+        public bool RestoreFailed { get; private set; }
         private readonly NugetPackage _nugetPackage;
 
         public event Action<IReadOnlyList<string>> RestoreError;
@@ -63,19 +62,18 @@ namespace Metatool.NugetPackage
             var str = framework?.Split(",Version=v");
             Debug.Assert(str != null, nameof(str) + " != null");
             var frameworkName = string.Concat(str);
-            _targetFramework  = NuGetFramework.ParseFolder(frameworkName);
+            _targetFramework = NuGetFramework.ParseFolder(frameworkName);
             _frameworkVersion = str?[1];
-            _nugetPackage     = new NugetPackage(_logger, this);
+            _nugetPackage = new NugetPackage(_logger, this);
         }
 
         public void SetTargetFramework(string targetFrameworkMoniker, string frameworkVersion = null)
         {
-            _targetFramework  = NuGetFramework.ParseFolder(targetFrameworkMoniker);
+            _targetFramework = NuGetFramework.ParseFolder(targetFrameworkMoniker);
             _frameworkVersion = frameworkVersion;
             RefreshPackages();
         }
-
-        public void Restore(IReadOnlyList<LibraryRef> libraries)
+        private bool CheckChanged(IReadOnlyList<LibraryRef> libraries)
         {
             var changed = false;
 
@@ -83,7 +81,7 @@ namespace Metatool.NugetPackage
             {
                 _libraries.Clear();
                 LocalLibraryPaths = ImmutableArray<string>.Empty;
-                changed           = true;
+                changed = true;
             }
             else
             {
@@ -116,26 +114,38 @@ namespace Metatool.NugetPackage
                     }
                 }
             }
-
-            if (changed)
-            {
-                RefreshPackages();
-            }
+            return changed;
         }
 
-        private void RefreshPackages()
+        public void Restore(IReadOnlyList<LibraryRef> libraries)
         {
-            if (RestorePath == null || _targetFramework == null) return;
+            if (CheckChanged(libraries))
+            {
+                RefreshPackages().GetAwaiter().GetResult();
+            }
+        }
+        public async Task<RestoreResult> RestoreAsync(IReadOnlyList<LibraryRef> libraries)
+        {
+            if (CheckChanged(libraries))
+                return await RefreshPackages();
+            return new RestoreResult(new []{"no change in libaries, so no need to restore Nuget packages"}, true, true);
+        }
+
+        private async Task<RestoreResult> RefreshPackages()
+        {
+            if (RestorePath == null || _targetFramework == null)
+                return new RestoreResult(
+                    new[] { "RestorePath is null or _taggetFramework is null" }, false, true);
 
             _restoreCts?.Cancel();
 
             var packages = _libraries?.ToArray();
 
-            var restoreCts        = new CancellationTokenSource();
+            var restoreCts = new CancellationTokenSource();
             var cancellationToken = restoreCts.Token;
             _restoreCts = restoreCts;
 
-            RestoreTask = Task.Run(() => RefreshPackagesAsync(packages, cancellationToken), cancellationToken);
+            return await RefreshPackagesAsync(packages, cancellationToken);
         }
 
         public async Task<RestoreResult> RefreshPackagesAsync(LibraryRef[] libraries, CancellationToken cancellationToken,
@@ -146,10 +156,10 @@ namespace Metatool.NugetPackage
             try
             {
                 var restoreParams = _nugetPackage.CreateRestoreParams();
-                restoreParams.ProjectName      = Id;
-                restoreParams.OutputPath       = RestorePath;
-                restoreParams.Libraries        = libraries;
-                restoreParams.TargetFramework  = _targetFramework;
+                restoreParams.ProjectName = Id;
+                restoreParams.OutputPath = RestorePath;
+                restoreParams.Libraries = libraries;
+                restoreParams.TargetFramework = _targetFramework;
                 restoreParams.FrameworkVersion = _frameworkVersion;
                 if (sources != null) restoreParams.Sources = sources;
 
@@ -189,7 +199,7 @@ namespace Metatool.NugetPackage
             catch (Exception e) when (!(e is OperationCanceledException))
             {
                 _logger?.LogError(e.Message + e.StackTrace);
-                return new RestoreResult(new List<string>(){e.Message, e.StackTrace},false, false);
+                return new RestoreResult(new List<string>() { e.Message, e.StackTrace }, false, false);
             }
             finally
             {

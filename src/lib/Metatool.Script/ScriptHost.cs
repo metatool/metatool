@@ -4,12 +4,11 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Metatool.NugetPackage;
 using Metatool.Script.Runtime;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Script
@@ -43,14 +42,6 @@ namespace Metatool.Script
             "System.IO",
             "System.Reflection",
             "Metatool.Script.Runtime"
-            // "System.Core",
-            // "System.Data",
-            // "System.Data.DataSetExtensions",
-            // "System.Runtime",
-            // "System.Xml",
-            // "System.Xml.Linq",
-            // "System.Net.Http",
-            // "Microsoft.CSharp"
         }.ToImmutableArray();
 
         private IEnumerable<MetadataReference> _frameworkReferences;
@@ -78,8 +69,8 @@ namespace Metatool.Script
             return GetReferencePaths(DefaultReferences).Concat(references).ToImmutableArray();
         }
 
-        public ScriptHost Build(string codePath, string outputDir, string assemblyName = null,
-            OptimizationLevel optimization = OptimizationLevel.Debug, bool onlyBuild=true)
+        public async Task Build(string codePath, string outputDir, string assemblyName = null,
+            OptimizationLevel optimization = OptimizationLevel.Debug, bool onlyBuild = true)
         {
             var code = File.ReadAllText(codePath);
             var codeDir = Path.GetDirectoryName(codePath);
@@ -90,11 +81,16 @@ namespace Metatool.Script
             stopWatch.Start();
 
             var packageManager = new NugetManager(_logger) { Id = id, RestorePath = Path.Combine(outputDir, "nuget") };
+            if (DefaultReferences.Length > 0)
+            {
+                refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
+            }
+            var result = await packageManager.RestoreAsync(refs);
 
-            packageManager.RestoreSuccess += async restoreResult =>
+            if (result.Success)
             {
                 _logger.LogInformation(
-                    $"{assemblyName}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
+                     $"{assemblyName}: NugetPackage Restores successfully, time: {stopWatch.ElapsedMilliseconds}ms");
 
                 var executionHostParameters = new ExecutionHostParameters(
                     compileReferences: ImmutableArray<string>.Empty,
@@ -108,40 +104,41 @@ namespace Metatool.Script
                     globalPackageFolder: packageManager.PackageFolder);
 
                 executionHostParameters.NuGetCompileReferences =
-                    GetReferences(references: restoreResult.CompileReferences);
+                    GetReferences(references: result.SuccessResult.CompileReferences);
 
                 executionHostParameters.NuGetRuntimeReferences =
-                    GetReferences(references: restoreResult.RuntimeReferences);
+                    GetReferences(references: result.SuccessResult.RuntimeReferences);
 
                 // reference directives & default references
                 executionHostParameters.DirectReferences = packageManager.LocalLibraryPaths;
 
                 var executionHost =
                     new ExecutionHost(executionHostParameters, id, _logger);
-                executionHost.Dumped += result=>_logger.LogError(result.ToString());
+                executionHost.Dumped += result => _logger.LogError(result.ToString());
                 executionHost.Error += result => _logger.LogError(result.ToString());
-                executionHost.ReadInput += ()=>_logger.LogInformation("read input");
-                executionHost.NotifyBuildResult += e => NotifyBuildResult?.Invoke(e);
+                executionHost.ReadInput += () => _logger.LogInformation("read input");
+                executionHost.NotifyBuildResult += e =>
+                {
+                    if (e.Count > 0)
+                    {
+                        _logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, e));
+                    }
+
+                    NotifyBuildResult?.Invoke(e);
+                };
 
                 stopWatch.Restart();
 
                 _logger.LogInformation($"{assemblyName}: Start to build...");
-                var result = await executionHost.BuildAndExecuteAsync(code, optimization, codePath, onlyBuild) ? "successfully" : "error";
-                _logger.LogInformation($"{assemblyName}: Build {result} , time: {stopWatch.ElapsedMilliseconds}ms");
-            };
-            if (DefaultReferences.Length > 0)
-            {
-                refs.AddRange(GetReferencePaths(DefaultReferences).Select(p => new LibraryRef(p)));
+                var res = await executionHost.BuildAndExecuteAsync(code, optimization, codePath, onlyBuild) ? "successfully" : "error";
+                _logger.LogInformation($"{assemblyName}: Build {res} , time: {stopWatch.ElapsedMilliseconds}ms");
             }
-
-            packageManager.RestoreError += r =>
+            else
             {
-                NotifyBuildResult?.Invoke(r.ToList().Select(er =>
+                NotifyBuildResult?.Invoke(result.Errors.ToList().Select(er =>
                         CompilationErrorResultObject.Create("", "", "PackageRestoreError:: " + er, "", -1, -1))
                     .ToList());
             };
-            packageManager.Restore(refs);
-            return this;
         }
 
     }

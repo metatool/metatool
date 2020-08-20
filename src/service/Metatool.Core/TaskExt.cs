@@ -19,7 +19,8 @@ namespace Metatool.Service
     {
         public static EAPTask<TEventArgs, EventHandler<TEventArgs>> FromEvent<TEventArgs>(
             int timeout = Timeout.Infinite,
-            Action<TEventArgs> action = null, Predicate<TEventArgs> predicate = null)
+            Action<TEventArgs> action = null,
+            Predicate<TEventArgs> predicate = null)
         {
             var tcs = new TaskCompletionSource<TEventArgs>(timeout);
             return new EAPTask<TEventArgs, EventHandler<TEventArgs>>(tcs, (s, e) =>
@@ -32,18 +33,16 @@ namespace Metatool.Service
 
         public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, int timeout, TResult defaultValue = default) // -1: infinite
         {
-
             using (var timeoutCancellationTokenSource = new CancellationTokenSource())
             {
-
                 var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
                 if (completedTask == task)
                 {
                     timeoutCancellationTokenSource.Cancel();
-                    return await task; // Very important in order to propagate exceptions
+                    return await task; // await again. Very important in order to propagate exceptions
                 }
 
-                if(EqualityComparer<TResult>.Default.Equals(default(TResult)))
+                if(EqualityComparer<TResult>.Default.Equals(defaultValue, default(TResult)))
                     throw new TimeoutException("The operation has timed out.");
                 return defaultValue;
             }

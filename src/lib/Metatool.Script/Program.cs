@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using System.Threading.Tasks;
 using static Metatool.Metatool.SimpleConsoleLoggerProvider;
 
 namespace Metatool.Script
@@ -11,7 +9,7 @@ namespace Metatool.Script
     {
         const string ScriptBin = "bin";
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             // var path = Path.Combine(AppContext.BaseDirectory,"BBB", "cc.csx");
             var scriptPath = args[0];
@@ -35,19 +33,8 @@ namespace Metatool.Script
             // var dll = Path.Combine(outputDir, assemblyName + ".dll");
 
             var logger = new SimpleConsoleLogger(nameof(ScriptHost));
-            new ScriptHost(logger)
-            .Build(scriptPath, outputDir, assemblyName, onlyBuild:false)
-            .NotifyBuildResult += errors =>
-                {
-                    if (errors.Count > 0)
-                    {
-                        logger.LogError($"Build Error({assemblyName}): " + string.Join(Environment.NewLine, errors));
-                    }
-                };
-            while (true)
-            {
-                Thread.Sleep(100);
-            }
+            await new ScriptHost(logger).Build(scriptPath, outputDir, assemblyName, onlyBuild:false);
+            
         }
     }
 }

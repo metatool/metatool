@@ -16,7 +16,7 @@ namespace Metatool.ScreenHint
         {
         }
 
-        readonly Metatool.ScreenHint.MainWindow _window = MainWindow.Inst;
+        readonly MainWindow _window = MainWindow.Inst;
 
         public void Show(bool isReshow = false)
         {
