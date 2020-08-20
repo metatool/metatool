@@ -423,7 +423,6 @@ namespace Metatool.Plugin
                     }
                     else
                     {
-                        _logger.LogInformation($"Assembly {assemblyName}: build successfully!");
                         Load(scriptPath, dll, assemblyName, watch);
                     }
                 };
