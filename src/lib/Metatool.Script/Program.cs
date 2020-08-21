@@ -1,40 +1,63 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
+using System.Runtime.Loader;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using static Metatool.Metatool.SimpleConsoleLoggerProvider;
 
 namespace Metatool.Script
 {
     static class Program
     {
-        const string ScriptBin = "bin";
-
         static async Task Main(string[] args)
         {
-            // var path = Path.Combine(AppContext.BaseDirectory,"BBB", "cc.csx");
-            var scriptPath = args[0];
-            if (!File.Exists(scriptPath))
-            {
-                Console.WriteLine("the script path is not right!");
-                return;
-            }
-            if (!scriptPath.EndsWith(".csx"))
-            {
-                Console.WriteLine("the script should be end with '.csx'!");
-                return;
-            }
-            var assemblyName = Path.GetFileNameWithoutExtension(scriptPath);
-            if (args.Length > 1)
-            {
-                assemblyName = args[1];
-            }
-
-            var outputDir = Path.Combine(Path.GetDirectoryName(scriptPath), ScriptBin);
-            // var dll = Path.Combine(outputDir, assemblyName + ".dll");
-
             var logger = new SimpleConsoleLogger(nameof(ScriptHost));
-            await new ScriptHost(logger).Build(scriptPath, outputDir, assemblyName, onlyBuild:false);
-            
+            var subCmd = args[0];
+            if (subCmd.EndsWith(".csx"))
+            {
+                var scriptPath = subCmd;
+                if (!File.Exists(scriptPath))
+                {
+                    logger.LogError("the script path is not right!");
+                    return;
+                }
+
+                var assemblyName = Path.GetFileNameWithoutExtension(scriptPath);
+                for (var i = 1; i < args.Length; i++)
+                {
+                    if (args[i] == "-n")
+                    {
+                        assemblyName = args[i + 1];
+                        i++;
+                    }
+                    // "--" is handled internally
+                    else
+                    {
+                        logger.LogError("unexpected argument.");
+                        return;
+                    }
+                }
+
+                var outputDir = Path.Combine(Path.GetDirectoryName(scriptPath), "bin");
+                var dll = Path.Combine(outputDir, assemblyName + ".dll");
+
+                await new ScriptHost(logger).Build(scriptPath, outputDir, assemblyName, onlyBuild: true/*true: to debug, we should not run it in it's own process*/);
+                var assembly = Assembly.LoadFrom(dll);
+                assembly.EntryPoint?.Invoke(null, new string[] { });
+                return;
+            }
+            else if (subCmd == "init")
+            {
+
+            }
+            else
+            {
+                logger.LogError("unexpected argument");
+                return;
+
+            }
+
         }
     }
 }

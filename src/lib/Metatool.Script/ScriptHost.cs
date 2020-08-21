@@ -68,7 +68,16 @@ namespace Metatool.Script
         {
             return GetReferencePaths(DefaultReferences).Concat(references).ToImmutableArray();
         }
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="codePath"></param>
+        /// <param name="outputDir"></param>
+        /// <param name="assemblyName"></param>
+        /// <param name="optimization"></param>
+        /// <param name="onlyBuild">if true: run dll in its own process, and redirect the console input/output/error to the parent process. can not debug</param>
+        /// <returns></returns>
         public async Task Build(string codePath, string outputDir, string assemblyName = null,
             OptimizationLevel optimization = OptimizationLevel.Debug, bool onlyBuild = true)
         {

@@ -25,6 +25,22 @@ namespace Metatool.Script.Runtime
             AttachConsole(isAttachedToParent);
         }
 
+        public static string[] Args
+        {
+            get
+            {
+                var args = Environment.GetCommandLineArgs();
+                for (var i = 1; i < args.Length; i++)
+                {
+                    if (args[i] == "--")
+                    {
+                        return args[(i + 1)..];
+                    }
+                }
+                return new string[0];
+            }
+        }
+
         private static void AttachConsole(bool isAttachedToParent)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -99,7 +115,7 @@ namespace Metatool.Script.Runtime
 
         private static bool ParseCommandLine(string name, string pattern, out string value)
         {
-            var match = Regex.Match(Environment.CommandLine, @$"--{name}\s+""?({pattern})");
+            var match = Regex.Match(Environment.CommandLine, @$"--\s?{name}\s+""?({pattern})");
             value = match.Success ? match.Groups[1].Value : string.Empty;
             return match.Success;
         }

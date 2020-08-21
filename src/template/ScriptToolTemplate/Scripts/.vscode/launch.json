@@ -12,6 +12,7 @@
           "${workspaceRoot}/Main.csx"
           // "${file}"
         ],
+        "console": "integratedTerminal",
         "cwd": "${workspaceRoot}",
         // "stopAtEntry": true
       }

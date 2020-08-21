@@ -32,7 +32,7 @@ namespace Metatool.Script
         );
 
         private static readonly SyntaxTree InitHostSyntax = SyntaxFactory.ParseSyntaxTree(
-            @"Metatool.Script.Runtime.RuntimeInitializer.Initialize();", ParseOptions);
+            @"Metatool.Script.Runtime.RuntimeInitializer.Initialize(); var Args = Metatool.Script.Runtime.RuntimeInitializer.Args;", ParseOptions);
 
         private ExecutionHostParameters _parameters;
         private ScriptOptions _scriptOptions;
