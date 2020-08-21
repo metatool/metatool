@@ -77,8 +77,7 @@ namespace Metatool.Script
             var refs = LibRefParser.ParseReference(code, codeDir);
             var id = assemblyName ?? Path.GetFileNameWithoutExtension(codePath);
 
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
+            var stopWatch = Stopwatch.StartNew();
 
             var packageManager = new NugetManager(_logger) { Id = id, RestorePath = Path.Combine(outputDir, "nuget") };
             if (DefaultReferences.Length > 0)
@@ -113,8 +112,7 @@ namespace Metatool.Script
                 // reference directives & default references
                 executionHostParameters.DirectReferences = packageManager.LocalLibraryPaths;
 
-                var executionHost =
-                    new ExecutionHost(executionHostParameters, id, _logger);
+                var executionHost = new ExecutionHost(executionHostParameters, id, _logger);
                 executionHost.Dumped += result => _logger.LogError(result.ToString());
                 executionHost.Error += result => _logger.LogError(result.ToString());
                 executionHost.ReadInput += () => _logger.LogInformation("read input");
@@ -135,8 +133,7 @@ namespace Metatool.Script
             else
             {
                 NotifyBuildResult?.Invoke(result.Errors.ToList().Select(er =>
-                        CompilationErrorResultObject.Create("", "", "PackageRestoreError:: " + er, "", -1, -1))
-                    .ToList());
+                        CompilationErrorResultObject.Create("", "", "PackageRestoreError:: " + er, "", -1, -1)).ToList());
             };
         }
 
