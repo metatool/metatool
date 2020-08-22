@@ -6,7 +6,6 @@ using Metatool.Input;
 using Metatool.Service;
 using Metatool.Plugins;
 using Metatool.ScreenHint;
-using Metatool.UI;
 using Metatool.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

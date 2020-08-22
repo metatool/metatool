@@ -23,10 +23,6 @@ if ( $LASTEXITCODE -ne 0 ) {
     throw "publish fail!"
 }
 
-msbuild /t:publish  "$metatool\src\app\Metaseed.CSharpScript\Metaseed.CSharpScript.csproj"  /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publishCSharpScript" /p:CopyOutputSymbolsToPublishDirectory=false /p:SolutionDir="$metatool\src\" /p:PublishProfile="$metatool\src\app\Metaseed.CSharpScript\Properties\PublishProfiles\FolderProfile.pubxml"
-if ( $LASTEXITCODE -ne 0 ) {
-    throw "publish fail!"
-}
 . ./script/Build-Tool.ps1
 
 "Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {

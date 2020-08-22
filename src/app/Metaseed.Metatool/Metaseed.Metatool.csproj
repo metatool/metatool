@@ -4,7 +4,6 @@
     <UseWPF>true</UseWPF>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>Metatool.ico</ApplicationIcon>
-    <DisableFody Condition="'$(Configuration)' == 'Debug'">true</DisableFody>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
