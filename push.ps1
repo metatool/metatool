@@ -4,20 +4,23 @@ param (
 	# Set to True when testing the script to prevent actual publishing to PowerShell Gallery, and to create a Draft of the GitHub Release instead of a published Release.
 	[Alias("t")]
 	[switch]
-	$test
+	$test,
+	# exe path
+	[Alias("p")]
+	$path
 )
 
 $metatool = "M:\Workspace\metatool" 
 $published = "$metatool\exe\published"
-
+$exeName = [System.IO.Path]::GetFileNameWithoutExtension($path)
 ## zip
-$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$publish\metatool.exe").ProductVersion
+$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path).ProductVersion
 
 if (!(Test-Path $published)) {
 	New-Item -ItemType Directory -Force -Path $published
 }
 
-$target = "$published\Metatool_v$version.zip"
+$target = "$published\$exeName_v$version.zip"
 $entries = New-Object System.Collections.Generic.List[System.Object]
 Get-ChildItem $publish | ForEach-Object { $entries.Add($_.FullName) }
 

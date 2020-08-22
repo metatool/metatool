@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -15,14 +12,12 @@ using System.Windows.Threading;
 using Metatool.NotifyIcon;
 using Metatool.NotifyIcon.Interop;
 using Metatool.Service;
-using Metatool.Utils.Implementation;
 using Metatool.Utils.Internal;
-using Metatool.Utils.Notify;
 using Application = System.Windows.Application;
 using Point = System.Windows.Point;
 using Window = System.Windows.Window;
 
-namespace Metatool.UI
+namespace Metatool.UI.Notify
 {
     public partial class Notify: INotify
     {

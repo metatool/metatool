@@ -10,8 +10,8 @@ param (
 )
 $source = "M:\Workspace\metatool" 
 
-Import-Module "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-Enter-VsDevShell a4cdb433
+. ./script/msbuild.ps1
+
 Set-Location $source
 $target = $rebuild ? "rebuild" : "build"
 $config = $release ? "Release" : "Debug"

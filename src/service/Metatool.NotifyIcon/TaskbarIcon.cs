@@ -62,10 +62,7 @@ namespace Metatool.NotifyIcon
         /// on the OS. Windows Vista or higher is required in order to
         /// support this feature.
         /// </summary>
-        public bool SupportsCustomToolTips
-        {
-            get { return messageSink.Version == NotifyIconVersion.Vista; }
-        }
+        public bool SupportsCustomToolTips => messageSink.Version == NotifyIconVersion.Vista;
 
 
         /// <summary>
@@ -85,7 +82,6 @@ namespace Metatool.NotifyIcon
             }
         }
 
-        private double scalingFactor = double.NaN;
 
         #endregion
 

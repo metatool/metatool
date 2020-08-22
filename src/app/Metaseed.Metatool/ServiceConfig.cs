@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Metaseed.Metatool.HostService;
+using Metatool.UI.Notify;
 
 namespace Metaseed.Metatool
 {

@@ -5,9 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Metatool.NotifyIcon;
-using Metatool.UI;
 
-namespace Metatool.Utils.Notify
+namespace Metatool.UI.Notify
 {
     public partial class SelectableMessage : UserControl
     {

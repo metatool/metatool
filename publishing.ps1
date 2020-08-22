@@ -7,16 +7,23 @@ param (
 )
 $metatool = "M:\Workspace\metatool" 
 $publish = "$metatool\exe\publishing"
+$publishCSharpScript = "$metatool\exe\publishing-cs"
 
-Import-Module "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-Enter-VsDevShell a4cdb433
+
+. ./script/msbuild.ps1
+
 Set-Location $metatool
 
 if (Test-Path $publish) {
     Remove-Item $publish -Force -Recurse
 }
 
-msbuild /t:publish  "$metatool\src\app\Metaseed.Metatool.csproj"  /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publish" /p:CopyOutputSymbolsToPublishDirectory=false /p:SolutionDir="$metatool\src\" /p:PublishProfile="$metatool\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
+msbuild /t:publish  "$metatool\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj"  /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publish" /p:CopyOutputSymbolsToPublishDirectory=false /p:SolutionDir="$metatool\src\" /p:PublishProfile="$metatool\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
+if ( $LASTEXITCODE -ne 0 ) {
+    throw "publish fail!"
+}
+
+msbuild /t:publish  "$metatool\src\app\Metaseed.CSharpScript\Metaseed.CSharpScript.csproj"  /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publishCSharpScript" /p:CopyOutputSymbolsToPublishDirectory=false /p:SolutionDir="$metatool\src\" /p:PublishProfile="$metatool\src\app\Metaseed.CSharpScript\Properties\PublishProfiles\FolderProfile.pubxml"
 if ( $LASTEXITCODE -ne 0 ) {
     throw "publish fail!"
 }

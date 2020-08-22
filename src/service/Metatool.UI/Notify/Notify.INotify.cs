@@ -1,15 +1,15 @@
-﻿using Metatool.NotifyIcon;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Controls.Primitives;
-using Metatool.Utils.Notify;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
+using Metatool.NotifyIcon;
+using Metatool.Utils.Notify;
 using MenuItem = System.Windows.Controls.MenuItem;
 using Application = System.Windows.Application;
 
-namespace Metatool.UI
+namespace Metatool.UI.Notify
 {
     public partial class Notify
     {

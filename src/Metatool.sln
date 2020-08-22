@@ -113,7 +113,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "others", "others", "{F88A26
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.MetaKeyboard", "tool\Metatool.Tools.MetaKeyboard\Metatool.Tools.MetaKeyboard.csproj", "{3FBCC029-512A-44A4-8EC3-DE50B68270A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metaseed.CSharpScript", "app\Metaseed.CSharpScript\Metaseed.CSharpScript.csproj", "{32AA14DA-9D01-4524-9080-A0C909F7197E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.CSharpScript", "app\Metaseed.CSharpScript\Metaseed.CSharpScript.csproj", "{32AA14DA-9D01-4524-9080-A0C909F7197E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool\Metaseed.Metatool.csproj", "{5C767EA7-F0F8-46DB-ABAE-564CA48F4763}"
 EndProject

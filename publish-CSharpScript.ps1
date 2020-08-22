@@ -9,7 +9,7 @@ param (
 	[switch]
 	$test
 )
-$publish = "$metatool\exe\publishing"
+$publish = "$metatool\exe\publishing-cs"
 
-. $PSScriptRoot\publishing.ps1 -r: $rebuild
-. $PSScriptRoot\push.ps1 -t:$test -p:"$publish\metatool.exe"
+. $PSScriptRoot\publishing-CSharpScript.ps1 -r: $rebuild
+. $PSScriptRoot\push.ps1 -t:$test -p:"$publish\Metaseed.CSharpScript.exe"
