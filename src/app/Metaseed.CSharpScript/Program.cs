@@ -4,11 +4,12 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
+using Metatool.Script;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using static Metatool.Metatool.SimpleConsoleLoggerProvider;
 
-namespace Metatool.Script
+namespace Metaseed.CSharpScript
 {
     static class Program
     {

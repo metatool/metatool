@@ -1,5 +1,4 @@
 function Build-Tool {
-
     [CmdletBinding()]
     param (
         [Parameter()]

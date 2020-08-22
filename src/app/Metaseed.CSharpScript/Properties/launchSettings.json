@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Metaseed.CSharpScript": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\temp\\New folder (3)\\Scripts\\Main.csx\" "
+    }
+  }
+}
