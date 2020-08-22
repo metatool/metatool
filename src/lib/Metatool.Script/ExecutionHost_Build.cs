@@ -36,11 +36,8 @@ namespace Metatool.Script
 
         private ExecutionHostParameters _parameters;
         private ScriptOptions _scriptOptions;
-        private bool _running;
         private string _assemblyPath;
         private string _depsFile;
-        private CancellationTokenSource _executeCts;
-        private bool _initializeBuildPathAfterRun;
         private ILogger _logger;
         public event Action<IList<CompilationErrorResultObject>> NotifyBuildResult;
 
@@ -66,19 +63,14 @@ namespace Metatool.Script
 
         public string Name { get; set; }
 
-        public async Task<bool> BuildAndExecuteAsync(string code, OptimizationLevel? optimizationLevel, string codePath,
-            bool onlyBuild = true)
+        public async Task<bool> BuildAsync(string code, OptimizationLevel? optimizationLevel, string codePath,
+            CancellationToken cancellationToken = default)
         {
-            bool buildResult = true;
             await new NoContextYieldAwaitable();
             _logger.LogInformation($"{Name}: Start to build...");
             var sw = Stopwatch.StartNew();
             try
             {
-                _running = true;
-                using var executeCts = new CancellationTokenSource();
-                var cancellationToken = executeCts.Token;
-
                 _assemblyPath = Path.Combine(BuildPath, $"{Name}.dll");
                 _depsFile = Path.ChangeExtension(_assemblyPath, ".deps.json");
 
@@ -106,50 +98,20 @@ namespace Metatool.Script
                     return false;
                 }
                 CreateRuntimeConfig();
-
-                _executeCts = executeCts;
-
-                if (!onlyBuild)
-                    await RunProcess(_assemblyPath, cancellationToken);
             }
             catch (Exception e)
             {
-                buildResult = false;
                 _logger?.LogError(e.Message + e.StackTrace);
-            }
-            finally
-            {
-                _executeCts = null;
-                _running = false;
-
-                if (_initializeBuildPathAfterRun)
-                {
-                    _initializeBuildPathAfterRun = false;
-                    InitializeBuildPath(stop: false);
-                }
+                return false;
             }
 
-            return buildResult;
+            return true;
         }
 
-        private void InitializeBuildPath(bool stop)
-        {
-            if (stop)
-            {
-                StopProcess();
-            }
-            else if (_running)
-            {
-                _initializeBuildPathAfterRun = true;
-                return;
-            }
-
-            CleanupBuildPath();
-        }
+        public async Task RunAsync(CancellationToken cancellationToken = default) => await RunProcess(_assemblyPath, cancellationToken);
 
         private void CleanupBuildPath()
         {
-            StopProcess();
             try
             {
                 foreach (var file in Directory.EnumerateFiles(BuildPath))
@@ -179,11 +141,6 @@ namespace Metatool.Script
             {
                 token.WriteTo(writer);
             }
-        }
-
-        private void StopProcess()
-        {
-            _executeCts?.Cancel();
         }
 
         private void SendDiagnostics(ImmutableArray<Diagnostic> diagnostics)

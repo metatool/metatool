@@ -2,7 +2,9 @@
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using static Metatool.Metatool.SimpleConsoleLoggerProvider;
 
@@ -13,51 +15,63 @@ namespace Metatool.Script
         static async Task Main(string[] args)
         {
             var logger = new SimpleConsoleLogger(nameof(ScriptHost));
-            var subCmd = args[0];
-            if (subCmd.EndsWith(".csx"))
+            try
             {
-                var scriptPath = subCmd;
-                if (!File.Exists(scriptPath))
+                var subCmd = args[0];
+                if (subCmd.EndsWith(".csx"))
                 {
-                    logger.LogError("the script path is not right!");
+                    await ScriptCommand(args, logger);
                     return;
                 }
-
-                var assemblyName = Path.GetFileNameWithoutExtension(scriptPath);
-                for (var i = 1; i < args.Length; i++)
+                else if (subCmd == "init")
                 {
-                    if (args[i] == "-n")
-                    {
-                        assemblyName = args[i + 1];
-                        i++;
-                    }
-                    // "--" is handled internally
-                    else
-                    {
-                        logger.LogError("unexpected argument.");
-                        return;
-                    }
+
                 }
+                else
+                {
+                    logger.LogError("unexpected argument");
+                    return;
 
-                var outputDir = Path.Combine(Path.GetDirectoryName(scriptPath), "bin");
-                var dll = Path.Combine(outputDir, assemblyName + ".dll");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Error");
+            }
+        }
 
-                await new ScriptHost(logger).Build(scriptPath, outputDir, assemblyName, onlyBuild: true/*true: to debug, we should not run it in it's own process*/);
-                var assembly = Assembly.LoadFrom(dll);
-                assembly.EntryPoint?.Invoke(null, new string[] { });
+        static async Task ScriptCommand(string[] args, ILogger logger)
+        {
+            var scriptPath = args[0];
+            if (!File.Exists(scriptPath))
+            {
+                logger.LogError("the script path is not right!");
                 return;
             }
-            else if (subCmd == "init")
+
+            var assemblyName = Path.GetFileNameWithoutExtension(scriptPath);
+            for (var i = 1; i < args.Length; i++)
             {
-
+                if (args[i] == "-n")
+                {
+                    assemblyName = args[i + 1];
+                    i++;
+                }
+                // "--" is handled internally
+                else
+                {
+                    logger.LogError("unexpected argument.");
+                    return;
+                }
             }
-            else
-            {
-                logger.LogError("unexpected argument");
-                return;
 
-            }
-
+            var outputDir = Path.Combine(Path.GetDirectoryName(scriptPath)!, "bin");
+            var dll = Path.Combine(outputDir, assemblyName + ".dll");
+            using var executeCts = new CancellationTokenSource();
+            var cancellationToken = executeCts.Token;
+            await new ScriptHost(logger).Build(scriptPath, outputDir, assemblyName, OptimizationLevel.Debug, cancellationToken);
+            var assembly = Assembly.LoadFrom(dll);
+            assembly.EntryPoint?.Invoke(null, new object[] { });
         }
     }
 }

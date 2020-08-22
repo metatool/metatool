@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Metatool.NugetPackage;
 using Metatool.Script.Runtime;
@@ -79,7 +80,7 @@ namespace Metatool.Script
         /// <param name="onlyBuild">if true: run dll in its own process, and redirect the console input/output/error to the parent process. can not debug</param>
         /// <returns></returns>
         public async Task Build(string codePath, string outputDir, string assemblyName = null,
-            OptimizationLevel optimization = OptimizationLevel.Debug, bool onlyBuild = true)
+            OptimizationLevel optimization = OptimizationLevel.Debug, CancellationToken cancellationToken = default)
         {
             var code = File.ReadAllText(codePath);
             var codeDir = Path.GetDirectoryName(codePath);
@@ -137,7 +138,7 @@ namespace Metatool.Script
 
                 stopWatch.Restart();
 
-                var res = await executionHost.BuildAndExecuteAsync(code, optimization, codePath, onlyBuild) ;
+                var res = await executionHost.BuildAsync(code, optimization, codePath, cancellationToken) ;
             }
             else
             {
