@@ -13,6 +13,7 @@ using Metatool.NotifyIcon;
 using Metatool.NotifyIcon.Interop;
 using Metatool.Service;
 using Metatool.Utils.Internal;
+using UI.Notify;
 using Application = System.Windows.Application;
 using Point = System.Windows.Point;
 using Window = System.Windows.Window;

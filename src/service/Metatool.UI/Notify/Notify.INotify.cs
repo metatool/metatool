@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using Metatool.NotifyIcon;
 using Metatool.Utils.Notify;
+using UI.Notify;
 using MenuItem = System.Windows.Controls.MenuItem;
 using Application = System.Windows.Application;
 
