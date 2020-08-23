@@ -5,7 +5,9 @@ param (
     [Alias("r")]
     $rebuild
 )
+$target = $rebuild ? "rebuild": "build"
 $metatool = "M:\Workspace\metatool" 
+$tools = "$metatool\exe\release\tools"
 $publish = "$metatool\exe\publishing"
 $publishCSharpScript = "$metatool\exe\publishing-cs"
 

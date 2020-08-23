@@ -13,6 +13,7 @@ param (
 $metatool = "M:\Workspace\metatool" 
 $published = "$metatool\exe\published"
 $exeName = [System.IO.Path]::GetFileNameWithoutExtension($path)
+
 ## zip
 $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path).ProductVersion
 
@@ -20,7 +21,7 @@ if (!(Test-Path $published)) {
 	New-Item -ItemType Directory -Force -Path $published
 }
 
-$target = "$published\$exeName_v$version.zip"
+$target = "$published\$exeName"+"_v$version.zip"
 $entries = New-Object System.Collections.Generic.List[System.Object]
 Get-ChildItem $publish | ForEach-Object { $entries.Add($_.FullName) }
 
@@ -54,8 +55,8 @@ $gitHubReleaseParameters =
 	GitHubUsername       = $gitHubUsername
 	GitHubRepositoryName = $gitHubRepositoryName
 	GitHubAccessToken    = $GitHubAccessToken
-	ReleaseName          = "$gitHubRepositoryName v" + $version
-	TagName              = "v" + $version
+	ReleaseName          = "$exeName v" + $version
+	TagName              = "$exeName"+"_v" + $version
 	ReleaseNotes         = $newReleaseNotes
 	AssetFilePaths       = @($target)
 	IsPreRelease         = $versionNumberIsAPreReleaseVersion

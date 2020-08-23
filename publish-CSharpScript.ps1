@@ -9,6 +9,7 @@ param (
 	[switch]
 	$test
 )
+$metatool = "M:\Workspace\metatool" 
 $publish = "$metatool\exe\publishing-cs"
 
 . $PSScriptRoot\publishing-CSharpScript.ps1 -r: $rebuild

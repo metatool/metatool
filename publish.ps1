@@ -9,7 +9,8 @@ param (
 	[switch]
 	$test
 )
+$metatool = "M:\Workspace\metatool"
 $publish = "$metatool\exe\publishing"
 
-. $PSScriptRoot\publishing.ps1 -r: $rebuild
+# . $PSScriptRoot\publishing.ps1 -r: $rebuild
 . $PSScriptRoot\push.ps1 -t:$test -p:"$publish\metatool.exe"
