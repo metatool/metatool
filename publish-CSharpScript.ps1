@@ -13,4 +13,4 @@ $metatool = Split-Path $script:MyInvocation.MyCommand.Path
 $publish = "$metatool\exe\publishing-cs"
 
 . $PSScriptRoot\publishing-CSharpScript.ps1 -r: $rebuild
-. $PSScriptRoot\push.ps1 -t:$test -p:"$publish\Metaseed.CSharpScript.exe"
+. $PSScriptRoot\push.ps1 -t:$test -p:"$publish\CSharpScript.exe"

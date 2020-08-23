@@ -18,6 +18,16 @@ namespace Metaseed.CSharpScript
             var logger = new SimpleConsoleLogger(nameof(ScriptHost));
             try
             {
+                if (args.Length == 0)
+                {
+                    logger.LogInformation(@$"v{Assembly.GetEntryAssembly().GetName().Version} © metaseed
+* run script
+  CSharpScript <scriptPath> [-- arg0 arg1...]
+* init script
+  CSharpScript init
+");
+                    return;
+                }
                 var subCmd = args[0];
                 if (subCmd.EndsWith(".csx"))
                 {

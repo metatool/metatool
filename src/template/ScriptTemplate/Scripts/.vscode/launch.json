@@ -1,0 +1,19 @@
+﻿{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "CSharpScript Debug",
+        "type": "coreclr",
+        "request": "launch",
+        "program": "CSharpScript.exe",
+        "requireExactSource":false,
+        "args": [
+          // "${workspaceRoot}/Main.csx"
+          "${file}"
+        ],
+        "console": "integratedTerminal",
+        "cwd": "${workspaceRoot}",
+        // "stopAtEntry": true
+      }
+    ]
+}

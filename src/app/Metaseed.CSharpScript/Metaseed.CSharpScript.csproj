@@ -6,8 +6,16 @@
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <Version>1.0.0</Version>
     <ApplicationIcon>metaseed.charpScript.ico</ApplicationIcon>
+    <AssemblyName>CSharpScript</AssemblyName>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>$(SolutionDir)..\exe\debug</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>$(SolutionDir)..\exe\release</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Metatool.Script\Metatool.Script.csproj" />
   </ItemGroup>
