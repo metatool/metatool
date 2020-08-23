@@ -6,7 +6,7 @@
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <Version>1.0.0</Version>
     <ApplicationIcon>metaseed.charpScript.ico</ApplicationIcon>
-    <AssemblyName>CSharpScript</AssemblyName>
+    <AssemblyName>CS</AssemblyName>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
