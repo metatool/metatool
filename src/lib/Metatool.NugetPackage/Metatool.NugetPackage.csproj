@@ -4,10 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Commands" Version="5.6.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.6" />
-    <PackageReference Include="NuGet.PackageManagement" Version="5.6.0" />
-    <PackageReference Include="NuGet.Resolver" Version="5.6.0" />
+    <PackageReference Include="NuGet.Commands" Version="5.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.7" />
+    <PackageReference Include="NuGet.PackageManagement" Version="5.7.0" />
+    <PackageReference Include="NuGet.Resolver" Version="5.7.0" />
 
   </ItemGroup>
   <ItemGroup>
