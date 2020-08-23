@@ -17,6 +17,12 @@
     <OutputPath>$(SolutionDir)..\exe\release</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Templates\Script.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Script.zip" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\lib\Metatool.Script\Metatool.Script.csproj" />
   </ItemGroup>
 
