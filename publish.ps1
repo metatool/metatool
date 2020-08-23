@@ -9,7 +9,7 @@ param (
 	[switch]
 	$test
 )
-$metatool = "M:\Workspace\metatool"
+$metatool = Split-Path $script:MyInvocation.MyCommand.Path
 $publish = "$metatool\exe\publishing"
 
 # . $PSScriptRoot\publishing.ps1 -r: $rebuild

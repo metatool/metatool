@@ -5,12 +5,8 @@ param (
     [Alias("r")]
     $rebuild
 )
-$target = $rebuild ? "rebuild": "build"
-$metatool = "M:\Workspace\metatool" 
-$tools = "$metatool\exe\release\tools"
+$metatool = Split-Path $script:MyInvocation.MyCommand.Path 
 $publish = "$metatool\exe\publishing"
-$publishCSharpScript = "$metatool\exe\publishing-cs"
-
 
 . ./script/msbuild.ps1
 

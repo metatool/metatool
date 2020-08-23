@@ -10,7 +10,7 @@ param (
 	$path
 )
 
-$metatool = "M:\Workspace\metatool" 
+$metatool = Split-Path $script:MyInvocation.MyCommand.Path 
 $published = "$metatool\exe\published"
 $exeName = [System.IO.Path]::GetFileNameWithoutExtension($path)
 

@@ -8,9 +8,9 @@ param (
     [Alias("re")]
     $rebuild
 )
-$source = "M:\Workspace\metatool" 
+$source = Split-Path $script:MyInvocation.MyCommand.Path
 
-. ./script/msbuild.ps1
+. $source/script/msbuild.ps1
 
 Set-Location $source
 $target = $rebuild ? "rebuild" : "build"
