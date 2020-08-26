@@ -61,7 +61,6 @@ namespace Metatool.Service
             WindowStyle      = windowStyle;
             WorkingDirectory = workingDirectory;
         }
-
         public string WorkingDirectory;
     }
 }
