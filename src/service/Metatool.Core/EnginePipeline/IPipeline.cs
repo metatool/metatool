@@ -9,6 +9,7 @@ namespace Metatool.Core.EnginePipeline
         IPipeline<TIn, TPipeOut> AddPipe<TPipeOut>(Func<TOut, TPipeOut> pipe) => AddPipe(new Pipe<TOut, TPipeOut>(pipe));
         IPipeline<TIn, TPipeOut> AddPipe<TPipe, TPipeOut>(IServiceProvider services = null) where TPipe : IPipe<TOut, TPipeOut>;
         IDataEngine<TIn, TOut> AddEngine(IDataEngine<TIn, TOut> engine = null);
+        IDataEngine<TIn, TOut> AddEngine<TEngine>(IServiceProvider services = null) where TEngine : IDataEngine<TIn, TOut>;
         TOut Flow(TIn stream, IContext context);
     }
 }

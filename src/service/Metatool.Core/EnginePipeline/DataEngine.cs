@@ -1,14 +1,9 @@
 namespace Metatool.Core.EnginePipeline
- {
+{
     public class DataEngine<TIn, TOut> : IDataEngine<TIn, TOut>
     {
-        private readonly IPipeline<TIn, TOut> _pipeline;
+        public IPipeline<TIn, TOut> Pipeline { set; get; }
 
-        public DataEngine(IPipeline<TIn, TOut> pipeline)
-        {
-            _pipeline = pipeline;
-        }
-        public TOut Run(TIn stream, IContext context) => _pipeline.Flow(stream, context);
-        public TOut Run(TIn stream) => _pipeline.Flow(stream, new Context());
+        public TOut Run(TIn stream = default, IContext context = null) => Pipeline.Flow(stream, context ?? new Context());
     }
 }

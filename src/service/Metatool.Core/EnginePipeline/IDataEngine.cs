@@ -2,7 +2,7 @@ namespace Metatool.Core.EnginePipeline
 {
     public interface IDataEngine<TIn, TOut>
     {
-        TOut Run(TIn stream, IContext context);
-        TOut Run(TIn stream);
+        IPipeline<TIn, TOut> Pipeline { set; }
+        TOut Run(TIn stream = default, IContext context = null);
     }
 }
