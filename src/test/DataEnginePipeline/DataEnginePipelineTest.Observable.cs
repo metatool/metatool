@@ -1,12 +1,14 @@
-using Xunit;
 using System;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reactive;
-using System.Reactive.Linq;
-using Microsoft.Reactive.Testing;
 using System.Reactive.Concurrency;
-
-namespace Metatool.Core.EnginePipeline.Tests
+using System.Reactive.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Reactive.Testing;
+using Metatool.Core.EnginePipeline;
+using Metatool.ServiceTests.TestTools;
+using Xunit;
+namespace Metatool.ServiceTests.DataEnginePipeline
 {
     public class DataEnginePipelineObservableTests
     {
@@ -30,6 +32,9 @@ namespace Metatool.Core.EnginePipeline.Tests
                 .Select(i => (float)i * _counter.Count++)
                 .Sample(TimeSpan.FromMilliseconds(1000), scheduler);
             }
+            public void Dispose()
+            {
+            }
         }
 
         [Fact()]
@@ -40,13 +45,13 @@ namespace Metatool.Core.EnginePipeline.Tests
             var provider = services.BuildServiceProvider();
 
             var engine = new EnginePipelineBuilder<IObservable<int>>()
+                .AddEngine()
                 .AddPipe<MultiplyPipe, IObservable<float>>(provider) // 6
-                .AddPipe(a => a.Select(i => (int)i + 2)) // 8
-                .AddPipe<MultiplyPipe, IObservable<float>>(provider) // 24
-                .AddEngine();
+                .AddPipe(a => a.Select(i => (int) i + 2)) // 8
+                .AddPipe<MultiplyPipe, IObservable<float>>(provider); // 24
             // act
             var scheduler = new TestScheduler();
-            var observable = engine.Run(Observable.Return(3), new Context() { { "scheduler", scheduler } });
+            var observable = engine.Flow(Observable.Return(3), new Context() { { "scheduler", scheduler } });
             var observer = scheduler.Start(()=>observable, 0, 0, TimeSpan.FromMilliseconds(2000).Ticks);
             var msg = observer.Messages;
             // assert
@@ -55,5 +60,37 @@ namespace Metatool.Core.EnginePipeline.Tests
             Assert.Equal(msg[1].Value.Kind, NotificationKind.OnCompleted);
         }
 
+        class ObservableEngine : ObservableDataEngineBase<int>
+        {
+            protected override IObservable<int> ConnectToStream()
+            {
+                return Observable.Return(3);
+            }
+        }
+
+        [Fact()]
+        public void ObservableDataPipelineRunWithDependencyInjection()
+        {
+            // arrange
+            var services = new ServiceCollection().AddSingleton<Counter>().AddSingleton<MultiplyPipe>().AddSingleton<ObservableEngine>().AddSingleton<ILogger, ILoggerFake>();
+            var provider = services.BuildServiceProvider();
+
+            var engine = new EnginePipelineBuilder<IObservable<int>>()
+                .AddEngine<ObservableEngine>(provider)
+                .AddPipe<MultiplyPipe, IObservable<float>>(provider) // 6
+                .AddPipe(a => a.Select(i => (int)i + 2)) // 8
+                .AddPipe<MultiplyPipe, IObservable<float>>(provider);// 24
+            // act
+            var scheduler = new TestScheduler();
+            engine.Run(new Context() { { "scheduler", scheduler } }, o => /*Flow()*/{
+                var observer = scheduler.Start(() => o, 0, 0, TimeSpan.FromMilliseconds(2000).Ticks);
+                var msg = observer.Messages;
+                // assert
+                Assert.Equal(msg.Count, 2);
+                Assert.Equal(msg[0].Value.Value, 24);
+                Assert.Equal(msg[1].Value.Kind, NotificationKind.OnCompleted);
+                return null;
+            });
+        }
     }
 }

@@ -1,14 +1,14 @@
-using Xunit;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using Metatool.Tests;
 using Microsoft.Extensions.DependencyInjection;
-using Metatool.Service;
+using Microsoft.Extensions.Logging;
+using Metatool.Core.EnginePipeline;
+using Metatool.ServiceTests.TestTools;
+using Xunit;
 
-namespace Metatool.Core.EnginePipeline.Tests
+namespace Metatool.ServiceTests.DataEnginePipeline
 {
     public class DataEnginePipelineAsyncEnumerableTests : AsyncEnumerableTest
     {
@@ -35,6 +35,10 @@ namespace Metatool.Core.EnginePipeline.Tests
                 .SelectAwait(async i => await new ValueTask<float>(i))
                 .Do(f => _logger.LogInformation(f.ToString(CultureInfo.InvariantCulture)));
             }
+
+            public void Dispose()
+            {
+            }
         }
 
         [Fact()]
@@ -44,12 +48,12 @@ namespace Metatool.Core.EnginePipeline.Tests
             var services = new ServiceCollection().AddSingleton<Counter>().AddSingleton<MultiplyPipe>().AddSingleton<ILogger, ILoggerFake>();
             var provider = services.BuildServiceProvider();
             var engine = new EnginePipelineBuilder<IAsyncEnumerable<int>>()
+                .AddEngine()
                 .AddPipe<MultiplyPipe, IAsyncEnumerable<float>>(provider) // 6
-                .AddPipe(a => a.Select(i => (int)i + 2)) // 8
-                .AddPipe<MultiplyPipe, IAsyncEnumerable<float>>(provider) // 24
-                .AddEngine();
+                .AddPipe(a => a.Select(i => (int) i + 2)) // 8
+                .AddPipe<MultiplyPipe, IAsyncEnumerable<float>>(provider); // 24
             // act
-            var asyncEnumerable = engine.Run(new[] { 3, 4, 5 }.ToAsyncEnumerable());
+            var asyncEnumerable = engine.Flow(new[] { 3, 4, 5 }.ToAsyncEnumerable());
             // assert
             var e = asyncEnumerable.GetAsyncEnumerator();
             await HasNextAsync(e, 24);
