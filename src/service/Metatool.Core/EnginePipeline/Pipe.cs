@@ -1,4 +1,3 @@
-
 using System;
 
 namespace Metatool.Core.EnginePipeline
@@ -12,5 +11,9 @@ namespace Metatool.Core.EnginePipeline
         public Pipe(Func<TIn, TOut> converter) => _converter = converter;
 
         public TOut Flow(TIn dataStream, IContext context) => _converterWithContext != null ? _converterWithContext(dataStream, context) : _converter(dataStream);
+
+        public void Dispose()
+        {
+        }
     }
 }

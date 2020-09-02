@@ -4,9 +4,12 @@ namespace Metatool.Core.EnginePipeline
 {
     public interface IEnginePipelineBuilder<TIn>
     {
-        IPipeline<TIn, TOut> AddPipe<TOut>(IPipe<TIn, TOut> pipe);
-        IPipeline<TIn, TOut> AddPipe<TOut>(Func<TIn, IContext, TOut> pipe);
-        IPipeline<TIn, TOut> AddPipe<TOut>(Func<TIn, TOut> pipe);
-        IPipeline<TIn, TOut> AddPipe<TPipe, TOut>(IServiceProvider services = null) where TPipe : IPipe<TIn, TOut>;
+        IPipeline<TIn, TIn> AddEngine(IDataEngine<TIn> engine = null);
+        IPipeline<TIn, TIn> AddEngine<TEngine>(IServiceProvider services = null) where TEngine : IDataEngine<TIn>;
+
+        IPipeline<TIn, TPipeOut> AddPipe<TPipeOut>(IPipe<TIn, TPipeOut> pipe);
+        IPipeline<TIn, TPipeOut> AddPipe<TPipeOut>(Func<TIn, IContext, TPipeOut> pipe) => AddPipe(new Pipe<TIn, TPipeOut>(pipe));
+        IPipeline<TIn, TPipeOut> AddPipe<TPipeOut>(Func<TIn, TPipeOut> pipe) => AddPipe(new Pipe<TIn, TPipeOut>(pipe));
+        IPipeline<TIn, TPipeOut> AddPipe<TPipe, TPipeOut>(IServiceProvider services = null) where TPipe : IPipe<TIn, TPipeOut>;
     }
 }

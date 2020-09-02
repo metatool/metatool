@@ -1,8 +1,9 @@
+using System;
+
 namespace Metatool.Core.EnginePipeline
 {
-    public interface IDataEngine<TIn, TOut>
+    public interface IDataEngine<TIn>: IDisposable
     {
-        IPipeline<TIn, TOut> Pipeline { set; }
-        TOut Run(TIn stream = default, IContext context = null);
+        void Run<TOut>(Func<TIn, IContext, TOut> flow, IContext context= null);
     }
 }
