@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Metaseed.Metatool.HostService;
 using Metatool.UI.Notify;
+using Metatool.Core.EnginePipeline;
+using Context = Metatool.Service.Context;
 
 namespace Metaseed.Metatool
 {
@@ -71,7 +73,7 @@ namespace Metaseed.Metatool
             var configPath = Path.Combine(Context.AppDirectory, "appsettings.Production.json");
             if (!File.Exists(configPath))
             {
-                File.Copy(Path.Combine(Context.BaseDirectory, "appsettings.Production.json"), configPath);
+                File.Copy(Path.Combine(Context.BaseDirectory, "appsettings.json"), configPath); // when singleton.exe, after copying could be 'appsettings.Production.json'
             }
 
             var builder = Host.CreateDefaultBuilder(args);
