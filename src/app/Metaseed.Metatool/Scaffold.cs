@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Security;
 using McMaster.Extensions.CommandLineUtils;
 using Metatool.Service;
-using Metatool.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool

@@ -23,7 +23,7 @@ namespace Metatool.Service
 
         static string _appDirectory;
 
-        // singleton exe filt path
+        // singleton exe file path
         public static string AppDirectory
         {
             get

@@ -25,7 +25,7 @@ namespace Metaseed.Metatool
                 .UseContentRoot(Context.AppDirectory) // needed for locating appsettings.json when currentDir is not the metatool.exe dir, i.e. invoke from commandline
                 .ConfigureHostConfiguration(configHost =>
                 {
-                    configHost.SetBasePath(Context.AppDirectory);
+                    // configHost.SetBasePath(Context.AppDirectory);
                 })
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
