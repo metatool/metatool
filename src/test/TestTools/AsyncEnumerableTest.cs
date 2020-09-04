@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Metatool.ServiceTests.TestTools
+namespace Metatool.Pipeline.Test.Tools
 {
     public class AsyncEnumerableTest
     {

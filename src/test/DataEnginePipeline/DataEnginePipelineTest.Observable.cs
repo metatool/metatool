@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Reactive.Testing;
 using Metatool.Core.EnginePipeline;
-using Metatool.ServiceTests.TestTools;
+using Metatool.Pipeline.Test.Tools;
 using Xunit;
-namespace Metatool.ServiceTests.DataEnginePipeline
+namespace Metatool.Pipeline.Test
 {
     public class DataEnginePipelineObservableTests
     {

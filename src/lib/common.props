@@ -1,6 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>1.4.17</Version>
-  </PropertyGroup>
- </Project>

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace Metatool.ServiceTests.TestTools
+namespace Metatool.Pipeline.Test.Tools
 {
     public class ILoggerFake : ILogger
     {
