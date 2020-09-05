@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Metaseed.Metatool.HostService;
 using Metatool.UI.Notify;
-using Metatool.Core.EnginePipeline;
 using Context = Metatool.Service.Context;
 
 namespace Metaseed.Metatool

@@ -11,9 +11,9 @@ namespace Metatool.Core.ViewModel
 {
     public abstract class NotificationObject : INotifyPropertyChanged, INotifyDataErrorInfo
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (!EqualityComparer<T>.Default.Equals(field, value))
             {
@@ -24,12 +24,12 @@ namespace Metatool.Core.ViewModel
             return false;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private ConcurrentDictionary<string, List<ErrorInfo>>? _propertyErrors;
+        private ConcurrentDictionary<string, List<ErrorInfo>> _propertyErrors;
 
         protected void SetError(string propertyName, string id, string message)
         {
@@ -73,14 +73,14 @@ namespace Metatool.Core.ViewModel
 
         public IEnumerable GetErrors(string propertyName)
         {
-            List<ErrorInfo>? errors = null;
+            List<ErrorInfo> errors = null;
             _propertyErrors?.TryGetValue(propertyName, out errors);
             return errors?.AsEnumerable() ?? Array.Empty<ErrorInfo>();
         }
 
         public bool HasErrors => _propertyErrors?.Any(c => c.Value.Any()) == true;
 
-        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
         protected virtual void OnErrorsChanged(string propertyName)
         {

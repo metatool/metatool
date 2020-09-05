@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Metatool.Core.EnginePipeline;
 using Xunit;
 
 namespace Metatool.Pipeline.Test

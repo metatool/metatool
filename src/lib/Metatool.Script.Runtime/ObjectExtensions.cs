@@ -36,7 +36,7 @@ namespace Metatool.Script
             return enumerable;
         }
 
-        public static TEnumerable DumpElementAt<TEnumerable>(this TEnumerable enumerable, int index, string? header = null, int maxDepth = DumpQuotas.DefaultMaxDepth, int maxExpandedDepth = DumpQuotas.DefaultMaxExpandedDepth, int maxEnumerableLength = DumpQuotas.DefaultMaxEnumerableLength, int maxStringLength = DumpQuotas.DefaultMaxStringLength)
+        public static TEnumerable DumpElementAt<TEnumerable>(this TEnumerable enumerable, int index, string header = null, int maxDepth = DumpQuotas.DefaultMaxDepth, int maxExpandedDepth = DumpQuotas.DefaultMaxExpandedDepth, int maxEnumerableLength = DumpQuotas.DefaultMaxEnumerableLength, int maxStringLength = DumpQuotas.DefaultMaxStringLength)
             where TEnumerable : IEnumerable
         {
             Dump(enumerable?.Cast<object>().ElementAtOrDefault(index), header, maxDepth, maxExpandedDepth, maxEnumerableLength, maxStringLength);

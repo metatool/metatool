@@ -5,8 +5,7 @@ using System.Reactive.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Reactive.Testing;
-using Metatool.Core.EnginePipeline;
-using Metatool.Pipeline.Test.Tools;
+using Slb.Planck.Presto.ControlGateway.ServiceTests.TestTools;
 using Xunit;
 namespace Metatool.Pipeline.Test
 {

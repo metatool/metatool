@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Metatool.Core.EnginePipeline;
-using Metatool.Pipeline.Test.Tools;
 using Xunit;
+using Slb.Planck.Presto.ControlGateway.ServiceTests.TestTools;
+using Metatool.Service;
 
 namespace Metatool.Pipeline.Test
 {

@@ -45,7 +45,7 @@ namespace Metatool.NugetPackage
                         configFileName: null,
                         machineWideSettings: new XPlatMachineWideSetting());
                 }
-                catch (NuGetConfigurationException ex)
+                catch (NuGetConfigurationException)
                 {
                     // create default settings using a non-existent config file
                     settings = new Settings(nameof(NugetPackage));
@@ -90,7 +90,7 @@ namespace Metatool.NugetPackage
 
         internal (IList<string> compile, IList<string> runtime, IList<string> analyzers) ParseLockFile(
             string lockFilePath, CancellationToken cancellationToken,
-            NuGetFramework targetFramework, string? frameworkVersion, HashSet<LibraryRef> libraries)
+            NuGetFramework targetFramework, string frameworkVersion, HashSet<LibraryRef> libraries)
         {
             JObject obj;
             using (var reader = File.OpenText(lockFilePath))

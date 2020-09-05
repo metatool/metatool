@@ -58,7 +58,7 @@ namespace Metatool.Core.WeakEvent
         /// <summary>
         /// List of weak delegates subscribed to the event.
         /// </summary>
-        private List<WeakDelegate<TOpenEventHandler, TStrongHandler>?> _delegates;
+        private List<WeakDelegate<TOpenEventHandler, TStrongHandler>> _delegates;
 
         /// <summary>
         /// Quick lookup index for individual handlers.
@@ -70,18 +70,18 @@ namespace Metatool.Core.WeakEvent
 
         private int _deletedCount;
 
-        private ConditionalWeakTable<object, List<object>>? _targetLifetimes;
+        private ConditionalWeakTable<object, List<object>> _targetLifetimes;
 
-        private readonly Func<object?, TOpenEventHandler, TStrongHandler> _createStrongHandler;
+        private readonly Func<object, TOpenEventHandler, TStrongHandler> _createStrongHandler;
 
-        protected DelegateCollectionBase(Func<object?, TOpenEventHandler, TStrongHandler> createStrongHandler)
+        protected DelegateCollectionBase(Func<object, TOpenEventHandler, TStrongHandler> createStrongHandler)
         {
-            _delegates = new List<WeakDelegate<TOpenEventHandler, TStrongHandler>?>();
+            _delegates = new List<WeakDelegate<TOpenEventHandler, TStrongHandler>>();
             _index = new Dictionary<int, List<int>>();
             _createStrongHandler = createStrongHandler;
         }
 
-        public void Add(object? lifetimeObject, Delegate[] invocationList)
+        public void Add(object lifetimeObject, Delegate[] invocationList)
         {
             foreach (var singleHandler in invocationList)
             {
@@ -99,7 +99,7 @@ namespace Metatool.Core.WeakEvent
         /// <remarks>
         /// Follows the same logic as MulticastDelegate.Remove.
         /// </remarks>
-        public void Remove(object? lifetimeObject, Delegate[] invocationList)
+        public void Remove(object lifetimeObject, Delegate[] invocationList)
         {
             int matchIndex = GetIndexOfInvocationListLastOccurrence(invocationList);
 
@@ -141,7 +141,7 @@ namespace Metatool.Core.WeakEvent
             // Make a new list with only live delegates, keeping track of the old and new indices
             int newCount = _delegates.Count - _deletedCount;
             var newIndices = new Dictionary<int, int>(newCount);
-            var newDelegates = new List<WeakDelegate<TOpenEventHandler, TStrongHandler>?>(newCount);
+            var newDelegates = new List<WeakDelegate<TOpenEventHandler, TStrongHandler>>(newCount);
             for (int oldIndex = 0; oldIndex < _delegates.Count; oldIndex++)
             {
                 var oldDelegate = _delegates[oldIndex];
@@ -177,7 +177,7 @@ namespace Metatool.Core.WeakEvent
             _deletedCount = 0;
         }
 
-        public WeakDelegate<TOpenEventHandler, TStrongHandler>? this[int index] => _delegates[index];
+        public WeakDelegate<TOpenEventHandler, TStrongHandler> this[int index] => _delegates[index];
 
         public int Count => _delegates.Count;
 
@@ -198,7 +198,7 @@ namespace Metatool.Core.WeakEvent
                 _index.Add(hashCode, new List<int> { index });
         }
 
-        private void KeepTargetAlive(object? lifetimeObject, object? target)
+        private void KeepTargetAlive(object lifetimeObject, object target)
         {
             // If the lifetime object isn't the same as the target,
             // keep the target alive while the lifetime object is alive
@@ -211,7 +211,7 @@ namespace Metatool.Core.WeakEvent
             targets.Add(target);
         }
 
-        private void StopKeepingTargetAlive(object? lifetimeObject, object? target)
+        private void StopKeepingTargetAlive(object lifetimeObject, object target)
         {
             if (lifetimeObject is null || target is null || lifetimeObject == target)
                 return;

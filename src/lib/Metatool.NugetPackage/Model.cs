@@ -24,12 +24,12 @@ namespace Metatool.NugetPackage
     {
         public string ProjectName { get; set; }
         public NuGetFramework TargetFramework { get; set; }
-        public string? FrameworkVersion { get; set; }
+        public string FrameworkVersion { get; set; }
         public string OutputPath { get; set; }
         public string PackagesPath { get; set; }
         public IList<string> ConfigFilePaths { get; set; } = new List<string>();
         public IList<PackageSource> Sources { get; set; } = new List<PackageSource>();
-        public IList<LibraryRef>? Libraries { get; set; } = new List<LibraryRef>();
+        public IList<LibraryRef> Libraries { get; set; } = new List<LibraryRef>();
     }
     public class RestoreResult
     {

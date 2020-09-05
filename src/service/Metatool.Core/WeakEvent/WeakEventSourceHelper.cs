@@ -8,7 +8,7 @@ namespace Metatool.Core.WeakEvent
     internal static class WeakEventSourceHelper
     {
         public static IEnumerable<TStrongHandler> GetValidHandlers<TOpenEventHandler, TStrongHandler>(
-            DelegateCollectionBase<TOpenEventHandler, TStrongHandler>? handlers)
+            DelegateCollectionBase<TOpenEventHandler, TStrongHandler> handlers)
             where TOpenEventHandler : Delegate
             where TStrongHandler : struct
         {
@@ -38,7 +38,7 @@ namespace Metatool.Core.WeakEvent
         }
 
         public static void Subscribe<TDelegateCollection, TOpenEventHandler, TStrongHandler>(
-            object? lifetimeObject,
+            object lifetimeObject,
             ref TDelegateCollection handlers,
             Delegate handler)
             where TDelegateCollection : DelegateCollectionBase<TOpenEventHandler, TStrongHandler>, new()
@@ -58,8 +58,8 @@ namespace Metatool.Core.WeakEvent
         }
 
         public static void Unsubscribe<TOpenEventHandler, TStrongHandler>(
-            object? lifetimeObject,
-            DelegateCollectionBase<TOpenEventHandler, TStrongHandler>? handlers,
+            object lifetimeObject,
+            DelegateCollectionBase<TOpenEventHandler, TStrongHandler> handlers,
             Delegate handler)
             where TOpenEventHandler : Delegate
             where TStrongHandler : struct

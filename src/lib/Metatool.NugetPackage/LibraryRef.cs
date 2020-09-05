@@ -24,7 +24,7 @@ namespace Metatool.NugetPackage
         public string      Path         { get; }
         public string      AssemblyName { get; }
 
-        public bool Equals(LibraryRef? other)
+        public bool Equals(LibraryRef other)
         {
             return other != null &&
                    (Id, VersionRange, Path).Equals((other.Id, other.VersionRange, other.Path));

@@ -173,3 +173,4 @@ exe/publish/tools/Metatool.Tools.Software/software/everything/Run History.csv
 exe/publish/_private/Software/Clipjump_x64/
 coveragereport
 exe/publishing-cs/
+.ionide/symbolCache.db

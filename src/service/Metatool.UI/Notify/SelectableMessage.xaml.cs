@@ -54,8 +54,6 @@ namespace UI.Notify
 
         public TipItem SelectedItem { get; set; }
 
-        IInputElement element = null;
-
         private void OnBalloonClosing(object sender, RoutedEventArgs e)
         {
             e.Handled  = true;
