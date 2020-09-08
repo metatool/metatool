@@ -61,6 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Pipeline\Metaseed.Pipeline\Metaseed.Pipeline.csproj" />
     <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
     <ProjectReference Include="..\..\service\Metatool.Clipboard\Metatool.Clipboard.csproj" />
     <ProjectReference Include="..\..\service\Metatool.Command\Metatool.Command.csproj" />

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Metaseed.Metatool.HostService;
 using Metatool.UI.Notify;
 using Context = Metatool.Service.Context;
+using Metatool.Pipeline;
 
 namespace Metaseed.Metatool
 {

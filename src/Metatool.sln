@@ -26,6 +26,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool\Metaseed.Metatool.csproj", "{5C767EA7-F0F8-46DB-ABAE-564CA48F4763}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.CSharpScript", "app\Metaseed.CSharpScript\Metaseed.CSharpScript.csproj", "{32AA14DA-9D01-4524-9080-A0C909F7197E}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "template", "template", "{0C2683F4-FE4F-42F8-81CD-C4A8F205250D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.WindowsInput", "lib\Metatool.WindowsInput\Metatool.WindowsInput.csproj", "{AC6A8257-5B31-4E52-BE83-BAC199C1CEC4}"
@@ -112,10 +116,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "others", "others", "{F88A2637-31D7-4442-A2C6-3C8EF5C066C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.MetaKeyboard", "tool\Metatool.Tools.MetaKeyboard\Metatool.Tools.MetaKeyboard.csproj", "{3FBCC029-512A-44A4-8EC3-DE50B68270A3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.CSharpScript", "app\Metaseed.CSharpScript\Metaseed.CSharpScript.csproj", "{32AA14DA-9D01-4524-9080-A0C909F7197E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metaseed.Metatool", "app\Metaseed.Metatool\Metaseed.Metatool.csproj", "{5C767EA7-F0F8-46DB-ABAE-564CA48F4763}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScriptTemplate", "ScriptTemplate", "{75F2277D-D989-416C-86AE-6396A0FD4CF1}"
 EndProject
