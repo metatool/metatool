@@ -31,7 +31,7 @@ $isTestingThisScript = $test
 $gitHubUsername = 'metatool'
 $gitHubRepositoryName = 'metatool'
 
-$script = Join-Path -Path $PSScriptRoot -ChildPath 'script'
+$script = Join-Path -Path $PSScriptRoot -ChildPath 'lib'
 $commonFunctionsScriptFilePath = Join-Path -Path $script -ChildPath 'CommonFunctions.ps1'
 $publishToGitHubScriptFilePath = Join-Path -Path $script -ChildPath 'Publish-NewReleaseToGitHub.ps1'
 
