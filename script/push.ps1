@@ -31,12 +31,8 @@ $isTestingThisScript = $test
 $gitHubUsername = 'metatool'
 $gitHubRepositoryName = 'metatool'
 
-$script = Join-Path -Path $PSScriptRoot -ChildPath 'lib'
-$commonFunctionsScriptFilePath = Join-Path -Path $script -ChildPath 'CommonFunctions.ps1'
-$publishToGitHubScriptFilePath = Join-Path -Path $script -ChildPath 'Publish-NewReleaseToGitHub.ps1'
-
-. $commonFunctionsScriptFilePath
-. $publishToGitHubScriptFilePath
+. "$PSScriptRoot\lib\CommonFunctions.ps1"
+. "$PSScriptRoot\lib\Publish-NewReleaseToGitHub.ps1"
 
 $newReleaseNotes = Read-MultiLineInputBoxDialog -WindowTitle 'Release Notes' -Message 'What release notes should be included with this version?' -DefaultText $currentManifestReleaseNotes
 if ($null -eq $newReleaseNotes) { throw 'You cancelled out of the release notes prompt.' }
