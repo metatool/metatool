@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Metatool.Service
 {
-    public interface IConfig<T>
+    public interface IConfig<out T>
     {
         /// <summary>
         /// Returns the current <typeparamref name="T" /> instance/>.

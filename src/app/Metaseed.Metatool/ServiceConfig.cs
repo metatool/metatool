@@ -40,9 +40,10 @@ namespace Metaseed.Metatool
                     // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                     //     new TextWriterTraceListener(writer: Console.Out)));
-                    logging
+                    //logging
                     //.AddProvider(new SimpleConsoleLoggerProvider())
-                    .AddFile(o => o.RootPath = Context.AppDirectory)
+                    //.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    //.AddFile(o => o.RootPath = Context.AppDirectory);
                     ;
                 })
                 .ConfigureServices((hostContext, services) =>
@@ -61,7 +62,7 @@ namespace Metaseed.Metatool
                         .AddSingleton<ICommandManager, CommandManager>()
                         .AddSingleton<INotify, Notify>()
                         .AddSingleton<IScreenHint, ScreenHint>()
-                        .AddMetatoolUtils()
+                        .AddMetatoolUtils()          
                         .AddPipelineBuilder()
                         .AddHostedService<StartupService>()
                         .AddHostedService<LifetimeEventsHostedService>()

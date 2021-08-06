@@ -25,9 +25,8 @@ namespace Metaseed.Metatool
                     // and use Win+Shift+1 then Alt+Y to launch as admin,
                     // note: could not use Win+Alt+1, it's used to do right click on the first taskbar item
                     return Context.Restart(0, true);
-                else
-                    ServiceConfig.BuildHost(args).Run();
-                    return 0;
+                ServiceConfig.BuildHost(args).Run();
+                return 0;
             }
             catch (Exception e)
             {
