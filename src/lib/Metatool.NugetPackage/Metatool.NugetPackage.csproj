@@ -4,10 +4,10 @@
     <TargetFramework>net5.0-windows</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Commands" Version="5.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.7" />
-    <PackageReference Include="NuGet.PackageManagement" Version="5.7.0" />
-    <PackageReference Include="NuGet.Resolver" Version="5.7.0" />
+    <PackageReference Include="NuGet.Commands" Version="5.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="NuGet.PackageManagement" Version="5.10.0" />
+    <PackageReference Include="NuGet.Resolver" Version="5.10.0" />
 
   </ItemGroup>
   <ItemGroup>
