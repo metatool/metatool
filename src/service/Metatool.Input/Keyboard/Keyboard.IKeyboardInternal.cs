@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
-using Metatool.Command;
+﻿using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 

@@ -4,7 +4,7 @@
     <UseWPF>true</UseWPF>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>Metatool.ico</ApplicationIcon>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
