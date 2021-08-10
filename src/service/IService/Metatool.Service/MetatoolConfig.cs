@@ -22,8 +22,9 @@ namespace Metatool.Service
 
     public class MetatoolConfig
     {
-        public ServicesConfig Services { get; set; }
-        public OrderedDictionary<string, HotkeyTrigger> Hotkeys { get; set; }
+        public bool                                     SingleInstance { get; set; }
+        public ServicesConfig                           Services       { get; set; }
+        public OrderedDictionary<string, HotkeyTrigger> Hotkeys        { get; set; }
 
     }
 }
