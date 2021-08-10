@@ -9,10 +9,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool
 {
+    // todo: replace it with https://github.com/dotnet/command-line-api
     public class ArgumentProcessor
     {
-        private readonly ILogger _logger;
-        private string[] _args;
+        private readonly ILogger  _logger;
+        private readonly string[] _args;
 
         public ArgumentProcessor(string[] args)
         {

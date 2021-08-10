@@ -307,14 +307,12 @@ namespace Metatool.Input
             switch (keyMaps)
             {
                 case KeyMaps.HardMap:
-                    var t = target as ISequenceUnit;
-                    if (t == null)
+                    if (target is not ISequenceUnit t)
                         throw new ArgumentException(
                             $"HardMap could only map '{source}' to ISequenceUnit, but currently mapped to {target}");
                     return HardMap(source, t, predicate);
                 case KeyMaps.MapOnDownUp:
-                    var t1 = target as ISequenceUnit;
-                    if (t1 == null)
+                    if (target is not ISequenceUnit t1)
                         throw new ArgumentException(
                             $"MapOnDownUp could only map '{source}' to ISequenceUnit, but currently mapped to {target}");
                     return MapOnDownUp(source, t1, predicate);
@@ -324,12 +322,10 @@ namespace Metatool.Input
                     return MapOnHitAndAllUp(source, target, predicate);
                 case KeyMaps.ChordMap:
                 {
-                    var src = source as ISequenceUnit;
-                    if (src == null)
+                    if (source is not ISequenceUnit src)
                         throw new ArgumentException(
                             $"ChordMap could only use ISequenceUnit as it's source,  but currently the source is {source}");
-                    var tgt = target as ISequenceUnit;
-                    if (tgt == null)
+                    if (target is not ISequenceUnit tgt)
                         throw new ArgumentException(
                             $"ChordMap could only use ISequenceUnit as it's target,  but currently the source is {target}");
 
@@ -359,7 +355,7 @@ namespace Metatool.Input
                 stopwatch.Reset();
                 targetDown = false;
             }
-            void Handler(Object o, IKeyEventArgs e)
+            void Handler(object o, IKeyEventArgs e)
             {
                 _hook.KeyDown -= Handler;
                 if (sourCombination.IsAnyKey(e.KeyCode)) return; // repeated long press key, > duration

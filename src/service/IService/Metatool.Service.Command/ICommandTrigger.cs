@@ -2,7 +2,7 @@
 
 namespace Metatool.Service
 {
-    public interface ICommandTrigger<TArgs>
+    public interface ICommandTrigger<out TArgs>
     {
         event Action<TArgs> Execute;
         event Predicate<TArgs> CanExecute;
