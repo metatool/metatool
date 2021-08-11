@@ -9,11 +9,17 @@ param (
 	[Alias("p")]
 	$path
 )
+## zip
+$metatool = Resolve-Path $PSScriptRoot\..
 
-$published = "$PSScriptRoot\exe\published"
+if (!$path) {
+	$path = "$metatool\exe\publishing\metatool.exe" 
+}
 $exeName = [System.IO.Path]::GetFileNameWithoutExtension($path)
 
-## zip
+$publishing = "$metatool\exe\publishing"
+$published = "$metatool\exe\published"
+
 $version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path).ProductVersion
 
 if (!(Test-Path $published)) {
@@ -22,7 +28,7 @@ if (!(Test-Path $published)) {
 
 $target = "$published\${exeName}_v$version.zip"
 $entries = New-Object System.Collections.Generic.List[System.Object]
-Get-ChildItem $publish | ForEach-Object { $entries.Add($_.FullName) }
+Get-ChildItem $publishing | ForEach-Object { $entries.Add($_.FullName) }
 
 Compress-Archive -LiteralPath $entries -CompressionLevel Optimal -DestinationPath $target -Force
 
@@ -50,7 +56,7 @@ $gitHubReleaseParameters =
 	GitHubRepositoryName = $gitHubRepositoryName
 	GitHubAccessToken    = $GitHubAccessToken
 	ReleaseName          = "$exeName v" + $version
-	TagName              = "$exeName"+"_v" + $version
+	TagName              = "$exeName" + "_v" + $version
 	ReleaseNotes         = $newReleaseNotes
 	AssetFilePaths       = @($target)
 	IsPreRelease         = $versionNumberIsAPreReleaseVersion

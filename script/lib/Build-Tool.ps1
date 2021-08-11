@@ -17,9 +17,8 @@ function Build-Tool {
     $tools = "$metatool\exe\release\tools"
     $publish = "$metatool\exe\publishing"
 
-    Import-Module "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
-    Enter-VsDevShell a4cdb433
-    Set-Location $metatool
+# . $PSScriptRoot\msbuild.ps1
+    # Set-Location $metatool
 
     msbuild "$metatool\src\tool\$tool\$tool.csproj" -t:$target /p:SolutionDir=$metatool\src\ /p:Configuration=$config
     if ( $LASTEXITCODE -ne 0 ) {

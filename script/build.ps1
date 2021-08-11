@@ -9,12 +9,12 @@ param (
     $rebuild
 )
 
-. $PSCriptRoot/lib/msbuild.ps1
+. "$PSScriptRoot/lib/msbuild.ps1"
 
-Set-Location $source
+$source = Resolve-Path $PSScriptRoot\..
 $target = $rebuild ? "rebuild" : "build"
 $config = $release ? "Release" : "Debug"
-msbuild src\Metatool.sln -t:$target /p:Configuration=$config
+msbuild $source\src\Metatool.sln -t:$target /p:Configuration=$config
 if ( $LASTEXITCODE -ne 0 ) {
     throw "build fail!"
 }

@@ -5,12 +5,10 @@ param (
     [Alias("r")]
     $rebuild
 )
-$metatool = Split-Path $script:MyInvocation.MyCommand.Path 
+$metatool = Resolve-Path $PSScriptRoot\..
 $publish = "$metatool\exe\publishing"
 
-. ./script/msbuild.ps1
-
-Set-Location $metatool
+. $PSScriptRoot/lib/msbuild.ps1
 
 if (Test-Path $publish) {
     Remove-Item $publish -Force -Recurse
@@ -21,7 +19,7 @@ if ( $LASTEXITCODE -ne 0 ) {
     throw "publish fail!"
 }
 
-. ./script/Build-Tool.ps1
+. $PSScriptRoot/lib/Build-Tool.ps1
 
 "Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {
     Build-Tool $_ -release: $true -rebuild: $rebuild
@@ -32,3 +30,5 @@ $metaSoftwarePublishing = "$metatool\exe\publishing\tools\Metatool.Tools.Softwar
 
 Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse
 Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse
+
+sl $PSScriptRoot
