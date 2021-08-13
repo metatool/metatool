@@ -57,7 +57,7 @@ namespace Metatool.MetaKeyboard
             {
                 Application.Current.DispatcherUnhandledException += (_, __) => EnableWinLock();
                 AppDomain.CurrentDomain.UnhandledException       += (_, __) => EnableWinLock();
-                Application.Current.Exit                         += (_, __) => EnableWinLock();
+                //Application.Current.Exit                         += (_, __) => EnableWinLock();
                 Console.CancelKeyPress                           += (_, __) => EnableWinLock();
                 ConsoleExt.Exit                                  += EnableWinLock;
             }));

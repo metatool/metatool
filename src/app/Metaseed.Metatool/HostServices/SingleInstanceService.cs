@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Metatool.Service;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ namespace Metaseed.Metatool.HostService
 
             if (config.CurrentValue.SingleInstance && !created)
             {
+                MessageBox.Show("Metatool is already running!");
                 logger.LogCritical("Metatool is already running!");
                 Process.GetCurrentProcess().Kill();
             }

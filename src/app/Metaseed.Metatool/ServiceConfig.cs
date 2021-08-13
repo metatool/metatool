@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Metaseed.Metatool.HostService;
+using Metatool.Metatool;
 using Metatool.UI.Notify;
 using Context = Metatool.Service.Context;
 using Metatool.Pipeline;
@@ -40,10 +41,10 @@ namespace Metaseed.Metatool
                     // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                     //     new TextWriterTraceListener(writer: Console.Out)));
-                    //logging
-                    //.AddProvider(new SimpleConsoleLoggerProvider())
-                    //.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    //.AddFile(o => o.RootPath = Context.AppDirectory);
+                    logging
+                    .AddProvider(new SimpleConsoleLoggerProvider())
+                    //.AddFile(o => o.RootPath = hostingContext.HostingEnvironment.ContentRootPath);
+                    .AddFile(o => o.RootPath = Context.AppDirectory);
                     ;
                 })
                 .ConfigureServices((hostContext, services) =>

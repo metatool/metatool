@@ -52,7 +52,12 @@ namespace Metatool.Utils.Notify
         {
             get
             {
-                return new DelegateCommand<object> {CommandAction = o => Application.Current.Shutdown()};
+                return new DelegateCommand<object> {CommandAction = o =>
+                    {
+                        Application.Current.Shutdown();
+                        Environment.Exit(0);
+                    }
+                };
             }
         }
     }

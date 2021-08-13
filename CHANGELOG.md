@@ -3,6 +3,7 @@ All notable changes to the "metatool" extension will be documented in this file.
 
 ## Todo List:
 ## In Development
+ - repeat action use 2 times press
 ---
 ### V1.1.0 - Aug 20, 2020
 #### Added

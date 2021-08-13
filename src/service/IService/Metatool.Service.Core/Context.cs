@@ -18,12 +18,16 @@ namespace Metatool.Service
         public static string DotnetExePath =>
             _dotnetExePath ??= string.IsNullOrEmpty(dotnetRoot) ? "" : Path.Combine(dotnetRoot, "dotnet.exe");
 
-        // real path exe that is running
+        /// <summary>
+        ///  real path exe that is runnings
+        /// </summary>
         public static string BaseDirectory => AppContext.BaseDirectory;
 
         static string _appDirectory;
 
-        // singleton exe file path
+        /// <summary>
+        /// self-contained exe file path
+        /// </summary>
         public static string AppDirectory
         {
             get
