@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <Title>Metatool Tool Demo</Title>
     <Description>template for create metatool plugin tool</Description>
     <Authors>metasong</Authors>

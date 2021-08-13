@@ -73,13 +73,18 @@ namespace Metaseed.Metatool
 
         internal static IHostBuilder CreateHostBuilder(string[] args)
         {
-            var configPath = Path.Combine(Context.AppDirectory, "appsettings.Production.json");
-            if (!File.Exists(configPath))
+            static void CopySetting(string settingFile)
             {
-                File.Copy(Path.Combine(Context.BaseDirectory, "appsettings.json"), configPath); // when singleton.exe, after copying could be 'appsettings.Production.json'
+                var configPath = Path.Combine(Context.AppDirectory, settingFile);
+                if (!File.Exists(configPath))
+                {
+                    File.Copy(Path.Combine(Context.BaseDirectory, settingFile), configPath);
+                }
             }
 
-            var builder = Host.CreateDefaultBuilder(args);
+            CopySetting("appsettings.json");
+            CopySetting("appsettings.Production.json");
+             var builder = Host.CreateDefaultBuilder(args);
             return ConfigHostBuilder(builder);
         }
 

@@ -6,6 +6,7 @@
     <!-- <OutputType>WinExe</OutputType> -->
     <TargetFramework>net5.0-windows</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <ApplicationIcon>metaKeyboard.ico</ApplicationIcon>
     <DisableFody Condition="'$(Configuration)' == 'Debug'">true</DisableFody>
     <LangVersion>8.0</LangVersion>
