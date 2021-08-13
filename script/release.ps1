@@ -10,5 +10,5 @@ param (
 	$test
 )
 
-. $PSScriptRoot\publishing.ps1 -r: $rebuild
+. $PSScriptRoot\publishing.ps1 -r: $rebuild -localRelease
 . $PSScriptRoot\push.ps1 -t:$test
