@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Metatool.Service;
 using Microsoft.Win32;
 
 namespace Metatool.Core
@@ -10,7 +11,7 @@ namespace Metatool.Core
             ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
         static readonly string name      = Assembly.GetEntryAssembly().GetName().Name;
-        static readonly string path      = $"{AppDomain.CurrentDomain.BaseDirectory}{name}.exe";
+        static readonly string path      = $"{Context.AppDirectory}\\{name}.exe";
 
         public static bool IsAutoStart
         {
