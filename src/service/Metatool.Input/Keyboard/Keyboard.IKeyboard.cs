@@ -514,8 +514,7 @@ namespace Metatool.Input
             foreach (var alias in aliasesRaw.Reverse())
             {
                 hotkey = ReplaceComma(hotkey);
-                hotkey = Regex.Replace(hotkey,  @$"(?:(?<=[\s,+])|^){Regex.Escape(alias.Key)}(?:(?=[\s,+*])|$)", alias
-                    .Value);
+                hotkey = Regex.Replace(hotkey,  @$"(?:(?<=[\s,+])|^){Regex.Escape(alias.Key)}(?:(?=[\s,+*])|$)", alias.Value);
             }
 
             return hotkey;

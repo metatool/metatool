@@ -38,8 +38,7 @@ namespace Metatool.Input
             AddHotStrings(hotStrings);
 
             keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
-            resetTrigger??=new HotkeyTrigger(Key.Caps + Key.R);
-            resetTrigger.OnEvent(_ => ReleaseDownKeys());
+            resetTrigger?.OnEvent(_ => ReleaseDownKeys());
         }
 
         public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
