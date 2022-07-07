@@ -6,6 +6,7 @@ using McMaster.Extensions.CommandLineUtils.Validation;
 using Metatool.Plugin;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace Metaseed.Metatool
 {
@@ -18,6 +19,7 @@ namespace Metaseed.Metatool
         public ArgumentProcessor(string[] args)
         {
             _args = args;
+            _args = args.Where(i => i != "-admin").ToArray();
             if (args.Length == 0 || args[0] == "run")
                 ConsoleExt.InitialConsole(true, Context.IsElevated);
             _logger = Services.Get<ILogger<ArgumentProcessor>>();
@@ -33,6 +35,7 @@ namespace Metaseed.Metatool
                 Description = "tools for Windows",
                 ExtendedHelpText = "===Metaseed Metatool==="
             };
+
             app.HelpOption(inherited: true);
 
             app.OnExecute(() =>

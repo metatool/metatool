@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Microsoft.CodeAnalysis.Scripting;
@@ -20,11 +21,11 @@ namespace Metaseed.Metatool
             try
             {
                 var shiftDown = KeyboardState.GetCurrent().IsDown(Key.Shift);
-                if (shiftDown && !Context.IsElevated)
+                if (!Context.IsElevated && (shiftDown || args.Contains("-admin")))
                     // so you could pin metatool to the first windows taskbar shortcut,
                     // and use Win+Shift+1 then Alt+Y to launch as admin,
                     // note: could not use Win+Alt+1, it's used to do right click on the first taskbar item
-                    return Context.Restart(0, true);
+                    return Context.Restart(0, true, args);
                 ServiceConfig.BuildHost(args).Run();
                 return 0;
             }
@@ -34,6 +35,7 @@ namespace Metaseed.Metatool
                 {
                     e = aggregateEx.Flatten().InnerException;
                 }
+                MessageBox.Show(e.Message + e.StackTrace);
 
                 if (e is CompilationErrorException)
                 {

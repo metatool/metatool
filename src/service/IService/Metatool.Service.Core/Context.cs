@@ -72,7 +72,7 @@ namespace Metatool.Service
             Dispatcher?.BeginInvoke((Action)(() => Application.Current.Shutdown(code)));
         }
 
-        public static int Restart(int code, bool admin)
+        public static int Restart(int code, bool admin, string[] args = null)
         {
             void restart()
             {
@@ -88,6 +88,8 @@ namespace Metatool.Service
                             UseShellExecute = true,
                         }
                     };
+                    if (args != null)
+                        foreach (var arg in args) process.StartInfo.ArgumentList.Add(arg);
 
                     if (admin) process.StartInfo.Verb = "runas";
                     process.Start();
