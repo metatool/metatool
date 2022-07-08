@@ -19,7 +19,7 @@ namespace Metaseed.Metatool
         public ArgumentProcessor(string[] args)
         {
             _args = args;
-            _args = args.Where(i => i != "-admin").ToArray();
+
             if (args.Length == 0 || args[0] == "run")
                 ConsoleExt.InitialConsole(true, Context.IsElevated);
             _logger = Services.Get<ILogger<ArgumentProcessor>>();

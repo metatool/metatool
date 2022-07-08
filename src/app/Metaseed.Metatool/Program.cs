@@ -22,10 +22,13 @@ namespace Metaseed.Metatool
             {
                 var shiftDown = KeyboardState.GetCurrent().IsDown(Key.Shift);
                 if (!Context.IsElevated && (shiftDown || args.Contains("-admin")))
+                {
                     // so you could pin metatool to the first windows taskbar shortcut,
                     // and use Win+Shift+1 then Alt+Y to launch as admin,
                     // note: could not use Win+Alt+1, it's used to do right click on the first taskbar item
+                    args = args.Where(i => i != "-admin").ToArray();
                     return Context.Restart(0, true, args);
+                }
                 ServiceConfig.BuildHost(args).Run();
                 return 0;
             }
