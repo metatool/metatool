@@ -131,9 +131,9 @@ namespace Metaseed.Metatool
             var shortcut = shell.ReadShortcut(shortcutPath);
             var shortcutAdmin = shell.ReadShortcut(shortcutPathAdmin);
 
-            if (shortcut.TargetPath != targetPath)
+            if (shortcut == null || shortcut.TargetPath != targetPath)
                 shell.CreateShortcut(targetPath, shortcutPath, "Ctrl+Alt+X", description);
-            if (shortcutAdmin.TargetPath != targetPath)
+            if (shortcut == null || shortcutAdmin.TargetPath != targetPath)
                 shell.CreateShortcut(targetPath, shortcutPathAdmin, "Ctrl+Alt+Z", description + "- Admin", true);
         }
     }

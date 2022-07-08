@@ -4,13 +4,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service
 {
-    public interface IServiceProviderDisposable : IServiceProvider, IDisposable
+    public interface IDisposableServiceProvider : IServiceProvider, IDisposable
     {
     }
 
     public static class Services
     {
-        public class ChildServiceProvider : IServiceProviderDisposable
+        public class ChildServiceProvider : IDisposableServiceProvider
         {
             private readonly IServiceProvider _child;
             private readonly IServiceProvider _parent;
@@ -42,11 +42,12 @@ namespace Metatool.Service
         static ILogger commonLogger;
         public static ILogger CommonLogger => commonLogger ??= GetOrCreate<ILogger<Object>>();
 
+        // keep a chain of parent/child providers
         static IServiceProvider _provider;
 
         internal static void SetDefaultProvider(IServiceProvider provider) => _provider = provider;
 
-        internal static IServiceProviderDisposable AddServices(IServiceCollection services)
+        internal static IDisposableServiceProvider AddServices(IServiceCollection services)
         {
             var p = new ChildServiceProvider(_provider, services);
             _provider = p;

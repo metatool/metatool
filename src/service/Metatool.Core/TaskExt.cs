@@ -17,6 +17,14 @@ namespace Metatool.Service
     /// </summary>
     public static class TaskExt
     {
+        /// <summary>
+        /// event based async pattern
+        /// </summary>
+        /// <typeparam name="TEventArgs"></typeparam>
+        /// <param name="timeout"></param>
+        /// <param name="action"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
         public static EAPTask<TEventArgs, EventHandler<TEventArgs>> FromEvent<TEventArgs>(
             int timeout = Timeout.Infinite,
             Action<TEventArgs> action = null,

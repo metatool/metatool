@@ -16,11 +16,11 @@ namespace Metatool.Core
 
         static ValueOf()
         {
-            var              ctor    = typeof(TThis).GetTypeInfo().DeclaredConstructors.First();
-            var     argsExp = new Expression[0];
-            var    newExp  = Expression.New(ctor, argsExp);
-            var lambda  = Expression.Lambda(typeof(Func<TThis>), newExp);
-            Factory = (Func<TThis>) lambda.Compile();
+            var ctor = typeof(TThis).GetTypeInfo().DeclaredConstructors.First();
+            var argsExp = new Expression[0];
+            var newExp = Expression.New(ctor, argsExp);
+            var lambda = Expression.Lambda(typeof(Func<TThis>), newExp);
+            Factory = (Func<TThis>)lambda.Compile();
         }
 
         public TValue Value { get; protected set; }
@@ -44,7 +44,7 @@ namespace Metatool.Core
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ValueOf<TValue, TThis>) obj);
+            return Equals((ValueOf<TValue, TThis>)obj);
         }
 
         public override int GetHashCode()

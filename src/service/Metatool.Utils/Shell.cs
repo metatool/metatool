@@ -219,10 +219,9 @@ namespace Metatool.Utils
             var exists = File.Exists(shortcutPath);
             if (exists) return;
 
-            var shDesktop = (object) "Desktop";
+            //var shDesktop = (object) "Desktop";
             var shell = new WshShell();
-            var shortcutAddress = shortcutPath;
-            var shortcut = (IWshShortcut) shell.CreateShortcut(shortcutAddress);
+            var shortcut = (IWshShortcut) shell.CreateShortcut(shortcutPath);
             shortcut.Description = description;
             shortcut.Hotkey = hotkey;
             shortcut.TargetPath = targetPath;
@@ -238,6 +237,9 @@ namespace Metatool.Utils
 
         public ShortcutLink ReadShortcut(string shortcutPath)
         {
+            var exists = File.Exists(shortcutPath);
+            if (!exists) return null;
+
             IWshShell shell = new WshShell();
             try
             {

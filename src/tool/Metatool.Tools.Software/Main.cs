@@ -41,7 +41,7 @@ namespace Metatool.Tools.Software
         private void loadConfigInFolder(string folder)
         {
             var toolDir = Context.ToolDir<SoftwareTool>();
-            folder = Context.ParsePath(folder, toolDir, typeof(SoftwareTool));
+            folder = Context.ParseMetatoolPath(folder, toolDir, typeof(SoftwareTool));
             var files = GetFiles(folder);
             ConfigShortcuts(files, folder);
         }

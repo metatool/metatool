@@ -10,16 +10,19 @@ namespace Metatool.Service
     public class Context
     {
         public static Dispatcher Dispatcher;
+
         public static bool IsElevated =>
             new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+
         private static string _dotnetExePath;
         private static readonly string dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
 
         public static string DotnetExePath =>
-            _dotnetExePath ??= string.IsNullOrEmpty(dotnetRoot) ? "" : Path.Combine(dotnetRoot, "dotnet.exe");
+            _dotnetExePath ??= Path.Combine(dotnetRoot ?? "", "dotnet.exe");
 
         /// <summary>
         ///  real path exe that is runnings
+        ///  it's inside the $home\AppData\Local\Temp\.net\Metatool
         /// </summary>
         public static string BaseDirectory => AppContext.BaseDirectory;
 
@@ -35,19 +38,21 @@ namespace Metatool.Service
                 if (Debugger.IsAttached) return BaseDirectory;
 
                 if (_appDirectory != null) return _appDirectory;
+
                 var mainModule = Process.GetCurrentProcess().MainModule;
                 _appDirectory = Path.GetDirectoryName(mainModule?.FileName);
                 return _appDirectory;
             }
         }
 
-        public static string ParsePath(string rawPath, string currentDir = null, Type toolType = null)
+        public static string ParseMetatoolPath(string rawPath, string currentDir = null, Type toolType = null)
         {
             if (toolType != null)
             {
                 var toolDir = Path.GetDirectoryName(toolType.Assembly.Location);
                 rawPath = rawPath.Replace("${toolDir}", toolDir, StringComparison.InvariantCultureIgnoreCase);
             }
+
             var path = rawPath.Replace("${appDir}", AppDirectory, StringComparison.InvariantCultureIgnoreCase);
 
             if (path.StartsWith(".\\") || path.StartsWith("./") || path.StartsWith("..\\") || path.StartsWith("../"))
@@ -69,7 +74,9 @@ namespace Metatool.Service
 
         public static void Exit(int code)
         {
-            Dispatcher?.BeginInvoke((Action)(() => Application.Current.Shutdown(code)));
+            if (Dispatcher == null) Application.Current.Shutdown(code);
+
+            Dispatcher?.BeginInvoke(() => Application.Current.Shutdown(code));
         }
 
         public static int Restart(int code, bool admin, string[] args = null)
@@ -102,7 +109,7 @@ namespace Metatool.Service
                 }
             }
             if (Dispatcher == null) restart();
-            else Dispatcher?.BeginInvoke((Action)restart);
+            else Dispatcher.BeginInvoke(restart);
             return code;
 
         }

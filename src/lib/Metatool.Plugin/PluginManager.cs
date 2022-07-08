@@ -287,7 +287,7 @@ namespace Metatool.Plugin
             var token = new PluginToken() { Loader = loader, Watcher = lastWatcher };
             _plugins.Add(assemblyName, token);
 
-            IServiceProviderDisposable provider = null;
+            IDisposableServiceProvider provider = null;
             var allTypes = loader.MainAssembly.GetTypes();
             var optionType = ToolConfigAttribute.GetConfigType(allTypes);
             if (optionType != null)
