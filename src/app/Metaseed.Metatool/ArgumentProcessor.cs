@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-//using McMaster.Extensions.CommandLineUtils;
-//using McMaster.Extensions.CommandLineUtils.Validation;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 using Metatool.Plugin;
@@ -12,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Metaseed.Metatool
 {
-    // todo: replace it with https://github.com/dotnet/command-line-api
+    // https://github.com/dotnet/command-line-api
     public class ArgumentProcessor
     {
         private readonly ILogger _logger;

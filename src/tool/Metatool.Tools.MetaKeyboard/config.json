@@ -127,9 +127,9 @@
             "Description": "Focus &Navigation Tree View"
           },
           "CopySelectedPath": {
-            "Hotkey": "Caps + \\",
+            "Hotkey": "CK + \\",
             "Description": "Copy Selected Files Path"
-          },
+          },    
           "NewFile": {
               "Hotkey": "Ctrl + Alt + N",
               "Event": "AllUp",
