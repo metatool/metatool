@@ -21,8 +21,7 @@ namespace Metaseed.Metatool.HostService
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            new ArgumentProcessor(Environment.GetCommandLineArgs().Skip(1).ToArray()).Run();
-            return Task.CompletedTask;
+            return new ArgumentProcessor(Environment.GetCommandLineArgs().Skip(1).ToArray()).Run();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

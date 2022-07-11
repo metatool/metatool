@@ -1,18 +1,21 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using McMaster.Extensions.CommandLineUtils;
-using McMaster.Extensions.CommandLineUtils.Validation;
+//using McMaster.Extensions.CommandLineUtils;
+//using McMaster.Extensions.CommandLineUtils.Validation;
+using System.CommandLine;
+using System.CommandLine.Parsing;
 using Metatool.Plugin;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace Metaseed.Metatool
 {
     // todo: replace it with https://github.com/dotnet/command-line-api
     public class ArgumentProcessor
     {
-        private readonly ILogger  _logger;
+        private readonly ILogger _logger;
         private readonly string[] _args;
 
         public ArgumentProcessor(string[] args)
@@ -26,151 +29,161 @@ namespace Metaseed.Metatool
 
         const string HelpOptionTemplate = "-? | -h | --help";
 
-        public int Run()
+        public Task<int> Run()
         {
-            var app = new CommandLineApplication()
+            var app = new RootCommand()
             {
                 Name = "metatool",
                 Description = "tools for Windows",
-                ExtendedHelpText = "===Metaseed Metatool==="
             };
 
-            app.HelpOption(inherited: true);
+            //app.HelpOption(inherited: true);
 
-            app.OnExecute(() =>
+            app.SetHandler(() =>
             {
                 // without sub command
                 App.RunApp();
                 Services.GetOrCreate<PluginManager>().InitPlugins();
             });
 
-            app.Command("new", configCmd =>
+            var newCmd = new Command("new");
+            app.Add(newCmd);
+
+            newCmd.AddAlias("n");
+            newCmd.SetHandler(() =>
             {
-                configCmd.OnExecute(() =>
-                {
-                    Console.WriteLine("Please specify a subcommand");
-                    configCmd.ShowHelp();
-                    return 1;
-                });
-
-                configCmd.Command("script", c =>
-                {
-                    c.Description =
-                        "Creates a sample script tool along with the files needed to launch and debug the script.";
-
-                    var fileName = c.Argument("name",
-                            "The name of the tool script to be created.")
-                        .IsRequired(errorMessage: "please set the tool name \nusage: metatool new script <name>");
-                    var cwd = c.Option("-dir |--directory <dir>",
-                        "The directory to initialize the tool scripts. Defaults to current directory.",
-                        CommandOptionType.SingleValue).Accepts(v => v.ExistingDirectory());
-                    c.HelpOption(HelpOptionTemplate);
-                    c.OnExecute(() =>
-                    {
-                        var scaffolder = new Scaffold(_logger);
-                        scaffolder.InitTemplate(fileName.Value, cwd.Value());
-                    });
-                });
-
-                configCmd.Command("lib", c =>
-                {
-                    c.Description =
-                        "Creates a sample lib(dll) tool along with the files needed to launch and debug the csharp project.";
-
-                    var fileName = c.Argument("name",
-                        "The name of the tool to be created.");
-                    var cwd = c.Option("-dir |--directory <dir>",
-                        "The directory to initialize the tool. Defaults to current directory.",
-                        CommandOptionType.SingleValue).Accepts(v => v.ExistingDirectory());
-                    c.HelpOption(HelpOptionTemplate);
-                    c.OnExecute(() =>
-                    {
-                        var scaffolder = new Scaffold(_logger);
-                        scaffolder.InitTemplate(fileName.Value, cwd.Value(), false);
-                    });
-                });
+                Console.WriteLine("Please specify a subcommand");
+                //configCmd.ShowHelp();
+                //return 1;
             });
 
-            app.Command("run", app =>
+            var newScriptCmd = new Command("script", "Creates a sample script tool along with the files needed to launch and debug the script.");
+            newCmd.Add(newScriptCmd);
+
+            var nameArg = new Argument<string>("name",
+                        "The name of the tool script to be created.");
+            newScriptCmd.AddArgument(nameArg);
+
+            var dirOption = new Option<string>(new[] { "--directory", "-dir" }, () =>
             {
-                app.Description = "run the script or lib with metatool";
+                return Directory.GetCurrentDirectory();
+            }, "The directory to initialize the tool scripts. Defaults to current directory.");
 
-                var cmdArg = app.Argument("path", "The dir and name of the script(.csx) to be created.");
-                cmdArg.Validators.Add(new FileNameValidator());
-
-                app.HelpOption(HelpOptionTemplate);
-                app.OnExecute(() =>
+            newScriptCmd.SetHandler((string name, string directory) =>
+            {
+                if (string.IsNullOrEmpty(name))
                 {
-                    var fullPath = cmdArg.Value;
-                    if (!File.Exists(fullPath))
-                        fullPath = Path.Combine(Context.CurrentDirectory, fullPath);
+                    Console.WriteLine("please set the tool name \nusage: metatool new script <name>");
+                    return;
+                }
 
-                    if (fullPath.EndsWith(".dll"))
-                    {
-                        try
-                        {
-                            Services.GetOrCreate<PluginManager>().LoadDll(fullPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex,
-                                $"Error while loading tool {fullPath}! No tools loaded! Please fix it then restart!");
-                        }
-                    }
-                    else if (fullPath.EndsWith(".csx"))
-                    {
-                        var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
-                        _logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
-                        Services.GetOrCreate<PluginManager>().BuildReload(fullPath, assemblyName, false);
-                    }
-
-                    App.RunApp();
-                });
-            });
-
-
-            // on windows we have command to register .csx files to be executed by dotnet-script
-            app.Command("register", c =>
-            {
-                c.Description = "Register .csx file handler to enable running scripts directly";
-                c.HelpOption(HelpOptionTemplate);
-                c.OnExecute(() =>
+                if (!Directory.Exists(directory))
                 {
-                    var scaffolder = new Scaffold(_logger);
-                    scaffolder.Register();
-                });
-            });
+                    Console.WriteLine("the directory is not exist");
+                    return;
+                }
 
+                var scaffolder = new Scaffold(_logger);
+                scaffolder.InitTemplate(name, directory);
+            }, nameArg, dirOption);
 
-            return app.Execute(_args);
-        }
+            var newLibCmd = new Command("lib", "Creates a sample lib(dll) tool along with the files needed to launch and debug the csharp project.");
+            newCmd.Add(newLibCmd);
 
-        class FileNameValidator : IArgumentValidator
-        {
-            public ValidationResult GetValidationResult(CommandArgument argument, ValidationContext context)
+            var nameArgLib = new Argument<string>("name",
+            "The name of the tool lib to be created.");
+            newLibCmd.AddArgument(nameArgLib);
+
+            var dirOptionLib = new Option<string>(new[] { "--directory", "-dir" }, () =>
             {
-                var path = argument.Value;
+                return Directory.GetCurrentDirectory();
+            }, "The directory to initialize the tool lib. Defaults to current directory.");
+            newLibCmd.AddOption(dirOptionLib);
+            newLibCmd.SetHandler((string name, string directory) =>
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    Console.WriteLine("please set the tool name \nusage: metatool new lib <name>");
+                    return;
+                }
 
+                if (!Directory.Exists(directory))
+                {
+                    Console.WriteLine("the directory is not exist");
+                    return;
+                }
+
+                var scaffolder = new Scaffold(_logger);
+                scaffolder.InitTemplate(name, directory, false);
+            }, nameArg, dirOption);
+
+            var runCmd = new Command("run", "run the script or lib with metatool");
+            app.Add(runCmd);
+
+            var pathArg = new Argument<string>("path", "The dir and name of the script(.csx) to be created.");
+            runCmd.Add(pathArg);
+
+            runCmd.SetHandler(path =>
+            {
                 if (string.IsNullOrEmpty(path))
-                    return new ValidationResult(
+                {
+                    Console.WriteLine(
                         $"the 'run' command should have argument of a file end with '.csx' or '.dll'");
+                    return;
+                }
 
                 if (!path.EndsWith(".dll") && !path.EndsWith(".csx"))
-                    return new ValidationResult($"The value for {argument.Value} must be end with '.csx' or '.dll'");
-
-                if (File.Exists(path))
                 {
-                    return ValidationResult.Success;
+                    Console.WriteLine($"The value for {path} must be end with '.csx' or '.dll'");
+                    return;
                 }
 
-                path = Path.Combine(Context.CurrentDirectory, path);
-                if (File.Exists(path))
+                var fullPath = path;
+                if (!File.Exists(fullPath))
                 {
-                    return ValidationResult.Success;
+                    fullPath = Path.Combine(Context.CurrentDirectory, fullPath);
+
+                    if (!File.Exists(fullPath))
+                    {
+                        Console.WriteLine($"the value '{path}' is not exist.");
+                        return;
+                    }
                 }
 
-                return new ValidationResult($"Could not find {path}!");
-            }
+                if (fullPath.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        Services.GetOrCreate<PluginManager>().LoadDll(fullPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex,
+                            $"Error while loading tool {fullPath}! No tools loaded! Please fix it then restart!");
+                    }
+                }
+                else if (fullPath.EndsWith(".csx"))
+                {
+                    var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
+                    _logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
+                    Services.GetOrCreate<PluginManager>().BuildReload(fullPath, assemblyName, false);
+                }
+
+                App.RunApp();
+            }, pathArg);
+
+            // on windows we have command to register .csx files to be executed by dotnet-script
+            var registerCmd = new Command("register", "Register .csx file handler to enable running scripts directly");
+            app.Add(registerCmd);
+
+            registerCmd.SetHandler(() =>
+            {
+                var scaffolder = new Scaffold(_logger);
+                scaffolder.Register();
+            });
+
+            return app.InvokeAsync(_args);
         }
+
     }
 }

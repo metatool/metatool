@@ -4,7 +4,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
-using McMaster.Extensions.CommandLineUtils;
+using Metaseed.ConsoleUtils;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
 
@@ -43,7 +43,7 @@ namespace Metaseed.Metatool
                 cmdRunner.Run("reg",
                     $@"add HKCU\Software\Classes\metatool\Shell\Open\Command /f /ve /t REG_EXPAND_SZ /d ""\""%MetatoolDir%\Metatool.exe\"" \""%1\"" -- %*""");
             }
-        }
+        }   
 
         void SetupEnvVar()
         {
