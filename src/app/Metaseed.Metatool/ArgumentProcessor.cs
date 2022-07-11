@@ -6,7 +6,6 @@ using McMaster.Extensions.CommandLineUtils.Validation;
 using Metatool.Plugin;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 
 namespace Metaseed.Metatool
 {

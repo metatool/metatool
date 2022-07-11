@@ -35,9 +35,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj">
     </ProjectReference>
   </ItemGroup>

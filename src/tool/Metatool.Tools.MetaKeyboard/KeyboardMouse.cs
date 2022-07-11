@@ -61,11 +61,11 @@ namespace Metatool.MetaKeyboard
 
                 var x = (int)Math.Floor(bounding.X + bounding.Width  / 2);
                 var y = (int)Math.Floor(bounding.Y + bounding.Height / 2);
-                if (x == 0 && y == 0)
+                if (double.IsFinite(bounding.X) || double.IsInfinity(bounding.Y) || x == 0 && y == 0)
                 {
                     var r = windowManager.CurrentWindow.Rect;
                     x = (int)(r.X + r.Width  / 2);
-                    y = (int)(r.Y + r.Height / 2);
+                    y = (int)(r.Y + r.Height / 2); 
                 }
                 mouse.MoveToLikeUser(x, y);
             }
