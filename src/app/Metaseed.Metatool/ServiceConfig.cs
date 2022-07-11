@@ -31,8 +31,7 @@ namespace Metaseed.Metatool
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
-                    config
-                        .AddPluginsConfig()
+                    config.AddPluginsConfig()
                         .AddEnvironmentVariables(prefix: "METATOOL_");
                 })
                 .ConfigureLogging((hostingContext, logging) =>
@@ -63,7 +62,7 @@ namespace Metaseed.Metatool
                         .AddSingleton<ICommandManager, CommandManager>()
                         .AddSingleton<INotify, Notify>()
                         .AddSingleton<IScreenHint, ScreenHint>()
-                        .AddMetatoolUtils()          
+                        .AddMetatoolUtils()
                         .AddPipelineBuilder()
                         .AddHostedService<SingleInstanceService>()
                         .AddHostedService<StartupService>()
@@ -84,7 +83,7 @@ namespace Metaseed.Metatool
 
             CopySetting("appsettings.json");
             CopySetting("appsettings.Production.json");
-             var builder = Host.CreateDefaultBuilder(args);
+            var builder = Host.CreateDefaultBuilder(args);
             return ConfigHostBuilder(builder);
         }
 

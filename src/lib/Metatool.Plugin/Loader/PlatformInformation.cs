@@ -1,7 +1,4 @@
-﻿// Copyright (c) Nate McMaster.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -9,7 +6,7 @@ namespace Metatool.Metatool.Plugin.Loader
 {
     internal class PlatformInformation
     {
-        public static  readonly string[] NativeLibraryExtensions;
+        public static readonly string[] NativeLibraryExtensions;
         public static readonly string[] NativeLibraryPrefixes;
         public static readonly string[] ManagedAssemblyExtensions = new[]
         {

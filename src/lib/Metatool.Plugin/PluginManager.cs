@@ -50,7 +50,7 @@ namespace Metatool.Plugin
             {
                 return Path.GetFullPath(new Uri(path).LocalPath)
                     .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                    .ToUpperInvariant();
+                    .ToLowerInvariant();
             }
 
             static List<string> AddToolPath(List<string> tools, string path)
@@ -276,7 +276,6 @@ namespace Metatool.Plugin
                     }
                 }
 
-                ;
             }
         }
 
