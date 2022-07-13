@@ -7,6 +7,7 @@ namespace Metatool.Service
     {
         None  = 0,
         All   = -1,
+
         Down  = 1,
         Up    = 2,
         Hit   = 0xF,

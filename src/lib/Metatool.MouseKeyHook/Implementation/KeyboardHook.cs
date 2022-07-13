@@ -240,6 +240,7 @@ namespace Metatool.Input.MouseKeyHook
             {
                 Debug.Assert(stateTree.IsOnRoot);
                 if (stateTree.ProcessState == KeyProcessState.Yield) continue;
+
                 var selectionResult = stateTree.TrySelect(eventType, args);
                 if (selectionResult.CandidateNode == null) continue;
 

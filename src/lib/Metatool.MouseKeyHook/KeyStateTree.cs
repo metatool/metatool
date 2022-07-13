@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.Implementation.Trie;
 using Metatool.MouseKeyHook.Implementation.Trie;
@@ -18,7 +17,7 @@ namespace Metatool.Input
     public enum KeyProcessState
     {
         /// <summary>
-        ///  well processed this event and at root: event consumed, state reset
+        ///  well processed this event, and at root: event consumed, state reset
         /// </summary>
         Done,
 
@@ -28,12 +27,12 @@ namespace Metatool.Input
         Continue,
 
         /// <summary>
-        /// reprocess this event on the root of trees, and the tree is at root: event reschedule(include me), state reset from path to root
+        /// reprocess this event on the root of trees, and the tree is at root: event reschedule(include the current event), state reset from path to root
         /// </summary>
         Reprocess,
 
         /// <summary>
-        /// could not process the event, try to process this event with other trees, at root. event reschedule(exclude me), state reset
+        /// could not process the event, try to process this event with other trees at root. event reschedule(exclude this event), state reset
         /// </summary>
         Yield,
 
@@ -101,7 +100,7 @@ namespace Metatool.Input
         {
             var lastDownHit = "";
             if (_lastKeyDownNodeForAllUp != null)
-                lastDownHit = $"\t↓@ {_lastKeyDownNodeForAllUp}";
+                lastDownHit = $"last↓@ {_lastKeyDownNodeForAllUp}";
             _lastKeyDownNodeForAllUp = null;
             Console.WriteLine($"${Name}{lastDownHit}");
 
@@ -260,13 +259,13 @@ namespace Metatool.Input
                 {
                     if (_treeWalker.IsOnRoot)
                     {
-                        // AnyKeyNotInRoot_down_or_up: *A_down *A_up is not registered in root
+                        // AnyKeyNotRegisteredInRoot_down_or_up: *A_down *A_up is not registered in root
                         _lastKeyDownNodeForAllUp = null;
                         return ProcessState = KeyProcessState.Yield;
                     }
 
                     // on path, up
-                    if (_treeWalker.ChildrenCount == 0)
+                    if (_treeWalker.CurrentChildrenCount == 0)
                     {
                         // NoChild & NotOnRoot:
                         //   KeyInChord_up : A+B when A_up.
@@ -294,7 +293,7 @@ namespace Metatool.Input
 
             var lastDownHit = "";
             if (_lastKeyDownNodeForAllUp != null)
-                lastDownHit = $"\t↓@{_lastKeyDownNodeForAllUp}";
+                lastDownHit = $"last↓@{_lastKeyDownNodeForAllUp}";
             Console.WriteLine($"${Name}{lastDownHit}");
 
             // matched
@@ -357,7 +356,7 @@ namespace Metatool.Input
                 _lastKeyDownNodeForAllUp = null;
                 return ProcessState = KeyProcessState.Continue;
             }
-
+            // goto candidateNode
             switch (eventType)
             {
                 case KeyEvent.Up:
@@ -385,7 +384,7 @@ namespace Metatool.Input
                 case KeyEvent.AllUp:
                     _lastKeyDownNodeForAllUp = null;
                     // navigate on AllUp event only when not navigated by up
-                    // A+B then B_up then A_up would not execute if clause
+                    // A+B down then B_up then A_up would not execute this if clause
                     if (_treeWalker.CurrentNode.Equals(candidateNode))
                     {
                         return ProcessState;

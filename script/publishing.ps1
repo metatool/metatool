@@ -29,7 +29,7 @@ if ($localRelease) {
 "Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {
     Build-Tool $_ -release: $true -rebuild: $rebuild
     if ($localRelease) {
-        Copy-Item "$metatool\exe\publishing\tools\$_" "$metatool\exe\publish\tools\$_" -Force
+        Copy-Item "$metatool\exe\publishing\tools\$_" "$metatool\exe\publish\tools" -Force -Recurse -Verbose
     }
 }
 

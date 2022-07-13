@@ -32,6 +32,8 @@ namespace Metatool.MetaKeyboard
 
     public class KeyboardMousePackage
     {
+        public bool MouseFollowActiveWindow { get; set; }
+
         public IDictionary<string, KeyMapDef> KeyMaps { get; set; }
 
         public MouseKeyboardHotKeys Hotkeys { get; set; }

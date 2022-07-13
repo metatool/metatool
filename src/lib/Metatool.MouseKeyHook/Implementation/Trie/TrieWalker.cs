@@ -33,7 +33,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation.Trie
         public TrieNode<TKey, TValue> Root     => _trie;
         public bool                   IsOnRoot => CurrentNode == _trie;
 
-        public int                 ChildrenCount => CurrentNode.ChildrenCount;
+        public int                 CurrentChildrenCount => CurrentNode.ChildrenCount;
         public IEnumerable<TValue> CurrentValues => CurrentNode.Values();
 
         public bool TryGoToChild(TKey key)

@@ -83,6 +83,10 @@
         }
       },
       "KeyboardMousePackage": {
+        // not work well, if click to change active window
+        // need to just handle alt+tab switch
+        "MouseFollowActiveWindow": false,
+
         "KeyMaps": {
           "GK + [": "LButton",
           "GK + ]": "RButton"
@@ -107,7 +111,7 @@
           },
           "MouseLeftClickLast": {
             "Hotkey": "GK + X*",
-            "Description": "Mouse Left Click via Last Hint" 
+            "Description": "Mouse Left Click via Last Hint"
           }
 
         }

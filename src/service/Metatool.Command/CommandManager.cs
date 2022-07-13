@@ -7,19 +7,19 @@ namespace Metatool.Command
 {
     public class CommandManager : ICommandManager
     {
-        private class Entry
+        private class CommandEntry
         {
             public object   Trigger { get; }
             public ICommand Command { get; }
 
-            public Entry(object trigger, ICommand command)
+            public CommandEntry(object trigger, ICommand command)
             {
                 Trigger = trigger;
                 Command = command;
             }
         }
 
-        readonly Dictionary<ICommandToken, Entry> _commands = new Dictionary<ICommandToken, Entry>();
+        readonly Dictionary<ICommandToken, CommandEntry> _commands = new Dictionary<ICommandToken, CommandEntry>();
 
         private ICommandToken<TArgs> Add<TArgs>(ICommandTrigger<TArgs> trigger, ICommand<TArgs> command, ICommandToken<TArgs> token=null)
         {
@@ -27,7 +27,7 @@ namespace Metatool.Command
             trigger.Execute    += command.Execute;
             trigger.OnAdd(command);
             token ??= new CommandToken<TArgs>(this);
-            _commands.Add(token, new Entry(trigger, command));
+            _commands.Add(token, new CommandEntry(trigger, command));
             return token;
         }
 
