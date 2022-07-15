@@ -149,7 +149,10 @@ namespace Metatool.Input
             if (TreeType == TreeType.SingleEventCommand)
             {
                 var commands = _trie.Get(combinations);
-                if (commands.Count() != 0) _trie.Remove(combinations, c => c.KeyEvent == command.KeyEvent);
+                if (commands.Count() != 0)
+                {
+                    _trie.Remove(combinations, c => c.KeyEvent == command.KeyEvent);
+                }
             }
 
             _trie.Add(combinations, command);

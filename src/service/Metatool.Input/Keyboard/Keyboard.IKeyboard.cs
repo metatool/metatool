@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Metatool.Command;
-using Metatool.Input.implementation;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.WindowsInput.Native;
@@ -74,6 +73,7 @@ namespace Metatool.Input
                 ISequence seq => seq.ToList(),
                 _ => throw new Exception("IHotkey should be ISequence or ISequenceUnit")
             };
+
             var trigger = new KeyboardCommandTrigger();
             var metaKey = Add(sequence, keyEvent,
                 new KeyCommand(trigger.OnExecute) {CanExecute = trigger.OnCanExecute}, stateTree) as MetaKey;

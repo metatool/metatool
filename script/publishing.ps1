@@ -37,7 +37,7 @@ if ($localRelease) {
 $metaSoftware = "$metatool\exe\publish\tools\Metatool.Tools.Software"
 $metaSoftwarePublishing = "$metatool\exe\publishing\tools\Metatool.Tools.Software"
 
-Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse
-Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse
+Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse -Force
+Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse -Force
 
 sl $PSScriptRoot

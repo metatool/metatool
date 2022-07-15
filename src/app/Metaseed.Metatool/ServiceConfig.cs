@@ -36,11 +36,11 @@ namespace Metaseed.Metatool
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
+                    logging.ClearProviders()
                     //loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
                     // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
                     //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
                     //     new TextWriterTraceListener(writer: Console.Out)));
-                    logging
                     .AddProvider(new SimpleConsoleLoggerProvider())
                     //.AddFile(o => o.RootPath = hostingContext.HostingEnvironment.ContentRootPath);
                     .AddFile(o => o.RootPath = Context.AppDirectory);

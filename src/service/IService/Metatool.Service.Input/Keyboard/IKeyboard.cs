@@ -34,7 +34,7 @@ namespace Metatool.Service
         IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null);
         void AddHotStrings(IDictionary<string, HotStringDef> hotStrings);
 
-        Task<IKeyEventArgs> KeyDownAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey=null, CancellationToken token = default);
+        Task<IKeyEventArgs> KeyDownAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default);
         Task<IKeyPressEventArgs> KeyPressAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default);
         Task<IKeyEventArgs> KeyUpAsync(bool handled = false, int timeout = Timeout.Infinite, ISequenceUnit hotkey = null, CancellationToken token = default);
 
@@ -59,7 +59,27 @@ namespace Metatool.Service
 
     }
 
-    public enum KeyMaps { MapOnDownUp, HardMap, MapOnHit, MapOnHitAndAllUp, ChordMap}
+    public enum KeyMaps
+    {
+        /// <summary>
+        /// map to target down when source down, map to target up when source up
+        /// </summary>
+        MapOnDownUp,
+        /// <summary>
+        /// replay the broken key, i.e. Num0 for RCtrl
+        /// </summary>
+        HardMap,
+        /// <summary>
+        /// do mapping when the triggerKey is downAndUp
+        /// Note: A+B -> C become A+C, use MapOnHitAndAllUp to overcome
+        /// </summary>
+        MapOnHit,
+        MapOnHitAndAllUp,
+        /// <summary>
+        /// i.e. x+ for ctrl+alt+
+        /// </summary>
+        ChordMap
+    }
 
     public interface IKeyboardVirtual
     {

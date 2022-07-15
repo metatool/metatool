@@ -13,7 +13,6 @@ namespace Metatool.Input
         private readonly Key _key;
         private bool? _isAlwaysOn;
         private bool _confirmAlwaysOnOffSate;
-        private bool _valid;
         private IKeyCommand _keyCommandDownActionToken;
         private IKeyCommand _keyCommandUpActionToken;
         internal ToggleKey(Key key)
@@ -34,6 +33,8 @@ namespace Metatool.Input
 
         void InstallHook()
         {
+             bool handleViaSystem = false;
+
             if (_keyCommandDownActionToken == null)
                 _keyCommandDownActionToken = _key.OnDown(e =>
                 {
@@ -42,51 +43,46 @@ namespace Metatool.Input
 
                     if (_key == Keys.NumLock)
                     {
-                        var on = Control.IsKeyLocked((Keys)_key);
-                        if (on && !_isAlwaysOn.Value || !on && _isAlwaysOn.Value)
+                        var isOn = Control.IsKeyLocked((Keys)_key);
+                        if (isOn && !_isAlwaysOn.Value || !isOn && _isAlwaysOn.Value)
                         {
-                            _valid = true;
-                            return;
+                            handleViaSystem = true;
                         }
-
-
+                        // e.Handled is not set to true, so will toggle it via system logic.
                         return;
                     }
 
                     if (_confirmAlwaysOnOffSate)
                     {
                         _confirmAlwaysOnOffSate = false;
-                        var on = Control.IsKeyLocked((Keys)_key);
-                        if (on && !_isAlwaysOn.Value || !on && _isAlwaysOn.Value)
+                        var isOn = Control.IsKeyLocked((Keys)_key);
+                        if (isOn && !_isAlwaysOn.Value || !isOn && _isAlwaysOn.Value)
                         {
-                            _valid = true;
+                            handleViaSystem = true;
                             return;
                         }
                     }
 
+                    // prevent system to toggle it
                     e.Handled = true;
                 }, e=> !e.IsVirtual);
+
             if (_keyCommandUpActionToken == null)
                 _keyCommandUpActionToken = _key.OnUp(e =>
                 {
                     if (!_isAlwaysOn.HasValue) return;
 
-                    if (_key == Keys.NumLock)
+                    if (handleViaSystem)
                     {
-                        if (_valid)
-                        {
-                            _valid = false;
-                            return;
-                        }
-
-                        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
-                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key)));
+                        handleViaSystem = false;
+                        // e.handled is not set to true, so will trigger system logic
                         return;
                     }
 
-                    if (_valid)
+                    if (_key == Keys.NumLock)
                     {
-                        _valid = false;
+                        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
+                            InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key)));
                         return;
                     }
 
@@ -136,7 +132,6 @@ namespace Metatool.Input
                     _confirmAlwaysOnOffSate = true;
                     _isAlwaysOn = false;
                     Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
-
                             InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key)
                         ));
 
@@ -168,6 +163,7 @@ namespace Metatool.Input
             }
 
         }
+
         public void On()
         {
             RemoveHook();

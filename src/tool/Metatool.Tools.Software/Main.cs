@@ -96,8 +96,9 @@ namespace Metatool.Tools.Software
             }
 
             conf.Handled &= hotkeyTrigger.Handled;
-
-            hotkeyTrigger.OnEvent(async e =>
+            try
+            {
+                hotkeyTrigger.OnEvent(async e =>
             {
                 try
                 {
@@ -108,6 +109,12 @@ namespace Metatool.Tools.Software
                     Logger.LogError(ex, $"Can not run shortcut: {file}");
                 }
             });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Can not parse hotkeyTrigger {hotkeyTrigger.Key}");
+
+            }
             return true;
         }
 

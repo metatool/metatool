@@ -51,6 +51,7 @@
           "LMenu + I": "Up",
           "LMenu + K": "Down",
           "LMenu + J": "Left",
+          //"LCtrl+LMenu + J*": "Left",
           "LMenu + L": "Right",
           "LMenu + H": "Home",
           "LMenu + ;": "End",
