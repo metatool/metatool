@@ -1,8 +1,9 @@
 # install folder
-$programFolder = Read-Host "Enter the foler path to unzip the metatool software: (press 'enter' to install to {$env:ProgramData}"
+$defaultFolder = "{$env:LOCALAPPDATA}\Programs"
+$programFolder = Read-Host "Enter the foler path to unzip the metatool software: (press 'enter' to install to {$defaultFolder}"
 
 if([string]::IsNullOrWhiteSpace($programFolder)) {
-    $programFolder = $env:ProgramData;
+    $programFolder = $defaultFolder;
 } else {
     if(!(Test-Path $programFolder -PathType Container)){
         New-Item -ItemType Directory -Force -Path $programFolder
@@ -16,7 +17,7 @@ New-Item $tempFolder -ItemType Directory -Force
 
 # Get the latest release
 $latestRelease = Invoke-WebRequest "https://api.github.com/repos/metatool/metatool/releases/latest" |
-ConvertFrom-Json | 
+ConvertFrom-Json |
 Select-Object tag_name
 $tag_name =  $latestRelease.tag_name
 
@@ -32,8 +33,8 @@ Microsoft.PowerShell.Archive\Expand-Archive $zipFile -DestinationPath $installat
 Remove-Item $tempFolder -Recurse -Force
 
 $path = [System.Environment]::GetEnvironmentVariable("path", [System.EnvironmentVariableTarget]::User);
-# Get all paths except paths to old dotnet.script installations. 
-$paths = $path.Split(";") -inotlike "*metatool*" 
+# Get all paths except paths to old dotnet.script installations.
+$paths = $path.Split(";") -inotlike "*metatool*"
 # Add the installation folder to the path
 $paths += Join-Path $installationFolder "metatool"
 # Create the new path string
