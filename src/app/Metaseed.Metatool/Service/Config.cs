@@ -2,19 +2,18 @@
 using Metatool.Service;
 using Microsoft.Extensions.Options;
 
-namespace Metaseed.Metatool.Service
+namespace Metaseed.Metatool.Service;
+
+internal class ToolConfig<T>: IConfig<T>
 {
-    internal class ToolConfig<T>: IConfig<T>
-    {
-        private readonly IOptionsMonitor<T> _optionsAccessor;
+	private readonly IOptionsMonitor<T> _optionsAccessor;
 
-        public ToolConfig()
-        {
+	public ToolConfig()
+	{
 
-            _optionsAccessor = Services.Get<IOptionsMonitor<T>>();
-        }
+		_optionsAccessor = Services.Get<IOptionsMonitor<T>>();
+	}
 
-        public T CurrentValue => _optionsAccessor.CurrentValue;
-        public IDisposable OnChange(Action<T, string> listener) => _optionsAccessor.OnChange(listener);
-    }
+	public T CurrentValue => _optionsAccessor.CurrentValue;
+	public IDisposable OnChange(Action<T, string> listener) => _optionsAccessor.OnChange(listener);
 }

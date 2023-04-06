@@ -4,10 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public interface IScreenHint
 {
-    public interface IScreenHint
-    {
-   Task Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true);
-    }
+	Task Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true);
 }

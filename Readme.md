@@ -1,6 +1,9 @@
 
-Metatool is an efficiency-oriented tool that facilitates the user’s operation on Windows system
+Metatool is an efficiency-oriented tool that facilitates the user’s operation on Windows. Its function is composed by a set of plugin tools.
 
+## Plugin Tools
+* [Metatool.Tools.MetaKeyboard](./src/tool/Metatool.Tools.MetaKeyboard/README.md)
+* [Metatool.Tools.Software](./src/tool/Metatool.Tools.Software/README.md)
 
 
 ## Installing

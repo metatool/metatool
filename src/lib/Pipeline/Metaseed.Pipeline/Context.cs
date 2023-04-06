@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 
-namespace Metatool.Pipeline
+namespace Metatool.Pipeline;
+
+public class Context: Dictionary<string, object>, IContext
 {
-    public class Context: Dictionary<string, object>, IContext
-    {
-    }
 }

@@ -1,11 +1,10 @@
-﻿namespace Metatool.Service
+﻿namespace Metatool.Service;
+
+public interface IToggleKey
 {
-    public interface IToggleKey
-    {
-        ToggleKeyState State { get; }
-        void AlwaysOn();
-        void AlwaysOff();
-        void Off();
-        void On();
-    } 
+	ToggleKeyState State { get; }
+	void AlwaysOn();
+	void AlwaysOff();
+	void Off();
+	void On();
 }

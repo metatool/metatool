@@ -4,7 +4,7 @@ The `goal` of MetaKB is described by the below gif:
 
 ![keyboard](./image/keyboard.gif)
 ## Description
-MetaKeyboard shrinks the full keyboard into the its main panel of 60 keys, so the user only need to remember the 60 key locations and do touch typing.
+MetaKeyboard shrinks the full windows keyboard (104 keys) into its main panel of 60 keys, so the user only needs to remember the 60 key locations to do touch typing
 
 MetaKeyboard redefined the CapsLock key as a function key:
 

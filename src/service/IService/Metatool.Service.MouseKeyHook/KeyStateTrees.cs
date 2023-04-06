@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public class KeyStateTrees
 {
-    public class KeyStateTrees
-    {
-        public const string HardMap = "HardMap";
-        public const string ChordMap = "ChordMap";
-        public const string Default = "Default";
-        public const string Map = "Map";
-        public const string HotString = "HotString";
-    }
+	public const string HardMap = "HardMap";
+	public const string ChordMap = "ChordMap";
+	public const string Default = "Default";
+	public const string Map = "Map";
+	public const string HotString = "HotString";
 }

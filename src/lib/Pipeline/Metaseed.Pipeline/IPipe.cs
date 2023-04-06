@@ -1,12 +1,11 @@
 using System;
 
-namespace Metatool.Pipeline
+namespace Metatool.Pipeline;
+
+public interface IPipe<TIn, TOut>: IDisposable
 {
-    public interface IPipe<TIn, TOut>: IDisposable
-    {
-        TOut Flow(TIn stream, IContext context);
-    }
-    public interface IPipe<T>: IPipe<T,T>
-    {
-    }
+	TOut Flow(TIn stream, IContext context);
+}
+public interface IPipe<T>: IPipe<T,T>
+{
 }

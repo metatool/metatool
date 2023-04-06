@@ -1,10 +1,9 @@
-﻿namespace Metatool.Service
+﻿namespace Metatool.Service;
+
+public partial class Key
 {
-    public partial class Key
-    {
-        public ICombination ToCombination()
-        {
-            return (Combination) this;
-        }
-    }
+	public ICombination ToCombination()
+	{
+		return (Combination) this;
+	}
 }

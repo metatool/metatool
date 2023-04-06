@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Windows.Controls.Primitives;
 
-namespace Metatool.NotifyIcon
+namespace Metatool.NotifyIcon;
+
+public class NotifyToken
 {
-    public class NotifyToken
-    {
-        internal Popup Popup;
+	internal Popup Popup;
 
-        public NotifyToken(Popup popup = null)
-        {
-            Popup = popup;
-        }
+	public NotifyToken(Popup popup = null)
+	{
+		Popup = popup;
+	}
 
-        public void Close()
-        {
-            Popup.IsOpen = false;
-            Popup.Child  = null;
+	public void Close()
+	{
+		Popup.IsOpen = false;
+		Popup.Child  = null;
 
-        }
-    }
+	}
 }

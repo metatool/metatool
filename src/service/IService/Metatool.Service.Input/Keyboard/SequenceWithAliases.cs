@@ -4,12 +4,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Text;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public class AliasedSequence: Sequence
 {
 
-    public class AliasedSequence: Sequence
-    {
 
-
-    }
 }

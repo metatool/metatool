@@ -1,10 +1,9 @@
 ﻿using Metatool.Service;
 
-namespace Metatool.Tools.Software
+namespace Metatool.Tools.Software;
+
+[ToolConfig]
+public class Config
 {
-    [ToolConfig]
-    public class Config
-    {
-        public string[] ConfigFolders { get; set; }
-    }
+	public string[] ConfigFolders { get; set; }
 }

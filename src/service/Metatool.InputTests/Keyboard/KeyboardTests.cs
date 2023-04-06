@@ -5,25 +5,24 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Metatool.Input.Tests
-{
-    [TestClass()]
-    public class KeyboardTests
-    {
-        [TestMethod()]
-        public void ReplaceAliasTest()
-        {
-            // var input = "` CAPS` + ` b` +`,+ ,`";
-            // var key = "`";
-            // var regex = @$"(?:(?<=[\s,+])|^){Regex.Escape(key)}(?:(?=[\s,+])|$)";
+namespace Metatool.Input.Tests;
 
-            var input = ", ,, ,, ,";
-            var key   = "`";
-            var regex = @$",\s*,";
-            var b = Regex.Replace(input, regex, ", W");
+[TestClass()]
+public class KeyboardTests
+{
+	[TestMethod()]
+	public void ReplaceAliasTest()
+	{
+		// var input = "` CAPS` + ` b` +`,+ ,`";
+		// var key = "`";
+		// var regex = @$"(?:(?<=[\s,+])|^){Regex.Escape(key)}(?:(?=[\s,+])|$)";
+
+		var input = ", ,, ,, ,";
+		var key   = "`";
+		var regex = @$",\s*,";
+		var b = Regex.Replace(input, regex, ", W");
                
 
-            // (?<=[\s,+])`
-        }
-    }
+		// (?<=[\s,+])`
+	}
 }

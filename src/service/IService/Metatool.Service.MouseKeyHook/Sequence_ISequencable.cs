@@ -2,25 +2,25 @@
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Metatool.Service{
-    public partial class Sequence
-    {
-        public ISequence Then(Keys key)
-        {
-            return this.Then(new Combination(key));
-        }
+namespace Metatool.Service;
 
-        public ISequence Then(IHotkey hotkey)
-        {
-            this.AddRange(hotkey.ToSequence());
-            return this;
-        }
+public partial class Sequence
+{
+	public ISequence Then(Keys key)
+	{
+		return this.Then(new Combination(key));
+	}
 
-        public KeyEvent Handled
-        {
-            get => this.Last().TriggerKey.Handled;
-            set => this.Last().TriggerKey.Handled = value;
-        }
-        public ISequence ToSequence() => this;
-    }
+	public ISequence Then(IHotkey hotkey)
+	{
+		this.AddRange(hotkey.ToSequence());
+		return this;
+	}
+
+	public KeyEvent Handled
+	{
+		get => this.Last().TriggerKey.Handled;
+		set => this.Last().TriggerKey.Handled = value;
+	}
+	public ISequence ToSequence() => this;
 }

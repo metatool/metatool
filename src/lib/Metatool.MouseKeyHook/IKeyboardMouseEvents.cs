@@ -2,12 +2,11 @@
 
 using System;
 
-namespace Metatool.Input.MouseKeyHook
+namespace Metatool.Input.MouseKeyHook;
+
+/// <summary>
+///     Provides keyboard and mouse events.
+/// </summary>
+public interface IKeyboardMouseEvents : IKeyboardEvents, IMouseEvents, IDisposable
 {
-    /// <summary>
-    ///     Provides keyboard and mouse events.
-    /// </summary>
-    public interface IKeyboardMouseEvents : IKeyboardEvents, IMouseEvents, IDisposable
-    {
-    }
 }

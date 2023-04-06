@@ -1,9 +1,8 @@
 ﻿using Metatool.Service;
 
-namespace Metatool.Command
+namespace Metatool.Command;
+
+public interface IKeyboardCommandTrigger : ICommandTrigger<IKeyEventArgs>
 {
-    public interface IKeyboardCommandTrigger : ICommandTrigger<IKeyEventArgs>
-    {
-        IMetaKey MetaKey { get; }
-    }
+	IMetaKey MetaKey { get; }
 }

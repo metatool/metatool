@@ -1,38 +1,37 @@
-﻿namespace Metatool.Core.ComponentModel
+﻿namespace Metatool.Core.ComponentModel;
+
+/// <summary>
+/// Represents the arguments of an event <see cref="Delayer.Action"/>
+/// </summary>
+public sealed class DelayerActionEventArgs<T> where T : class
 {
-    /// <summary>
-    /// Represents the arguments of an event <see cref="Delayer.Action"/>
-    /// </summary>
-    public sealed class DelayerActionEventArgs<T> where T : class
-    {
-        #region Properties
+	#region Properties
 
-        /// <summary>
-        /// Gets the data linked to the event.
-        /// </summary>
-        internal T Data { get; }
+	/// <summary>
+	/// Gets the data linked to the event.
+	/// </summary>
+	internal T Data { get; }
 
-        #endregion
+	#endregion
 
-        #region Constructors
+	#region Constructors
 
-        /// <summary>
-        /// Initialize a new instance of the <see cref="DelayerActionEventArgs"/> class
-        /// </summary>
-        internal DelayerActionEventArgs()
-            : this(null)
-        {
-        }
+	/// <summary>
+	/// Initialize a new instance of the <see cref="DelayerActionEventArgs"/> class
+	/// </summary>
+	internal DelayerActionEventArgs()
+		: this(null)
+	{
+	}
 
-        /// <summary>
-        /// Initialize a new instance of the <see cref="DelayerActionEventArgs"/> class
-        /// </summary>
-        /// <param name="data">The data linked to the event.</param>
-        internal DelayerActionEventArgs(T data)
-        {
-            Data = data;
-        }
+	/// <summary>
+	/// Initialize a new instance of the <see cref="DelayerActionEventArgs"/> class
+	/// </summary>
+	/// <param name="data">The data linked to the event.</param>
+	internal DelayerActionEventArgs(T data)
+	{
+		Data = data;
+	}
 
-        #endregion
-    }
+	#endregion
 }

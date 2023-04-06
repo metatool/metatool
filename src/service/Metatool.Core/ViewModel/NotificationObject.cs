@@ -7,99 +7,98 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Metatool.Core.ViewModel
+namespace Metatool.Core.ViewModel;
+
+public abstract class NotificationObject : INotifyPropertyChanged, INotifyDataErrorInfo
 {
-    public abstract class NotificationObject : INotifyPropertyChanged, INotifyDataErrorInfo
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
+	public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (!EqualityComparer<T>.Default.Equals(field, value))
-            {
-                field = value;
-                OnPropertyChanged(propertyName);
-                return true;
-            }
-            return false;
-        }
+	protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+	{
+		if (!EqualityComparer<T>.Default.Equals(field, value))
+		{
+			field = value;
+			OnPropertyChanged(propertyName);
+			return true;
+		}
+		return false;
+	}
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+	protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
 
-        private ConcurrentDictionary<string, List<ErrorInfo>> _propertyErrors;
+	private ConcurrentDictionary<string, List<ErrorInfo>> _propertyErrors;
 
-        protected void SetError(string propertyName, string id, string message)
-        {
-            if (_propertyErrors == null)
-            {
-                LazyInitializer.EnsureInitialized(ref _propertyErrors, () => new ConcurrentDictionary<string, List<ErrorInfo>>());
-            }
+	protected void SetError(string propertyName, string id, string message)
+	{
+		if (_propertyErrors == null)
+		{
+			LazyInitializer.EnsureInitialized(ref _propertyErrors, () => new ConcurrentDictionary<string, List<ErrorInfo>>());
+		}
 
 #pragma warning disable CS8602 // Possible dereference of a null reference.
-            var errors = _propertyErrors.GetOrAdd(propertyName, _ => new List<ErrorInfo>());
+		var errors = _propertyErrors.GetOrAdd(propertyName, _ => new List<ErrorInfo>());
 #pragma warning restore CS8602 // Possible dereference of a null reference.
-            errors.RemoveAll(e => e.Id == id);
-            errors.Add(new ErrorInfo(id, message));
+		errors.RemoveAll(e => e.Id == id);
+		errors.Add(new ErrorInfo(id, message));
 
-            OnErrorsChanged(propertyName);
-        }
+		OnErrorsChanged(propertyName);
+	}
 
-        protected void ClearError(string propertyName, string id)
-        {
-            if (_propertyErrors == null) return;
+	protected void ClearError(string propertyName, string id)
+	{
+		if (_propertyErrors == null) return;
 
-            _propertyErrors.TryGetValue(propertyName, out var errors);
-            if (errors?.RemoveAll(e => e.Id == id) > 0)
-            {
-                OnErrorsChanged(propertyName);
-            }
-        }
+		_propertyErrors.TryGetValue(propertyName, out var errors);
+		if (errors?.RemoveAll(e => e.Id == id) > 0)
+		{
+			OnErrorsChanged(propertyName);
+		}
+	}
 
-        protected void ClearErrors(string propertyName)
-        {
-            if (_propertyErrors == null) return;
+	protected void ClearErrors(string propertyName)
+	{
+		if (_propertyErrors == null) return;
 
-            _propertyErrors.TryGetValue(propertyName, out var errors);
-            if (errors?.Count > 0)
-            {
-                errors.Clear();
+		_propertyErrors.TryGetValue(propertyName, out var errors);
+		if (errors?.Count > 0)
+		{
+			errors.Clear();
 
-                OnErrorsChanged(propertyName);
-            }
-        }
+			OnErrorsChanged(propertyName);
+		}
+	}
 
-        public IEnumerable GetErrors(string propertyName)
-        {
-            List<ErrorInfo> errors = null;
-            _propertyErrors?.TryGetValue(propertyName, out errors);
-            return errors?.AsEnumerable() ?? Array.Empty<ErrorInfo>();
-        }
+	public IEnumerable GetErrors(string propertyName)
+	{
+		List<ErrorInfo> errors = null;
+		_propertyErrors?.TryGetValue(propertyName, out errors);
+		return errors?.AsEnumerable() ?? Array.Empty<ErrorInfo>();
+	}
 
-        public bool HasErrors => _propertyErrors?.Any(c => c.Value.Any()) == true;
+	public bool HasErrors => _propertyErrors?.Any(c => c.Value.Any()) == true;
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
+	public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
-        protected virtual void OnErrorsChanged(string propertyName)
-        {
-            ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
-        }
+	protected virtual void OnErrorsChanged(string propertyName)
+	{
+		ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
+	}
 
-        protected class ErrorInfo
-        {
-            public ErrorInfo(string id, string message)
-            {
-                Id = id;
-                Message = message;
-            }
+	protected class ErrorInfo
+	{
+		public ErrorInfo(string id, string message)
+		{
+			Id = id;
+			Message = message;
+		}
 
-            public string Id { get; }
+		public string Id { get; }
 
-            public string  Message { get; }
+		public string  Message { get; }
 
-            public override string ToString() => Message;
-        }
-    }
+		public override string ToString() => Message;
+	}
 }

@@ -1,17 +1,16 @@
 ﻿
 
-namespace Metatool.Input.MouseKeyHook.Implementation
-{
-    internal class AppEventFacade : EventFacade
-    {
-        protected override MouseListener CreateMouseListener()
-        {
-            return new AppMouseListener();
-        }
+namespace Metatool.Input.MouseKeyHook.Implementation;
 
-        protected override KeyListener CreateKeyListener()
-        {
-            return new AppKeyListener();
-        }
-    }
+internal class AppEventFacade : EventFacade
+{
+	protected override MouseListener CreateMouseListener()
+	{
+		return new AppMouseListener();
+	}
+
+	protected override KeyListener CreateKeyListener()
+	{
+		return new AppKeyListener();
+	}
 }

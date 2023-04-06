@@ -1,9 +1,8 @@
-﻿namespace Metatool.Service
+﻿namespace Metatool.Service;
+
+public interface IPlugin
 {
-    public interface IPlugin
-    {
-        string Id { get; }
-        bool OnLoaded();
-        void OnUnloading();
-    }
+	string Id { get; }
+	bool OnLoaded();
+	void OnUnloading();
 }

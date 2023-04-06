@@ -2,10 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public interface IClipboard
 {
-    public interface IClipboard
-    {
-        Task<string> CopyTextAsync(int timeout = -1, CancellationToken token=default);
-    }
+	Task<string> CopyTextAsync(int timeout = -1, CancellationToken token=default);
 }

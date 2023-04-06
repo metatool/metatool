@@ -17,81 +17,80 @@ using Metatool.UI.Notify;
 using Context = Metatool.Service.Context;
 using Metatool.Pipeline;
 
-namespace Metaseed.Metatool
+namespace Metaseed.Metatool;
+
+public class ServiceConfig
 {
-    public class ServiceConfig
-    {
-        private static IHostBuilder ConfigHostBuilder(IHostBuilder builder) =>
-            builder
-                .UseContentRoot(Context.AppDirectory) // needed for locating appsettings.json when currentDir is not the metatool.exe dir, i.e. invoke from commandline
-                .ConfigureHostConfiguration(configHost =>
-                {
-                    // configHost.SetBasePath(Context.AppDirectory);
-                })
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    var env = hostingContext.HostingEnvironment;
-                    config.AddPluginsConfig()
-                        .AddEnvironmentVariables(prefix: "METATOOL_");
-                })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.ClearProviders()
-                    //loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
-                    // loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
-                    //     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
-                    //     new TextWriterTraceListener(writer: Console.Out)));
-                    .AddProvider(new SimpleConsoleLoggerProvider())
-                    //.AddFile(o => o.RootPath = hostingContext.HostingEnvironment.ContentRootPath);
-                    .AddFile(o => o.RootPath = Context.AppDirectory);
-                    ;
-                })
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services
-                        .Configure<MetatoolConfig>(hostContext.Configuration)
-                        .AddSingleton<IContextVariable, ContextVariable>()
-                        .AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>))
-                        .Configure<LoggerFilterOptions>(options =>
-                            options.MinLevel = hostContext.HostingEnvironment.IsDevelopment()
-                                ? LogLevel.Trace
-                                : LogLevel.Information)
-                        .AddSingleton<IKeyboard, Keyboard>()
-                        .AddSingleton<IClipboard, Clipboard>()
-                        .AddSingleton<IMouse, Mouse>()
-                        .AddSingleton<ICommandManager, CommandManager>()
-                        .AddSingleton<INotify, Notify>()
-                        .AddSingleton<IScreenHint, ScreenHint>()
-                        .AddMetatoolUtils()
-                        .AddPipelineBuilder()
-                        .AddHostedService<SingleInstanceService>()
-                        .AddHostedService<StartupService>()
-                        .AddHostedService<LifetimeEventsHostedService>()
-                        .AddHostedService<ConsoleInputService>();
-                });
+	private static IHostBuilder ConfigHostBuilder(IHostBuilder builder) =>
+		builder
+			.UseContentRoot(Context.AppDirectory) // needed for locating appsettings.json when currentDir is not the metatool.exe dir, i.e. invoke from commandline
+			.ConfigureHostConfiguration(configHost =>
+			{
+				// configHost.SetBasePath(Context.AppDirectory);
+			})
+			.ConfigureAppConfiguration((hostingContext, config) =>
+			{
+				var env = hostingContext.HostingEnvironment;
+				config.AddPluginsConfig()
+					.AddEnvironmentVariables(prefix: "METATOOL_");
+			})
+			.ConfigureLogging((hostingContext, logging) =>
+			{
+				logging.ClearProviders()
+					//loggingBuilder.AddConsole(o => o.Format = ConsoleLoggerFormat.Default);
+					// loggingBuilder.AddProvider(new TraceSourceLoggerProvider(
+					//     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
+					//     new TextWriterTraceListener(writer: Console.Out)));
+					.AddProvider(new SimpleConsoleLoggerProvider())
+					//.AddFile(o => o.RootPath = hostingContext.HostingEnvironment.ContentRootPath);
+					.AddFile(o => o.RootPath = Context.AppDirectory);
+				;
+			})
+			.ConfigureServices((hostContext, services) =>
+			{
+				services
+					.Configure<MetatoolConfig>(hostContext.Configuration)
+					.AddSingleton<IContextVariable, ContextVariable>()
+					.AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>))
+					.Configure<LoggerFilterOptions>(options =>
+						options.MinLevel = hostContext.HostingEnvironment.IsDevelopment()
+							? LogLevel.Trace
+							: LogLevel.Information)
+					.AddSingleton<IKeyboard, Keyboard>()
+					.AddSingleton<IClipboard, Clipboard>()
+					.AddSingleton<IMouse, Mouse>()
+					.AddSingleton<ICommandManager, CommandManager>()
+					.AddSingleton<INotify, Notify>()
+					.AddSingleton<IScreenHint, ScreenHint>()
+					.AddMetatoolUtils()
+					.AddPipelineBuilder()
+					.AddHostedService<SingleInstanceService>()
+					.AddHostedService<StartupService>()
+					.AddHostedService<LifetimeEventsHostedService>()
+					.AddHostedService<ConsoleInputService>();
+			});
 
-        internal static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            static void CopySetting(string settingFile)
-            {
-                var configPath = Path.Combine(Context.AppDirectory, settingFile);
-                if (!File.Exists(configPath))
-                {
-                    File.Copy(Path.Combine(Context.BaseDirectory, settingFile), configPath);
-                }
-            }
+	internal static IHostBuilder CreateHostBuilder(string[] args)
+	{
+		static void CopySetting(string settingFile)
+		{
+			var configPath = Path.Combine(Context.AppDirectory, settingFile);
+			if (!File.Exists(configPath))
+			{
+				File.Copy(Path.Combine(Context.BaseDirectory, settingFile), configPath);
+			}
+		}
 
-            CopySetting("appsettings.json");
-            CopySetting("appsettings.Production.json");
-            var builder = Host.CreateDefaultBuilder(args);
-            return ConfigHostBuilder(builder);
-        }
+		CopySetting("appsettings.json");
+		CopySetting("appsettings.Production.json");
+		var builder = Host.CreateDefaultBuilder(args);
+		return ConfigHostBuilder(builder);
+	}
 
-        public static IHost BuildHost(string[] args)
-        {
-            var host = CreateHostBuilder(args).Build();
-            Services.SetDefaultProvider(host.Services);
-            return host;
-        }
-    }
+	public static IHost BuildHost(string[] args)
+	{
+		var host = CreateHostBuilder(args).Build();
+		Services.SetDefaultProvider(host.Services);
+		return host;
+	}
 }

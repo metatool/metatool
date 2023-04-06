@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public interface ICombinable
 {
-    public interface ICombinable
-    {
-        ICombination With(Keys chordKey);
-        ICombination With(IEnumerable<Keys> keys);
-        ICombination Control();
-        ICombination Shift();
-        ICombination Alt();
-    }
+	ICombination With(Keys chordKey);
+	ICombination With(IEnumerable<Keys> keys);
+	ICombination Control();
+	ICombination Shift();
+	ICombination Alt();
 }

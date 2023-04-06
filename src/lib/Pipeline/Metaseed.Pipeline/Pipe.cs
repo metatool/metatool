@@ -1,19 +1,18 @@
 using System;
 
-namespace Metatool.Pipeline
+namespace Metatool.Pipeline;
+
+public class Pipe<TIn, TOut> : IPipe<TIn, TOut>
 {
-    public class Pipe<TIn, TOut> : IPipe<TIn, TOut>
-    {
-        private readonly Func<TIn, IContext, TOut> _converterWithContext;
-        private readonly Func<TIn, TOut> _converter;
+	private readonly Func<TIn, IContext, TOut> _converterWithContext;
+	private readonly Func<TIn, TOut> _converter;
 
-        public Pipe(Func<TIn, IContext, TOut> converter) => _converterWithContext = converter;
-        public Pipe(Func<TIn, TOut> converter) => _converter = converter;
+	public Pipe(Func<TIn, IContext, TOut> converter) => _converterWithContext = converter;
+	public Pipe(Func<TIn, TOut> converter) => _converter = converter;
 
-        public TOut Flow(TIn dataStream, IContext context) => _converterWithContext != null ? _converterWithContext(dataStream, context) : _converter(dataStream);
+	public TOut Flow(TIn dataStream, IContext context) => _converterWithContext != null ? _converterWithContext(dataStream, context) : _converter(dataStream);
 
-        public void Dispose()
-        {
-        }
-    }
+	public void Dispose()
+	{
+	}
 }

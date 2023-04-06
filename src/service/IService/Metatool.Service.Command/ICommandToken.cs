@@ -1,11 +1,10 @@
-﻿namespace Metatool.Service
-{
-    public interface ICommandToken
-    {
-        string Id { get; set; }
-    }
+﻿namespace Metatool.Service;
 
-    public interface ICommandToken<T> : ICommandToken, IChangeRemove<ICommandTrigger<T>>
-    {
-    }
+public interface ICommandToken
+{
+	string Id { get; set; }
+}
+
+public interface ICommandToken<T> : ICommandToken, IChangeRemove<ICommandTrigger<T>>
+{
 }

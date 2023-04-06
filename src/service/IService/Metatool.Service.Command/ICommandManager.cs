@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public interface ICommandManager
 {
-    public interface ICommandManager
-    {
-        ICommandToken<T> Add<T>(ICommandTrigger<T> trigger, Action<T> execute,
-            Predicate<T> canExecute = null, string description = "");
+	ICommandToken<T> Add<T>(ICommandTrigger<T> trigger, Action<T> execute,
+		Predicate<T> canExecute = null, string description = "");
 
 
-    }
 }

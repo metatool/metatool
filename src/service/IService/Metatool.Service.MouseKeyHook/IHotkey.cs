@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public interface  IHotkey: ISequencable
 {
-    public interface  IHotkey: ISequencable
-    {
-        ISequence ToSequence();
-        KeyEvent Handled { get; set; }
-    }
+	ISequence ToSequence();
+	KeyEvent Handled { get; set; }
 }

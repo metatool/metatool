@@ -1,10 +1,9 @@
 ﻿using System;
 using Metatool.Service;
 
-namespace Metatool.Input
+namespace Metatool.Input;
+
+public interface IKeyDownEvents
 {
-    public interface IKeyDownEvents
-    {
-        void Down(string actionId, string description, Action<IKeyEventArgs> action);
-    }
+	void Down(string actionId, string description, Action<IKeyEventArgs> action);
 }

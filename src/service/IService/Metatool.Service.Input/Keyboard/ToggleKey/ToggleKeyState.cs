@@ -1,10 +1,9 @@
-﻿namespace Metatool.Service
+﻿namespace Metatool.Service;
+
+public enum ToggleKeyState
 {
-    public enum ToggleKeyState
-    {
-        On,
-        Off,
-        AlwaysOn,
-        AlwaysOff
-    }
+	On,
+	Off,
+	AlwaysOn,
+	AlwaysOff
 }

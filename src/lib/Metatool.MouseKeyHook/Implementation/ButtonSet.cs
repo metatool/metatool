@@ -2,30 +2,29 @@
 
 using System.Windows.Forms;
 
-namespace Metatool.Input.MouseKeyHook.Implementation
+namespace Metatool.Input.MouseKeyHook.Implementation;
+
+internal class ButtonSet
 {
-    internal class ButtonSet
-    {
-        private MouseButtons m_Set;
+	private MouseButtons m_Set;
 
-        public ButtonSet()
-        {
-            m_Set = MouseButtons.None;
-        }
+	public ButtonSet()
+	{
+		m_Set = MouseButtons.None;
+	}
 
-        public void Add(MouseButtons element)
-        {
-            m_Set |= element;
-        }
+	public void Add(MouseButtons element)
+	{
+		m_Set |= element;
+	}
 
-        public void Remove(MouseButtons element)
-        {
-            m_Set &= ~element;
-        }
+	public void Remove(MouseButtons element)
+	{
+		m_Set &= ~element;
+	}
 
-        public bool Contains(MouseButtons element)
-        {
-            return (m_Set & element) != MouseButtons.None;
-        }
-    }
+	public bool Contains(MouseButtons element)
+	{
+		return (m_Set & element) != MouseButtons.None;
+	}
 }

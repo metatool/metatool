@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public interface ISequence : IList<ICombination>, IHotkey, IKeyPath
 {
-    public interface ISequence : IList<ICombination>, IHotkey, IKeyPath
-    {
-    }
 }

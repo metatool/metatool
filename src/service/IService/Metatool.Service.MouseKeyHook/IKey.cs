@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public interface IKey
 {
-    public interface IKey
-    {
-        // char Char { get; }
-    }
+	// char Char { get; }
 }

@@ -5,60 +5,59 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Metatool.Metatool.Script
+namespace Metatool.Metatool.Script;
+
+internal class Compiler
 {
-    internal class Compiler
-    {
-        public byte[] Compile(string filepath)
-        {
-            Console.WriteLine($"Starting compilation of: '{filepath}'");
+	public byte[] Compile(string filepath)
+	{
+		Console.WriteLine($"Starting compilation of: '{filepath}'");
 
-            var sourceCode = File.ReadAllText(filepath);
+		var sourceCode = File.ReadAllText(filepath);
 
-            using var peStream = new MemoryStream();
-            var result = GenerateCode(sourceCode).Emit(peStream);
+		using var peStream = new MemoryStream();
+		var result = GenerateCode(sourceCode).Emit(peStream);
 
-            if (!result.Success)
-            {
-                Console.WriteLine("Compilation done with error.");
+		if (!result.Success)
+		{
+			Console.WriteLine("Compilation done with error.");
 
-                var failures = result.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
+			var failures = result.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
 
-                foreach (var diagnostic in failures)
-                {
-                    Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-                }
+			foreach (var diagnostic in failures)
+			{
+				Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+			}
 
-                return null;
-            }
+			return null;
+		}
 
-            Console.WriteLine("Compilation done without any error.");
+		Console.WriteLine("Compilation done without any error.");
 
-            peStream.Seek(0, SeekOrigin.Begin);
+		peStream.Seek(0, SeekOrigin.Begin);
 
-            return peStream.ToArray();
-        }
+		return peStream.ToArray();
+	}
 
-        private static CSharpCompilation GenerateCode(string sourceCode)
-        {
-            var codeString = SourceText.From(sourceCode);
-            var options = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest);
-            var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(codeString, options);
+	private static CSharpCompilation GenerateCode(string sourceCode)
+	{
+		var codeString = SourceText.From(sourceCode);
+		var options = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest);
+		var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(codeString, options);
 
-            var references = new MetadataReference[]
-            {
-                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location),
-            };
+		var references = new MetadataReference[]
+		{
+			MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+			MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
+			MetadataReference.CreateFromFile(typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly.Location),
+			MetadataReference.CreateFromFile(typeof(Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo).Assembly.Location),
+		};
 
-            return CSharpCompilation.Create("Hello.dll",
-                new[] { parsedSyntaxTree }, 
-                references: references, 
-                options: new CSharpCompilationOptions(OutputKind.ConsoleApplication, 
-                    optimizationLevel: OptimizationLevel.Release,
-                    assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default));
-        }
-    }
+		return CSharpCompilation.Create("Hello.dll",
+			new[] { parsedSyntaxTree }, 
+			references: references, 
+			options: new CSharpCompilationOptions(OutputKind.ConsoleApplication, 
+				optimizationLevel: OptimizationLevel.Release,
+				assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default));
+	}
 }

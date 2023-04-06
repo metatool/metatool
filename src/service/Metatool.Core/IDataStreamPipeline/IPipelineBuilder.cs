@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 
-namespace Metatool.Core.IDataStreamPipeline
+namespace Metatool.Core.IDataStreamPipeline;
+
+public interface IPipelineBuilder
 {
-    public interface IPipelineBuilder
-    {
-        IPipelineBuilder Add(Pipe pipe);
-        IPipeline Build();
-    }
+	IPipelineBuilder Add(Pipe pipe);
+	IPipeline Build();
 }

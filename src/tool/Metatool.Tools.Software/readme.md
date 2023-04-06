@@ -1,4 +1,7 @@
-﻿> TIP: to create a Desktop shortcut for a Store app in Windows 10    
+﻿the MetaApp plugin tool m  
+
+
+> TIP: to create a Desktop shortcut for a Store app in Windows 10    
 > 1. Press the Win + R keys together to open the Run dialog and type shell:AppsFolder in the run box.
 > 1. Hit the Enter key to open the Applications folder.
 > 1. Now, drag and drop the desired app to the Desktop. Windows will create a new shortcut for it instantly!

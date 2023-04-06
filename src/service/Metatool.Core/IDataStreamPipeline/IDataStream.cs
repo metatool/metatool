@@ -1,6 +1,5 @@
-namespace Metatool.Core.IDataStreamPipeline
+namespace Metatool.Core.IDataStreamPipeline;
+
+public interface IDataStream
 {
-    public interface IDataStream
-    {
-    }
 }

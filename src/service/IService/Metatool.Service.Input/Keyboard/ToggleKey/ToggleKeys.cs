@@ -1,17 +1,16 @@
 ﻿using Metatool.Service.Internal;
 
-namespace Metatool.Service
+namespace Metatool.Service;
+
+public class ToggleKeys
 {
-    public class ToggleKeys
-    {
-        private static IKeyboardInternal _keyboard;
+	private static IKeyboardInternal _keyboard;
 
-        private static IKeyboardInternal Keyboard =>
-            _keyboard ??= (IKeyboardInternal)Services.Get<IKeyboard, IKeyboard>();
+	private static IKeyboardInternal Keyboard =>
+		_keyboard ??= (IKeyboardInternal)Services.Get<IKeyboard, IKeyboard>();
 
-        public static IToggleKey NumLock    = Keyboard.GeToggleKey(Key.Num);
-        public static IToggleKey CapsLock   = Keyboard.GeToggleKey(Key.Caps);
-        public static IToggleKey ScrollLock = Keyboard.GeToggleKey(Key.Scroll);
-        public static IToggleKey Insert     = Keyboard.GeToggleKey(Key.Ins);
-    }
+	public static IToggleKey NumLock    = Keyboard.GeToggleKey(Key.Num);
+	public static IToggleKey CapsLock   = Keyboard.GeToggleKey(Key.Caps);
+	public static IToggleKey ScrollLock = Keyboard.GeToggleKey(Key.Scroll);
+	public static IToggleKey Insert     = Keyboard.GeToggleKey(Key.Ins);
 }

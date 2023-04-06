@@ -1,9 +1,8 @@
-﻿namespace Metatool.Tools.Software
+﻿namespace Metatool.Tools.Software;
+
+public enum RunMode
 {
-    public enum RunMode
-    {
-        Inherit,
-        Admin,
-        User
-    }
+	Inherit,
+	Admin,
+	User
 }

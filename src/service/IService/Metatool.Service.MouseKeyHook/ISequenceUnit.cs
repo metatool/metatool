@@ -1,7 +1,6 @@
-﻿namespace Metatool.Service
+﻿namespace Metatool.Service;
+
+public interface ISequenceUnit: IHotkey
 {
-    public interface ISequenceUnit: IHotkey
-    {
-        ICombination ToCombination();
-    }
+	ICombination ToCombination();
 }

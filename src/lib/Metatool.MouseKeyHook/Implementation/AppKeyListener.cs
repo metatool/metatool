@@ -2,23 +2,22 @@
 using Metatool.Input.MouseKeyHook.WinApi;
 using Metatool.Service;
 
-namespace Metatool.Input.MouseKeyHook.Implementation
+namespace Metatool.Input.MouseKeyHook.Implementation;
+
+internal class AppKeyListener : KeyListener
 {
-    internal class AppKeyListener : KeyListener
-    {
-        public AppKeyListener()
-            : base(HookHelper.HookAppKeyboard)
-        {
-        }
+	public AppKeyListener()
+		: base(HookHelper.HookAppKeyboard)
+	{
+	}
 
-        protected override IEnumerable<KeyPressEventArgsExt> GetPressEventArgs(CallbackData data, IKeyEventArgs arg)
-        {
-            return KeyPressEventArgsExt.FromRawDataApp(data, arg);
-        }
+	protected override IEnumerable<KeyPressEventArgsExt> GetPressEventArgs(CallbackData data, IKeyEventArgs arg)
+	{
+		return KeyPressEventArgsExt.FromRawDataApp(data, arg);
+	}
 
-        protected override IKeyEventArgs GetDownUpEventArgs(CallbackData data)
-        {
-            return KeyEventArgsExt.FromRawDataApp(data);
-        }
-    }
+	protected override IKeyEventArgs GetDownUpEventArgs(CallbackData data)
+	{
+		return KeyEventArgsExt.FromRawDataApp(data);
+	}
 }

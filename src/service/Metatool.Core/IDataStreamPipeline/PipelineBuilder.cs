@@ -4,28 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Metatool.Core.IDataStreamPipeline
+namespace Metatool.Core.IDataStreamPipeline;
+
+public class PipelineBuilder: IPipelineBuilder
 {
-    public class PipelineBuilder: IPipelineBuilder
-    {
-        readonly List<Pipe> _pipes = new List<Pipe>();
+	readonly List<Pipe> _pipes = new();
 
-        public IPipelineBuilder Add(Pipe pipe)
-        {
-            _pipes.Add(pipe);
-            return this;
-        }
+	public IPipelineBuilder Add(Pipe pipe)
+	{
+		_pipes.Add(pipe);
+		return this;
+	}
 
-        public IPipeline Build()
-        {
-            var pipe = _pipes.Aggregate(
-                (first, second) =>
-                    (ctx, next) =>
-                        first(ctx,
-                            c => second(c, next)));
-            return new Pipeline(pipe);
-        }
+	public IPipeline Build()
+	{
+		var pipe = _pipes.Aggregate(
+			(first, second) =>
+				(ctx, next) =>
+					first(ctx,
+						c => second(c, next)));
+		return new Pipeline(pipe);
+	}
 
        
-    }
 }
