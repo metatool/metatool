@@ -1,18 +1,18 @@
-﻿the MetaApp plugin tool m  
+﻿MetaApp plugin tool launch frequently used application via sequential-hotkeys, i.e (AK+Space, N) too open notepad.exe, the hotkey sequence are defined by a tree of folders, just put the application shortcut into the folder to configure launched applications, i.e. put notepad.lnk shortcut into the 'AK + Space' folder.
 
 
-> TIP: to create a Desktop shortcut for a Store app in Windows 10    
+> TIP: to create a Desktop shortcut for a Store app in Windows 10
 > 1. Press the Win + R keys together to open the Run dialog and type shell:AppsFolder in the run box.
 > 1. Hit the Enter key to open the Applications folder.
 > 1. Now, drag and drop the desired app to the Desktop. Windows will create a new shortcut for it instantly!
 
 
 ## Example
-* Folder: `AK +`  
+* Folder: `AK +`
   * file `Visual Studio &Code.lnk`: `AK + C` to start run the file shortcut.
-  * file `Find with Everything.lnk`: `AK + F` to search with Everything.exe. 
-   > Note: the first letter is 'F', '&' is not needed.  
-  * file `Find with Everything(new window)#Shift+F$Handled=true, Description = open a new instance of Everyting.lnk` and search: `AK + Shift + F` to search with Everything.exe in a new instance window, trigger keys configured after '#', and properties after '$'. This is all properties you could config via name: `Abc#A+B,C$Handled=true, Enabled=true, Description=ab cs ef`  
+  * file `Find with Everything.lnk`: `AK + F` to search with Everything.exe.
+   > Note: the first letter is 'F', '&' is not needed.
+  * file `Find with Everything(new window)#Shift+F$Handled=true, Description = open a new instance of Everyting.lnk` and search: `AK + Shift + F` to search with Everything.exe in a new instance window, trigger keys configured after '#', and properties after '$'. This is all properties you could config via name: `Abc#A+B,C$Handled=true, Enabled=true, Description=ab cs ef`
   > Note: the default value of `Handled` is true, no need to config it explicitly.
 
 ## how to pass args
