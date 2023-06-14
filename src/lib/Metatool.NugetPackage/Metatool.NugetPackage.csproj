@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NuGet.Commands" Version="6.2.1" />
+    <PackageReference Include="NuGet.Commands" Version="6.2.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="NuGet.PackageManagement" Version="6.2.1" />
     <PackageReference Include="NuGet.Resolver" Version="6.2.1" />
