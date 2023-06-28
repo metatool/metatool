@@ -1,4 +1,4 @@
-Directly run c# code as script
+Directly run c# code as script, we can use it to write script plugin for MetaTool
 ## Example
 ```csharp
 // support using nuget pakcage
@@ -34,10 +34,10 @@ new ClassTest().Hello();
 
 ```
 ## Usage
-**to init the setup**
-
-`  cs init`
+**To init scripts template in directory**
+> it will add vscode config to let you debug the scripts with vscode
+`cs init [-d dir]`
 
 ** to run script**
 
-` cs <scriptPath> [-- arg0 arg1...]`
+` cs <scriptPath> [-n LocalAssembly.dll] [-- arg0 arg1...]`
