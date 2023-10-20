@@ -3,6 +3,7 @@ Metatool is an efficiency-oriented tool that facilitates the user’s operation 
 
 ## Plugin Tools
 * [Metatool.Tools.MetaKeyboard](./src/tool/Metatool.Tools.MetaKeyboard/README.md)
+  ![keyboard](./src/tool/Metatool.Tools.MetaKeyboard/image/keyboard.gif)
 * [Metatool.Tools.Software](./src/tool/Metatool.Tools.Software/README.md)
 
 
