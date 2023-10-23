@@ -91,7 +91,6 @@
         "KeyMaps": {
           "GK + [": "LButton",
           "GK + ]": "RButton"
-
         },
         "Hotkeys": {
           "MouseToFocus": {
@@ -132,7 +131,7 @@
             "Description": "Focus &Navigation Tree View"
           },
           "CopySelectedPath": {
-            "Hotkey": "CK + \\",
+            "Hotkey": "GK + \\",
             "Description": "Copy Selected Files Path"
           },    
           "NewFile": {
