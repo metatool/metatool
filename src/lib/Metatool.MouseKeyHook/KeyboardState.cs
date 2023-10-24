@@ -58,7 +58,7 @@ public class KeyboardState : IKeyboardState
 	///     instance of <see cref="KeyboardState" /> class.
 	/// </summary>
 	/// <returns>An instance of <see cref="KeyboardState" /> class representing a snapshot of keyboard state at certain moment.</returns>
-	public static KeyboardState GetCurrent()
+	public static KeyboardState Current()
 	{
 		var bytes = new byte[256];
 		accessor.ReadArray<byte>(0, bytes, 0, 256);

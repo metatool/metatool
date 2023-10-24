@@ -12,7 +12,7 @@ partial class Keyboard
 	public IToggleKey GeToggleKey(Key key) => new ToggleKey(key);
 	public void ReleaseDownKeys()
 	{
-		var downKeys = KeyboardState.GetCurrent().AllDownKeys;
+		var downKeys = KeyboardState.Current().AllDownKeys;
 		foreach (var downKey in downKeys)
 		{
 			Up((Key)downKey);

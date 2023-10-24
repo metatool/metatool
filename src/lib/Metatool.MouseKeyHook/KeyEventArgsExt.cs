@@ -187,7 +187,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 
 		var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,
 			_lastKeyEventApp,
-			MouseKeyHook.Implementation.KeyboardState.GetCurrent());
+			MouseKeyHook.Implementation.KeyboardState.Current());
 		_lastKeyEventApp = r;
 		if (isKeyDown) _lastKeyEventApp.LastKeyDownEvent = r;
 		return r;
@@ -211,7 +211,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 		var        isExtendedKey   = (keyboardHookStruct.Flags & maskExtendedKey) > 0;
 
 		var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
-			isKeyUp, isExtendedKey, _lastKeyEventGloable, MouseKeyHook.Implementation.KeyboardState.GetCurrent());
+			isKeyUp, isExtendedKey, _lastKeyEventGloable, MouseKeyHook.Implementation.KeyboardState.Current());
 		_lastKeyEventGloable = r;
 		if (isKeyDown) _lastKeyEventGloable.LastKeyDownEvent                           = r;
 		if (!isVirtual) _lastKeyEventGloable.LastKeyEvent_NoneVirtual                  = r;

@@ -552,17 +552,17 @@ public partial class Keyboard
 
 	public bool IsDown(IKey key)
 	{
-		var state = KeyboardState.GetCurrent();
+		var state = KeyboardState.Current();
 		return state.IsDown((Key)key);
 	}
 	public bool IsUp(IKey key)
 	{
-		var state = KeyboardState.GetCurrent();
+		var state = KeyboardState.Current();
 		return state.IsUp((Key)key);
 	}
 	public bool IsToggled(IKey key)
 	{
-		var state = KeyboardState.GetCurrent();
+		var state = KeyboardState.Current();
 		return state.IsToggled((Key)key);
 	}
 	public bool Disable
@@ -602,5 +602,5 @@ public partial class Keyboard
 		_hook.EnableChord(c);
 	}
 
-	public IKeyboardState State => KeyboardState.GetCurrent();
+	public IKeyboardState State => KeyboardState.Current();
 }

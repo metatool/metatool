@@ -42,7 +42,7 @@ public static class CombinationExtensions
 				reset?.Invoke();
 				return;
 			}
-			var state = KeyboardState.GetCurrent();
+			var state = KeyboardState.Current();
 			var action = reset;
 			var maxLength = 0;
 			foreach (var current in element)

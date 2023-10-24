@@ -84,7 +84,7 @@ internal static class KeyboardNativeMethods
 		out char[] chars)
 	{
 		var pwszBuff = new StringBuilder(64);
-		var keyboardState = KeyboardState.GetCurrent();
+		var keyboardState = KeyboardState.Current();
 		var currentKeyboardState = keyboardState.GetNativeState();
 		var isDead = false;
 

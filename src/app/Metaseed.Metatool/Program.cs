@@ -20,7 +20,7 @@ public static class Program
 	{
 		try
 		{
-			var shiftDown = KeyboardState.GetCurrent().IsDown(Key.Shift);
+			var shiftDown = KeyboardState.Current().IsDown(Key.Shift);
 			if (!Context.IsElevated && (shiftDown || args.Contains("-admin")))
 			{
 				// so you could pin metatool to the first windows taskbar shortcut,
