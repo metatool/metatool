@@ -20,6 +20,7 @@ public static class Program
 	{
 		try
 		{
+			Console.WriteLine($"Is Elevated: {Context.IsElevated}");
 			var shiftDown = KeyboardState.Current().IsDown(Key.Shift);
 			if (!Context.IsElevated && (shiftDown || args.Contains("-admin")))
 			{
@@ -29,6 +30,7 @@ public static class Program
 				args = args.Where(i => i != "-admin").ToArray();
 				return Context.Restart(0, true, args);
 			}
+			args = args.Where(i => i != "-admin").ToArray();
 			ServiceConfig.BuildHost(args).Run();
 			return 0;
 		}

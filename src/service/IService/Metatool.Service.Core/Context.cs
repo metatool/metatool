@@ -79,6 +79,13 @@ public class Context
 		Dispatcher?.BeginInvoke(() => Application.Current.Shutdown(code));
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="code">shutdown code of the running app</param>
+	/// <param name="admin"></param>
+	/// <param name="args"></param>
+	/// <returns></returns>
 	public static int Restart(int code, bool admin, string[] args = null)
 	{
 		void restart()

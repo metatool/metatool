@@ -23,15 +23,17 @@ public class ServiceConfig
 {
 	private static IHostBuilder ConfigHostBuilder(IHostBuilder builder) =>
 		builder
-			.UseContentRoot(Context.AppDirectory) // needed for locating appsettings.json when currentDir is not the metatool.exe dir, i.e. invoke from commandline
+			// needed for locating appsettings.json when currentDir is not the metatool.exe dir, i.e. invoke from commandline
+			.UseContentRoot(Context.AppDirectory)
 			.ConfigureHostConfiguration(configHost =>
 			{
 				// configHost.SetBasePath(Context.AppDirectory);
 			})
 			.ConfigureAppConfiguration((hostingContext, config) =>
 			{
-				var env = hostingContext.HostingEnvironment;
-				config.AddPluginsConfig()
+				//var env = hostingContext.HostingEnvironment;
+				config
+					.AddPluginsConfig()
 					.AddEnvironmentVariables(prefix: "METATOOL_");
 			})
 			.ConfigureLogging((hostingContext, logging) =>
