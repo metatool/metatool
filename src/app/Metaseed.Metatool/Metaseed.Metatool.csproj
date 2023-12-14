@@ -4,10 +4,11 @@
     <UseWPF>true</UseWPF>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>Metatool.ico</ApplicationIcon>
-    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+	  <UseRidGraph>true</UseRidGraph>
+	  <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <LangVersion>preview</LangVersion>
     <AssemblyName>Metatool</AssemblyName>
@@ -77,7 +78,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />
+    <Exec Command="pwsh -ExecutionPolicy Bypass -NoProfile -NonInteractive postBuild.ps1 $(ConfigurationName) $(solutiondir)&#xD;&#xA;" />
+      <!--<Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />-->
   </Target>
 
   <!--<ItemGroup>
