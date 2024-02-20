@@ -1,3 +1,7 @@
+<#
+build metatool app and all the tool plugins and put the output into the exe/publishing folder
+add the '-l' parameter to also output them into local 'publish' folder
+#>
 [CmdletBinding()]
 param (
     [Parameter()]
@@ -8,36 +12,44 @@ param (
     [Alias("l")]
     $localRelease
 )
-$metatool = Resolve-Path $PSScriptRoot\..
-$publishing = "$metatool\exe\publishing"
+$metatoolDir = Resolve-Path $PSScriptRoot\..
+$publishingDir = "$metatoolDir\exe\publishing"
+Push-Location .
+try {
+    . $PSScriptRoot/lib/msbuild.ps1
 
-. $PSScriptRoot/lib/msbuild.ps1
-
-if (Test-Path $publishing) {
-    Remove-Item $publishing -Force -Recurse
-}
-
-msbuild /t:publish  "$metatool\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj"  /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publishing" /p:CopyOutputSymbolsToPublishDirectory=false /p:DebugType=None /p:DebugSymbols=false /p:SolutionDir="$metatool\src\" /p:PublishProfile="$metatool\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
-if ( $LASTEXITCODE -ne 0 ) {    
-    throw "publish fail!"
-}
-if ($localRelease) {
-    Copy-Item "$metatool\exe\publishing\Metatool.exe" "$metatool\exe\publish" -Force
-}
-. $PSScriptRoot/lib/Build-Tool.ps1
-
-"Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {
-    Build-Tool $_ -release: $true -rebuild: $rebuild
-    if ($localRelease) {
-        Copy-Item "$metatool\exe\publishing\tools\$_" "$metatool\exe\publish\tools" -Force -Recurse -Verbose
+    if (Test-Path $publishingDir) {
+        Remove-Item $publishingDir -Force -Recurse
     }
+#
+    msbuild /t:publish  "$metatoolDir\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj" /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publishingDir" /p:CopyOutputSymbolsToPublishDirectory=false /p:DebugType=None /p:DebugSymbols=false /p:SolutionDir="$metatoolDir\src\" /p:PublishProfile="$metatoolDir\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
+   # dotnet publish "$metatoolDir\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj" -p:DeployOnBuild=true  -p:Configuration=Release -p:PublishDir="$publishingDir" -p:CopyOutputSymbolsToPublishDirectory=false -p:DebugType=None -p:DebugSymbols=false -p:SolutionDir="$metatoolDir\src\" -p:PublishProfile="$metatoolDir\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
+    if ( $LASTEXITCODE -ne 0 ) {
+        throw "publish build of metatool.exe fail!"
+    }
+    if ($localRelease) {
+        spps -n metatool -ErrorAction Ignore
+        Copy-Item "$metatoolDir\exe\publishing\Metatool.exe" "$metatoolDir\exe\publish" -Force
+    }
+    . $PSScriptRoot/lib/Build-Tool.ps1
+
+    "Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {
+        Build-Tool $_ -release: $true -rebuild: $rebuild
+        if ($localRelease) {
+            Copy-Item "$metatoolDir\exe\publishing\tools\$_" "$metatoolDir\exe\publish\tools" -Force -Recurse -Verbose
+        }
+    }
+
+
+    $metaSoftware = "$metatoolDir\exe\publish\tools\Metatool.Tools.Software"
+    $metaSoftwarePublishing = "$metatoolDir\exe\publishing\tools\Metatool.Tools.Software"
+
+    Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse -Force
+    Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse -Force
+
+    sl $PSScriptRoot
 }
-
-
-$metaSoftware = "$metatool\exe\publish\tools\Metatool.Tools.Software"
-$metaSoftwarePublishing = "$metatool\exe\publishing\tools\Metatool.Tools.Software"
-
-Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse -Force
-Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse -Force
-
-sl $PSScriptRoot
+finally {
+    Pop-Location
+    # $Error[0]
+}

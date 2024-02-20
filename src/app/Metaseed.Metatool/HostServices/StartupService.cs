@@ -12,6 +12,7 @@ public class StartupService : IHostedService
 {
 	private readonly IConfiguration _config;
 	private readonly ILogger _logger;
+	
 
 	public StartupService(IConfiguration config, ILogger<StartupService> logger)
 	{
@@ -21,7 +22,9 @@ public class StartupService : IHostedService
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
-		return new ArgumentProcessor(Environment.GetCommandLineArgs().Skip(1).ToArray()).Run();
+		var args = Environment.GetCommandLineArgs().Skip(1).ToArray();
+		args = args.Where(i => i != Program.AdminFlagLong).ToArray();
+		return new ArgumentProcessor(args).Run();
 	}
 
 	public Task StopAsync(CancellationToken cancellationToken)

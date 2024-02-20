@@ -9,6 +9,11 @@ param (
 	[switch]
 	$test
 )
-
+Push-Location .
+try{
 . $PSScriptRoot\publishing.ps1 -r: $rebuild -localRelease
 . $PSScriptRoot\push.ps1 -t:$test
+}
+finally {
+ Pop-Location
+}

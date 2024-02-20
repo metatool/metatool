@@ -13,7 +13,7 @@ public static class Program
 {
 	private const string DebugFlagShort = "-d";
 	private const string DebugFlagLong = "--debug";
-
+	internal const string AdminFlagLong = "--admin";
 	[STAThread]
 	[System.Diagnostics.DebuggerNonUserCode]
 	public static int Main(string[] args)
@@ -22,15 +22,16 @@ public static class Program
 		{
 			Console.WriteLine($"Is Elevated: {Context.IsElevated}");
 			var shiftDown = KeyboardState.Current().IsDown(Key.Shift);
-			if (!Context.IsElevated && (shiftDown || args.Contains("-admin")))
+			if (!Context.IsElevated && (shiftDown || args.Contains(AdminFlagLong)))
 			{
 				// so you could pin metatool to the first windows taskbar shortcut,
 				// and use Win+Shift+1 then Alt+Y to launch as admin,
 				// note: could not use Win+Alt+1, it's used to do right click on the first taskbar item
-				args = args.Where(i => i != "-admin").ToArray();
+				args = args.Where(i => i != AdminFlagLong).ToArray();
 				return Context.Restart(0, true, args);
 			}
-			args = args.Where(i => i != "-admin").ToArray();
+			args = args.Where(i => i != AdminFlagLong).ToArray(); 
+			
 			ServiceConfig.BuildHost(args).Run();
 			return 0;
 		}

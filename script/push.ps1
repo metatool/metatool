@@ -13,14 +13,14 @@ param (
 $metatool = Resolve-Path $PSScriptRoot\..
 
 if (!$path) {
-	$path = "$metatool\exe\publishing\metatool.exe" 
+	$path = "$metatool\exe\publishing\metatool.exe"
 }
 $exeName = [System.IO.Path]::GetFileNameWithoutExtension($path)
 
 $publishing = "$metatool\exe\publishing"
 $published = "$metatool\exe\published"
 
-$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path).ProductVersion
+$version = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path).FileVersion
 
 if (!(Test-Path $published)) {
 	New-Item -ItemType Directory -Force -Path $published

@@ -4,7 +4,7 @@
     <UseWPF>true</UseWPF>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <!-- <OutputType>WinExe</OutputType> -->
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <ApplicationIcon>metaKeyboard.ico</ApplicationIcon>
@@ -39,7 +39,7 @@
     </ProjectReference>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\release\software /J&#xD;&#xA;exit 0" />
+    <!--<Exec Command="mklink $(OutDir)software $(SolutionDir)..\exe\publish\tools\Metatool.Tools.Software\software /J&#xD;&#xA;exit 0" />-->
   </Target>
 
 </Project>

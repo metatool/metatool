@@ -59,7 +59,7 @@ public class ServiceConfig
 							? LogLevel.Trace
 							: LogLevel.Information)
 					.AddSingleton<IKeyboard, Keyboard>()
-					.AddSingleton<IClipboard, Clipboard>()
+					//.AddSingleton<IClipboard, Clipboard>()
 					.AddSingleton<IMouse, Mouse>()
 					.AddSingleton<ICommandManager, CommandManager>()
 					.AddSingleton<INotify, Notify>()

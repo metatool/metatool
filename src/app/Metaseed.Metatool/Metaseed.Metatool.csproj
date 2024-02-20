@@ -1,88 +1,88 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\common.props" />
-  <PropertyGroup>
-    <UseWPF>true</UseWPF>
-    <OutputType>Exe</OutputType>
-    <ApplicationIcon>Metatool.ico</ApplicationIcon>
-	  <UseRidGraph>true</UseRidGraph>
-	  <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <LangVersion>preview</LangVersion>
-    <AssemblyName>Metatool</AssemblyName>
-    <StartupObject />
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-  </PropertyGroup>
+	<Import Project="..\..\common.props" />
+	<PropertyGroup>
+		<UseWPF>true</UseWPF>
+		<OutputType>Exe</OutputType>
+		<ApplicationIcon>Metatool.ico</ApplicationIcon>
+		<UseRidGraph>true</UseRidGraph>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<LangVersion>preview</LangVersion>
+		<AssemblyName>Metatool</AssemblyName>
+		<StartupObject />
+		<RunPostBuildEvent>Always</RunPostBuildEvent>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\debug</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>$(SolutionDir)..\exe\release</OutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <ApplicationDefinition Remove="App.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Templates\Metatool.Tools.LibTool.zip" />
-    <None Remove="Templates\Metatool.Tools.ScriptTool.zip" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Templates\Metatool.Tools.LibTool.zip" />
-    <EmbeddedResource Include="Templates\Metatool.Tools.ScriptTool.zip" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="appsettings.Production.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="mt.bat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="App.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <!-- <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" /> -->
-    <PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.5.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>$(SolutionDir)..\exe\debug</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>$(SolutionDir)..\exe\release</OutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<ApplicationDefinition Remove="App.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Templates\Metatool.Tools.LibTool.zip" />
+		<None Remove="Templates\Metatool.Tools.ScriptTool.zip" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Templates\Metatool.Tools.LibTool.zip" />
+		<EmbeddedResource Include="Templates\Metatool.Tools.ScriptTool.zip" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="appsettings.Production.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="mt.bat">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<Page Include="App.xaml">
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
+	<ItemGroup>
+		<!-- <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" /> -->
+		<PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.5.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
 
-  </ItemGroup>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\lib\Pipeline\Metaseed.Pipeline\Metaseed.Pipeline.csproj" />
-    <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.Clipboard\Metatool.Clipboard.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.Command\Metatool.Command.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.Core\Metatool.Core.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.Input\Metatool.Input.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.UI\Metatool.UI.csproj" />
-    <ProjectReference Include="..\..\lib\Metatool.Script\Metatool.Script.csproj" />
-    <ProjectReference Include="..\..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.Utils\Metatool.Utils.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\lib\Pipeline\Metaseed.Pipeline\Metaseed.Pipeline.csproj" />
+		<ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
+		<!--<ProjectReference Include="..\..\service\Metatool.Clipboard\Metatool.Clipboard.csproj" />-->
+		<ProjectReference Include="..\..\service\Metatool.Command\Metatool.Command.csproj" />
+		<ProjectReference Include="..\..\service\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
+		<ProjectReference Include="..\..\service\Metatool.Core\Metatool.Core.csproj" />
+		<ProjectReference Include="..\..\service\Metatool.Input\Metatool.Input.csproj" />
+		<ProjectReference Include="..\..\service\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
+		<ProjectReference Include="..\..\service\Metatool.UI\Metatool.UI.csproj" />
+		<ProjectReference Include="..\..\lib\Metatool.Script\Metatool.Script.csproj" />
+		<ProjectReference Include="..\..\lib\Metatool.Plugin\Metatool.Plugin.csproj" />
+		<ProjectReference Include="..\..\service\Metatool.Utils\Metatool.Utils.csproj" />
+	</ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="pwsh -ExecutionPolicy Bypass -NoProfile -NonInteractive postBuild.ps1 $(ConfigurationName) $(solutiondir)&#xD;&#xA;" />
-      <!--<Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />-->
-  </Target>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="pwsh -ExecutionPolicy Bypass -NoProfile -NonInteractive postBuild.ps1 $(ConfigurationName) $(solutiondir)&#xD;&#xA;" />
+		<!--<Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />-->
+	</Target>
 
-  <!--<ItemGroup>
+	<!--<ItemGroup>
     <FluentValidationExcludedCultures Include="be;cs;cs-CZ;da;de;es;fa;fi;fr;ja;it;ko;mk;nl;pl;pt;pt-BR;ru;sv;tr;uk;zh-CN;zh-CHS;zh-CHT;zh-Hant;zh-Hans">
       <InProject>false</InProject>
     </FluentValidationExcludedCultures> 

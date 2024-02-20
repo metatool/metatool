@@ -9,11 +9,11 @@ using static Metatool.Service.Key;
 namespace Metatool.Tools.MetaKeyboard
 {
     public class MetaEditor
-    {
-        public MetaEditor(IClipboard clipboard, IKeyboard keyboard)
+    {//IClipboard clipboard,
+        public MetaEditor( IKeyboard keyboard)
         {
-            (Space + RAlt).Handled(KeyEvent.All).OnHit(async e => { await GoToChar(clipboard, keyboard, e); });
-            (Space + LAlt).Handled(KeyEvent.All).OnHit(async e => { await GoToChar(clipboard, keyboard, e, false); });
+            //(Space + RAlt).Handled(KeyEvent.All).OnHit(async e => { await GoToChar(clipboard, keyboard, e); });
+            //(Space + LAlt).Handled(KeyEvent.All).OnHit(async e => { await GoToChar(clipboard, keyboard, e, false); });
             (Caps + J).OnDown(e => // Join lines
             {
                 e.Handled = true;
@@ -58,117 +58,117 @@ namespace Metatool.Tools.MetaKeyboard
             }, null, "Copy current line");
         }
 
-        private async Task GoToChar(IClipboard clipboard, IKeyboard keyboard, IKeyEventArgs e, bool right = true)
-        {
-            keyboard.HandleVirtualKey = false;
-            var chordKey   = Space;
-            var triggerKey = right ? RAlt : LAlt;
+        //private async Task GoToChar(IClipboard clipboard, IKeyboard keyboard, IKeyEventArgs e, bool right = true)
+        //{
+        //    keyboard.HandleVirtualKey = false;
+        //    var chordKey   = Space;
+        //    var triggerKey = right ? RAlt : LAlt;
 
-            try
-            {
-                if (e.KeyboardState.IsDown(triggerKey))
-                    keyboard.Up(triggerKey); // RAlt is still down in Hit event
+        //    try
+        //    {
+        //        if (e.KeyboardState.IsDown(triggerKey))
+        //            keyboard.Up(triggerKey); // RAlt is still down in Hit event
 
-                var selectKeys = right ? Shift + End : ShiftKey + Home;
-                keyboard.Type(selectKeys);
+        //        var selectKeys = right ? Shift + End : ShiftKey + Home;
+        //        keyboard.Type(selectKeys);
 
-                var text = await clipboard.CopyTextAsync(100);
+        //        var text = await clipboard.CopyTextAsync(100);
 
-                if (text.Length == 0)
-                {
-                    var select = right ? Shift + PageDown : ShiftKey + PageUp;
-                    keyboard.Type(select);
+        //        if (text.Length == 0)
+        //        {
+        //            var select = right ? Shift + PageDown : ShiftKey + PageUp;
+        //            keyboard.Type(select);
 
-                    text = await clipboard.CopyTextAsync(100);
-                    text = text.Replace("\r\n", "\r");
-                }
+        //            text = await clipboard.CopyTextAsync(100);
+        //            text = text.Replace("\r\n", "\r");
+        //        }
 
-                if (text.Length == 0)
-                    return;
-                keyboard.Type(right ? Left : Right); // unselect
+        //        if (text.Length == 0)
+        //            return;
+        //        keyboard.Type(right ? Left : Right); // unselect
 
-                keyboard.DisableChord(chordKey);
-                var startIndex   = right ? 0 : text.Length - 1;
-                var chordHolding = false;
-                var lineSearch   = true;
-                do
-                {
-                    var cs               = new CancellationTokenSource();
-                    var charToSearchTask = keyboard.KeyPressAsync(true, 5000, null, cs.Token);
+        //        keyboard.DisableChord(chordKey);
+        //        var startIndex   = right ? 0 : text.Length - 1;
+        //        var chordHolding = false;
+        //        var lineSearch   = true;
+        //        do
+        //        {
+        //            var cs               = new CancellationTokenSource();
+        //            var charToSearchTask = keyboard.KeyPressAsync(true, 5000, null, cs.Token);
 
-                    if (chordHolding)
-                    {
-                        var chordUpTask = keyboard.KeyUpAsync(false, 5000, chordKey, cs.Token);
-                        var i           = Task.WaitAny(charToSearchTask, chordUpTask);
-                        if (!(i == 0 && charToSearchTask.IsCompleted))
-                        {
-                            cs.Cancel();
-                            return;
-                        }
-                    }
+        //            if (chordHolding)
+        //            {
+        //                var chordUpTask = keyboard.KeyUpAsync(false, 5000, chordKey, cs.Token);
+        //                var i           = Task.WaitAny(charToSearchTask, chordUpTask);
+        //                if (!(i == 0 && charToSearchTask.IsCompleted))
+        //                {
+        //                    cs.Cancel();
+        //                    return;
+        //                }
+        //            }
 
-                    var charArgs = await charToSearchTask;
-                    // if we search the Upper case Shift is pressed
-                    new List<Key> {LShift, RShift}.ForEach(k =>
-                    {
-                        if (charArgs.EventArgs.KeyboardState.IsDown(k))
-                        {
-                            keyboard.Up(k); //todo: add UpAsync here
-                        }
-                    });
+        //            var charArgs = await charToSearchTask;
+        //            // if we search the Upper case Shift is pressed
+        //            new List<Key> {LShift, RShift}.ForEach(k =>
+        //            {
+        //                if (charArgs.EventArgs.KeyboardState.IsDown(k))
+        //                {
+        //                    keyboard.Up(k); //todo: add UpAsync here
+        //                }
+        //            });
 
-                    if (charToSearchTask.IsCompleted)
-                    {
-                        chordHolding = true;
-                        var cha                           = charArgs.KeyChar.ToString();
-                        if (charArgs.KeyChar == '\b') cha = " ";
-                        if (charArgs.KeyChar == '\r') cha = "\r\r";
-                        var index                         = Search(cha, text, startIndex, right);
-                        if (index == -1)
-                        {
-                            if (lineSearch)
-                            {
-                                lineSearch = false;
-                                keyboard.Type(right ? End : Home);
-                            }
+        //            if (charToSearchTask.IsCompleted)
+        //            {
+        //                chordHolding = true;
+        //                var cha                           = charArgs.KeyChar.ToString();
+        //                if (charArgs.KeyChar == '\b') cha = " ";
+        //                if (charArgs.KeyChar == '\r') cha = "\r\r";
+        //                var index                         = Search(cha, text, startIndex, right);
+        //                if (index == -1)
+        //                {
+        //                    if (lineSearch)
+        //                    {
+        //                        lineSearch = false;
+        //                        keyboard.Type(right ? End : Home);
+        //                    }
 
-                            //Thread.Sleep(3);
-                            var select = right ? Shift + PageDown : ShiftKey + PageUp;
-                            keyboard.Type(select);
+        //                    //Thread.Sleep(3);
+        //                    var select = right ? Shift + PageDown : ShiftKey + PageUp;
+        //                    keyboard.Type(select);
 
-                            text = await clipboard.CopyTextAsync(100);
-                            text = text.Replace("\r\n", "\r");
+        //                    text = await clipboard.CopyTextAsync(100);
+        //                    text = text.Replace("\r\n", "\r");
 
-                            if (text.Length == 0)
-                                return;
-                            keyboard.Type(right ? PageUp : PageDown); // unselect
-                            startIndex = right ? 0 : text.Length - 1;
+        //                    if (text.Length == 0)
+        //                        return;
+        //                    keyboard.Type(right ? PageUp : PageDown); // unselect
+        //                    startIndex = right ? 0 : text.Length - 1;
 
-                            index = Search(cha, text, startIndex, right);
-                        }
+        //                    index = Search(cha, text, startIndex, right);
+        //                }
 
-                        if (index != -1)
-                        {
-                            var count = Math.Abs(index - startIndex);
-                            count++;
-                            var moveKey = right ? Right : Left;
-                            for (var j = 0; j < count; j++)
-                            {
-                                keyboard.Type(moveKey);
-                            }
+        //                if (index != -1)
+        //                {
+        //                    var count = Math.Abs(index - startIndex);
+        //                    count++;
+        //                    var moveKey = right ? Right : Left;
+        //                    for (var j = 0; j < count; j++)
+        //                    {
+        //                        keyboard.Type(moveKey);
+        //                    }
 
-                            startIndex += (right ? count : (-count));
-                        }
-                    }
-                } while (keyboard.State.IsDown(chordKey));
-            }
-            finally
-            {
-                keyboard.HandleVirtualKey = true;
-                            Console.WriteLine(" 3");
-                keyboard.EnableChord(chordKey);
-            }
-        }
+        //                    startIndex += (right ? count : (-count));
+        //                }
+        //            }
+        //        } while (keyboard.State.IsDown(chordKey));
+        //    }
+        //    finally
+        //    {
+        //        keyboard.HandleVirtualKey = true;
+        //                    Console.WriteLine(" 3");
+        //        keyboard.EnableChord(chordKey);
+        //    }
+        //}
 
         int Search(string ch, string text, int startIndex = 0, bool right = true)
         {
