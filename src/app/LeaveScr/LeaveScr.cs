@@ -1,23 +1,12 @@
-using System;
 using System.Diagnostics;
-//using System.DirectoryServices.AccountManagement;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.IO;
-using System.Drawing;
 
-/*
-Author: @bitsadmin
-Website: https://github.com/bitsadmin
-License: BSD 3-Clause
-*/
 
 namespace LeaveScr
 {
     public partial class LeaveScr : Form
     {
         private bool success = false;
-        //public ContextType Context { get; set; }
         public string Username { get; set; }
         public string DisplayName { get; set; }
 
@@ -28,6 +17,12 @@ namespace LeaveScr
 
         private void mtbPassword_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Enter && e.Modifiers == Keys.Shift)
+            {
+                Exit();
+                return;
+            }
+
             if (e.KeyCode == Keys.Enter)
                 ValidateCredentials();
 
@@ -38,36 +33,19 @@ namespace LeaveScr
         private void pbSubmit_Click(object sender, EventArgs e)
         {
             ValidateCredentials();
-            Environment.Exit();
         }
 
         private void ValidateCredentials()
         {
             // Validate password
             string password = mtbPassword.Text;
-            //try
-            //{
-            //    using (PrincipalContext context = new PrincipalContext(Context))
-            //    {
-            //        // If for whatever reason the username couldn't be resolved, the password can most likely also not be validated
-            //        // Just save the password and close the screen
-            //        if (string.IsNullOrEmpty(Username))
-            //            success = true;
 
-            //        success = context.ValidateCredentials(Username, password);
-            //    }
-            //}
-            //// Could happen in case for example the (local) user's password is empty
-            //catch (Exception e)
-            //{
-            //    success = true;
-            //    Console.WriteLine(e);
-            //}
 
             // Output result of logon screen
             try
             {
                 if (string.IsNullOrEmpty(password))
+
                     password = "[blank password]";
 
                 // Even if a wrong password is typed, it might be valuable
@@ -127,9 +105,9 @@ namespace LeaveScr
                 if (s.Primary)
                     continue;
 
-                Form black = new Form()
+                var black = new Form()
                 {
-                    BackColor = System.Drawing.Color.Black,
+                    BackColor = Color.Black,
                     ShowIcon = false,
                     ShowInTaskbar = false,
                     WindowState = FormWindowState.Maximized,
@@ -142,7 +120,7 @@ namespace LeaveScr
                 };
 
                 // Prevent black screen from being closed
-                black.FormClosing += delegate (object fSender, FormClosingEventArgs fe) { fe.Cancel = true; };
+                black.FormClosing += (fSender, fe) => fe.Cancel = true;
 
                 // Show black screen
                 black.Show();
@@ -174,6 +152,7 @@ namespace LeaveScr
             WindowState = FormWindowState.Minimized;
             Show();
             WindowState = FormWindowState.Maximized;
+            
         }
 
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
@@ -218,12 +197,12 @@ namespace LeaveScr
             if (nCode >= 0)
             {
                 KBDLLHOOKSTRUCT objKeyInfo = (KBDLLHOOKSTRUCT)Marshal.PtrToStructure(lp, typeof(KBDLLHOOKSTRUCT));
-
+                /* Code to Disable WinKey, Alt+Tab, Ctrl+Esc Ends Here */
                 // Disabling Windows keys 
-                //if (objKeyInfo.key == Keys.RWin || objKeyInfo.key == Keys.LWin || objKeyInfo.key == Keys.Tab && HasAltModifier(objKeyInfo.flags) || objKeyInfo.key == Keys.Escape && (ModifierKeys & Keys.Control) == Keys.Control)
-                //{
-                //    return (IntPtr)1; // if 0 is returned then All the above keys will be enabled
-                //}
+                if (objKeyInfo.key == Keys.RWin || objKeyInfo.key == Keys.LWin || objKeyInfo.key == Keys.Tab && HasAltModifier(objKeyInfo.flags) || objKeyInfo.key == Keys.Escape && (ModifierKeys & Keys.Control) == Keys.Control)
+                {
+                    return (IntPtr)1; // if 0 is returned then All the above keys will be enabled
+                }
             }
             return CallNextHookEx(ptrHook, nCode, wp, lp);
         }
@@ -233,10 +212,22 @@ namespace LeaveScr
             return (flags & 0x20) == 0x20;
         }
 
+        private int _counter = 0;
+
         private void pbUser_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            Exit();
         }
-        /* Code to Disable WinKey, Alt+Tab, Ctrl+Esc Ends Here */
+
+        private void Exit()
+        {
+            _counter++;
+            if (_counter > 2)
+            {
+                success = true;
+                Application.Exit();
+                Environment.Exit(1);
+            }
+        }
     }
 }

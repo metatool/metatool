@@ -24,9 +24,9 @@ public static class Program
 			var shiftDown = KeyboardState.Current().IsDown(Key.Shift);
 			if (!Context.IsElevated && (shiftDown || args.Contains(AdminFlagLong)))
 			{
-				// so you could pin metatool to the first windows taskbar shortcut,
+				// so you could pin metatool to the first windows task bar shortcut,
 				// and use Win+Shift+1 then Alt+Y to launch as admin,
-				// note: could not use Win+Alt+1, it's used to do right click on the first taskbar item
+				// note: could not use Win+Alt+1, it's used to do right click on the first task bar item
 				args = args.Where(i => i != AdminFlagLong).ToArray();
 				return Context.Restart(0, true, args);
 			}

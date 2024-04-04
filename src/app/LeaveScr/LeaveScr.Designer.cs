@@ -141,7 +141,7 @@ namespace LeaveScr
             pPassword.TabIndex = 3;
             // 
             // pbSubmit
-            // LeaveScr.Properties.Resources
+            // 
             pbSubmit.Image = Properties.Resources.SubmitIcon;
             pbSubmit.Location = new Point(293, 14);
             pbSubmit.Margin = new Padding(4, 3, 4, 3);
@@ -164,7 +164,7 @@ namespace LeaveScr
             pbUser.SizeMode = PictureBoxSizeMode.AutoSize;
             pbUser.TabIndex = 4;
             pbUser.TabStop = false;
-            pbUser.Click += pbUser_Click;
+            pbUser.DoubleClick += pbUser_Click;
             // 
             // lblError
             // 

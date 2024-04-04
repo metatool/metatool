@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.CommandLine;
-using System.CommandLine.Parsing;
 using Metatool.Plugin;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
