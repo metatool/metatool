@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Metatool.Service;
 using Microsoft.Extensions.Logging;
-using static Metatool.Service.Key;
 
 namespace Metatool.Tools.Software;
 

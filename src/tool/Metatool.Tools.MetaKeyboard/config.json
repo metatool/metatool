@@ -57,6 +57,7 @@
           "LMenu + ;": "End",
           "LMenu + U": "PageUp",
           "LMenu + N": "PageDown",
+          //"LMenu + Back":  "LMenu + Del", // for closing window when in alt+tab triggered WindowManager, not work, the Back is sent
           //
           // Move (Vim)
           //"GK + K": "Up",

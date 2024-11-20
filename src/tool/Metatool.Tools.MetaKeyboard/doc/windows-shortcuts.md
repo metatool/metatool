@@ -4,8 +4,8 @@
 
 | Key                    | Note                                                                           |
 | ---------------------- | ------------------------------------------------------------------------------ |
-| `Alt+Tab`              | to switch between open apps, and using `LAlt+h,j,k or l` to select active app. |
-| `Ctrl+Alt+Tab`|switch between opened apps, not close after release these keys|
+| `Alt+Tab`              | to switch between open apps, and using `left,right,up,down` to select active app. `Delete` to close the selected app|
+| `Ctrl+Alt+Tab`|switch between opened apps, not close after release these keys, `ctrl+w` to close app, and `Esc` to |
 | `Ctrl+Z/Y`             | Undo/Redo.                                                                     |
 | `Alt+F4(Alt+GK+4)`     | Close active app.                                                              |
 | `Alt+Space`            | show system menu, n(miNimize),r(Restore),x(maXimize),c(Close) window           |
@@ -52,7 +52,7 @@
 | `Alt+Up`                              | Go up one level.                                                                                             |
 | `Alt+Right`                           | Go forward.                                                                                                  |
 | `Alt+Left`                            | Go back.                                                                                                     |
-| `Alt+d`                               | Focus the address bar, and select the current path. (press `Ctrl+c` to copy)                           |
+| `Alt+D`                               | Focus the address bar, and select the current path. (press `Ctrl+c` to copy)                           |
 | `Alt+p`                               | Preview panel                                                                                                      | `alt+1` to show navigation pane (when add it to quick access bar)                                                                           |
 | `Ctrl+arrow key` and `Ctrl+ Spacebar` | to move to an item and press Spacebar to select/unselect multiple individual items in window                       | `ctrl+arrow`: move while select; `ctrl+space`: toggle selection                                                                             |
 | `Shift+arrow`              | continuously Select more than one item in a window or on the desktop, or select text in a document                  |
@@ -87,3 +87,13 @@
 | Key                           | Function           | Note |
 | ----------------------------- | ------------------ | ---- |
 | `ctrl+alt+home` | Activate the connection bar | then we could use `alt+tab` to switch to the app in host windows |
+
+Win+r, then type 'mstsc'	Microsoft Terminal Services Client.
+
+Ctrl + Alt + Break to toggle remote desktop fullscreen mode.
+## On Hyper-v
+https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/learn-more/hyper-v-virtual-machine-connect
+Ctrl + Alt + Left: Mouse release, to move focus from VM to it's connection window
+CTRL+ALT+END	Equivalent of CTRL+ALT+DELETE in the virtual machine
+CTRL+ALT+BREAK	Switch from full-screen mode back to windowed mode
+you could press Ctrl+Alt+Left to unfocus and then press Ctrl+O to open setting(shortcut in the menu)...
