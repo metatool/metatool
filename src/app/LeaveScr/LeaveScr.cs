@@ -1,13 +1,15 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-
+using System.ComponentModel;
 
 namespace LeaveScr
 {
     public partial class LeaveScr : Form
     {
         private bool success = false;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Username { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string DisplayName { get; set; }
 
         public LeaveScr()

@@ -5,8 +5,8 @@
 		<OutputType>Exe</OutputType>
 		<ApplicationIcon>Metatool.ico</ApplicationIcon>
 		<UseRidGraph>true</UseRidGraph>
-		<TargetFramework>net8.0-windows</TargetFramework>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>

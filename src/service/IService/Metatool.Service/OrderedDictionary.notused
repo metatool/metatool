@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 
 namespace Metatool.Service;
 
@@ -11,6 +10,7 @@ public interface IOrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 {
 }
 
+// deprecated: we have on in dotnet System.Collections.Generic current in dotnet 9
 // System.Collections.Specialized.OrderedDictionary is NOT generic.
 // This class is essentially a generic wrapper for OrderedDictionary.
 public class OrderedDictionary<TKey, TValue> : IOrderedDictionary<TKey, TValue>
