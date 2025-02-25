@@ -54,6 +54,7 @@ function Publish-NewReleaseToGitHub($gitHubReleaseParameters) {
 		Write-Output "Release published successfully! View it at $($gitHubReleaseCreationResult.ReleaseUrl)"
 	}
 	elseif ($gitHubReleaseCreationResult.ReleaseCreationSucceeded -eq $false) {
+		Write-Warning "if the error code is 401, that means we need to update the github access token, if you stored it in $env:GitHubAccessToken, please update it!"
 		throw "The release was not created. Error message is: $($gitHubReleaseCreationResult.ErrorMessage)"
 	}
 	elseif ($gitHubReleaseCreationResult.AllAssetUploadsSucceeded -eq $false) {

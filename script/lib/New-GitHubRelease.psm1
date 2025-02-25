@@ -21,6 +21,7 @@ function New-GitHubRelease
 	.PARAMETER GitHubAccessToken
 	The Access Token to use as credentials for GitHub.
 	Access tokens can be generated at https://github.com/settings/tokens.
+	please create a classic token
 	The access token will need to have the repo/public_repo permission on it for it to be allowed to create a new Release.
 
 	.PARAMETER TagName

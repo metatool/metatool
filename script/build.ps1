@@ -17,7 +17,7 @@ try {
     $config = $release ? "Release" : "Debug"
     dotnet restore $source\src\Metatool.sln
     msbuild $source\src\Metatool.sln -t:$target /p:Configuration=$config
-    if ( $LASTEXITCODE -ne 0 ) {
+    if (!$? ) {#$LASTEXITCODE -ne 0
         throw "build fail!"
     }
 }

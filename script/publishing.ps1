@@ -12,6 +12,7 @@ param (
     [Alias("l")]
     $localRelease
 )
+
 $metatoolDir = Resolve-Path $PSScriptRoot\..
 $publishingDir = "$metatoolDir\exe\publishing"
 Push-Location .
@@ -21,10 +22,12 @@ try {
     if (Test-Path $publishingDir) {
         Remove-Item $publishingDir -Force -Recurse
     }
-#
+
+    #publish
     msbuild /t:publish  "$metatoolDir\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj" /p:DeployOnBuild=true  /p:Configuration=Release /p:PublishDir="$publishingDir" /p:CopyOutputSymbolsToPublishDirectory=false /p:DebugType=None /p:DebugSymbols=false /p:SolutionDir="$metatoolDir\src\" /p:PublishProfile="$metatoolDir\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
-   # dotnet publish "$metatoolDir\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj" -p:DeployOnBuild=true  -p:Configuration=Release -p:PublishDir="$publishingDir" -p:CopyOutputSymbolsToPublishDirectory=false -p:DebugType=None -p:DebugSymbols=false -p:SolutionDir="$metatoolDir\src\" -p:PublishProfile="$metatoolDir\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
-    if ( $LASTEXITCODE -ne 0 ) {
+    # dotnet publish "$metatoolDir\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj" -p:DeployOnBuild=true  -p:Configuration=Release -p:PublishDir="$publishingDir" -p:CopyOutputSymbolsToPublishDirectory=false -p:DebugType=None -p:DebugSymbols=false -p:SolutionDir="$metatoolDir\src\" -p:PublishProfile="$metatoolDir\src\app\Metaseed.Metatool\Properties\PublishProfiles\metatool.pubxml"
+
+    if (!$?) {#  $LASTEXITCODE -ne 0
         throw "publish build of metatool.exe fail!"
     }
     if ($localRelease) {
@@ -48,7 +51,6 @@ try {
     Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse -Force
     Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse -Force
 
-    sl $PSScriptRoot
 }
 finally {
     Pop-Location
