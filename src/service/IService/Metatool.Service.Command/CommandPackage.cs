@@ -12,13 +12,17 @@ public abstract class CommandPackage
 
 	protected CommandPackage()
 	{
-		var loggerType = typeof(ILogger<>).MakeGenericType(this.GetType());
+		var loggerType = typeof(ILogger<>).MakeGenericType(GetType());//will get the child type and create a logger for the child
 		_logger = Services.Get(loggerType) as ILogger;
 	}
 
-	protected IEnumerable<(FieldInfo fi, ICommandToken token)> GetCommands()
+    /// <summary>
+    /// public IKeyCommand Esc = Caps.MapOnHit(Key.Esc, e => !e.IsVirtual);
+    /// </summary>
+    /// <returns></returns>
+    protected IEnumerable<(FieldInfo fi, ICommandToken token)> GetCommands()
 	{
-		var commands = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
+		var commands = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
 			.Where(f => typeof(ICommandToken).IsAssignableFrom(f.FieldType))
 			.Select(fi => (fi, fi.GetValue(this) as ICommandToken));
 		return commands;
