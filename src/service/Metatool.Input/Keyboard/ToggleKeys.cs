@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Windows.Threading;
-using Metatool.Command;
 using Metatool.Service;
 using Metatool.WindowsInput.Native;
 
@@ -25,7 +24,7 @@ public class ToggleKey : IToggleKey
 		{
 			if (_isAlwaysOn.HasValue) return _isAlwaysOn.Value ? ToggleKeyState.AlwaysOn : ToggleKeyState.AlwaysOff;
 
-			return Control.IsKeyLocked((Keys)_key) ? ToggleKeyState.On : ToggleKeyState.Off;
+			return Control.IsKeyLocked(_key.ToKeys()) ? ToggleKeyState.On : ToggleKeyState.Off;
 		}
 
 	}
@@ -40,9 +39,9 @@ public class ToggleKey : IToggleKey
 				if (!_isAlwaysOn.HasValue) return;
 
 
-				if (_key == Keys.NumLock)
+				if (_key == KeyValues.NumLock)
 				{
-					var isOn = Control.IsKeyLocked((Keys)_key);
+					var isOn = Control.IsKeyLocked(_key.ToKeys());
 					if (isOn && !_isAlwaysOn.Value || !isOn && _isAlwaysOn.Value)
 					{
 						handleViaSystem = true;
@@ -54,7 +53,7 @@ public class ToggleKey : IToggleKey
 				if (_confirmAlwaysOnOffSate)
 				{
 					_confirmAlwaysOnOffSate = false;
-					var isOn = Control.IsKeyLocked((Keys)_key);
+					var isOn = Control.IsKeyLocked(_key.ToKeys());
 					if (isOn && !_isAlwaysOn.Value || !isOn && _isAlwaysOn.Value)
 					{
 						handleViaSystem = true;
@@ -78,10 +77,10 @@ public class ToggleKey : IToggleKey
 					return;
 				}
 
-				if (_key == Keys.NumLock)
+				if (_key == KeyValues.NumLock)
 				{
 					Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
-						InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key)));
+						InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)_key)));
 					return;
 				}
 
@@ -108,7 +107,7 @@ public class ToggleKey : IToggleKey
 				_isAlwaysOn = true;
 				_confirmAlwaysOnOffSate = true;
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
-						InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key)
+						InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)_key)
 					));
 				break;
 			case ToggleKeyState.On:
@@ -131,7 +130,7 @@ public class ToggleKey : IToggleKey
 				_confirmAlwaysOnOffSate = true;
 				_isAlwaysOn = false;
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
-						InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key)
+						InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)_key)
 					));
 
 				break;
@@ -150,14 +149,14 @@ public class ToggleKey : IToggleKey
 			case ToggleKeyState.Off:
 				break;
 			case ToggleKeyState.On:
-				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key);
+				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)_key);
 				break;
 			case ToggleKeyState.AlwaysOff:
 				_isAlwaysOn = null;
 				break;
 			case ToggleKeyState.AlwaysOn:
 				_isAlwaysOn = null;
-				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key);
+				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)_key);
 				break;
 		}
 
@@ -169,13 +168,13 @@ public class ToggleKey : IToggleKey
 		switch (State)
 		{
 			case ToggleKeyState.Off:
-				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key);
+				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)_key);
 				break;
 			case ToggleKeyState.On:
 				break;
 			case ToggleKeyState.AlwaysOff:
 				_isAlwaysOn = null;
-				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(Keys)_key);
+				InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)_key);
 				break;
 			case ToggleKeyState.AlwaysOn:
 				_isAlwaysOn = null;

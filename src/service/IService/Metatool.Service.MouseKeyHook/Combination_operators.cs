@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Windows.Forms;
 
 namespace Metatool.Service;
 
@@ -15,9 +14,9 @@ public partial class Combination
 		return new Combination(keyB, keyA.AllKeys);
 	}
 
-	public static implicit operator Combination(Keys keys)
+	public static implicit operator Combination(KeyValues key)
 	{
-		return new Combination(keys);
+		return new Combination(key);
 	}
 
 	protected bool Equals(Combination other)

@@ -2,8 +2,6 @@
   <Import Project="..\common.props" />
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="6.0.1" />

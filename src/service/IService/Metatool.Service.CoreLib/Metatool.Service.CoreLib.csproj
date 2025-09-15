@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\common.props" />
+  <!--<Import Project="..\common.props" />-->
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
@@ -19,8 +17,5 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Metatool.Service.CoreLib\Metatool.Service.CoreLib.csproj" />
   </ItemGroup>
 </Project>

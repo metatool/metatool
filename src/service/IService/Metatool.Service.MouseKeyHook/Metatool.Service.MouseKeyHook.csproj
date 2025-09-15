@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup> 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -9,8 +9,6 @@
     </AssemblyAttribute>
   </ItemGroup>
   <PropertyGroup>
-    <UseWindowsForms>true</UseWindowsForms>
-
     <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
    <ItemGroup>

@@ -8,7 +8,7 @@ public static class KeysExtensions
 	private static IKeyboard _keyboard;
 	private static IKeyboard Keyboard =>
 		_keyboard ??= Services.Get<IKeyboard>();
-	public static ICombination With(this Key key, Keys chord)
+	public static ICombination With(this Key key, KeyValues chord)
 	{
 		return new Combination(key, chord);
 	}

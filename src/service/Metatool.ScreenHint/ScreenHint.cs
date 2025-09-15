@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using Metatool.Service;
 using Metatool.ScreenPoint;
 
@@ -42,7 +41,7 @@ public sealed class ScreenHint: IScreenHint
 		{
 			var downArg = await _keyboard.KeyDownAsync(true);
 
-			if (downArg.KeyCode == Keys.LShiftKey)
+			if (downArg.KeyCode == KeyValues.LShiftKey)
 			{
 				HintUI.Inst.HideHints();
 				var upArg = await _keyboard.KeyUpAsync();

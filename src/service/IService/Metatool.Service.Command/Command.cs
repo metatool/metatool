@@ -4,9 +4,6 @@ namespace Metatool.Service;
 
 public class Command<T> : ICommand<T>
 {
-	// private readonly WeakEventSource<T> canExecutEventSource = new WeakEventSource<T>();
-	// private readonly WeakEventSource<T> executEventSource    = new WeakEventSource<T>();
-
 	public Predicate<T> CanExecute { get; set; }
         
 	public Action<T> Execute     { get; set; }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Windows.Forms;
-using System.Windows.Threading;
 
 namespace Metatool.Service;
 
@@ -17,11 +15,12 @@ public interface IKeyPressEventArgs
 public interface IKeyEventArgs
 {
 	bool Handled { get; set; }
-	Keys KeyData { get; }
-	Keys KeyCode { get; }
 	Key  Key { get; }
+    KeyValues KeyValues { get; }
+    KeyValues KeyCode { get; }
 	int KeyValue { get; }
-	bool Alt { get; }
+
+    bool Alt { get; }
 	bool Control { get; }
 	bool Shift { get; }
 	bool NoFurtherProcess { get; set; }
@@ -40,8 +39,8 @@ public interface IKeyEventArgs
 
 	IKeyEventArgs LastKeyDownEvent_NoneVirtual { get; }
 	IKeyEventArgs LastKeyEvent_NoneVirtual     { get; }
-	void BeginInvoke(Action<IKeyEventArgs> action, DispatcherPriority priority = DispatcherPriority.Send);
-	void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send);
+	void BeginInvoke(Action<IKeyEventArgs> action);
+	void BeginInvoke(Action action);
 	bool IsActive(ISequenceUnit hotKey)
 	{
 		var comb = hotKey.ToCombination();

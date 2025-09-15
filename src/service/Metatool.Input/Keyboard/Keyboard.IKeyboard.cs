@@ -138,15 +138,15 @@ public partial class Keyboard
 				handled   = true;
 				e.Handled = true;
 				if (isAsync) e.NoFurtherProcess = true;
-				if (combination.TriggerKey == Keys.LButton)
+				if (combination.TriggerKey == KeyValues.LButton)
 				{
 					Call(e, () => InputSimu.Inst.Mouse.LeftDown());
 				}
-				else if (combination.TriggerKey == Keys.RButton)
+				else if (combination.TriggerKey == KeyValues.RButton)
 				{
 					Call(e, () => InputSimu.Inst.Mouse.RightDown());
 				}
-				else if (combination.TriggerKey == Keys.MButton)
+				else if (combination.TriggerKey == KeyValues.MButton)
 				{
 					Call(e, () => InputSimu.Inst.Mouse.MiddleDown());
 				}
@@ -160,16 +160,16 @@ public partial class Keyboard
 				handled   = false;
 				e.Handled = true;
 				if (isAsync) e.NoFurtherProcess = true;
-				if (combination.TriggerKey == Keys.LButton)
+				if (combination.TriggerKey == KeyValues.LButton)
 				{
 					Call(e, () => InputSimu.Inst.Mouse.LeftUp());
 				}
 
-				else if (combination.TriggerKey == Keys.RButton)
+				else if (combination.TriggerKey == KeyValues.RButton)
 				{
 					Call(e, () => InputSimu.Inst.Mouse.RightUp());
 				}
-				else if (combination.TriggerKey == Keys.MButton)
+				else if (combination.TriggerKey == KeyValues.MButton)
 				{
 					Call(e, () => InputSimu.Inst.Mouse.MiddleUp());
 				}
@@ -358,10 +358,10 @@ public partial class Keyboard
 		void Handler(object o, IKeyEventArgs e)
 		{
 			_hook.KeyDown -= Handler;
-			if (sourCombination.IsAnyKey(e.KeyCode)) return; // repeated long press key, > duration
+			if (sourCombination.IsAnyKey(e.KeyValues)) return; // repeated long press key, > duration
 
 			e.Handled = true;
-			Down(new Combination(e.KeyCode, target));
+			Down(new Combination(e.KeyValues, target));
 			targetDown = true;
 		}
 

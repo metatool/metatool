@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using Metatool.Service.MouseKeyHook.Implementation;
 using Microsoft.Extensions.Logging;
 
@@ -16,17 +15,17 @@ public partial class Combination : ICombination
 	private readonly Chord _chord;
 	private          Key   _key;
 
-	public Combination(Keys triggerKey) : this(triggerKey, null as Chord)
+	public Combination(KeyValues triggerKey) : this(triggerKey, null as Chord)
 	{
 	}
 
-	public Combination(Keys triggerKey, Keys chordKey) : this(triggerKey, new Keys[] {chordKey})
+	public Combination(KeyValues triggerKey, KeyValues chordKey) : this(triggerKey, [chordKey])
 	{
 	}
 
 
-	public Combination(Keys triggerKey, IEnumerable<Keys> chordKeys)
-		: this(triggerKey, new Chord(chordKeys ?? Enumerable.Empty<Keys>()))
+	public Combination(KeyValues triggerKey, IEnumerable<KeyValues> chordKeys)
+		: this(triggerKey, new Chord(chordKeys ?? []))
 	{
 	}
 
@@ -34,16 +33,16 @@ public partial class Combination : ICombination
 	{
 	}
 
-	public Combination(Key triggerKey, Key chordKey) : this(triggerKey, new Key[] {chordKey})
+	public Combination(Key triggerKey, Key chordKey) : this(triggerKey, [chordKey])
 	{
 	}
 
 	public Combination(Key triggerKey, IEnumerable<Key> chordKeys) : this(triggerKey,
-		new Chord(chordKeys ?? Enumerable.Empty<Key>()))
+		new Chord(chordKeys ?? []))
 	{
 	}
 
-	private Combination(Keys triggerKey, Chord chord) : this((Key) triggerKey, chord)
+	private Combination(KeyValues triggerKey, Chord chord) : this((Key) triggerKey, chord)
 	{
 	}
 
@@ -55,7 +54,7 @@ public partial class Combination : ICombination
 	private Combination(Key triggerKey, Chord chord)
 	{
 		TriggerKey = triggerKey;
-		_chord     = chord ?? new Chord(Enumerable.Empty<Keys>());
+		_chord     = chord ?? new Chord(Array.Empty<KeyValues>());
 		_key = TriggerKey;
 	}
 
@@ -68,7 +67,7 @@ public partial class Combination : ICombination
 
 	public IEnumerable<Key> AllKeys => _chord.Append(TriggerKey);
 
-	public bool IsAnyKey(Keys key)
+	public bool IsAnyKey(KeyValues key)
 	{
 		if (key == TriggerKey) return true;
 		if (Chord.Contains(key)) return true;

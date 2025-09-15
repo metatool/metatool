@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.Service;
 
 namespace Metatool.Input.MouseKeyHook.WinApi;
 
@@ -88,10 +89,10 @@ internal static class KeyboardNativeMethods
 		var currentKeyboardState = keyboardState.GetNativeState();
 		var isDead = false;
 
-		if (keyboardState.IsDown(Keys.ShiftKey))
+		if (keyboardState.IsDown(KeyValues.ShiftKey))
 			currentKeyboardState[(byte) Keys.ShiftKey] = 0x80;
 
-		if (keyboardState.IsToggled(Keys.CapsLock))
+		if (keyboardState.IsToggled(KeyValues.CapsLock))
 			currentKeyboardState[(byte) Keys.CapsLock] = 0x01;
 
 		var relevantChars = ToUnicodeEx(virtualKeyCode, scanCode, currentKeyboardState, pwszBuff, pwszBuff.Capacity,

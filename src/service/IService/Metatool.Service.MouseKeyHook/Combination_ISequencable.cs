@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows.Forms;
-
-namespace Metatool.Service;
+﻿namespace Metatool.Service;
 
 public partial class Combination
 {
@@ -12,7 +9,7 @@ public partial class Combination
 		return sequence;
 	}
 
-	public ISequence Then(Keys key)
+	public ISequence Then(KeyValues key)
 	{
 		return this.Then(new Combination(key));
 	}

@@ -1,33 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Metatool.Service;
 
 public partial class Combination
 {
-	public ICombination With(Keys key)
+	public ICombination With(KeyValues key)
 	{
-		return new Combination(TriggerKey, Chord.Concat(Enumerable.Repeat((Key) key, 1)));
+		return new Combination(TriggerKey, Chord.Concat(Enumerable.Repeat((Key)key, 1)));
 	}
 
-	public ICombination With(IEnumerable<Keys> chordKeys)
+	public ICombination With(IEnumerable<KeyValues> chordKeys)
 	{
 		return chordKeys.Aggregate(this as ICombination, (c, k) => c.With(k));
 	}
 
 	public ICombination Control()
 	{
-		return With(Keys.Control);
+		return With(KeyValues.Control);
 	}
 
 	public ICombination Alt()
 	{
-		return With(Keys.Alt);
+		return With(KeyValues.Alt);
 	}
 
 	public ICombination Shift()
 	{
-		return With(Keys.Shift);
+		return With(KeyValues.Shift);
 	}
 }

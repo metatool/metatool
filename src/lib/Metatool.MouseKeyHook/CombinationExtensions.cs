@@ -36,7 +36,7 @@ public static class CombinationExtensions
 		source.KeyDown += (sender, e) =>
 		{
 			KeyValuePair<ICombination, Action>[] element;
-			var found = watchlists.TryGetValue(e.KeyCode, out element);
+			var found = watchlists.TryGetValue(e.KeyValues, out element);
 			if (!found)
 			{
 				reset?.Invoke();

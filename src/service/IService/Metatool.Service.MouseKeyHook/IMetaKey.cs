@@ -1,13 +1,10 @@
-﻿using Metatool.Command;
-
-namespace Metatool.Service;
+﻿namespace Metatool.Service;
 
 public interface IMeta
 {
 	string Id    { get; set; }
 	bool   Disable { get; set; }
 }
-
 
 public interface IMetaKey : IMeta, IRemove
 {

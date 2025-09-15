@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service;
@@ -12,27 +11,27 @@ namespace Metatool.Service;
 // [DebuggerDisplay("{this}")]
 public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, ISequencable
 {
-	private SortedSet<Keys> _codes;
+	private SortedSet<KeyValues> _codes;
 	private int             _val;
 
-	public SortedSet<Keys> Codes
+	public SortedSet<KeyValues> Codes
 	{
 		get => _codes;
 		private set
 		{
 			_codes = value;
-			_val   = value.Aggregate<Keys, int>(0, (o, c1) => o + (int) c1);
+			_val   = value.Aggregate<KeyValues, int>(0, (o, c1) => o + (int) c1);
 		}
 	}
 
-	public Key(params Keys[] keyCodes)
+	public Key(params KeyValues[] keyCodes)
 	{
-		Codes = new SortedSet<Keys>(keyCodes);
+		Codes = new(keyCodes);
 	}
 
 	public Key(params Key[] keys)
 	{
-		Codes   = new SortedSet<Keys>(keys.SelectMany(k => k.Codes));
+		Codes   = new(keys.SelectMany(k => k.Codes));
 		keys.Aggregate(Handled, (a, c)=>a |= c.Handled);
 	}
 
@@ -50,10 +49,10 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
 			var r       = All.TryGetValue(s, out var key);
 			if (r) return key;
 
-			throw new Exception($"Could not parse Key {str}");
+			throw new($"Could not parse Key {str}");
 		}).ToArray();
 
-		return new Key(keys) {Handled = handled};
+		return new(keys) {Handled = handled};
 	}
 
 	public static bool TryParse(string str, out Key value, bool log=true)

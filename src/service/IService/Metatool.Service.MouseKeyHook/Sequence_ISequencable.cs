@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+﻿using System.Linq;
 
 namespace Metatool.Service;
 
 public partial class Sequence
 {
-	public ISequence Then(Keys key)
+	public ISequence Then(KeyValues key)
 	{
 		return this.Then(new Combination(key));
 	}

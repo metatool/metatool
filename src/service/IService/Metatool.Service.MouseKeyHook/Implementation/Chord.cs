@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Metatool.Service.MouseKeyHook.Implementation;
 
@@ -15,7 +14,7 @@ internal class Chord : IEnumerable<Key>
 		_keys = chordKeys.OrderBy(k => k).ToArray();
 	}
 
-	internal Chord(IEnumerable<Keys> chordKeys) : this(chordKeys.Select(k => new Key(k)))
+	internal Chord(IEnumerable<KeyValues> chordKeys) : this(chordKeys.Select(k => new Key(k)))
 	{
 	}
 
@@ -40,9 +39,9 @@ internal class Chord : IEnumerable<Key>
 	{
 		var parts = chord
 			.Split('+')
-			.Select(p => Enum.Parse(typeof(Keys), p))
-			.Cast<Keys>();
-		var stack = new Stack<Keys>(parts);
+			.Select(p => Enum.Parse(typeof(KeyValues), p))
+			.Cast<KeyValues>();
+		var stack = new Stack<KeyValues>(parts);
 		return new Chord(stack);
 	}
 

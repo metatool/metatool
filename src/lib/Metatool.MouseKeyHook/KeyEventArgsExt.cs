@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
-using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.WinApi;
 using Metatool.Service;
@@ -51,14 +49,14 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 
 	public IKeyPath PathToGo { get; internal set; }
 
-	public void BeginInvoke(Action action, DispatcherPriority priority = DispatcherPriority.Send)
+	public void BeginInvoke(Action action)
 	{
-		_dispatcher.BeginInvoke(priority, action);
+		_dispatcher.BeginInvoke(DispatcherPriority.Send, action);
 	}
 
-	public void BeginInvoke(Action<IKeyEventArgs> action, DispatcherPriority priority = DispatcherPriority.Send)
+	public void BeginInvoke(Action<IKeyEventArgs> action)
 	{
-		_dispatcher.BeginInvoke(priority, action, this);
+		_dispatcher.BeginInvoke(DispatcherPriority.Send, action, this);
 	}
 
 	public static async Task<T> InvokeAsync<T>(Func<T> action,
@@ -85,9 +83,12 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 	public int ScanCode { get; }
 
 	private Key _key;
-	public  Key Key => _key??=new Key(KeyCode);
+    public  Key Key => _key??=new Key(KeyValues);
+    public KeyValues KeyValues => KeyData.ToKeyValues();
 
-	/// <summary>
+    public new KeyValues KeyCode => base.KeyCode.ToKeyValues();
+
+    /// <summary>
 	/// is it from the keyboard simulator?
 	/// </summary>
 	public bool IsVirtual { get; private set; }
@@ -139,7 +140,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 		}
 	}
 
-	public bool           NoFurtherProcess { get; set; }
+    public bool           NoFurtherProcess { get; set; }
 	public IKeyboardState KeyboardState    { get; }
 
 	public override string ToString()

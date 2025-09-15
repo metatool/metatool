@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Metatool.Service;
 
 public partial class Key
 {
 
-	public static implicit operator Key(Keys keys)
+	public static implicit operator Key(KeyValues key)
 	{
-		return new Key(keys);
+		return new Key(key);
 	}
 
 	public static implicit operator Combination(Key key)
@@ -17,7 +16,7 @@ public partial class Key
 		return new Combination(key);
 	}
 
-	public static explicit operator Keys(Key key)
+	public static explicit operator KeyValues(Key key)
 	{
 		return key.Codes.First();
 	}
@@ -36,25 +35,25 @@ public partial class Key
 		return !Equals(keyB, keyA);
 	}
 
-	public static bool operator ==(Key keyA, Keys keyB)
+	public static bool operator ==(Key keyA, KeyValues keyB)
 	{
 		if (keyA == null) return false;
 		return keyA.Equals(keyB);
 	}
 
-	public static bool operator !=(Key keyA, Keys keyB)
+	public static bool operator !=(Key keyA, KeyValues keyB)
 	{
 		if (keyA == null) return true;
 		return !keyA.Equals(keyB);
 	}
-	public static bool operator ==(Keys keyA, Key keyB)
+	public static bool operator ==(KeyValues keyA, Key keyB)
 	{
 		if (keyB == null) return false;
 
 		return keyB.Equals(keyA);
 	}
 
-	public static bool operator !=(Keys keyA, Key keyB)
+	public static bool operator !=(KeyValues keyA, Key keyB)
 	{
 		if (keyB == null) return true;
 		return !keyB.Equals(keyA);
@@ -70,12 +69,12 @@ public partial class Key
 		return Codes.IsSupersetOf(key.Codes);
 	}
 
-	public bool Equals(Keys key)
+	public bool Equals(KeyValues key)
 	{
 		return Codes.Contains(key);
 	}
 
-	public bool Equals(Key obj)
+    public bool Equals(Key obj)
 	{
 		if (ReferenceEquals(null, obj))
 		{
@@ -109,7 +108,7 @@ public partial class Key
 		{
 			case Key k:
 				return IsEquals(k);
-			case Keys keys:
+			case KeyValues keys:
 				return Equals(keys);
 			default:
 				return false;
