@@ -24,7 +24,7 @@ namespace Metatool.Tools.MetaKeyboard
 
             // open line below 
             // bug: in vscode, ctrl+alt+enter to replace all have problem to trigger, 
-            (Ctrl + Enter).Handled(KeyEvent.All).OnHit(e =>
+            (Ctrl + Enter).Handled(KeyEventType.All).OnHit(e =>
             {
                 new List<Key> {LCtrl, RCtrl}.ForEach(k =>
                 {
@@ -37,7 +37,7 @@ namespace Metatool.Tools.MetaKeyboard
             });
 
             // open line above
-            (Ctrl + Shift + Enter).Handled(KeyEvent.All).OnHit(e =>
+            (Ctrl + Shift + Enter).Handled(KeyEventType.All).OnHit(e =>
             {
                 new List<Key> {LCtrl, RCtrl, LShift, RShift}.ForEach(k =>
                 {

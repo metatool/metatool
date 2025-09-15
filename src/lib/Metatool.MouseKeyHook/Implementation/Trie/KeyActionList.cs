@@ -8,20 +8,20 @@ namespace Metatool.Input.MouseKeyHook.Implementation;
 
 internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEventCommand
 {
-	public IEnumerable<KeyCommand> this[KeyEvent keyEvent]
+	public IEnumerable<KeyCommand> this[KeyEventType keyEventType]
 	{
 		get
 		{
-			switch (keyEvent)
+			switch (keyEventType)
 			{
-				case KeyEvent.Down:
+				case KeyEventType.Down:
 					return Down;
-				case KeyEvent.Up:
+				case KeyEventType.Up:
 					return Up;
-				case KeyEvent.AllUp:
+				case KeyEventType.AllUp:
 					return AllUp;
 				default:
-					throw new Exception(keyEvent + "not supported.");
+					throw new Exception(keyEventType + "not supported.");
 			}
 		}
 	}
@@ -34,7 +34,7 @@ internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEve
 		get
 		{
 			if (_down != null && !_refresh) return _down;
-			_down    = this.Where(e => e.KeyEvent == KeyEvent.Down).Select(e => e.Command);
+			_down    = this.Where(e => e.KeyEventType == KeyEventType.Down).Select(e => e.Command);
 			_refresh = false;
 			return _down;
 		}
@@ -47,7 +47,7 @@ internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEve
 		get
 		{
 			if (_up != null && !_refresh) return _up;
-			_up      = this.Where(e => e.KeyEvent == KeyEvent.Up).Select(e => e.Command);
+			_up      = this.Where(e => e.KeyEventType == KeyEventType.Up).Select(e => e.Command);
 			_refresh = false;
 			return _up;
 		}
@@ -60,7 +60,7 @@ internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEve
 		get
 		{
 			if (_allUp != null && !_refresh) return _allUp;
-			_allUp   = this.Where(e => e.KeyEvent == KeyEvent.AllUp).Select(e => e.Command);
+			_allUp   = this.Where(e => e.KeyEventType == KeyEventType.AllUp).Select(e => e.Command);
 			_refresh = false;
 			return _allUp;
 		}

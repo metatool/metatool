@@ -13,7 +13,7 @@ public interface IKeyboard : IKeyboardVirtual
 	/// down up happened successively
 	IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
 	IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
-	IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEvent keyEvent, string stateTree = KeyStateTrees.Default);
+	IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEventType keyEventType, string stateTree = KeyStateTrees.Default);
 
 	IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
 	IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);

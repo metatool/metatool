@@ -151,7 +151,7 @@ public class KeyStateTree
 			var commands = _trie.Get(combinations);
 			if (commands.Count() != 0)
 			{
-				_trie.Remove(combinations, c => c.KeyEvent == command.KeyEvent);
+				_trie.Remove(combinations, c => c.KeyEventType == command.KeyEventType);
 			}
 		}
 
@@ -191,17 +191,17 @@ public class KeyStateTree
 	{
 		_disabledChords.Remove(chord);
 	}
-	internal SelectionResult TrySelect(KeyEvent eventType, IKeyEventArgs args)
+	internal SelectionResult TrySelect(KeyEventType eventTypeType, IKeyEventArgs args)
 	{
 		// to handle A+B+C(B is down in Chord)
 		var downInChord = false;
 
-		var type = eventType;
+		var type = eventTypeType;
 		var candidateNode = _treeWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
 		{
 			if (_disabledChords.Contains(combination.Chord)) return acc;
 			// mark down_in_chord and continue try to find trigger
-			if (type == KeyEvent.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
+			if (type == KeyEventType.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
 
 			if (args.KeyCode != combination.TriggerKey || combination.Disabled) return acc;
 			var mach = combination.Chord.All(args.KeyboardState.IsDown);
@@ -214,7 +214,7 @@ public class KeyStateTree
 	}
 
 	//eventType is only Down or Up
-	internal KeyProcessState Climb(KeyEvent eventType, IKeyEventArgs iargs,
+	internal KeyProcessState Climb(KeyEventType eventTypeType, IKeyEventArgs iargs,
 		TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
 	{
 		var args = iargs as KeyEventArgsExt;
@@ -225,7 +225,7 @@ public class KeyStateTree
 		// Chord_downOrUp? or
 		if (candidateNode == null)
 		{
-			if (eventType == KeyEvent.Down)
+			if (eventTypeType == KeyEventType.Down)
 			{
 				if (_treeWalker.IsOnRoot)
 				{
@@ -251,7 +251,7 @@ public class KeyStateTree
 				if (args.KeyboardState.AreAllUp(_lastKeyDownNodeForAllUp.Key.AllKeys))
 				{
 					candidateNode = _lastKeyDownNodeForAllUp;
-					eventType     = KeyEvent.AllUp;
+					eventTypeType     = KeyEventType.AllUp;
 				}
 				else
 				{
@@ -292,7 +292,7 @@ public class KeyStateTree
 			}
 		}
 
-		args.KeyEvent = eventType;
+		args.KeyEventType = eventTypeType;
 
 		var lastDownHit = "";
 		if (_lastKeyDownNodeForAllUp != null)
@@ -306,21 +306,21 @@ public class KeyStateTree
 		// execute
 		var handled     = candidateNode.Key.TriggerKey.Handled;
 		var oneExecuted = false;
-		foreach (var keyCommand in actionList[eventType])
+		foreach (var keyCommand in actionList[eventTypeType])
 		{
 			if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
 			{
-				Console.WriteLine($"\t/!{eventType}\t{keyCommand.Id}\t{keyCommand.Description}");
+				Console.WriteLine($"\t/!{eventTypeType}\t{keyCommand.Id}\t{keyCommand.Description}");
 				continue;
 			}
 
 			oneExecuted = true;
 			var execute = keyCommand.Execute;
-			if ((eventType & handled) != 0)
+			if ((eventTypeType & handled) != 0)
 				args.Handled = true;
 			var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
 			Console.WriteLine(
-				$"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
+				$"\t!{eventTypeType}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
 			try
 			{
 				execute?.Invoke(args);
@@ -335,10 +335,10 @@ public class KeyStateTree
 			}
 		}
 
-		if (!oneExecuted && actionList[eventType].Any())
+		if (!oneExecuted && actionList[eventTypeType].Any())
 		{
-			Console.WriteLine($"All event of type:{eventType} not executable!");
-			if (eventType                == KeyEvent.Up &&
+			Console.WriteLine($"All event of type:{eventTypeType} not executable!");
+			if (eventTypeType                == KeyEventType.Up &&
 			    _lastKeyDownNodeForAllUp != null        &&
 			    _lastKeyDownNodeForAllUp.Key.Chord.Contains(args.KeyCode))
 			{
@@ -360,16 +360,16 @@ public class KeyStateTree
 			return ProcessState = KeyProcessState.Continue;
 		}
 		// goto candidateNode
-		switch (eventType)
+		switch (eventTypeType)
 		{
-			case KeyEvent.Up:
+			case KeyEventType.Up:
 			{
 				// only navigate on up/AllUp event
 				_treeWalker.GoToChild(candidateNode);
 
 				if (candidateNode.ChildrenCount == 0)
 				{
-					if (actionList[KeyEvent.AllUp].Any())
+					if (actionList[KeyEventType.AllUp].Any())
 					{
 						// wait for chord up
 						return ProcessState = KeyProcessState.Continue;
@@ -384,7 +384,7 @@ public class KeyStateTree
 				return ProcessState = KeyProcessState.Continue;
 			}
 
-			case KeyEvent.AllUp:
+			case KeyEventType.AllUp:
 				_lastKeyDownNodeForAllUp = null;
 				// navigate on AllUp event only when not navigated by up
 				// A+B down then B_up then A_up would not execute this if clause
@@ -407,11 +407,11 @@ public class KeyStateTree
 					return ProcessState = KeyProcessState.Continue;
 				}
 
-			case KeyEvent.Down:
+			case KeyEventType.Down:
 				_lastKeyDownNodeForAllUp = candidateNode;
 				return ProcessState = KeyProcessState.Continue;
 			default:
-				throw new Exception($"KeyEvent: {eventType} not supported");
+				throw new Exception($"KeyEvent: {eventTypeType} not supported");
 		}
 	}
 }

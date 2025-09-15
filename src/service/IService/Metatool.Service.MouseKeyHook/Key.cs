@@ -38,13 +38,13 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
 
 	public static Key Parse(string str)
 	{
-		var handled = KeyEvent.None;
+		var handled = KeyEventType.None;
 		var keys = str.Split("|", StringSplitOptions.RemoveEmptyEntries).Select(s =>
 		{
 			s = s.Trim();
 			if (s.EndsWith('*')) // todo: *{Up&Down} only mark Up and Down event handled
 			{
-				handled = KeyEvent.All;
+				handled = KeyEventType.All;
 				s       = s.TrimEnd('*').TrimEnd();
 			}
 			var r       = All.TryGetValue(s, out var key);
@@ -74,6 +74,6 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
 
 	public override string ToString()
 	{
-		return $"{string.Join("|", Codes)}{(Handled !=KeyEvent.None ? $"*{{{Handled.ToString()}}}" : "")}";
+		return $"{string.Join("|", Codes)}{(Handled !=KeyEventType.None ? $"*{{{Handled.ToString()}}}" : "")}";
 	}
 }

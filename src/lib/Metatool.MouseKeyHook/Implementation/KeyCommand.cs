@@ -15,28 +15,28 @@ public class KeyCommand : Command<IKeyEventArgs>
 
 public class KeyEventCommand
 {
-	public KeyEvent   KeyEvent { get; }
+	public KeyEventType   KeyEventType { get; }
 	public KeyCommand Command  { get; }
 
-	public KeyEventCommand(KeyEvent keyEvent, KeyCommand command)
+	public KeyEventCommand(KeyEventType keyEventType, KeyCommand command)
 	{
-		KeyEvent = keyEvent;
+		KeyEventType = keyEventType;
 		Command  = command;
 	}
 
 	public override int GetHashCode()
 	{
-		return (int) KeyEvent | Command?.GetHashCode() ?? 0;
+		return (int) KeyEventType | Command?.GetHashCode() ?? 0;
 	}
 
 	public override string ToString()
 	{
-		return KeyEvent + ": " + Command.Description;
+		return KeyEventType + ": " + Command.Description;
 	}
 
 	protected bool Equals(KeyEventCommand other)
 	{
-		return KeyEvent == other.KeyEvent && Command == other.Command;
+		return KeyEventType == other.KeyEventType && Command == other.Command;
 	}
 
 	public override bool Equals(object obj)

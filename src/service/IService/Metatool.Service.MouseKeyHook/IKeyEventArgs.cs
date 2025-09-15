@@ -30,7 +30,7 @@ public interface IKeyEventArgs
 	bool          IsVirtual        { get; }
 	int           Timestamp        { get; }
 	bool          IsKeyDown        { get; }
-	KeyEvent KeyEvent { get; }
+	KeyEventType KeyEventType { get; }
 	IKeyboardState KeyboardState { get; }
 	IKeyPath PathToGo { get; }
 	bool IsKeyUp { get; }

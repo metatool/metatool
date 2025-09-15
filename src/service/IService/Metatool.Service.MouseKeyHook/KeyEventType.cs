@@ -3,7 +3,7 @@
 namespace Metatool.Service;
 
 [Flags]
-public enum KeyEvent
+public enum KeyEventType
 {
 	None  = 0,
 	All   = -1,

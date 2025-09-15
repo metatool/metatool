@@ -37,12 +37,12 @@ public partial class Keyboard
 {
 	public IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
 	{
-		return OnEvent(hotkey, KeyEvent.Down, stateTree);
+		return OnEvent(hotkey, KeyEventType.Down, stateTree);
 	}
 
 	public IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
 	{
-		return OnEvent(hotkey, KeyEvent.Up, stateTree);
+		return OnEvent(hotkey, KeyEventType.Up, stateTree);
 	}
 
 	public IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
@@ -56,13 +56,13 @@ public partial class Keyboard
 
 	public IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
 	{
-		return OnEvent(hotkey, KeyEvent.AllUp, stateTree);
+		return OnEvent(hotkey, KeyEventType.AllUp, stateTree);
 	}
 
-	public IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEvent keyEvent,
+	public IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEventType keyEventType,
 		string stateTree = KeyStateTrees.Default)
 	{
-		if (keyEvent == KeyEvent.Hit)
+		if (keyEventType == KeyEventType.Hit)
 		{
 			return OnHit(hotkey, stateTree);
 		}
@@ -75,7 +75,7 @@ public partial class Keyboard
 		};
 
 		var trigger = new KeyboardCommandTrigger();
-		var metaKey = Add(sequence, keyEvent,
+		var metaKey = Add(sequence, keyEventType,
 			new KeyCommand(trigger.OnExecute) {CanExecute = trigger.OnCanExecute}, stateTree) as MetaKey;
 		trigger._metaKey = metaKey;
 		return trigger;

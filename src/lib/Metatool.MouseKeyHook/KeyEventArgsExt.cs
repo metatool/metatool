@@ -126,7 +126,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 	/// </summary>
 	public bool IsExtendedKey { get; }
 
-	public KeyEvent KeyEvent { get; internal set; }
+	public KeyEventType KeyEventType { get; internal set; }
 
 	public new bool Handled
 	{

@@ -86,9 +86,9 @@ public static class IHotKeyExtension
 
 	// if the handler async run, this is needed.
 	public static IHotkey Handled(this IHotkey hotkey,
-		KeyEvent keyEvent = KeyEvent.All)
+		KeyEventType keyEventType = KeyEventType.All)
 	{
-		hotkey.Handled = keyEvent;
+		hotkey.Handled = keyEventType;
 		// if ((keyEvent & KeyEvent.Down) == KeyEvent.Down)
 		//     hotkey.Down(e => e.Handled = true);
 		// if ((keyEvent & KeyEvent.Up) == KeyEvent.Up)

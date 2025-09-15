@@ -146,7 +146,7 @@ public class KeyboardHook
 		var selectedTrees = new List<KeyStateTree.SelectionResult>();
 
 		//eventType is only Down or Up
-		void ClimbTree(KeyEvent eventType, IKeyEventArgs args,
+		void ClimbTree(KeyEventType eventType, IKeyEventArgs args,
 			ILogger logger)
 		{
 			// if machine_1 has A+B and machine_2's A and B, press A+B on machine_1 would be processed
@@ -213,26 +213,28 @@ public class KeyboardHook
 
 		_eventSource.KeyDown += (sender, args) =>
 		{
-			ClimbTree(KeyEvent.Down, args, _logger);
+			ClimbTree(KeyEventType.Down, args, _logger);
 			// a copy, so newly added would be handled in next event.
 			var handlers = new List<KeyEventHandler>(_keyDownHandlers);
 			handlers.ForEach(h => h?.Invoke(sender, args));
 		};
-		_eventSource.KeyUp += (sender, args) =>
-		{
-			ClimbTree(KeyEvent.Up, args, _logger);
-			var handlers = new List<KeyEventHandler>(_keyUpHandlers); // a copy
-			handlers.ForEach(h => h?.Invoke(sender, args));
-		};
+
 		_eventSource.KeyPress += (sender, args) =>
 		{
 			var handlers = new List<KeyPressEventHandler>(_keyPressHandlers); // a copy
 			handlers.ForEach(h => h?.Invoke(sender, args));
 		};
-	}
+
+        _eventSource.KeyUp += (sender, args) =>
+        {
+            ClimbTree(KeyEventType.Up, args, _logger);
+            var handlers = new List<KeyEventHandler>(_keyUpHandlers); // a copy
+            handlers.ForEach(h => h?.Invoke(sender, args));
+        };
+    }
 
 	// the list count is one currently
-	static List<KeyStateTree.SelectionResult> SelectTree(KeyEvent eventType, IKeyEventArgs args, ILogger logger)
+	static List<KeyStateTree.SelectionResult> SelectTree(KeyEventType eventTypeType, IKeyEventArgs args, ILogger logger)
 	{
 		var selectedNodes = new List<KeyStateTree.SelectionResult>();
 		//all on root, find current trees
@@ -241,7 +243,7 @@ public class KeyboardHook
 			Debug.Assert(stateTree.IsOnRoot);
 			if (stateTree.ProcessState == KeyProcessState.Yield) continue;
 
-			var selectionResult = stateTree.TrySelect(eventType, args);
+			var selectionResult = stateTree.TrySelect(eventTypeType, args);
 			if (selectionResult.CandidateNode == null) continue;
 
 			if (selectedNodes.Count == 0)

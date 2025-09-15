@@ -58,7 +58,7 @@ public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue>
 	internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip => _childrenDictionary.Select(p =>
 		(p.Key.ToString(),
 			p.Value._values.Where(ea => !string.IsNullOrEmpty(ea.Command.Description)).Select(ea =>
-				(ea.KeyEvent == KeyEvent.Up ? "↑ " : "↓ ") + ea.Command.Description)));
+				(ea.KeyEventType == KeyEventType.Up ? "↑ " : "↓ ") + ea.Command.Description)));
 
 	protected override IEnumerable<TrieNodeBase<TKey, TValue>> Children => _childrenDictionary.Values;
 

@@ -17,7 +17,7 @@ public partial class Sequence
 		return this;
 	}
 
-	public KeyEvent Handled
+	public KeyEventType Handled
 	{
 		get => this.Last().TriggerKey.Handled;
 		set => this.Last().TriggerKey.Handled = value;

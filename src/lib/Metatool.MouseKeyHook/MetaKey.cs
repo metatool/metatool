@@ -78,7 +78,7 @@ public class MetaKey : IMetaKey
 		_token.Remove();
 	}
 
-	internal KeyEvent KeyEvent => _token.EventCommand.KeyEvent;
+	internal KeyEventType KeyEventType => _token.EventCommand.KeyEventType;
 
 	public MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> combinations,
 		KeyEventCommand command)

@@ -56,7 +56,7 @@ public partial class Keyboard : IKeyboard, IKeyboardInternal
 
 	readonly KeyboardHook _hook = new(Services.Get<ILogger<KeyboardHook>>(), Services.Get<INotify>());
 
-	internal IMetaKey Add(IList<ICombination> sequence, KeyEvent keyEvent, KeyCommand command,
+	internal IMetaKey Add(IList<ICombination> sequence, KeyEventType keyEventType, KeyCommand command,
 		string stateTree = KeyStateTrees.Default)
 	{
 		foreach (var combination in sequence)
@@ -76,7 +76,7 @@ public partial class Keyboard : IKeyboard, IKeyboardInternal
 			}
 		}
 
-		return _hook.Add(sequence, new KeyEventCommand(keyEvent, command), stateTree);
+		return _hook.Add(sequence, new KeyEventCommand(keyEventType, command), stateTree);
 	}
 
 	public void ShowTip()
