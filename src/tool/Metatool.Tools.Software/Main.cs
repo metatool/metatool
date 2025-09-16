@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Tools.Software;

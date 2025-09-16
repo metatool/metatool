@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using Metatool.Command;
+using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service;

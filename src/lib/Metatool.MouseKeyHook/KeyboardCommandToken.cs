@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Metatool.Command;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 

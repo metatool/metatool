@@ -1,5 +1,6 @@
 ﻿using Metatool.Service;
-using static Metatool.Service.Key;
+using Metatool.Service.MouseKey;
+using static Metatool.Service.MouseKey.Key;
 
 namespace Metatool.MetaKeyboard
 {

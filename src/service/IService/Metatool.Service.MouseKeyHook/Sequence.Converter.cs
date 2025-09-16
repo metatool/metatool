@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
 public class SequenceConverter : TypeConverter
 {

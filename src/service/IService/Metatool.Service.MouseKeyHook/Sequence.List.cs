@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
 /// <summary>
 ///     Describes a sequence of generic objects.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class SequenceBase<T> :List<T>, IEnumerable<T>
+public abstract class SequenceList<T> :List<T>, IEnumerable<T>
 {
-
-	protected SequenceBase(params T[] elements)
+	protected SequenceList(params T[] elements)
 	{
 		AddRange(elements);
 	}
@@ -20,7 +19,7 @@ public abstract class SequenceBase<T> :List<T>, IEnumerable<T>
 		return string.Join(", ", this);
 	}
 
-	protected bool Equals(SequenceBase<T> other)
+	protected bool Equals(SequenceList<T> other)
 	{
 		if (Count != other.Count) return false;
 		return this.SequenceEqual(other);
@@ -31,7 +30,7 @@ public abstract class SequenceBase<T> :List<T>, IEnumerable<T>
 		if (ReferenceEquals(null, obj)) return false;
 		if (ReferenceEquals(this, obj)) return true;
 		if (obj.GetType() != GetType()) return false;
-		return Equals((SequenceBase<T>) obj);
+		return Equals((SequenceList<T>) obj);
 	}
 
 	public override int GetHashCode()

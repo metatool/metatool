@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
-public partial class Sequence
+public partial class Sequence: ISequencable
 {
 	public ISequence Then(KeyValues key)
 	{

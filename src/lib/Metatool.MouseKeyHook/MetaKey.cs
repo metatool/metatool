@@ -5,6 +5,7 @@ using System.Reflection;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 

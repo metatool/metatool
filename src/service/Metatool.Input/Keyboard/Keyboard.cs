@@ -5,6 +5,7 @@ using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.Service.Internal;
+using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input;

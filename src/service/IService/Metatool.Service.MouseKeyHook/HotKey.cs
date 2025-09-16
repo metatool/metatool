@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
 public class Hotkey
 {

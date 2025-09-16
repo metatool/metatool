@@ -9,7 +9,7 @@
     </AssemblyAttribute>
   </ItemGroup>
   <PropertyGroup>
-    <RootNamespace>Metatool.Service</RootNamespace>
+    <RootNamespace>Metatool.Service.MouseKey</RootNamespace>
   </PropertyGroup>
    <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -18,5 +18,8 @@
   </ItemGroup>
    <ItemGroup>
      <ProjectReference Include="..\Metatool.Service.Command\Metatool.Service.Command.csproj" />
+   </ItemGroup>
+   <ItemGroup>
+     <Folder Include="Interface\" />
    </ItemGroup>
 </Project>

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Metatool.Service.MouseKeyHook.Implementation;
 using Microsoft.Extensions.Logging;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
 /// <summary>
 ///     Used to represent a key combination as frequently used in application as shortcuts.

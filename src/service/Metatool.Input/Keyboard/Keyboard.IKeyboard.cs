@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Metatool.Command;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
 
@@ -83,7 +83,7 @@ public partial class Keyboard
 
 	public IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null)
 	{
-		var sequence = Sequence.FromString(source);
+		var sequence = Sequence.FromHotString(source);
 		var send     = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
 		return sequence.OnUp(e =>
 		{

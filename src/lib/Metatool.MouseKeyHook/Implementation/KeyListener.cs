@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Metatool.Input.MouseKeyHook.WinApi;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input.MouseKeyHook.Implementation;

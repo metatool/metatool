@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.Input.MouseKeyHook.WinApi;
 

@@ -1,22 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using Metatool.Input.implementation;
 using Microsoft.Extensions.Logging;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
 /// <summary>
 ///     Describes key or key combination sequences. e.g. Control+Z,Z
 /// </summary>
 [TypeConverter(typeof(SequenceConverter))]
-public partial class Sequence : SequenceBase<ICombination>, ISequence
+public partial class Sequence(params ICombination[] combinations) : SequenceList<ICombination>(combinations), ISequence
 {
-	public Sequence(params ICombination[] combinations) : base(combinations)
-	{
-	}
-
-	public bool Disabled
+    public bool Disabled
 	{
 		get => this.Last()?.Disabled ?? false;
 		set
@@ -28,10 +23,10 @@ public partial class Sequence : SequenceBase<ICombination>, ISequence
 
 	public object Context { get; set; }
 
-	public static Sequence FromString(string str)
+	public static Sequence FromHotString(string str)
 	{
-		var sequence = str.Select(Helper.CharToKey);
-		return new Sequence(sequence.ToArray());
+		var sequence = str.Select(c => new Combination(c));
+		return new Sequence([.. sequence]);
 	}
 
 	public static Sequence Parse(string sequence)
@@ -41,7 +36,7 @@ public partial class Sequence : SequenceBase<ICombination>, ISequence
 		var parts = sequence
 			.Split(',', StringSplitOptions.RemoveEmptyEntries)
 			.Select(p => Combination.Parse(p.Trim()));
-		return new Sequence(parts.ToArray());
+		return new Sequence([..parts]);
 	}
 
 	public static bool TryParse(string str, out Sequence value, bool log = true)

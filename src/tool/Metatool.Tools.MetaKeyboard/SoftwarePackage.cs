@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Metatool.Service;
 using Microsoft.Win32;
-using static Metatool.Service.Key;
+using static Metatool.Service.MouseKey.Key;
 
 namespace Metatool.MetaKeyboard
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
 public partial class Key
 {

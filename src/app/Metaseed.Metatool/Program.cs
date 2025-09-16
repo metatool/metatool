@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

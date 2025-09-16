@@ -1,6 +1,4 @@
-﻿using Metatool.Service;
-
-namespace Metatool.Command;
+﻿namespace Metatool.Service.MouseKey;
 
 public interface IKeyboardCommandTrigger : ICommandTrigger<IKeyEventArgs>
 {

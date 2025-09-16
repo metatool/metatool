@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Metatool.DataStructures;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.Implementation.Trie;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 

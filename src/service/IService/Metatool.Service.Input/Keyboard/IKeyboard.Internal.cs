@@ -1,4 +1,4 @@
-﻿using Metatool.Command;
+﻿using Metatool.Service.MouseKey;
 
 namespace Metatool.Service.Internal;
 

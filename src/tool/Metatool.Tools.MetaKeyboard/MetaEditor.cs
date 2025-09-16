@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Metatool.Service;
-using static Metatool.Service.Key;
+using Metatool.Service.MouseKey;
+using static Metatool.Service.MouseKey.Key;
 
 namespace Metatool.Tools.MetaKeyboard
 {

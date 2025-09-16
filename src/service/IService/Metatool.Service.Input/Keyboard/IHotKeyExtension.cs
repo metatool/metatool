@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Metatool.Command;
 using Metatool.Service.Internal;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.Service;
 

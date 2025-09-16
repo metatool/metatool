@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Metatool.Service;
+namespace Metatool.Service.MouseKey;
 
 public partial class Combination
 {

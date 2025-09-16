@@ -1,5 +1,6 @@
 ﻿using System;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.Input.MouseKeyHook.Implementation;
 

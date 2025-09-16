@@ -1,6 +1,7 @@
 ﻿using Metatool.Service;
+using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
-using static Metatool.Service.Key;
+using static Metatool.Service.MouseKey.Key;
 using static Metatool.Tools.LibToolDemo.KeyboardConfig;
 namespace Metatool.Tools.LibToolDemo;
 

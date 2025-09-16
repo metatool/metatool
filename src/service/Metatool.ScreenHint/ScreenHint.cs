@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Metatool.Service;
 using Metatool.ScreenPoint;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.ScreenHint;
 

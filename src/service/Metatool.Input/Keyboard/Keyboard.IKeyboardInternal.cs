@@ -1,6 +1,6 @@
-﻿using Metatool.Command;
-using Metatool.Input.MouseKeyHook.Implementation;
+﻿using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 

@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 
 namespace Metatool.Input.implementation;
 

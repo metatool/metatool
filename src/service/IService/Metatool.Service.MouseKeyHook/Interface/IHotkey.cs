@@ -1,4 +1,4 @@
-﻿namespace Metatool.Service;
+﻿namespace Metatool.Service.MouseKey;
 
 public interface  IHotkey: ISequencable
 {
