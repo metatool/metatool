@@ -8,7 +8,7 @@ namespace Metatool.Input;
 public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 {
     List<SelectionResult> selectedTrees = new();
-    Forest forest = new Forest(notify);
+    Forest forest = new (notify);
     public IForest Forest => forest;
 
     public void Reset()
@@ -43,6 +43,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
         if (selectedNodes.Count > 0)
             logger.LogInformation(
                 $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
+
         return selectedNodes;
     }
 
