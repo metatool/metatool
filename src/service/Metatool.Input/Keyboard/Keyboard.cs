@@ -69,8 +69,7 @@ public partial class Keyboard : IKeyboard, IKeyboardInternal
 					var key = (Key) code;
 					if (!key.IsCommonChordKey())
 					{
-						var keyStateTree = KeyStateTree.GetOrCreateStateTree(KeyStateTrees.ChordMap);
-						if (!keyStateTree.Contains(key))
+						if(!_hook.Contains(key, KeyStateTrees.ChordMap))
 							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual);
 					}
 				}

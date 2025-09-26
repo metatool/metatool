@@ -1,25 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\common.props" />
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-  </PropertyGroup> 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Metatool.Input</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-  <PropertyGroup>
-    <RootNamespace>Metatool.Service.MouseKey</RootNamespace>
-  </PropertyGroup>
-   <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Metatool.MouseKeyHook</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-   <ItemGroup>
-     <ProjectReference Include="..\Metatool.Service.Command\Metatool.Service.Command.csproj" />
-   </ItemGroup>
-   <ItemGroup>
-     <Folder Include="Interface\" />
-   </ItemGroup>
+    <Import Project="..\common.props" />
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Metatool.Input</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <PropertyGroup>
+        <RootNamespace>Metatool.Service.MouseKey</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Metatool.MouseKeyHook</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Metatool.MouseKeyHook.FruitMonkey</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Metatool.Service.Command\Metatool.Service.Command.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Interface\" />
+    </ItemGroup>
 </Project>

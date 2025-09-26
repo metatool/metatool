@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using Metatool.Service;
+﻿using System.ComponentModel;
+using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service.MouseKey;
 
-namespace Metatool.Input.MouseKeyHook.Implementation;
+namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
 internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEventCommand
 {

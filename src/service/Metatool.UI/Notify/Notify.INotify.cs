@@ -120,7 +120,7 @@ public partial class Notify
 
 	public void CloseKeysTip(string name)
 	{
-		ShowKeysTip(name, Enumerable.Empty<(string key, IEnumerable<string> descriptions)>());
+		ShowKeysTip(name, []);
 	}
 
 	public void CloseKeysTip()

@@ -20,9 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\service\IService\Metatool.Service.Core\Metatool.Service.Core.csproj" />
-    <ProjectReference Include="..\..\service\IService\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj" />
     <ProjectReference Include="..\..\service\IService\Metatool.Service.UI\Metatool.Service.UI.csproj" />
     <ProjectReference Include="..\..\service\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\Metatool.MouseKeyHook.FruitMonkey\Metatool.MouseKeyHook.FruitMonkey.csproj" />
   </ItemGroup>
 
 </Project>

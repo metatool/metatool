@@ -16,6 +16,7 @@ using Metatool.Metatool;
 using Metatool.UI.Notify;
 using Context = Metatool.Service.Context;
 using Metatool.Pipeline;
+using Notify = Metatool.UI.Notify.Notify;
 
 namespace Metaseed.Metatool;
 
@@ -62,7 +63,7 @@ public class ServiceConfig
 					//.AddSingleton<IClipboard, Clipboard>()
 					.AddSingleton<IMouse, Mouse>()
 					.AddSingleton<ICommandManager, CommandManager>()
-					.AddSingleton<INotify, Notify>()
+					.AddSingleton<INotify,Notify>()
 					.AddSingleton<IScreenHint, ScreenHint>()
 					.AddMetatoolUtils()
 					.AddPipelineBuilder()

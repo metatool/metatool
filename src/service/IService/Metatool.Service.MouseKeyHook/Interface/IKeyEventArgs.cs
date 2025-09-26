@@ -12,6 +12,7 @@ public interface IKeyPressEventArgs
 	IKeyEventArgs EventArgs { get; }
 	bool IsActive(ISequenceUnit hotKey) => EventArgs.IsActive(hotKey);
 }
+
 public interface IKeyEventArgs
 {
 	bool Handled { get; set; }
@@ -29,7 +30,7 @@ public interface IKeyEventArgs
 	bool          IsVirtual        { get; }
 	int           Timestamp        { get; }
 	bool          IsKeyDown        { get; }
-	KeyEventType KeyEventType { get; }
+	KeyEventType KeyEventType { get; set; }
 	IKeyboardState KeyboardState { get; }
 	IKeyPath PathToGo { get; }
 	bool IsKeyUp { get; }

@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.WinApi;
-using Metatool.Service;
 using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
@@ -128,7 +127,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 	/// </summary>
 	public bool IsExtendedKey { get; }
 
-	public KeyEventType KeyEventType { get; internal set; }
+	public KeyEventType KeyEventType { get; set; }
 
 	public new bool Handled
 	{

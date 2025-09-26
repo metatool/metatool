@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using Metatool.Input.MouseKeyHook.WinApi;
-using Metatool.Service;
 using Metatool.Service.MouseKey;
 
 namespace Metatool.Input.MouseKeyHook.Implementation;

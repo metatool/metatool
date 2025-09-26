@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Metatool.Service.MouseKey;
 
-internal class Chord : IEnumerable<Key>
+public class Chord : IEnumerable<Key>
 {
     private readonly Key[] _keys;
 

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Metatool.DataStructures;
-using Metatool.Input.MouseKeyHook.Implementation;
+﻿using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.MouseKeyHook.FruitMonkey.Trie;
 using Metatool.Service;
 using Metatool.Service.MouseKey;
 
