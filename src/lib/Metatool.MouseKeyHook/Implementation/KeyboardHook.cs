@@ -11,10 +11,14 @@ namespace Metatool.Input.MouseKeyHook;
 public delegate void KeyEventHandler(object sender, IKeyEventArgs e);
 
 public delegate void KeyPressEventHandler(object sender, IKeyPressEventArgs e);
+public record KeyTipNotifier(Action<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> showKeysTip, Action<string> closeKeysTip) : IKeyTipNotifier
+{
+    public void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips) => showKeysTip(name, tips);
+    public void CloseKeysTip(string name) => closeKeysTip(name);
+}
 
 public class KeyboardHook
 {
-	private readonly INotify               _notify;
 	private readonly ILogger<KeyboardHook> _logger;
 	private readonly IKeyboardMouseEvents  _eventSource;
 	private          bool                  _isRunning;
@@ -43,10 +47,9 @@ public class KeyboardHook
 
 	public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
 	{
-		_notify             = notify;
 		_logger             = logger;
 		_eventSource        = Hook.GlobalEvents();
-		_monkey = new FruitMonkey(logger, new Notify((string key, IEnumerable<(string key, IEnumerable<string> descriptions)> tips) => notify.ShowKeysTip(key, tips), key => notify.CloseKeysTip(key)));
+		_monkey = new FruitMonkey(logger, new KeyTipNotifier((string key, IEnumerable<(string key, IEnumerable<string> descriptions)> tips) => notify.ShowKeysTip(key, tips), key => notify.CloseKeysTip(key)));
 	}
 
 	private readonly List<KeyEventHandler> _keyUpHandlers = [];

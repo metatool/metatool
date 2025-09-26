@@ -17,14 +17,12 @@ public enum TreeType
     SingleEventCommand
 };
 
-public record Notify(Action<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> ShowKeysTip, Action<string> CloseKeysTip);
-
 [DebuggerDisplay("${Name}")]
 public partial class KeyStateTree
 {
-    Notify _notify;
+    IKeyTipNotifier _notify;
 
-    public KeyStateTree(string name, Notify notify)
+    public KeyStateTree(string name, IKeyTipNotifier notify)
     {
         Name = name;
         _treeWalker = new TrieWalker<ICombination, KeyEventCommand>(_trie);

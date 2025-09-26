@@ -1,12 +1,11 @@
-﻿using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.MouseKeyHook.FruitMonkey;
+﻿using Metatool.MouseKeyHook.FruitMonkey;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace Metatool.Input;
 
-public class FruitMonkey(ILogger logger, Notify notify)
+public class FruitMonkey(ILogger logger, IKeyTipNotifier notify)
 {
     List<SelectionResult> selectedTrees = new();
     public Forest Forest = new(notify);
