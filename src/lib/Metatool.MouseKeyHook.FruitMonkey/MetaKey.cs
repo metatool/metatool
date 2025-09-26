@@ -31,7 +31,7 @@ public class HotkeyToken : IChangeRemove<IHotkey>
 		switch(keyProperty)
 		{
 			case ISequenceUnit k:
-				_trie.Add(k.ToCombination(), EventCommand);
+				_trie.Add([k.ToCombination()], EventCommand);
 				break;
 			case ISequence s:
 				_trie.Add(s.ToList(), EventCommand);

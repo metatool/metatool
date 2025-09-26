@@ -4,9 +4,9 @@ public abstract class TrieNodeBase<TKey, TValue>
 {
 	public void Add(IList<TKey> query, int position, TValue value)
 	{
-		if (query == null) throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(query);
 
-		if (OutOfKeySequence(position, query))
+        if (OutOfKeySequence(position, query))
 		{
 			AddValue(value);
 			return;
@@ -15,6 +15,7 @@ public abstract class TrieNodeBase<TKey, TValue>
 		var child = GetOrCreateChild(query[position]);
 		child.Add(query, position + 1, value);
 	}
+
 	protected internal abstract IEnumerable<TValue> Values();
 
 	protected abstract IEnumerable<TrieNodeBase<TKey, TValue>> Children { get; }
@@ -86,7 +87,6 @@ public abstract class TrieNodeBase<TKey, TValue>
 	}
 
 	protected abstract TrieNodeBase<TKey, TValue> GetChildOrNull(IList<TKey> query, int position);
-
 
 	private static bool OutOfKeySequence(int position, ICollection<TKey> query)
 	{
