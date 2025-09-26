@@ -9,7 +9,7 @@ public class MetaKeys(List<IMetaKey> keys) : List<IMetaKey>(keys), IMetaKey
 		get => this.Aggregate("", (a, c) => a + c.Id);
 		set
 		{
-			for (var i = 0; i < this.Count; i++)
+			for (var i = 0; i < Count; i++)
 			{
 				var k = (MetaKey) this[i];
 				k.Id = value; //$"{value}_{i}-{k.KeyEvent}"
@@ -20,13 +20,13 @@ public class MetaKeys(List<IMetaKey> keys) : List<IMetaKey>(keys), IMetaKey
 	public bool Disable
 	{
 		get => this.First().Disable;
-		set => this.ForEach(k => k.Disable = value);
+		set => ForEach(k => k.Disable = value);
 	}
 
 	public IHotkey Hotkey
 	{
 		get => this.First().Hotkey;
-		set => this.ForEach(k => k.Hotkey = value);
+		set => ForEach(k => k.Hotkey = value);
 	}
 
 	public IMetaKey ChangeHotkey(IHotkey hotkey)
@@ -37,11 +37,11 @@ public class MetaKeys(List<IMetaKey> keys) : List<IMetaKey>(keys), IMetaKey
 
 	public void ChangeDescription(string description)
 	{
-		this.ForEach(k =>k.ChangeDescription(description));
+		ForEach(k =>k.ChangeDescription(description));
 	}
 
 	public void Remove()
 	{
-		this.ForEach(k => k.Remove());
+		ForEach(k => k.Remove());
 	}
 }
