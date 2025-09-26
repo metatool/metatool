@@ -30,9 +30,9 @@ public abstract class TrieNodeBase<TKey, TValue>
 
 	protected TrieNodeBase<TKey, TValue> CleanPath(IList<TKey> query, int position)
 	{
-		if (query == null) throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(query);
 
-		TrieNodeBase<TKey, TValue> candidate = null;
+        TrieNodeBase<TKey, TValue> candidate = null;
 		TrieNodeBase<TKey, TValue> parent = null;
 		var key = default(TKey);
 		do
@@ -58,9 +58,9 @@ public abstract class TrieNodeBase<TKey, TValue>
 
 	protected bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
 	{
-		if (query == null) throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(query);
 
-		if (OutOfKeySequence(position, query))
+        if (OutOfKeySequence(position, query))
 		{
 			return RemoveValue(predicate);
 		}
