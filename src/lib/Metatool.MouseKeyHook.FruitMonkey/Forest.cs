@@ -4,7 +4,7 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.FruitMonkey;
 
-public class Forest(IKeyTipNotifier notify)
+public class Forest(IKeyTipNotifier notify): IForest
 {
     internal Dictionary<string, KeyStateTree> ForestGround = new()
     {

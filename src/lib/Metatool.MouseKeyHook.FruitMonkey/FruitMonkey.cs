@@ -5,14 +5,15 @@ using System.Diagnostics;
 
 namespace Metatool.Input;
 
-public class FruitMonkey(ILogger logger, IKeyTipNotifier notify)
+public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 {
     List<SelectionResult> selectedTrees = new();
-    public Forest Forest = new(notify);
+    Forest forest = new Forest(notify);
+    public IForest Forest => forest;
 
     public void Reset()
     {
-        foreach (var stateTree in Forest.ForestGround.Values) 
+        foreach (var stateTree in forest.ForestGround.Values) 
             stateTree.Reset();
     }
 
@@ -20,7 +21,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify)
     {
         var selectedNodes = new List<SelectionResult>();
         //all on root, find current trees
-        foreach (var stateTree in Forest.ForestGround.Values)
+        foreach (var stateTree in forest.ForestGround.Values)
         {
             Debug.Assert(stateTree.IsOnRoot);
             if (stateTree.ProcessState == KeyProcessState.Yield) continue;
@@ -105,7 +106,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify)
                  reprocess /*Yield or Reprocess*/);
 
         @return:
-        foreach (var stateTree in Forest.ForestGround.Values) stateTree.MarkDoneIfYield();
+        foreach (var stateTree in forest.ForestGround.Values) stateTree.MarkDoneIfYield();
     }
 
 }

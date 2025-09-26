@@ -22,7 +22,7 @@ public class KeyboardHook
 	private readonly ILogger<KeyboardHook> _logger;
 	private readonly IKeyboardMouseEvents  _eventSource;
 	private          bool                  _isRunning;
-	private FruitMonkey _monkey;
+	private IFruitMonkey _monkey;
 
     public bool Disable
 	{
