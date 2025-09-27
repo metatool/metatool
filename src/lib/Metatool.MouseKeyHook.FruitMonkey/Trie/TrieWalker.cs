@@ -46,8 +46,7 @@ public class TrieWalker<TKey, TValue>(Trie<TKey, TValue> trie) where TKey : ICom
         return true;
     }
 
-    internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc,
-        TKey initialKey = default(TKey))
+    internal TrieNode<TKey, TValue> GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc, TKey initialKey = default(TKey))
     {
         return CurrentNode.GetChildOrNull(initialKey, aggregateFunc);
     }
