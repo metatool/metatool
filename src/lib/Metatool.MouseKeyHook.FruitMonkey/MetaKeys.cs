@@ -12,7 +12,7 @@ public class MetaKeys(List<IMetaKey> keys) : List<IMetaKey>(keys), IMetaKey
 			for (var i = 0; i < Count; i++)
 			{
 				var k = (MetaKey) this[i];
-				k.Id = value; //$"{value}_{i}-{k.KeyEvent}"
+				k.Id = value; //$"{value}_{i}-{k.KeyEvent}
 			}
 		}
 	}

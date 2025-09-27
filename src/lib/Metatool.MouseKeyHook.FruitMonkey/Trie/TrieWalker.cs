@@ -3,41 +3,37 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
-public class TrieWalker<TKey, TValue> where TKey : ICombination where TValue : KeyEventCommand
+public class TrieWalker<TKey, TValue>(Trie<TKey, TValue> trie) where TKey : ICombination where TValue : KeyEventCommand
 {
-    private readonly Trie<TKey, TValue> _trie;
+    private readonly Trie<TKey, TValue> _root = trie;
 
-    public TrieWalker(Trie<TKey, TValue> trie)
-    {
-        _trie = trie;
-        _CurrentNode = _trie;
-    }
-
-    private TrieNode<TKey, TValue> _CurrentNode;
-
+    private TrieNode<TKey, TValue> currentNode = trie;
     internal TrieNode<TKey, TValue> CurrentNode
     {
-        get => _CurrentNode;
+        get => currentNode;
+
         private set
         {
-            if (_CurrentNode == value)
+            if (currentNode == value)
                 return;
 
-            _CurrentNode = value;
-            Console.WriteLine($"\t@{_CurrentNode}");
+            currentNode = value;
+            Console.WriteLine($"\t@{currentNode}");
         }
     }
 
-    public TrieNode<TKey, TValue> Root => _trie;
-    public bool IsOnRoot => CurrentNode == _trie;
+    public bool IsOnRoot => CurrentNode == _root;
 
     public int CurrentChildrenCount => CurrentNode.ChildrenCount;
+
     public IEnumerable<TValue> CurrentValues => CurrentNode.Values();
 
     public bool TryGoToChild(TKey key)
     {
         var node = CurrentNode.GetChildOrNull(key);
-        if (node == null) return false;
+        if (node == null) 
+            return false;
+
         CurrentNode = node;
         return true;
     }
@@ -61,7 +57,7 @@ public class TrieWalker<TKey, TValue> where TKey : ICombination where TValue : K
             KeyValuePair<TKey, TrieNode<TKey, TValue>>> aggregateFunc,
         KeyValuePair<TKey, TrieNode<TKey, TValue>> initKey = default(KeyValuePair<TKey, TrieNode<TKey, TValue>>))
     {
-        return CurrentNode.ChildrenDictionaryPairs.Aggregate(initKey, aggregateFunc);
+        return CurrentNode.ChildrenDictionary.Aggregate(initKey, aggregateFunc);
     }
 
     public void GoToChild(TrieNode<TKey, TValue> child)
@@ -71,14 +67,18 @@ public class TrieWalker<TKey, TValue> where TKey : ICombination where TValue : K
 
     public void GoToRoot()
     {
-        CurrentNode = _trie;
+        CurrentNode = _root;
     }
 
+    /// <summary>
+    /// start from root, and go to(set current state to) the state specified by path
+    /// </summary>
     public bool TryGoToState(IKeyPath path, out TrieNode<TKey, TValue> node)
     {
-        node = _trie;
+        node = _root;
 
         if (path != null)
+        {
             foreach (var combination in path)
             {
                 if (node.TryGetChild((TKey)combination, out var child))
@@ -89,6 +89,7 @@ public class TrieWalker<TKey, TValue> where TKey : ICombination where TValue : K
 
                 return false;
             }
+        }
 
         CurrentNode = node;
         return true;

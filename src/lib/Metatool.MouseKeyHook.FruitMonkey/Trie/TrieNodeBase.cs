@@ -35,6 +35,7 @@ public abstract class TrieNodeBase<TKey, TValue>
         TrieNodeBase<TKey, TValue> candidate = null;
 		TrieNodeBase<TKey, TValue> parent = null;
 		var key = default(TKey);
+
 		do
 		{
 			if (IsRemovable(query, position) && candidate == null)
@@ -45,6 +46,7 @@ public abstract class TrieNodeBase<TKey, TValue>
 			}
 			else
 				candidate = null;
+
 		} while (!OutOfKeySequence(position++, query));
 
 		if (candidate != null)

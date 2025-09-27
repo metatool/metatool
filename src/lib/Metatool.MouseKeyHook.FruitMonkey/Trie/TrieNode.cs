@@ -8,17 +8,17 @@ public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue>
 {
     private readonly IList<TValue> _values = [];
 
-    protected TrieNode(TKey? key, TrieNode<TKey, TValue>? parent = null)
+    protected TrieNode(TKey key, TrieNode<TKey, TValue>? parent = null)
     {
         Key = key;
         Parent = parent;
     }
 
-    public TKey? Key { get; }
+    public TKey Key { get; }
     public TrieNode<TKey, TValue>? Parent { get; private set; }
 
     private readonly Dictionary<TKey, TrieNode<TKey, TValue>> _childrenDictionary = [];
-    internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenDictionaryPairs => _childrenDictionary;
+    internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenDictionary => _childrenDictionary;
 
     private IKeyPath? _keyPath;
     public IKeyPath KeyPath
@@ -93,7 +93,9 @@ public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue>
     {
         var key = _childrenDictionary.Keys.Aggregate(initKey, aggregateFunc);
 
-        if (EqualityComparer<TKey>.Default.Equals(key, default(TKey))) return null;
+        if (EqualityComparer<TKey>.Default.Equals(key, default(TKey))) 
+            return null;
+
         return GetChildOrNull(key);
     }
 
@@ -106,7 +108,8 @@ public class TrieNode<TKey, TValue> : TrieNodeBase<TKey, TValue>
 
     internal bool TryGetChild(TKey key, out TrieNode<TKey, TValue> child)
     {
-        if (key == null) throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
+
         return _childrenDictionary.TryGetValue(key, out child);
     }
 

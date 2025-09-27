@@ -8,8 +8,8 @@
 /// <typeparam name="TValue"></typeparam>
 public interface ITrie<TKey,TValue>
 {
-	IEnumerable<TValue> Get(IList<TKey> query);
 	void Add(IList<TKey> query, TValue value);
+	IEnumerable<TValue> Get(IList<TKey> query);
 	bool Remove(IList<TKey> query, Predicate<TValue>? predicate = null);
 	void Clear();
 

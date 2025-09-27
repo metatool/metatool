@@ -4,11 +4,11 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 
-public class MetaKey : IMetaKey
+public class MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> combinations, KeyEventCommand command) : IMetaKey
 {
-	internal readonly HotkeyToken _token;
+	internal readonly HotkeyToken _token = new HotkeyToken(trie, combinations, command);
 
-	public IHotkey Hotkey
+    public IHotkey Hotkey
 	{
 		get
 		{
@@ -37,11 +37,6 @@ public class MetaKey : IMetaKey
 
 	internal KeyEventType KeyEventType => _token.EventCommand.KeyEventType;
 
-	public MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> combinations,
-		KeyEventCommand command)
-	{
-		_token = new HotkeyToken(trie, combinations, command);
-	}
 	public void ChangeDescription(string description)
 	{
 		_token.ChangeDescription(description);

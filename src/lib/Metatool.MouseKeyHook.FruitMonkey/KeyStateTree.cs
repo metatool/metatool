@@ -9,14 +9,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input;
 
-public enum TreeType
-{
-    Default,
-
-    // one for every down, up or allUp KeyEvent
-    SingleEventCommand
-};
-
 [DebuggerDisplay("${Name}")]
 public partial class KeyStateTree
 {
@@ -79,7 +71,7 @@ public partial class KeyStateTree
 
     public IEnumerable<(string key, IEnumerable<string> descriptions)> Tips(bool ifRootThenEmpty = false)
     {
-        if (ifRootThenEmpty && _treeWalker.CurrentNode == _treeWalker.Root)
+        if (ifRootThenEmpty && _treeWalker.IsOnRoot)
         {
             return [];
         }
