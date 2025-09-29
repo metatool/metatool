@@ -5,7 +5,7 @@ namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
 public partial class TrieNode<TKey, TValue> where TKey : ICombination where TValue : KeyEventCommand
 {
-    protected TrieNode(TKey key, TrieNode<TKey, TValue>? parent = null)
+    internal TrieNode(TKey key, TrieNode<TKey, TValue>? parent = null)
     {
         Key = key;
         Parent = parent;

@@ -35,7 +35,7 @@ public partial class TrieNode<TKey, TValue>
         return true;
     }
 
-	protected TrieNode<TKey, TValue> CleanPath(IList<TKey> query, int position)
+	internal TrieNode<TKey, TValue> CleanPath(IList<TKey> query, int position)
 	{
         ArgumentNullException.ThrowIfNull(query);
 
@@ -64,7 +64,7 @@ public partial class TrieNode<TKey, TValue>
 		return candidate;
 	}
 
-	protected bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
+	internal bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
 	{
         ArgumentNullException.ThrowIfNull(query);
 
@@ -77,7 +77,7 @@ public partial class TrieNode<TKey, TValue>
 		return node != null && node.Remove(query, position + 1, predicate);
 	}
 
-    protected TrieNode<TKey, TValue> GetOrCreateChild(TKey childKey)
+    private TrieNode<TKey, TValue> GetOrCreateChild(TKey childKey)
     {
         if (_childrenDictionary.TryGetValue(childKey, out var child))
         {
@@ -90,14 +90,14 @@ public partial class TrieNode<TKey, TValue>
         return child;
     }
 
-    protected internal virtual IEnumerable<TValue> Get(IList<TKey> query, int position)
+    internal  IEnumerable<TValue> Get(IList<TKey> query, int position)
 	{
 		return OutOfKeySequence(position, query)
 			? ValuesDeep()
 			: SearchDeep(query, position);
 	}
 
-	protected virtual IEnumerable<TValue> SearchDeep(IList<TKey> query, int position)
+    private IEnumerable<TValue> SearchDeep(IList<TKey> query, int position)
 	{
 		var nextNode = GetChildOrNull(query, position);
 		return nextNode != null
@@ -115,7 +115,7 @@ public partial class TrieNode<TKey, TValue>
 		return Subtree().SelectMany(node => node.Values);
 	}
 
-	protected IEnumerable<TrieNode<TKey, TValue>> Subtree()
+    private IEnumerable<TrieNode<TKey, TValue>> Subtree()
 	{
 		return Enumerable.Repeat(this, 1).Concat(Children.SelectMany(child => child.Subtree()));
 	}

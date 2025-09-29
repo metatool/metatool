@@ -17,15 +17,14 @@ public partial class KeyStateTree
     public KeyStateTree(string name, IKeyTipNotifier notify)
     {
         Name = name;
-        _treeWalker = new TrieWalker<ICombination, KeyEventCommand>(_trie);
+        _treeWalker = new Trie<ICombination, KeyEventCommand>();
         _lastKeyDownNodeForAllUp = null;
         _notify = notify;
     }
 
     public TreeType TreeType = TreeType.Default;
 
-    private readonly Trie<ICombination, KeyEventCommand> _trie = new();
-    private readonly TrieWalker<ICombination, KeyEventCommand> _treeWalker;
+    private readonly Trie<ICombination, KeyEventCommand> _treeWalker;
     public string Name;
 
     internal KeyProcessState ProcessState;
@@ -52,8 +51,8 @@ public partial class KeyStateTree
     {
         var values = hotKey switch
         {
-            ISequenceUnit k => _trie.Get((List<ICombination>)[.. k.ToCombination()]),
-            ISequence s => _trie.Get(s.ToList()),
+            ISequenceUnit k => _treeWalker.Get((List<ICombination>)[.. k.ToCombination()]),
+            ISequence s => _treeWalker.Get(s.ToList()),
             _ => throw new Exception("not supported!")
         };
 
@@ -83,15 +82,15 @@ public partial class KeyStateTree
     {
         if (TreeType == TreeType.SingleEventCommand)
         {
-            var commands = _trie.Get(combinations);
+            var commands = _treeWalker.Get(combinations);
             if (commands.Count() != 0)
             {
-                _trie.Remove(combinations, c => c.KeyEventType == command.KeyEventType);
+                _treeWalker.Remove(combinations, c => c.KeyEventType == command.KeyEventType);
             }
         }
 
-        _trie.Add(combinations, command);
-        return new MetaKey(_trie, combinations, command);
+        _treeWalker.Add(combinations, command);
+        return new MetaKey(_treeWalker, combinations, command);
     }
 
     public IMetaKey Add(ICombination combination, KeyEventCommand command)
