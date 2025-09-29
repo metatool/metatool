@@ -26,7 +26,7 @@ public class TrieWalker<TKey, TValue>(Trie<TKey, TValue> trie) where TKey : ICom
 
     public int CurrentChildrenCount => CurrentNode.ChildrenCount;
 
-    public IEnumerable<TValue> CurrentValues => CurrentNode.Values();
+    public IEnumerable<TValue> CurrentValues => CurrentNode.Values;
 
     public bool TryGoToChild(TKey key)
     {

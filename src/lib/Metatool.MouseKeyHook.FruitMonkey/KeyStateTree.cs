@@ -219,7 +219,7 @@ public partial class KeyStateTree
         Console.WriteLine($"${Name}{lastDownHit}");
 
         // matched
-        var actionList = candidateNode.Values() as KeyActionList<KeyEventCommand>;
+        var actionList = candidateNode.Values as KeyActionList<KeyEventCommand>;
         Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
         // execute
