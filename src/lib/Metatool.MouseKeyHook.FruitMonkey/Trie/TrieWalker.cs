@@ -51,23 +51,9 @@ public class TrieWalker<TKey, TValue>(Trie<TKey, TValue> trie) where TKey : ICom
         return CurrentNode.GetChildOrNull(initialKey, aggregateFunc);
     }
 
-    internal KeyValuePair<TKey, TrieNode<TKey, TValue>> GetChildOrNull(
-        Func<KeyValuePair<TKey, TrieNode<TKey, TValue>>, KeyValuePair<TKey, TrieNode<TKey, TValue>>,
-            KeyValuePair<TKey, TrieNode<TKey, TValue>>> aggregateFunc,
-        KeyValuePair<TKey, TrieNode<TKey, TValue>> initKey = default(KeyValuePair<TKey, TrieNode<TKey, TValue>>))
-    {
-        return CurrentNode.ChildrenDictionary.Aggregate(initKey, aggregateFunc);
-    }
+    public void GoToChild(TrieNode<TKey, TValue> child) => CurrentNode = child;
 
-    public void GoToChild(TrieNode<TKey, TValue> child)
-    {
-        CurrentNode = child;
-    }
-
-    public void GoToRoot()
-    {
-        CurrentNode = _root;
-    }
+    public void GoToRoot() => CurrentNode = _root;
 
     /// <summary>
     /// start from root, and go to(set current state to) the state specified by path
