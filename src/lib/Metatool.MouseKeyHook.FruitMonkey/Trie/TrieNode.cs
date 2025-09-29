@@ -14,7 +14,7 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
     public TKey Key { get; }
     public TrieNode<TKey, TValue>? Parent { get; private set; }
 
-    private readonly IList<TValue> _values = [];
+    private readonly IList<TValue> _values = new KeyActionList<TValue>();
     protected internal IEnumerable<TValue> Values => _values;
 
     private readonly Dictionary<TKey, TrieNode<TKey, TValue>> _childrenDictionary = [];

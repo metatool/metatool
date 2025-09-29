@@ -96,9 +96,9 @@ public partial class Combination
         { '\x05', (KeyValues.E, [KeyValues.Control])}, // Ctrl+E (ENQ)
         { '\x06', (KeyValues.F, [KeyValues.Control])}, // Ctrl+F (ACK)
         { '\x07', (KeyValues.G, [KeyValues.Control])}, // Ctrl+G (BEL)
-        { '\x08', (KeyValues.H, [KeyValues.Control])}, // Ctrl+H (BS) - same as backspace
+        // { '\x08', (KeyValues.H, [KeyValues.Control])}, // Ctrl+H (BS) - same as backspace \b
         // '\x09' is Tab, handled above
-        { '\x0A', (KeyValues.J, [KeyValues.Control])}, // Ctrl+J (LF)
+        // { '\x0A', (KeyValues.J, [KeyValues.Control])}, // Ctrl+J (LF)
         { '\x0B', (KeyValues.K, [KeyValues.Control])}, // Ctrl+K (VT)
         { '\x0C', (KeyValues.L, [KeyValues.Control])}, // Ctrl+L (FF)
         // '\x0D' is Enter, handled above
