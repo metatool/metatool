@@ -17,21 +17,21 @@ public partial class KeyStateTree
     public KeyStateTree(string name, IKeyTipNotifier notify)
     {
         Name = name;
-        _treeWalker = new Trie<ICombination, KeyEventCommand>();
+        _trie = new Trie<ICombination, KeyEventCommand>();
         _lastKeyDownNodeForAllUp = null;
         _notify = notify;
     }
 
     public TreeType TreeType = TreeType.Default;
 
-    private readonly Trie<ICombination, KeyEventCommand> _treeWalker;
+    private readonly Trie<ICombination, KeyEventCommand> _trie;
     public string Name;
 
     internal KeyProcessState ProcessState;
 
-    internal TrieNode<ICombination, KeyEventCommand> CurrentNode => _treeWalker.CurrentNode;
+    internal TrieNode<ICombination, KeyEventCommand> CurrentNode => _trie.CurrentNode;
 
-    internal bool IsOnRoot => _treeWalker.IsOnRoot;
+    internal bool IsOnRoot => _trie.IsOnRoot;
 
     public void Reset()
     {
@@ -44,15 +44,15 @@ public partial class KeyStateTree
         Console.WriteLine($"${Name}{lastDownHit}");
 
         Task.Run(() => _notify?.CloseKeysTip(Name)); // use task here, because the slow startup
-        _treeWalker.GoToRoot();
+        _trie.GoToRoot();
     }
 
     internal bool Contains(IHotkey hotKey)
     {
         var values = hotKey switch
         {
-            ISequenceUnit k => _treeWalker.Get((List<ICombination>)[.. k.ToCombination()]),
-            ISequence s => _treeWalker.Get(s.ToList()),
+            ISequenceUnit k => _trie.Get((List<ICombination>)[.. k.ToCombination()]),
+            ISequence s => _trie.Get(s.ToList()),
             _ => throw new Exception("not supported!")
         };
 
@@ -70,27 +70,27 @@ public partial class KeyStateTree
 
     public IEnumerable<(string key, IEnumerable<string> descriptions)> Tips(bool ifRootThenEmpty = false)
     {
-        if (ifRootThenEmpty && _treeWalker.IsOnRoot)
+        if (ifRootThenEmpty && _trie.IsOnRoot)
         {
             return [];
         }
 
-        return _treeWalker.CurrentNode.Tip;
+        return _trie.CurrentNode.Tip;
     }
 
     public IMetaKey Add(IList<ICombination> combinations, KeyEventCommand command)
     {
         if (TreeType == TreeType.SingleEventCommand)
         {
-            var commands = _treeWalker.Get(combinations);
+            var commands = _trie.Get(combinations);
             if (commands.Count() != 0)
             {
-                _treeWalker.Remove(combinations, c => c.KeyEventType == command.KeyEventType);
+                _trie.Remove(combinations, c => c.KeyEventType == command.KeyEventType);
             }
         }
 
-        _treeWalker.Add(combinations, command);
-        return new MetaKey(_treeWalker, combinations, command);
+        _trie.Add(combinations, command);
+        return new MetaKey(_trie, combinations, command);
     }
 
     public IMetaKey Add(ICombination combination, KeyEventCommand command)
@@ -106,17 +106,19 @@ public partial class KeyStateTree
     {
         _disabledChords.Add(chord);
     }
+
     internal void EnableChord(Chord chord)
     {
         _disabledChords.Remove(chord);
     }
+
     internal SelectionResult TrySelect(KeyEventType eventTypeType, IKeyEventArgs args)
     {
         // to handle A+B+C(B is down in Chord)
         var downInChord = false;
 
         var type = eventTypeType;
-        var candidateNode = _treeWalker.GetChildOrNull((ICombination acc, ICombination combination) =>
+        var candidateNode = _trie.GetChildOrNull((ICombination acc, ICombination combination) =>
         {
             if (_disabledChords.Contains(combination.Chord)) return acc;
             // mark down_in_chord and continue try to find trigger
@@ -145,7 +147,7 @@ public partial class KeyStateTree
         {
             if (eventTypeType == KeyEventType.Down)
             {
-                if (_treeWalker.IsOnRoot)
+                if (_trie.IsOnRoot)
                 {
                     // AnyKeyNotInRoot_down_or_up: *A_down *A_up is not registered in root
                     _lastKeyDownNodeForAllUp = null;
@@ -178,7 +180,7 @@ public partial class KeyStateTree
             }
             else
             {
-                if (_treeWalker.IsOnRoot)
+                if (_trie.IsOnRoot)
                 {
                     // AnyKeyNotRegisteredInRoot_down_or_up: *A_down *A_up is not registered in root
                     _lastKeyDownNodeForAllUp = null;
@@ -186,7 +188,7 @@ public partial class KeyStateTree
                 }
 
                 // on path, up
-                if (_treeWalker.CurrentChildrenCount == 0)
+                if (_trie.CurrentChildrenCount == 0)
                 {
                     // NoChild & NotOnRoot:
                     //   KeyInChord_up : A+B when A_up.
@@ -196,7 +198,7 @@ public partial class KeyStateTree
                 }
 
                 // HaveChild & KeyInChord_up: A+B, C when A_up continue wait C
-                if (_treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode))
+                if (_trie.CurrentNode.Key.Chord.Contains(args.KeyCode))
                 {
                     Console.WriteLine(
                         " would never been here:treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode)");
@@ -269,7 +271,7 @@ public partial class KeyStateTree
 
         if (args.PathToGo != null && !args.PathToGo.SequenceEqual(candidateNode.KeyPath)) // goto state by requiring
         {
-            if (!_treeWalker.TryGoToState(args.PathToGo, out var state))
+            if (!_trie.TryGoToState(args.PathToGo, out var state))
             {
                 Console.WriteLine($"Couldn't go to state {state}");
             }
@@ -283,7 +285,7 @@ public partial class KeyStateTree
             case KeyEventType.Up:
                 {
                     // only navigate on up/AllUp event
-                    _treeWalker.GoToChild(candidateNode);
+                    _trie.GoToChild(candidateNode);
 
                     if (candidateNode.ChildrenCount == 0)
                     {
@@ -298,7 +300,7 @@ public partial class KeyStateTree
                         return ProcessState = KeyProcessState.Done;
                     }
 
-                    _notify?.ShowKeysTip(Name, _treeWalker.CurrentNode.Tip);
+                    _notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
                     return ProcessState = KeyProcessState.Continue;
                 }
 
@@ -306,12 +308,12 @@ public partial class KeyStateTree
                 _lastKeyDownNodeForAllUp = null;
                 // navigate on AllUp event only when not navigated by up
                 // A+B down then B_up then A_up would not execute this if clause
-                if (_treeWalker.CurrentNode.Equals(candidateNode))
+                if (_trie.CurrentNode.Equals(candidateNode))
                 {
                     return ProcessState;
                 }
 
-                _treeWalker.GoToChild(candidateNode);
+                _trie.GoToChild(candidateNode);
 
                 if (candidateNode.ChildrenCount == 0)
                 {
@@ -321,7 +323,7 @@ public partial class KeyStateTree
                 }
                 else
                 {
-                    _notify?.ShowKeysTip(Name, _treeWalker.CurrentNode.Tip);
+                    _notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
                     return ProcessState = KeyProcessState.Continue;
                 }
 

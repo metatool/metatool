@@ -8,38 +8,19 @@ public partial class TrieNode<TKey, TValue>
 
         if (OutOfKeySequence(position, query))
 		{
-			AddValue(value);
-			return;
+            _values.Add(value);
+            return;
 		}
 
 		var child = GetOrCreateChild(query[position]);
 		child.Add(query, position + 1, value);
 	}
 
-    private void AddValue(TValue value)
-    {
-        _values.Add(value);
-    }
-
-    private bool RemoveValue(Predicate<TValue> predicate)
-    {
-        if (predicate == null)
-        {
-            _values.Clear();
-            return true;
-        }
-
-        var i = _values.FirstOrDefault(v => predicate(v));
-        if (object.Equals(i, default(TValue))) return false;
-        _values.Remove(i);
-        return true;
-    }
-
 	internal TrieNode<TKey, TValue> CleanPath(IList<TKey> query, int position)
 	{
         ArgumentNullException.ThrowIfNull(query);
 
-        TrieNode<TKey, TValue> candidate = null;
+        TrieNode<TKey, TValue>? candidate = null;
 		TrieNode<TKey, TValue> parent = null;
 		var key = default(TKey);
 
@@ -47,7 +28,7 @@ public partial class TrieNode<TKey, TValue>
 		{
 			if (IsRemovable(query, position) && candidate == null)
 			{
-				candidate = GetChildOrNull(query, position);
+				candidate = GetChildOrNull(query[position]);
 				parent = this;
 				key = query[position];
 			}
@@ -73,9 +54,23 @@ public partial class TrieNode<TKey, TValue>
 			return RemoveValue(predicate);
 		}
 
-		var node = GetChildOrNull(query, position);
+		var node = GetChildOrNull(query[position]);
 		return node != null && node.Remove(query, position + 1, predicate);
 	}
+
+    private bool RemoveValue(Predicate<TValue> predicate)
+    {
+        if (predicate == null)
+        {
+            _values.Clear();
+            return true;
+        }
+
+        var i = _values.FirstOrDefault(v => predicate(v));
+        if (object.Equals(i, default(TValue))) return false;
+        _values.Remove(i);
+        return true;
+    }
 
     private TrieNode<TKey, TValue> GetOrCreateChild(TKey childKey)
     {
@@ -99,7 +94,7 @@ public partial class TrieNode<TKey, TValue>
 
     private IEnumerable<TValue> SearchDeep(IList<TKey> query, int position)
 	{
-		var nextNode = GetChildOrNull(query, position);
+		var nextNode = GetChildOrNull(query[position]);
 		return nextNode != null
 			? nextNode.Get(query, position + 1)
 			: [];

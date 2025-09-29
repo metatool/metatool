@@ -20,6 +20,8 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
     private readonly Dictionary<TKey, TrieNode<TKey, TValue>> _childrenDictionary = [];
     internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenDictionary => _childrenDictionary;
 
+    protected IEnumerable<TrieNode<TKey, TValue>> Children => _childrenDictionary.Values;
+
     protected internal int ChildrenCount => _childrenDictionary.Count;
 
     private IKeyPath? _keyPath;
@@ -57,13 +59,16 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
         _values.Clear();
     }
 
-    internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip => _childrenDictionary.Select(p =>
-        (p.Key.ToString(),
-            p.Value._values.Where(ea => !string.IsNullOrEmpty(ea.Command.Description)).Select(ea =>
-                (ea.KeyEventType == KeyEventType.Up ? "↑ " : "↓ ") + ea.Command.Description)));
-
-    protected IEnumerable<TrieNode<TKey, TValue>> Children => _childrenDictionary.Values;
-
+    internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip => 
+        _childrenDictionary.Select(
+            p => (
+                $"{p.Key}",
+                p.Value._values
+                    .Where(ea => !string.IsNullOrEmpty(ea.Command.Description))
+                    .Select(ea =>
+                        (ea.KeyEventType == KeyEventType.Up ? "↑ " : "↓ ") + ea.Command.Description)
+            )
+        );
 
     protected bool IsRemovable(IList<TKey> query, int position)
     {
@@ -72,7 +77,7 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
                position == query.Count && _values.Count == 0 && _childrenDictionary.Count == 0;
     }
 
-    internal TrieNode<TKey, TValue> GetChildOrNull(TKey initKey, Func<TKey, TKey, TKey> aggregateFunc)
+    internal TrieNode<TKey, TValue>? GetChildOrNull(TKey initKey, Func<TKey, TKey, TKey> aggregateFunc)
     {
         var key = _childrenDictionary.Keys.Aggregate(initKey, aggregateFunc);
 
@@ -82,16 +87,9 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
         return GetChildOrNull(key);
     }
 
-    internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)
-    {
-        return _childrenDictionary.TryGetValue(key, out var childNode)
+    internal TrieNode<TKey, TValue>? GetChildOrNull(TKey key) => 
+        _childrenDictionary.TryGetValue(key, out var childNode)
             ? childNode
             : null;
-    }
-
-    private TrieNode<TKey, TValue> GetChildOrNull(IList<TKey> query, int position)
-    {
-        return GetChildOrNull(query[position]);
-    }
 
 }
