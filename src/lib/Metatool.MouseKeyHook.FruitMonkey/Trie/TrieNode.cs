@@ -84,19 +84,12 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
 
     internal TrieNode<TKey, TValue> GetChildOrNull(TKey key)
     {
-        return TryGetChild(key, out var childNode)
+        return _childrenDictionary.TryGetValue(key, out var childNode)
             ? childNode
             : null;
     }
 
-    internal bool TryGetChild(TKey key, out TrieNode<TKey, TValue> child)
-    {
-        ArgumentNullException.ThrowIfNull(key);
-
-        return _childrenDictionary.TryGetValue(key, out child);
-    }
-
-    protected TrieNode<TKey, TValue> GetChildOrNull(IList<TKey> query, int position)
+    private TrieNode<TKey, TValue> GetChildOrNull(IList<TKey> query, int position)
     {
         return GetChildOrNull(query[position]);
     }

@@ -66,7 +66,7 @@ public class TrieWalker<TKey, TValue>(Trie<TKey, TValue> trie) where TKey : ICom
         {
             foreach (var combination in path)
             {
-                if (node.TryGetChild((TKey)combination, out var child))
+                if (node.ChildrenDictionary.TryGetValue((TKey)combination, out var child))
                 {
                     node = child;
                     continue;
