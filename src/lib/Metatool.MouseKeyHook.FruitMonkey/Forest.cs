@@ -28,7 +28,7 @@ public class Forest(IKeyTipNotifier notify): IForest
         return keyStateTree;
     }
 
-    public void DisableChord(Chord chord, string stateTree = null)
+    public void DisableChord(Chord chord, string? stateTree = null)
     {
         if (stateTree == null)
         {
@@ -42,7 +42,7 @@ public class Forest(IKeyTipNotifier notify): IForest
         tre.DisableChord(chord);
     }
 
-    public void EnableChord(Chord chord, string stateTree = null)
+    public void EnableChord(Chord chord, string? stateTree = null)
     {
         if (stateTree == null)
         {
@@ -62,7 +62,7 @@ public class Forest(IKeyTipNotifier notify): IForest
         return keyStateTree.Add(combinations, command);
     }
 
-    public bool Contains(IHotkey hotKey, string stateTree = null)
+    public bool Contains(IHotkey hotKey, string? stateTree = null)
     {
         if (stateTree == null)
         {

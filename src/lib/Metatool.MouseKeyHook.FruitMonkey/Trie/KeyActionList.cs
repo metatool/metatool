@@ -1,10 +1,11 @@
-﻿using System.ComponentModel;
-using Metatool.Input.MouseKeyHook.Implementation;
+﻿using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service.MouseKey;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
-internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEventCommand
+internal class KeyActionList<TValue> : ObservableCollection<TValue> where TValue : KeyEventCommand
 {
     public IEnumerable<KeyCommand> this[KeyEventType keyEventType]
     {
@@ -25,7 +26,7 @@ internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEve
     }
 
     private bool _refresh = true;
-    private IEnumerable<KeyCommand> _down;
+    private IEnumerable<KeyCommand>? _down;
 
     public IEnumerable<KeyCommand> Down
     {
@@ -38,7 +39,7 @@ internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEve
         }
     }
 
-    private IEnumerable<KeyCommand> _up;
+    private IEnumerable<KeyCommand>? _up;
 
     public IEnumerable<KeyCommand> Up
     {
@@ -51,7 +52,7 @@ internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEve
         }
     }
 
-    private IEnumerable<KeyCommand> _allUp;
+    private IEnumerable<KeyCommand>? _allUp;
 
     public IEnumerable<KeyCommand> AllUp
     {
@@ -64,9 +65,9 @@ internal class KeyActionList<TValue> : BindingList<TValue> where TValue : KeyEve
         }
     }
 
-    protected override void OnListChanged(ListChangedEventArgs e)
+    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
     {
-        base.OnListChanged(e);
+        base.OnCollectionChanged(e);
         _refresh = true;
     }
 }
