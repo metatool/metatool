@@ -118,7 +118,7 @@ public partial class KeyStateTree
         var downInChord = false;
 
         var type = eventTypeType;
-        var candidateNode = _trie.GetChildOrNull((ICombination acc, ICombination combination) =>
+        var candidateNode = _trie.CurrentNode.GetChildOrNull((ICombination acc, ICombination combination) =>
         {
             if (_disabledChords.Contains(combination.Chord)) return acc;
             // mark down_in_chord and continue try to find trigger
@@ -188,7 +188,7 @@ public partial class KeyStateTree
                 }
 
                 // on path, up
-                if (_trie.CurrentChildrenCount == 0)
+                if (_trie.CurrentNode.ChildrenDictionary.Count == 0)
                 {
                     // NoChild & NotOnRoot:
                     //   KeyInChord_up : A+B when A_up.
@@ -285,9 +285,9 @@ public partial class KeyStateTree
             case KeyEventType.Up:
                 {
                     // only navigate on up/AllUp event
-                    _trie.GoToChild(candidateNode);
+                    _trie.CurrentNode = candidateNode;
 
-                    if (candidateNode.ChildrenCount == 0)
+                    if (candidateNode.ChildrenDictionary.Count == 0)
                     {
                         if (actionList[KeyEventType.AllUp].Any())
                         {
@@ -313,9 +313,9 @@ public partial class KeyStateTree
                     return ProcessState;
                 }
 
-                _trie.GoToChild(candidateNode);
+                _trie.CurrentNode = candidateNode;
 
-                if (candidateNode.ChildrenCount == 0)
+                if (candidateNode.ChildrenDictionary.Count == 0)
                 {
                     Reset();
                     _notify?.CloseKeysTip(Name);

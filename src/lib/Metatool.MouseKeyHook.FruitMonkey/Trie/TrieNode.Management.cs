@@ -1,62 +1,66 @@
 ﻿namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
-public partial class TrieNode<TKey, TValue> 
+public partial class TrieNode<TKey, TValue>
 {
-	public void Add(IList<TKey> query, int position, TValue value)
-	{
+    public void Add(IList<TKey> query, int position, TValue value)
+    {
         ArgumentNullException.ThrowIfNull(query);
+        //ArgumentOutOfRangeException.th
 
         if (OutOfKeySequence(position, query))
-		{
+        {
             _values.Add(value);
             return;
-		}
+        }
 
-		var child = GetOrCreateChild(query[position]);
-		child.Add(query, position + 1, value);
-	}
+        var child = GetOrCreateChild(query[position]);
+        child.Add(query, position + 1, value);
+    }
 
-	internal TrieNode<TKey, TValue> CleanPath(IList<TKey> query, int position)
-	{
+    internal void CleanPath(IList<TKey> query, int position)
+    {
         ArgumentNullException.ThrowIfNull(query);
 
         TrieNode<TKey, TValue>? candidate = null;
-		TrieNode<TKey, TValue> parent = null;
-		var key = default(TKey);
 
-		do
-		{
-			if (IsRemovable(query, position) && candidate == null)
-			{
-				candidate = GetChildOrNull(query[position]);
-				parent = this;
-				key = query[position];
-			}
-			else
-				candidate = null;
+        var key = default(TKey);
 
-		} while (!OutOfKeySequence(position++, query));
+        do
+        {
+            var isRemovable = _values.Count == 0 && (
+                   position < query.Count && _childrenDictionary.Count == 1 &&  _childrenDictionary.ContainsKey(query[position]) ||
+                   position == query.Count && _childrenDictionary.Count == 0
+               );
 
-		if (candidate != null)
-		{
-			parent._childrenDictionary.Remove(key);
+            if (isRemovable && candidate == null)
+            {
+                candidate = GetChildOrNull(query[position]);
+                key = query[position];
+            }
+            else
+                candidate = null;
+
+        } while (!OutOfKeySequence(position++, query));
+
+        if (candidate?.Parent != null)
+        {
+            candidate.Parent._childrenDictionary.Remove(key!);
         }
 
-		return candidate;
-	}
+    }
 
-	internal bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
-	{
+    internal bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
+    {
         ArgumentNullException.ThrowIfNull(query);
 
         if (OutOfKeySequence(position, query))
-		{
-			return RemoveValue(predicate);
-		}
+        {
+            return RemoveValue(predicate);
+        }
 
-		var node = GetChildOrNull(query[position]);
-		return node != null && node.Remove(query, position + 1, predicate);
-	}
+        var node = GetChildOrNull(query[position]);
+        return node != null && node.Remove(query, position + 1, predicate);
+    }
 
     private bool RemoveValue(Predicate<TValue> predicate)
     {
@@ -85,33 +89,34 @@ public partial class TrieNode<TKey, TValue>
         return child;
     }
 
-    internal  IEnumerable<TValue> Get(IList<TKey> query, int position)
-	{
-		return OutOfKeySequence(position, query)
-			? ValuesDeep()
-			: SearchDeep(query, position);
-	}
+    internal IEnumerable<TValue> Get(IList<TKey> query, int position)
+    {
+        return OutOfKeySequence(position, query)
+            ? AllSubtreeValues()
+            : SearchDeep(query, position);
+    }
 
     private IEnumerable<TValue> SearchDeep(IList<TKey> query, int position)
-	{
-		var nextNode = GetChildOrNull(query[position]);
-		return nextNode != null
-			? nextNode.Get(query, position + 1)
-			: [];
-	}
+    {
+        var nextNode = GetChildOrNull(query[position]);
 
-	private static bool OutOfKeySequence(int position, ICollection<TKey> query)
-	{
-		return position >= query.Count;
-	}
+        return nextNode != null
+            ? nextNode.Get(query, position + 1)
+            : [];
+    }
 
-	private IEnumerable<TValue> ValuesDeep()
-	{
-		return Subtree().SelectMany(node => node.Values);
-	}
+    private static bool OutOfKeySequence(int position, ICollection<TKey> query)
+    {
+        return position >= query.Count;
+    }
 
-    private IEnumerable<TrieNode<TKey, TValue>> Subtree()
-	{
-		return Enumerable.Repeat(this, 1).Concat(Children.SelectMany(child => child.Subtree()));
-	}
+    private IEnumerable<TValue> AllSubtreeValues()
+    {
+        return AllSubtreeNodes().SelectMany(node => node.Values);
+    }
+
+    private IEnumerable<TrieNode<TKey, TValue>> AllSubtreeNodes()
+    {
+        return Enumerable.Repeat(this, 1).Concat(ChildrenDictionary.Values.SelectMany(child => child.AllSubtreeNodes()));
+    }
 }

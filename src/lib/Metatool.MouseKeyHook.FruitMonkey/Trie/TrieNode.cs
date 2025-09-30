@@ -12,17 +12,13 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
     }
 
     public TKey Key { get; }
-    public TrieNode<TKey, TValue>? Parent { get; private set; }
+    public TrieNode<TKey, TValue>? Parent { get;}
 
     private readonly IList<TValue> _values = new KeyActionList<TValue>();
     protected internal IEnumerable<TValue> Values => _values;
 
     private readonly Dictionary<TKey, TrieNode<TKey, TValue>> _childrenDictionary = [];
     internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenDictionary => _childrenDictionary;
-
-    protected IEnumerable<TrieNode<TKey, TValue>> Children => _childrenDictionary.Values;
-
-    protected internal int ChildrenCount => _childrenDictionary.Count;
 
     private IKeyPath? _keyPath;
     public IKeyPath KeyPath
@@ -31,13 +27,13 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
         {
             if (_keyPath != null) return _keyPath;
 
-            if (Key == null || Parent == null)
+            if (Key == null) // root, Parent == null too
                 return null;
 
             _keyPath = new Sequence(
-                Parent.Key == null
+                Parent!.Key == null
                 ? [Key]
-                : [.. Parent.KeyPath, Key]
+                : [..Parent.KeyPath, Key]
             );
 
             return _keyPath;
@@ -46,9 +42,9 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
 
     public override string ToString()
     {
-        return Key == null || Parent == null ?
+        return Key == null ? // || Parent == null too
             "Root" :
-            Parent.Key == null ?
+            Parent!.Key == null ?
                 $"{Key}" :
                 $"{Parent.Key}, {Key}";
     }
@@ -70,14 +66,7 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
             )
         );
 
-    protected bool IsRemovable(IList<TKey> query, int position)
-    {
-        return position < query.Count && _childrenDictionary.Count == 1 && _values.Count == 0 &&
-               _childrenDictionary.ContainsKey(query[position]) ||
-               position == query.Count && _values.Count == 0 && _childrenDictionary.Count == 0;
-    }
-
-    internal TrieNode<TKey, TValue>? GetChildOrNull(TKey initKey, Func<TKey, TKey, TKey> aggregateFunc)
+    internal TrieNode<TKey, TValue>? GetChildOrNull( Func<TKey, TKey, TKey> aggregateFunc, TKey initKey = default(TKey))
     {
         var key = _childrenDictionary.Keys.Aggregate(initKey, aggregateFunc);
 
