@@ -11,20 +11,20 @@ namespace Metatool.Service.MouseKey;
 // [DebuggerDisplay("{this}")]
 public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, ISequencable
 {
-    private SortedSet<KeyValues> _codes;
+    private SortedSet<KeyCodes> _codes;
     private int _val;
 
-    public SortedSet<KeyValues> Codes
+    public SortedSet<KeyCodes> Codes
     {
         get => _codes;
         private set
         {
             _codes = value;
-            _val = value.Aggregate<KeyValues, int>(0, (o, c1) => o + (int)c1);
+            _val = value.Aggregate<KeyCodes, int>(0, (o, c1) => o + (int)c1);
         }
     }
 
-    public Key(params KeyValues[] keyCodes)
+    public Key(params KeyCodes[] keyCodes)
     {
         Codes = new(keyCodes);
     }

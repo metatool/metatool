@@ -138,15 +138,15 @@ public partial class Keyboard
                 handled   = true;
                 e.Handled = true;
                 if (isAsync) e.NoFurtherProcess = true;
-                if (combination.TriggerKey == KeyValues.LButton)
+                if (combination.TriggerKey == KeyCodes.LButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.LeftDown());
                 }
-                else if (combination.TriggerKey == KeyValues.RButton)
+                else if (combination.TriggerKey == KeyCodes.RButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.RightDown());
                 }
-                else if (combination.TriggerKey == KeyValues.MButton)
+                else if (combination.TriggerKey == KeyCodes.MButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.MiddleDown());
                 }
@@ -160,16 +160,16 @@ public partial class Keyboard
                 handled   = false;
                 e.Handled = true;
                 if (isAsync) e.NoFurtherProcess = true;
-                if (combination.TriggerKey == KeyValues.LButton)
+                if (combination.TriggerKey == KeyCodes.LButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.LeftUp());
                 }
 
-                else if (combination.TriggerKey == KeyValues.RButton)
+                else if (combination.TriggerKey == KeyCodes.RButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.RightUp());
                 }
-                else if (combination.TriggerKey == KeyValues.MButton)
+                else if (combination.TriggerKey == KeyCodes.MButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.MiddleUp());
                 }

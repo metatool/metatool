@@ -16,19 +16,19 @@ public partial class Keyboard
             switch (key)
             {
                 case Key k:
-                    InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyValues)k);
+                    InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyCodes)k);
                     break;
                 case ICombination combination:
                     InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                        combination.Chord.Select(k => (VirtualKeyCode)(KeyValues)k),
-                        (VirtualKeyCode)(KeyValues)combination.TriggerKey);
+                        combination.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
+                        (VirtualKeyCode)(KeyCodes)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                     {
                         foreach (var comb in sequence)
                         {
                             InputSimu.Inst.Keyboard.ModifiedKeyStroke(comb.Chord.Cast<VirtualKeyCode>(),
-                                (VirtualKeyCode)(KeyValues)comb.TriggerKey);
+                                (VirtualKeyCode)(KeyCodes)comb.TriggerKey);
                         }
 
                         break;
@@ -46,19 +46,19 @@ public partial class Keyboard
             switch (key)
             {
                 case Key k:
-                    InputSimu.Inst.Keyboard.KeyDown((VirtualKeyCode)(KeyValues)k);
+                    InputSimu.Inst.Keyboard.KeyDown((VirtualKeyCode)(KeyCodes)k);
                     break;
                 case ICombination combination:
                     InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                        combination.Chord.Select(k => (VirtualKeyCode)(KeyValues)k),
-                        (VirtualKeyCode)(KeyValues)combination.TriggerKey);
+                        combination.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
+                        (VirtualKeyCode)(KeyCodes)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                     {
                         foreach (var comb in sequence)
                         {
-                            InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Select(k => (VirtualKeyCode)(KeyValues)k),
-                                (VirtualKeyCode)(KeyValues)comb.TriggerKey);
+                            InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
+                                (VirtualKeyCode)(KeyCodes)comb.TriggerKey);
                         }
 
                         break;
@@ -75,18 +75,18 @@ public partial class Keyboard
             switch (key)
             {
                 case Key k:
-                    InputSimu.Inst.Keyboard.KeyUp((VirtualKeyCode)(KeyValues)k);
+                    InputSimu.Inst.Keyboard.KeyUp((VirtualKeyCode)(KeyCodes)k);
                     break;
                 case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Select(k => (VirtualKeyCode)(KeyValues)k),
-                        (VirtualKeyCode)(KeyValues)combination.TriggerKey);
+                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
+                        (VirtualKeyCode)(KeyCodes)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                     {
                         foreach (var comb in sequence)
                         {
-                            InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Select(k => (VirtualKeyCode)(KeyValues)k),
-                                (VirtualKeyCode)(KeyValues)comb.TriggerKey);
+                            InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
+                                (VirtualKeyCode)(KeyCodes)comb.TriggerKey);
                         }
 
                         break;

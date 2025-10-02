@@ -9,7 +9,7 @@ public partial class Combination
 		return sequence;
 	}
 
-	public ISequence Then(KeyValues key)
+	public ISequence Then(KeyCodes key)
 	{
 		return this.Then(new Combination(key));
 	}

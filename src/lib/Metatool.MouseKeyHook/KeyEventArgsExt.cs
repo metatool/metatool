@@ -84,9 +84,9 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 
 	private Key _key;
     public  Key Key => _key??=new Key(KeyValues);
-    public KeyValues KeyValues => KeyData.ToKeyValues();
+    public KeyCodes KeyValues => KeyData.ToKeyValues();
 
-    public new KeyValues KeyCode => base.KeyCode.ToKeyValues();
+    public new KeyCodes KeyCode => base.KeyCode.ToKeyValues();
 
     /// <summary>
 	/// is it from the keyboard simulator?

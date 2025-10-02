@@ -9,5 +9,5 @@ public interface ICombination :IKeyPath, ISequencable, ICombinable, ISequenceUni
 	int ChordLength { get; }
 	IEnumerable<Key> AllKeys { get; }
 
-	bool IsAnyKey(KeyValues key);
+	bool IsAnyKey(KeyCodes key);
 }

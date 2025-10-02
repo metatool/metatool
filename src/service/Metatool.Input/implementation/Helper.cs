@@ -18,12 +18,12 @@ internal class Helper
 		var shift     = (vkKeyScan & 0x100) > 0;
 		var ctrl      = (vkKeyScan & 0x200) > 0;
 		var alt       = (vkKeyScan & 0x400) > 0;
-		var chords = new List<KeyValues>();
-		if(ctrl) chords.Add(KeyValues.ControlKey);
-		if (shift) chords.Add(KeyValues.ShiftKey);
-		if (alt) chords.Add(KeyValues.Menu);
+		var chords = new List<KeyCodes>();
+		if(ctrl) chords.Add(KeyCodes.ControlKey);
+		if (shift) chords.Add(KeyCodes.ShiftKey);
+		if (alt) chords.Add(KeyCodes.Menu);
 
-		return new Combination((KeyValues)vkCode, chords);
+		return new Combination((KeyCodes)vkCode, chords);
 
 	}
 }

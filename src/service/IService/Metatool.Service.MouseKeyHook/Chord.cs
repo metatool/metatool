@@ -14,7 +14,7 @@ public class Chord : IEnumerable<Key>
         _keys = chordKeys.OrderBy(k => k).ToArray();
     }
 
-    internal Chord(IEnumerable<KeyValues> chordKeys) : this(chordKeys.Select(k => new Key(k)))
+    internal Chord(IEnumerable<KeyCodes> chordKeys) : this(chordKeys.Select(k => new Key(k)))
     {
     }
 
@@ -39,7 +39,7 @@ public class Chord : IEnumerable<Key>
     {
         var parts = chord
             .Split('+')
-            .Select(Enum.Parse<KeyValues>);
+            .Select(Enum.Parse<KeyCodes>);
 
         return new Chord(parts);
     }

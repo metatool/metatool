@@ -89,10 +89,10 @@ internal static class KeyboardNativeMethods
 		var currentKeyboardState = keyboardState.GetNativeState();
 		var isDead = false;
 
-		if (keyboardState.IsDown(KeyValues.ShiftKey))
+		if (keyboardState.IsDown(KeyCodes.ShiftKey))
 			currentKeyboardState[(byte) Keys.ShiftKey] = 0x80;
 
-		if (keyboardState.IsToggled(KeyValues.CapsLock))
+		if (keyboardState.IsToggled(KeyCodes.CapsLock))
 			currentKeyboardState[(byte) Keys.CapsLock] = 0x01;
 
 		var relevantChars = ToUnicodeEx(virtualKeyCode, scanCode, currentKeyboardState, pwszBuff, pwszBuff.Capacity,

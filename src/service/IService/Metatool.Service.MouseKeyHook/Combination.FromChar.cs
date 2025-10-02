@@ -6,119 +6,119 @@ public partial class Combination
 {
     public Combination(char key): this(CharToKeyMap[key]) { }
 
-    private Combination((KeyValues trigger, KeyValues[] chord) keyTuple):this(keyTuple.trigger, keyTuple.chord){}
+    private Combination((KeyCodes trigger, KeyCodes[] chord) keyTuple):this(keyTuple.trigger, keyTuple.chord){}
 
-    private static readonly Dictionary<char, (KeyValues trigger, KeyValues[] chord)> CharToKeyMap = new ()
+    private static readonly Dictionary<char, (KeyCodes trigger, KeyCodes[] chord)> CharToKeyMap = new ()
     {
         // Letters (lowercase - no modifiers needed)
-        { 'a', (KeyValues.A,[])}, { 'b', (KeyValues.B,[])}, { 'c', (KeyValues.C,[])}, { 'd', (KeyValues.D,[])},
-        { 'e', (KeyValues.E,[])}, { 'f', (KeyValues.F,[])}, { 'g', (KeyValues.G,[])}, { 'h', (KeyValues.H,[])},
-        { 'i', (KeyValues.I,[])}, { 'j', (KeyValues.J,[])}, { 'k', (KeyValues.K,[])}, { 'l', (KeyValues.L,[])},
-        { 'm', (KeyValues.M,[])}, { 'n', (KeyValues.N,[])}, { 'o', (KeyValues.O,[])}, { 'p', (KeyValues.P,[])},
-        { 'q', (KeyValues.Q,[])}, { 'r', (KeyValues.R,[])}, { 's', (KeyValues.S,[])}, { 't', (KeyValues.T,[])},
-        { 'u', (KeyValues.U,[])}, { 'v', (KeyValues.V,[])}, { 'w', (KeyValues.W,[])}, { 'x', (KeyValues.X,[])},
-        { 'y', (KeyValues.Y,[])}, { 'z', (KeyValues.Z,[])},
+        { 'a', (KeyCodes.A,[])}, { 'b', (KeyCodes.B,[])}, { 'c', (KeyCodes.C,[])}, { 'd', (KeyCodes.D,[])},
+        { 'e', (KeyCodes.E,[])}, { 'f', (KeyCodes.F,[])}, { 'g', (KeyCodes.G,[])}, { 'h', (KeyCodes.H,[])},
+        { 'i', (KeyCodes.I,[])}, { 'j', (KeyCodes.J,[])}, { 'k', (KeyCodes.K,[])}, { 'l', (KeyCodes.L,[])},
+        { 'm', (KeyCodes.M,[])}, { 'n', (KeyCodes.N,[])}, { 'o', (KeyCodes.O,[])}, { 'p', (KeyCodes.P,[])},
+        { 'q', (KeyCodes.Q,[])}, { 'r', (KeyCodes.R,[])}, { 's', (KeyCodes.S,[])}, { 't', (KeyCodes.T,[])},
+        { 'u', (KeyCodes.U,[])}, { 'v', (KeyCodes.V,[])}, { 'w', (KeyCodes.W,[])}, { 'x', (KeyCodes.X,[])},
+        { 'y', (KeyCodes.Y,[])}, { 'z', (KeyCodes.Z,[])},
 
         // Letters (uppercase - shift required)
-        { 'A', (KeyValues.A, [KeyValues.Shift])}, { 'B', (KeyValues.B, [KeyValues.Shift])},
-        { 'C', (KeyValues.C, [KeyValues.Shift])},
-        { 'D', (KeyValues.D, [KeyValues.Shift])}, { 'E', (KeyValues.E, [KeyValues.Shift])},
-        { 'F', (KeyValues.F, [KeyValues.Shift])},
-        { 'G', (KeyValues.G, [KeyValues.Shift])}, { 'H', (KeyValues.H, [KeyValues.Shift])},
-        { 'I', (KeyValues.I, [KeyValues.Shift])},
-        { 'J', (KeyValues.J, [KeyValues.Shift])}, { 'K', (KeyValues.K, [KeyValues.Shift])},
-        { 'L', (KeyValues.L, [KeyValues.Shift])},
-        { 'M', (KeyValues.M, [KeyValues.Shift])}, { 'N', (KeyValues.N, [KeyValues.Shift])},
-        { 'O', (KeyValues.O, [KeyValues.Shift])},
-        { 'P', (KeyValues.P, [KeyValues.Shift])}, { 'Q', (KeyValues.Q, [KeyValues.Shift])},
-        { 'R', (KeyValues.R, [KeyValues.Shift])},
-        { 'S', (KeyValues.S, [KeyValues.Shift])}, { 'T', (KeyValues.T, [KeyValues.Shift])},
-        { 'U', (KeyValues.U, [KeyValues.Shift])},
-        { 'V', (KeyValues.V, [KeyValues.Shift])}, { 'W', (KeyValues.W, [KeyValues.Shift])},
-        { 'X', (KeyValues.X, [KeyValues.Shift])},
-        { 'Y', (KeyValues.Y, [KeyValues.Shift])}, { 'Z', (KeyValues.Z, [KeyValues.Shift])},
+        { 'A', (KeyCodes.A, [KeyCodes.Shift])}, { 'B', (KeyCodes.B, [KeyCodes.Shift])},
+        { 'C', (KeyCodes.C, [KeyCodes.Shift])},
+        { 'D', (KeyCodes.D, [KeyCodes.Shift])}, { 'E', (KeyCodes.E, [KeyCodes.Shift])},
+        { 'F', (KeyCodes.F, [KeyCodes.Shift])},
+        { 'G', (KeyCodes.G, [KeyCodes.Shift])}, { 'H', (KeyCodes.H, [KeyCodes.Shift])},
+        { 'I', (KeyCodes.I, [KeyCodes.Shift])},
+        { 'J', (KeyCodes.J, [KeyCodes.Shift])}, { 'K', (KeyCodes.K, [KeyCodes.Shift])},
+        { 'L', (KeyCodes.L, [KeyCodes.Shift])},
+        { 'M', (KeyCodes.M, [KeyCodes.Shift])}, { 'N', (KeyCodes.N, [KeyCodes.Shift])},
+        { 'O', (KeyCodes.O, [KeyCodes.Shift])},
+        { 'P', (KeyCodes.P, [KeyCodes.Shift])}, { 'Q', (KeyCodes.Q, [KeyCodes.Shift])},
+        { 'R', (KeyCodes.R, [KeyCodes.Shift])},
+        { 'S', (KeyCodes.S, [KeyCodes.Shift])}, { 'T', (KeyCodes.T, [KeyCodes.Shift])},
+        { 'U', (KeyCodes.U, [KeyCodes.Shift])},
+        { 'V', (KeyCodes.V, [KeyCodes.Shift])}, { 'W', (KeyCodes.W, [KeyCodes.Shift])},
+        { 'X', (KeyCodes.X, [KeyCodes.Shift])},
+        { 'Y', (KeyCodes.Y, [KeyCodes.Shift])}, { 'Z', (KeyCodes.Z, [KeyCodes.Shift])},
 
         // Numbers (no modifiers needed)
-        { '0', (KeyValues.D0,[])}, { '1', (KeyValues.D1,[])}, { '2', (KeyValues.D2,[])}, { '3', (KeyValues.D3,[])},
-        { '4', (KeyValues.D4,[])}, { '5', (KeyValues.D5,[])}, { '6', (KeyValues.D6,[])}, { '7', (KeyValues.D7,[])},
-        { '8', (KeyValues.D8,[])}, { '9', (KeyValues.D9,[])},
+        { '0', (KeyCodes.D0,[])}, { '1', (KeyCodes.D1,[])}, { '2', (KeyCodes.D2,[])}, { '3', (KeyCodes.D3,[])},
+        { '4', (KeyCodes.D4,[])}, { '5', (KeyCodes.D5,[])}, { '6', (KeyCodes.D6,[])}, { '7', (KeyCodes.D7,[])},
+        { '8', (KeyCodes.D8,[])}, { '9', (KeyCodes.D9,[])},
 
         // Symbols that require Shift
-        { '!', (KeyValues.D1, [KeyValues.Shift])}, // Shift + 1
-        { '@', (KeyValues.D2, [KeyValues.Shift])}, // Shift + 2
-        { '#', (KeyValues.D3, [KeyValues.Shift])}, // Shift + 3
-        { '$', (KeyValues.D4, [KeyValues.Shift])}, // Shift + 4
-        { '%', (KeyValues.D5, [KeyValues.Shift])}, // Shift + 5
-        { '^', (KeyValues.D6, [KeyValues.Shift])}, // Shift + 6
-        { '&', (KeyValues.D7, [KeyValues.Shift])}, // Shift + 7
-        { '*', (KeyValues.D8, [KeyValues.Shift])}, // Shift + 8
-        { '(', (KeyValues.D9, [KeyValues.Shift])}, // Shift + 9
-        { ')', (KeyValues.D0, [KeyValues.Shift])}, // Shift + 0
+        { '!', (KeyCodes.D1, [KeyCodes.Shift])}, // Shift + 1
+        { '@', (KeyCodes.D2, [KeyCodes.Shift])}, // Shift + 2
+        { '#', (KeyCodes.D3, [KeyCodes.Shift])}, // Shift + 3
+        { '$', (KeyCodes.D4, [KeyCodes.Shift])}, // Shift + 4
+        { '%', (KeyCodes.D5, [KeyCodes.Shift])}, // Shift + 5
+        { '^', (KeyCodes.D6, [KeyCodes.Shift])}, // Shift + 6
+        { '&', (KeyCodes.D7, [KeyCodes.Shift])}, // Shift + 7
+        { '*', (KeyCodes.D8, [KeyCodes.Shift])}, // Shift + 8
+        { '(', (KeyCodes.D9, [KeyCodes.Shift])}, // Shift + 9
+        { ')', (KeyCodes.D0, [KeyCodes.Shift])}, // Shift + 0
 
-        { '_', (KeyValues.OemMinus, [KeyValues.Shift])}, // Shift + -
-        { '+', (KeyValues.Oemplus, [KeyValues.Shift])}, // Shift + =
-        { '|', (KeyValues.OemBackslash, [KeyValues.Shift])}, // Shift + \
-        { '~', (KeyValues.Oemtilde, [KeyValues.Shift])}, // Shift + `
-        { '{', (KeyValues.OemOpenBrackets, [KeyValues.Shift])}, // Shift + [
-        { '}', (KeyValues.OemCloseBrackets, [KeyValues.Shift])}, // Shift + ]
-        { ':', (KeyValues.OemSemicolon, [KeyValues.Shift])}, // Shift + ;
-        { '"', (KeyValues.OemQuotes, [KeyValues.Shift])}, // Shift + '
-        { '<', (KeyValues.Oemcomma, [KeyValues.Shift])}, // Shift + ,
-        { '>', (KeyValues.OemPeriod, [KeyValues.Shift])}, // Shift + .
-        { '?', (KeyValues.OemQuestion, [KeyValues.Shift])}, // Shift + /
+        { '_', (KeyCodes.OemMinus, [KeyCodes.Shift])}, // Shift + -
+        { '+', (KeyCodes.Oemplus, [KeyCodes.Shift])}, // Shift + =
+        { '|', (KeyCodes.OemBackslash, [KeyCodes.Shift])}, // Shift + \
+        { '~', (KeyCodes.Oemtilde, [KeyCodes.Shift])}, // Shift + `
+        { '{', (KeyCodes.OemOpenBrackets, [KeyCodes.Shift])}, // Shift + [
+        { '}', (KeyCodes.OemCloseBrackets, [KeyCodes.Shift])}, // Shift + ]
+        { ':', (KeyCodes.OemSemicolon, [KeyCodes.Shift])}, // Shift + ;
+        { '"', (KeyCodes.OemQuotes, [KeyCodes.Shift])}, // Shift + '
+        { '<', (KeyCodes.Oemcomma, [KeyCodes.Shift])}, // Shift + ,
+        { '>', (KeyCodes.OemPeriod, [KeyCodes.Shift])}, // Shift + .
+        { '?', (KeyCodes.OemQuestion, [KeyCodes.Shift])}, // Shift + /
 
         // Symbols that don't require modifiers
-        { '-', (KeyValues.OemMinus,[])},
-        { '=', (KeyValues.Oemplus,[])},
-        { '\\', (KeyValues.OemBackslash,[])},
-        { '`', (KeyValues.Oemtilde,[])},
-        { '[', (KeyValues.OemOpenBrackets,[])},
-        { ']', (KeyValues.OemCloseBrackets,[])},
-        { ';', (KeyValues.OemSemicolon,[])},
-        { '\'', (KeyValues.OemQuotes,[])},
-        { ',', (KeyValues.Oemcomma,[])},
-        { '.', (KeyValues.OemPeriod,[])},
-        { '/', (KeyValues.OemQuestion,[])},
+        { '-', (KeyCodes.OemMinus,[])},
+        { '=', (KeyCodes.Oemplus,[])},
+        { '\\', (KeyCodes.OemBackslash,[])},
+        { '`', (KeyCodes.Oemtilde,[])},
+        { '[', (KeyCodes.OemOpenBrackets,[])},
+        { ']', (KeyCodes.OemCloseBrackets,[])},
+        { ';', (KeyCodes.OemSemicolon,[])},
+        { '\'', (KeyCodes.OemQuotes,[])},
+        { ',', (KeyCodes.Oemcomma,[])},
+        { '.', (KeyCodes.OemPeriod,[])},
+        { '/', (KeyCodes.OemQuestion,[])},
 
         // Special keys
-        { ' ', (KeyValues.Space,[])},
-        { '\t', (KeyValues.Tab,[])},
-        { '\r', (KeyValues.Return,[])},
-        { '\n', (KeyValues.Return,[])},
-        { '\b', (KeyValues.Back,[])},
-        { '\x1b', (KeyValues.Escape,[])}, // ESC character
+        { ' ', (KeyCodes.Space,[])},
+        { '\t', (KeyCodes.Tab,[])},
+        { '\r', (KeyCodes.Return,[])},
+        { '\n', (KeyCodes.Return,[])},
+        { '\b', (KeyCodes.Back,[])},
+        { '\x1b', (KeyCodes.Escape,[])}, // ESC character
 
         // Control characters (Ctrl combinations)
-        { '\x01', (KeyValues.A, [KeyValues.Control])}, // Ctrl+A (SOH)
-        { '\x02', (KeyValues.B, [KeyValues.Control])}, // Ctrl+B (STX)
-        { '\x03', (KeyValues.C, [KeyValues.Control])}, // Ctrl+C (ETX)
-        { '\x04', (KeyValues.D, [KeyValues.Control])}, // Ctrl+D (EOT)
-        { '\x05', (KeyValues.E, [KeyValues.Control])}, // Ctrl+E (ENQ)
-        { '\x06', (KeyValues.F, [KeyValues.Control])}, // Ctrl+F (ACK)
-        { '\x07', (KeyValues.G, [KeyValues.Control])}, // Ctrl+G (BEL)
+        { '\x01', (KeyCodes.A, [KeyCodes.Control])}, // Ctrl+A (SOH)
+        { '\x02', (KeyCodes.B, [KeyCodes.Control])}, // Ctrl+B (STX)
+        { '\x03', (KeyCodes.C, [KeyCodes.Control])}, // Ctrl+C (ETX)
+        { '\x04', (KeyCodes.D, [KeyCodes.Control])}, // Ctrl+D (EOT)
+        { '\x05', (KeyCodes.E, [KeyCodes.Control])}, // Ctrl+E (ENQ)
+        { '\x06', (KeyCodes.F, [KeyCodes.Control])}, // Ctrl+F (ACK)
+        { '\x07', (KeyCodes.G, [KeyCodes.Control])}, // Ctrl+G (BEL)
         // { '\x08', (KeyValues.H, [KeyValues.Control])}, // Ctrl+H (BS) - same as backspace \b
         // '\x09' is Tab, handled above
         // { '\x0A', (KeyValues.J, [KeyValues.Control])}, // Ctrl+J (LF)
-        { '\x0B', (KeyValues.K, [KeyValues.Control])}, // Ctrl+K (VT)
-        { '\x0C', (KeyValues.L, [KeyValues.Control])}, // Ctrl+L (FF)
+        { '\x0B', (KeyCodes.K, [KeyCodes.Control])}, // Ctrl+K (VT)
+        { '\x0C', (KeyCodes.L, [KeyCodes.Control])}, // Ctrl+L (FF)
         // '\x0D' is Enter, handled above
-        { '\x0E', (KeyValues.N, [KeyValues.Control])}, // Ctrl+N (SO)
-        { '\x0F', (KeyValues.O, [KeyValues.Control])}, // Ctrl+O (SI)
-        { '\x10', (KeyValues.P, [KeyValues.Control])}, // Ctrl+P (DLE)
-        { '\x11', (KeyValues.Q, [KeyValues.Control])}, // Ctrl+Q (DC1)
-        { '\x12', (KeyValues.R, [KeyValues.Control])}, // Ctrl+R (DC2)
-        { '\x13', (KeyValues.S, [KeyValues.Control])}, // Ctrl+S (DC3)
-        { '\x14', (KeyValues.T, [KeyValues.Control])}, // Ctrl+T (DC4)
-        { '\x15', (KeyValues.U, [KeyValues.Control])}, // Ctrl+U (NAK)
-        { '\x16', (KeyValues.V, [KeyValues.Control])}, // Ctrl+V (SYN)
-        { '\x17', (KeyValues.W, [KeyValues.Control])}, // Ctrl+W (ETB)
-        { '\x18', (KeyValues.X, [KeyValues.Control])}, // Ctrl+X (CAN)
-        { '\x19', (KeyValues.Y, [KeyValues.Control])}, // Ctrl+Y (EM)
-        { '\x1A', (KeyValues.Z, [KeyValues.Control])}, // Ctrl+Z (SUB)
+        { '\x0E', (KeyCodes.N, [KeyCodes.Control])}, // Ctrl+N (SO)
+        { '\x0F', (KeyCodes.O, [KeyCodes.Control])}, // Ctrl+O (SI)
+        { '\x10', (KeyCodes.P, [KeyCodes.Control])}, // Ctrl+P (DLE)
+        { '\x11', (KeyCodes.Q, [KeyCodes.Control])}, // Ctrl+Q (DC1)
+        { '\x12', (KeyCodes.R, [KeyCodes.Control])}, // Ctrl+R (DC2)
+        { '\x13', (KeyCodes.S, [KeyCodes.Control])}, // Ctrl+S (DC3)
+        { '\x14', (KeyCodes.T, [KeyCodes.Control])}, // Ctrl+T (DC4)
+        { '\x15', (KeyCodes.U, [KeyCodes.Control])}, // Ctrl+U (NAK)
+        { '\x16', (KeyCodes.V, [KeyCodes.Control])}, // Ctrl+V (SYN)
+        { '\x17', (KeyCodes.W, [KeyCodes.Control])}, // Ctrl+W (ETB)
+        { '\x18', (KeyCodes.X, [KeyCodes.Control])}, // Ctrl+X (CAN)
+        { '\x19', (KeyCodes.Y, [KeyCodes.Control])}, // Ctrl+Y (EM)
+        { '\x1A', (KeyCodes.Z, [KeyCodes.Control])}, // Ctrl+Z (SUB)
         // '\x1B' is Escape, handled above
-        { '\x1C', (KeyValues.OemBackslash, [KeyValues.Control])}, // Ctrl+\ (FS)
-        { '\x1D', (KeyValues.OemCloseBrackets, [KeyValues.Control])}, // Ctrl+] (GS)
-        { '\x1E', (KeyValues.D6, [KeyValues.Shift, KeyValues.Control])}, // Ctrl+^ (RS)
-        { '\x1F', (KeyValues.OemMinus, [KeyValues.Shift, KeyValues.Control])}, // Ctrl+_ (US)
+        { '\x1C', (KeyCodes.OemBackslash, [KeyCodes.Control])}, // Ctrl+\ (FS)
+        { '\x1D', (KeyCodes.OemCloseBrackets, [KeyCodes.Control])}, // Ctrl+] (GS)
+        { '\x1E', (KeyCodes.D6, [KeyCodes.Shift, KeyCodes.Control])}, // Ctrl+^ (RS)
+        { '\x1F', (KeyCodes.OemMinus, [KeyCodes.Shift, KeyCodes.Control])}, // Ctrl+_ (US)
     };
 }

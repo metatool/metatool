@@ -6,7 +6,7 @@ namespace Metatool.Service.MouseKey;
 public partial class Key
 {
 
-	public static implicit operator Key(KeyValues key)
+	public static implicit operator Key(KeyCodes key)
 	{
 		return new Key(key);
 	}
@@ -16,7 +16,7 @@ public partial class Key
 		return new Combination(key);
 	}
 
-	public static explicit operator KeyValues(Key key)
+	public static explicit operator KeyCodes(Key key)
 	{
 		return key.Codes.First();
 	}
@@ -35,25 +35,25 @@ public partial class Key
 		return !Equals(keyB, keyA);
 	}
 
-	public static bool operator ==(Key keyA, KeyValues keyB)
+	public static bool operator ==(Key keyA, KeyCodes keyB)
 	{
 		if (keyA == null) return false;
 		return keyA.Equals(keyB);
 	}
 
-	public static bool operator !=(Key keyA, KeyValues keyB)
+	public static bool operator !=(Key keyA, KeyCodes keyB)
 	{
 		if (keyA == null) return true;
 		return !keyA.Equals(keyB);
 	}
-	public static bool operator ==(KeyValues keyA, Key keyB)
+	public static bool operator ==(KeyCodes keyA, Key keyB)
 	{
 		if (keyB == null) return false;
 
 		return keyB.Equals(keyA);
 	}
 
-	public static bool operator !=(KeyValues keyA, Key keyB)
+	public static bool operator !=(KeyCodes keyA, Key keyB)
 	{
 		if (keyB == null) return true;
 		return !keyB.Equals(keyA);
@@ -69,7 +69,7 @@ public partial class Key
 		return Codes.IsSupersetOf(key.Codes);
 	}
 
-	public bool Equals(KeyValues key)
+	public bool Equals(KeyCodes key)
 	{
 		return Codes.Contains(key);
 	}
@@ -108,7 +108,7 @@ public partial class Key
 		{
 			case Key k:
 				return IsEquals(k);
-			case KeyValues keys:
+			case KeyCodes keys:
 				return Equals(keys);
 			default:
 				return false;

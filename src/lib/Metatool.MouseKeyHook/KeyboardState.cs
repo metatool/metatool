@@ -41,7 +41,7 @@ public class KeyboardState : IKeyboardState
 			sb.Append(HandledDownKeys.ToString() + "|");
 		for (var i = 0; i < 256; i++)
 		{
-			var key = (KeyValues) i;
+			var key = (KeyCodes) i;
 			if (_keyboardStateNative[i] != 0)
 			{
 				if (IsDown(key)) sb.Append($"{key}↓ ");
@@ -77,7 +77,7 @@ public class KeyboardState : IKeyboardState
 	/// </summary>
 	/// <param name="key">Key (corresponds to the virtual code of the key)</param>
 	/// <returns><b>true</b> if key was down, <b>false</b> - if key was up.</returns>
-	public bool IsDown(KeyValues key)
+	public bool IsDown(KeyCodes key)
 	{
 		if (this != HandledDownKeys)
 		{
@@ -85,9 +85,9 @@ public class KeyboardState : IKeyboardState
 		}
 
 		if ((int) key < 256) return IsDownRaw(key);
-		if (key       == KeyValues.Alt) return IsDownRaw(KeyValues.LMenu)           || IsDownRaw(KeyValues.RMenu);
-		if (key       == KeyValues.Shift) return IsDownRaw(KeyValues.LShiftKey)     || IsDownRaw(KeyValues.RShiftKey);
-		if (key       == KeyValues.Control) return IsDownRaw(KeyValues.LControlKey) || IsDownRaw(KeyValues.RControlKey);
+		if (key       == KeyCodes.Alt) return IsDownRaw(KeyCodes.LMenu)           || IsDownRaw(KeyCodes.RMenu);
+		if (key       == KeyCodes.Shift) return IsDownRaw(KeyCodes.LShiftKey)     || IsDownRaw(KeyCodes.RShiftKey);
+		if (key       == KeyCodes.Control) return IsDownRaw(KeyCodes.LControlKey) || IsDownRaw(KeyCodes.RControlKey);
 		return false;
 	}
 
@@ -106,26 +106,26 @@ public class KeyboardState : IKeyboardState
 		return downKeys.Length > key.Codes.Count || downKeys.Any(k => !key.Codes.Contains(k));
 	}
 
-	public bool IsOtherDown(KeyValues key)
+	public bool IsOtherDown(KeyCodes key)
 	{
-		if (key == KeyValues.Alt) return IsOtherDown(Key.Alt);
-		if (key == KeyValues.Control) return IsOtherDown(Key.Ctrl);
-		if (key == KeyValues.Shift) return IsOtherDown(Key.Shift);
+		if (key == KeyCodes.Alt) return IsOtherDown(Key.Alt);
+		if (key == KeyCodes.Control) return IsOtherDown(Key.Ctrl);
+		if (key == KeyCodes.Shift) return IsOtherDown(Key.Shift);
 
 		var downKeys = AllDownKeys.ToArray();
 		return downKeys.Length > 1 || (downKeys.Length == 1 && downKeys[0] != key);
 	}
 
-	public IEnumerable<KeyValues> AllDownKeys
+	public IEnumerable<KeyCodes> AllDownKeys
 	{
 		get
 		{
-			IEnumerable<KeyValues> getDownKeys()
+			IEnumerable<KeyCodes> getDownKeys()
 			{
 				for (var i = 0; i < _keyboardStateNative.Length; i++)
 				{
 					if (GetHighBit(_keyboardStateNative[i]))
-						yield return (KeyValues) i;
+						yield return (KeyCodes) i;
 				}
 			}
 
@@ -138,7 +138,7 @@ public class KeyboardState : IKeyboardState
 	public IEnumerable<Key> DownKeys => AllDownKeys.Select(k => new Key(k));
 
 
-	public bool IsUp(KeyValues key)
+	public bool IsUp(KeyCodes key)
 	{
 		if (this != HandledDownKeys)
 		{
@@ -146,9 +146,9 @@ public class KeyboardState : IKeyboardState
 		}
 
 		if ((int) key < 256) return IsUpRaw(key);
-		if (key       == KeyValues.Alt) return IsUpRaw(KeyValues.LMenu)           || IsUpRaw(KeyValues.RMenu);
-		if (key       == KeyValues.Shift) return IsUpRaw(KeyValues.LShiftKey)     || IsUpRaw(KeyValues.RShiftKey);
-		if (key       == KeyValues.Control) return IsUpRaw(KeyValues.LControlKey) || IsUpRaw(KeyValues.RControlKey);
+		if (key       == KeyCodes.Alt) return IsUpRaw(KeyCodes.LMenu)           || IsUpRaw(KeyCodes.RMenu);
+		if (key       == KeyCodes.Shift) return IsUpRaw(KeyCodes.LShiftKey)     || IsUpRaw(KeyCodes.RShiftKey);
+		if (key       == KeyCodes.Control) return IsUpRaw(KeyCodes.LControlKey) || IsUpRaw(KeyCodes.RControlKey);
 		return false;
 	}
 
@@ -158,7 +158,7 @@ public class KeyboardState : IKeyboardState
 		return key.Codes.Any(IsUp);
 	}
 
-	internal void SetKeyUp(KeyValues key)
+	internal void SetKeyUp(KeyCodes key)
 	{
 		var virtualKeyCode = (int) key;
 		if (virtualKeyCode < 0 || virtualKeyCode > 255)
@@ -172,7 +172,7 @@ public class KeyboardState : IKeyboardState
 		}
 	}
 
-	internal void SetKeyDown(KeyValues key)
+	internal void SetKeyDown(KeyCodes key)
 	{
 		var virtualKeyCode = (int) key;
 		if (virtualKeyCode < 0 || virtualKeyCode > 255)
@@ -186,12 +186,12 @@ public class KeyboardState : IKeyboardState
 		}
 	}
 
-	private bool IsUpRaw(KeyValues key)
+	private bool IsUpRaw(KeyCodes key)
 	{
 		return !IsDownRaw(key);
 	}
 
-	private bool IsDownRaw(KeyValues key)
+	private bool IsDownRaw(KeyCodes key)
 	{
 		var keyState = GetKeyState(key);
 
@@ -210,9 +210,9 @@ public class KeyboardState : IKeyboardState
 	///     <b>true</b> if toggle key like (CapsLock, NumLocke, etc.) was on. <b>false</b> if it was off.
 	///     Ordinal (non toggle) keys return always false.
 	/// </returns>
-	public bool IsToggled(KeyValues key)
+	public bool IsToggled(KeyCodes key)
 	{
-		if (key != KeyValues.CapsLock && key != KeyValues.NumLock && key != KeyValues.Scroll && key != KeyValues.Insert) return false;
+		if (key != KeyCodes.CapsLock && key != KeyCodes.NumLock && key != KeyCodes.Scroll && key != KeyCodes.Insert) return false;
 
 		var keyState  = GetKeyState(key);
 		var isToggled = GetLowBit(keyState);
@@ -230,7 +230,7 @@ public class KeyboardState : IKeyboardState
 	/// </summary>
 	/// <param name="keys">Keys to verify whether they were down or not.</param>
 	/// <returns><b>true</b> - all were down. <b>false</b> - at least one was up.</returns>
-	public bool AreAllDown(IEnumerable<KeyValues> keys)
+	public bool AreAllDown(IEnumerable<KeyCodes> keys)
 	{
 		return keys.All(IsDown);
 	}
@@ -240,7 +240,7 @@ public class KeyboardState : IKeyboardState
 		return keys.All(IsDown);
 	}
 
-	public bool AreAllUp(IEnumerable<KeyValues> keys)
+	public bool AreAllUp(IEnumerable<KeyCodes> keys)
 	{
 		return keys.All(IsUp);
 	}
@@ -250,7 +250,7 @@ public class KeyboardState : IKeyboardState
 		return keys.All(IsUp);
 	}
 
-	private byte GetKeyState(KeyValues key)
+	private byte GetKeyState(KeyCodes key)
 	{
 		var virtualKeyCode = (int) key;
 		if (virtualKeyCode < 0 || virtualKeyCode > 255)

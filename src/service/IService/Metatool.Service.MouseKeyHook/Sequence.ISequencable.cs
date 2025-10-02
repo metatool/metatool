@@ -4,7 +4,7 @@ namespace Metatool.Service.MouseKey;
 
 public partial class Sequence: ISequencable
 {
-	public ISequence Then(KeyValues key)
+	public ISequence Then(KeyCodes key)
 	{
 		return this.Then(new Combination(key));
 	}

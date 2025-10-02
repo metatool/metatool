@@ -14,7 +14,7 @@ public partial class Combination
 		return new Combination(keyB, keyA.AllKeys);
 	}
 
-	public static implicit operator Combination(KeyValues key)
+	public static implicit operator Combination(KeyCodes key)
 	{
 		return new Combination(key);
 	}

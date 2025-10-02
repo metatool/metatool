@@ -2,6 +2,6 @@
 
 public interface ISequencable 
 {
-	ISequence Then(KeyValues key);
+	ISequence Then(KeyCodes key);
 	ISequence Then(IHotkey hotkey);
 }

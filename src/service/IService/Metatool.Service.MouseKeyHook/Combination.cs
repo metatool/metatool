@@ -14,16 +14,16 @@ public partial class Combination : ICombination
 	private readonly Chord _chord;
 	private          Key   _key;
 
-	public Combination(KeyValues triggerKey) : this(triggerKey, null as Chord)
+	public Combination(KeyCodes triggerKey) : this(triggerKey, null as Chord)
 	{
 	}
 
-	public Combination(KeyValues triggerKey, KeyValues chordKey) : this(triggerKey, [chordKey])
+	public Combination(KeyCodes triggerKey, KeyCodes chordKey) : this(triggerKey, [chordKey])
 	{
 	}
 
 
-	public Combination(KeyValues triggerKey, IEnumerable<KeyValues> chordKeys)
+	public Combination(KeyCodes triggerKey, IEnumerable<KeyCodes> chordKeys)
 		: this(triggerKey, new Chord(chordKeys ?? []))
 	{
 	}
@@ -41,7 +41,7 @@ public partial class Combination : ICombination
 	{
 	}
 
-	private Combination(KeyValues triggerKey, Chord chord) : this((Key) triggerKey, chord)
+	private Combination(KeyCodes triggerKey, Chord chord) : this((Key) triggerKey, chord)
 	{
 	}
 
@@ -53,7 +53,7 @@ public partial class Combination : ICombination
 	private Combination(Key triggerKey, Chord chord)
 	{
 		TriggerKey = triggerKey;
-		_chord     = chord ?? new Chord(Array.Empty<KeyValues>());
+		_chord     = chord ?? new Chord(Array.Empty<KeyCodes>());
 		_key = TriggerKey;
 	}
 
@@ -66,7 +66,7 @@ public partial class Combination : ICombination
 
 	public IEnumerable<Key> AllKeys => _chord.Append(TriggerKey);
 
-	public bool IsAnyKey(KeyValues key)
+	public bool IsAnyKey(KeyCodes key)
 	{
 		if (key == TriggerKey) return true;
 		if (Chord.Contains(key)) return true;

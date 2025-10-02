@@ -42,7 +42,7 @@ public sealed class ScreenHint: IScreenHint
 		{
 			var downArg = await _keyboard.KeyDownAsync(true);
 
-			if (downArg.KeyCode == KeyValues.LShiftKey)
+			if (downArg.KeyCode == KeyCodes.LShiftKey)
 			{
 				HintUI.Inst.HideHints();
 				var upArg = await _keyboard.KeyUpAsync();

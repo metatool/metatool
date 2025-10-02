@@ -3,7 +3,7 @@
 namespace Metatool.Service.MouseKey;
 // from System.Windows.Forms.Keys
 [Flags]
-public enum KeyValues
+public enum KeyCodes
 {
     /// <summary>The bitmask to extract a key code from a key value.</summary>
     KeyCode = 65535, // 0x0000FFFF
