@@ -7,8 +7,5 @@ public class KeyCommand : Command<IKeyEventArgs>
 {
 	public string Id { get; set; }
 
-	public KeyCommand(Action<IKeyEventArgs> action)
-	{
-		Execute = action;
-	}
+    public KeyCommand(Action<IKeyEventArgs> action) => Execute = action;
 }

@@ -51,8 +51,8 @@ public partial class KeyStateTree
     {
         var values = hotKey switch
         {
-            ISequenceUnit k => _trie.Get((List<ICombination>)[.. k.ToCombination()]),
-            ISequence s => _trie.Get(s.ToList()),
+            ISequenceUnit k => _trie.GetFruits((List<ICombination>)[.. k.ToCombination()]),
+            ISequence s => _trie.GetFruits(s.ToList()),
             _ => throw new Exception("not supported!")
         };
 
@@ -82,7 +82,7 @@ public partial class KeyStateTree
     {
         if (TreeType == TreeType.SingleEventCommand)
         {
-            var commands = _trie.Get(combinations);
+            var commands = _trie.GetFruits(combinations);
             if (commands.Count() != 0)
             {
                 _trie.Remove(combinations, c => c.KeyEventType == command.KeyEventType);
@@ -91,11 +91,6 @@ public partial class KeyStateTree
 
         _trie.Add(combinations, command);
         return new MetaKey(_trie, combinations, command);
-    }
-
-    public IMetaKey Add(ICombination combination, KeyEventCommand command)
-    {
-        return Add((List<ICombination>)[combination], command);
     }
 
     private TrieNode<ICombination, KeyEventCommand>? _lastKeyDownNodeForAllUp;
@@ -278,7 +273,7 @@ public partial class KeyStateTree
 
         if (args.PathToGo != null && !args.PathToGo.SequenceEqual(candidateNode.KeyPath)) // goto state by requiring
         {
-            if (!_trie.TryGoTo(args.PathToGo.ToList(), out var state))
+            if (!_trie.TryGet(args.PathToGo.ToList(), out var state))
             {
                 Console.WriteLine($"Couldn't go to state {state}");
             }

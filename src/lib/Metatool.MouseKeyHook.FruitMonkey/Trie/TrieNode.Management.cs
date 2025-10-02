@@ -77,7 +77,7 @@ public partial class TrieNode<TKey, TFruit>
     /// <param name="position">the index of the current node in path</param>
     /// <param name="node"></param>
     /// <returns></returns>
-    public bool TryGoTo(IList<TKey> path, int position, out TrieNode<TKey, TFruit>? node)
+    public bool TryGet(IList<TKey> path, int position, out TrieNode<TKey, TFruit>? node)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(position, path.Count);

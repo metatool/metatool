@@ -4,9 +4,9 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 
-public class MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> combinations, KeyEventCommand command) : IMetaKey
+public class MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> path, KeyEventCommand command) : IMetaKey
 {
-	internal readonly HotkeyToken _token = new HotkeyToken(trie, combinations, command);
+	internal readonly HotkeyToken _token = new HotkeyToken(trie, path, command);
 
     public IHotkey Hotkey
 	{

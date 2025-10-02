@@ -12,9 +12,11 @@ public interface IChange<in T>
 {
 	bool Change(T key);
 }
+
 public interface IChangeRemove<in T> : IRemove, IChange<T>
 {
 }
+
 public class Removable : IRemove
 {
 	private readonly Action _removeAction;

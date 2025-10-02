@@ -3,19 +3,18 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
-public partial class Trie<TKey, TValue> where TKey : ICombination where TValue : KeyEventCommand
+public partial class Trie<TKey, TFruit> where TKey : ICombination where TFruit : KeyEventCommand
 {
-    private readonly TrieNode<TKey, TValue> _root = new TrieNode<TKey, TValue>(default(TKey));
+    private readonly TrieNode<TKey, TFruit> _root = new TrieNode<TKey, TFruit>(default(TKey));
     public Trie()
     {
         currentNode = _root;
     }
 
-    private TrieNode<TKey, TValue> currentNode;
-    internal TrieNode<TKey, TValue> CurrentNode
+    private TrieNode<TKey, TFruit> currentNode;
+    internal TrieNode<TKey, TFruit> CurrentNode
     {
         get => currentNode;
-
         set
         {
             if (currentNode == value)
