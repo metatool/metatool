@@ -8,12 +8,12 @@ public enum KeyProcessState
     Done,
 
     /// <summary>
-    /// continue handling next event on the current state of the tree: event consumed, state kept
+    /// wait and continue handling next event on the current state of the tree: event consumed, state kept
     /// </summary>
     Continue,
 
     /// <summary>
-    /// reprocess this event on the root of trees, and the tree is at root: event reschedule(include the current event), state reset from path to root
+    /// reprocess this event on the root of trees, and the tree is at root: event reschedule(include the current event), state reset from path node to root
     /// </summary>
     Reprocess,
 

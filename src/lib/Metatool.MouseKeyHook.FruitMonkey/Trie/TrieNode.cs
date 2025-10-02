@@ -3,22 +3,20 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
-public partial class TrieNode<TKey, TValue> where TKey : ICombination where TValue : KeyEventCommand
+
+/// <param name="key"></param>
+/// <param name="parent"> used to generate KeyPath</param>
+public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _parent = null) where TKey : ICombination where TFruit : KeyEventCommand
 {
-    internal TrieNode(TKey key, TrieNode<TKey, TValue>? parent = null)
-    {
-        Key = key;
-        Parent = parent;
-    }
+    public TKey Key { get; } = key;
 
-    public TKey Key { get; }
-    public TrieNode<TKey, TValue>? Parent { get;}
+    internal TrieNode<TKey, TFruit>? parent  = _parent;
 
-    private readonly IList<TValue> _values = new KeyActionList<TValue>();
-    protected internal IEnumerable<TValue> Values => _values;
+    private readonly IList<TFruit> _values = new KeyActionList<TFruit>();
+    protected internal IEnumerable<TFruit> Values => _values;
 
-    private readonly Dictionary<TKey, TrieNode<TKey, TValue>> _childrenDictionary = [];
-    internal Dictionary<TKey, TrieNode<TKey, TValue>> ChildrenDictionary => _childrenDictionary;
+    private readonly Dictionary<TKey, TrieNode<TKey, TFruit>> _childrenDictionary = [];
+    internal Dictionary<TKey, TrieNode<TKey, TFruit>> ChildrenDictionary => _childrenDictionary;
 
     private IKeyPath? _keyPath;
     public IKeyPath KeyPath
@@ -31,9 +29,9 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
                 return null;
 
             _keyPath = new Sequence(
-                Parent!.Key == null
+                parent!.Key == null
                 ? [Key]
-                : [..Parent.KeyPath, Key]
+                : [.. parent.KeyPath, Key]
             );
 
             return _keyPath;
@@ -44,18 +42,18 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
     {
         return Key == null ? // || Parent == null too
             "Root" :
-            Parent!.Key == null ?
+            parent!.Key == null ?
                 $"{Key}" :
-                $"{Parent.Key}, {Key}";
+                $"{parent.Key}, {Key}";
     }
 
-    internal virtual void Clear()
+    internal void Clear()
     {
         _childrenDictionary.Clear();
         _values.Clear();
     }
 
-    internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip => 
+    internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip =>
         _childrenDictionary.Select(
             p => (
                 $"{p.Key}",
@@ -66,19 +64,15 @@ public partial class TrieNode<TKey, TValue> where TKey : ICombination where TVal
             )
         );
 
-    internal TrieNode<TKey, TValue>? GetChildOrNull( Func<TKey, TKey, TKey> aggregateFunc, TKey initKey = default(TKey))
+    internal TrieNode<TKey, TFruit>? GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc, TKey initKey = default(TKey))
     {
         var key = _childrenDictionary.Keys.Aggregate(initKey, aggregateFunc);
 
-        if (EqualityComparer<TKey>.Default.Equals(key, default(TKey))) 
+        if (EqualityComparer<TKey>.Default.Equals(key, default(TKey)))
             return null;
 
-        return GetChildOrNull(key);
+        _childrenDictionary.TryGetValue(key, out var childNode);
+        return childNode; // null if not exist
     }
-
-    internal TrieNode<TKey, TValue>? GetChildOrNull(TKey key) => 
-        _childrenDictionary.TryGetValue(key, out var childNode)
-            ? childNode
-            : null;
 
 }

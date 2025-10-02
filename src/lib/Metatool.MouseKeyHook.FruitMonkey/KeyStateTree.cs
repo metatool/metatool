@@ -112,22 +112,29 @@ public partial class KeyStateTree
         _disabledChords.Remove(chord);
     }
 
-    internal SelectionResult TrySelect(KeyEventType eventTypeType, IKeyEventArgs args)
+    internal SelectionResult TrySelect(KeyEventType eventType, IKeyEventArgs args)
     {
         // to handle A+B+C(B is down in Chord)
         var downInChord = false;
 
-        var type = eventTypeType;
         var candidateNode = _trie.CurrentNode.GetChildOrNull((ICombination acc, ICombination combination) =>
         {
-            if (_disabledChords.Contains(combination.Chord)) return acc;
+            if (_disabledChords.Contains(combination.Chord)) 
+                return acc;
             // mark down_in_chord and continue try to find trigger
-            if (type == KeyEventType.Down && combination.Chord.Contains(args.KeyCode)) downInChord = true;
+            if (eventType == KeyEventType.Down && combination.Chord.Contains(args.KeyCode)) 
+                downInChord = true;
 
-            if (args.KeyCode != combination.TriggerKey || combination.Disabled) return acc;
+            if (args.KeyCode != combination.TriggerKey || combination.Disabled) 
+                return acc;
+
             var mach = combination.Chord.All(args.KeyboardState.IsDown);
-            if (!mach) return acc;
-            if (acc == null) return combination;
+            if (!mach) 
+                return acc;
+
+            if (acc == null) 
+                return combination;
+
             return acc.ChordLength >= combination.ChordLength ? acc : combination;
         });
 
@@ -271,7 +278,7 @@ public partial class KeyStateTree
 
         if (args.PathToGo != null && !args.PathToGo.SequenceEqual(candidateNode.KeyPath)) // goto state by requiring
         {
-            if (!_trie.TryGoToState(args.PathToGo, out var state))
+            if (!_trie.TryGoTo(args.PathToGo.ToList(), out var state))
             {
                 Console.WriteLine($"Couldn't go to state {state}");
             }

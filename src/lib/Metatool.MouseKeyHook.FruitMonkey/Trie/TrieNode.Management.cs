@@ -1,68 +1,183 @@
-﻿namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
+﻿using Metatool.Service.MouseKey;
+using System.IO;
 
-public partial class TrieNode<TKey, TValue>
+namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
+
+/// <summary>
+/// the branch node(crotch) of the trie, it contains branches of child nodes
+/// </summary>
+public partial class TrieNode<TKey, TFruit>
 {
-    public void Add(IList<TKey> query, int position, TValue value)
+    /// <summary>
+    /// make sure all child branches exist and add the value to the end of the branch indicated by query
+    /// </summary>
+    /// <param name="path">the branch path</param>
+    /// <param name="position">the start position of the current node in the path</param>
+    /// <param name="fruit"></param>
+    public void Add(IList<TKey> path, int position, TFruit fruit)
     {
-        ArgumentNullException.ThrowIfNull(query);
-        //ArgumentOutOfRangeException.th
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, path.Count);
 
-        if (OutOfKeySequence(position, query))
+        if (position == path.Count)
         {
-            _values.Add(value);
+            _values.Add(fruit);
             return;
         }
 
-        var child = GetOrCreateChild(query[position]);
-        child.Add(query, position + 1, value);
+        var childKey = path[position];
+        var child = GetOrCreateChild(childKey);
+
+        child.Key.TriggerKey.Handled = childKey.TriggerKey.Handled;
+        child.Add(path, position + 1, fruit);
+    }
+    private TrieNode<TKey, TFruit> GetOrCreateChild(TKey childKey)
+    {
+        if (_childrenDictionary.TryGetValue(childKey, out var child))
+        {
+            return child;
+        }
+
+        child = new TrieNode<TKey, TFruit>(childKey, this);
+        _childrenDictionary.Add(childKey, child);
+        return child;
     }
 
-    internal void CleanPath(IList<TKey> query, int position)
+    /// <summary>
+    /// get the fruits stored in the node specified by path, and all its subtree nodes if any
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="position">the position of the current node in the path</param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    internal IEnumerable<TFruit> Get(IList<TKey> path, int position)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, path.Count);
 
-        TrieNode<TKey, TValue>? candidate = null;
-
-        var key = default(TKey);
-
-        do
+        if (position == path.Count)
         {
-            var isRemovable = _values.Count == 0 && (
-                   position < query.Count && _childrenDictionary.Count == 1 &&  _childrenDictionary.ContainsKey(query[position]) ||
-                   position == query.Count && _childrenDictionary.Count == 0
-               );
+            return FlatCurrentAndSubtreeNodes().SelectMany(node => node.Values);
+        }
+        else
+        {
+            var key = path[position];
+            _childrenDictionary.TryGetValue(key, out var child);
 
-            if (isRemovable && candidate == null)
+            if (child == null)
+                throw new KeyNotFoundException($"Get: Key '{key}' in the path: {path} is not found in Trie");
+
+            return child.Get(path, position + 1);
+        }
+    }
+
+    /// <summary>
+    /// try to go to the node specified by path, if found, set node to it and return true, otherwise set node to null and return false
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="position">the index of the current node in path</param>
+    /// <param name="node"></param>
+    /// <returns></returns>
+    public bool TryGoTo(IList<TKey> path, int position, out TrieNode<TKey, TFruit>? node)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, path.Count);
+
+        node = this;
+        for (var i = position; i < path.Count; i++)
+        {
+            var key = path[i];
+            if (node.ChildrenDictionary.TryGetValue(key, out var child))
             {
-                candidate = GetChildOrNull(query[position]);
-                key = query[position];
+                node = child;
+                continue;
             }
-            else
-                candidate = null;
 
-        } while (!OutOfKeySequence(position++, query));
-
-        if (candidate?.Parent != null)
-        {
-            candidate.Parent._childrenDictionary.Remove(key!);
+            node = null;
+            return false;
         }
 
+        return true;
     }
 
-    internal bool Remove(IList<TKey> query, int position, Predicate<TValue> predicate)
+    private IEnumerable<TrieNode<TKey, TFruit>> FlatCurrentAndSubtreeNodes()
     {
-        ArgumentNullException.ThrowIfNull(query);
-
-        if (OutOfKeySequence(position, query))
-        {
-            return RemoveValue(predicate);
-        }
-
-        var node = GetChildOrNull(query[position]);
-        return node != null && node.Remove(query, position + 1, predicate);
+        return Enumerable.Repeat(this, 1).Concat(ChildrenDictionary.Values.SelectMany(child => child.FlatCurrentAndSubtreeNodes()));
     }
 
-    private bool RemoveValue(Predicate<TValue> predicate)
+    /// <summary>
+    /// remove the node on the path from the trie if no fruit is stored in it and its subtree
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="position"></param>
+    /// <returns>true: if the whole path has no fruit</returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    internal bool CleanPath(IList<TKey> path, int position)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, path.Count);
+
+        if (position == path.Count)
+        {
+            return RemoveFromParentIfNoFruit();
+        }
+        else
+        {
+            var key = path[position];
+            _childrenDictionary.TryGetValue(key, out var child);
+
+            if (child == null)
+                throw new KeyNotFoundException($"CleanPath: Key '{key}' in the path: {path} is not found in Trie");
+
+            if(child.CleanPath(path, position + 1))
+            {
+                return RemoveFromParentIfNoFruit();
+            } 
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    private bool RemoveFromParentIfNoFruit()
+    {
+        if (_values.Count == 0)
+        {
+            parent!._childrenDictionary.Remove(Key);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// remove the fruit(s) stored in the node specified by path
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="position">the position of the current node in the path</param>
+    /// <param name="predicate"> to select the value to remove, null: all fruits</param>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
+    internal bool Remove(IList<TKey> path, int position, Predicate<TFruit>? predicate)
+    {
+        ArgumentNullException.ThrowIfNull(path);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(position, path.Count);
+
+        if (position == path.Count)
+        {
+            return RemoveFistValue(predicate);
+        }
+        _childrenDictionary.TryGetValue(path[position], out var child);
+
+        if (child == null)
+            throw new KeyNotFoundException($"Get: Key '{key}' in the path: {path} is not found in Trie");
+
+        return child.Remove(path, position + 1, predicate);
+    }
+
+    private bool RemoveFistValue(Predicate<TFruit>? predicate)
     {
         if (predicate == null)
         {
@@ -71,52 +186,11 @@ public partial class TrieNode<TKey, TValue>
         }
 
         var i = _values.FirstOrDefault(v => predicate(v));
-        if (object.Equals(i, default(TValue))) return false;
+        if (object.Equals(i, default(TFruit)))
+            return false;
+
         _values.Remove(i);
         return true;
     }
 
-    private TrieNode<TKey, TValue> GetOrCreateChild(TKey childKey)
-    {
-        if (_childrenDictionary.TryGetValue(childKey, out var child))
-        {
-            child.Key.TriggerKey.Handled = childKey.TriggerKey.Handled;
-            return child;
-        }
-
-        child = new TrieNode<TKey, TValue>(childKey, this);
-        _childrenDictionary.Add(childKey, child);
-        return child;
-    }
-
-    internal IEnumerable<TValue> Get(IList<TKey> query, int position)
-    {
-        return OutOfKeySequence(position, query)
-            ? AllSubtreeValues()
-            : SearchDeep(query, position);
-    }
-
-    private IEnumerable<TValue> SearchDeep(IList<TKey> query, int position)
-    {
-        var nextNode = GetChildOrNull(query[position]);
-
-        return nextNode != null
-            ? nextNode.Get(query, position + 1)
-            : [];
-    }
-
-    private static bool OutOfKeySequence(int position, ICollection<TKey> query)
-    {
-        return position >= query.Count;
-    }
-
-    private IEnumerable<TValue> AllSubtreeValues()
-    {
-        return AllSubtreeNodes().SelectMany(node => node.Values);
-    }
-
-    private IEnumerable<TrieNode<TKey, TValue>> AllSubtreeNodes()
-    {
-        return Enumerable.Repeat(this, 1).Concat(ChildrenDictionary.Values.SelectMany(child => child.AllSubtreeNodes()));
-    }
 }

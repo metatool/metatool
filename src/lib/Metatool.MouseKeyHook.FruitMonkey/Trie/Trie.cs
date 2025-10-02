@@ -30,27 +30,4 @@ public partial class Trie<TKey, TValue> where TKey : ICombination where TValue :
 
     public bool IsOnRoot => CurrentNode == _root;
 
-    /// <summary>
-    /// start from root, and go to(set current state to) the state specified by path
-    /// </summary>
-    public bool TryGoToState(IKeyPath path, out TrieNode<TKey, TValue> node)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-
-        node = _root;
-
-        foreach (var combination in path)
-        {
-            if (node.ChildrenDictionary.TryGetValue((TKey)combination, out var child))
-            {
-                node = child;
-                continue;
-            }
-
-            return false;
-        }
-
-        CurrentNode = node;
-        return true;
-    }
 }

@@ -78,8 +78,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
                     selectedTree = result;
                 }
 
-                var rt = selectedTree.Tree.Climb(eventType, args, selectedTree.CandidateNode,
-                    selectedTree.DownInChord);
+                var rt = selectedTree.Tree.Climb(eventType, args, selectedTree.CandidateNode, selectedTree.DownInChord);
                 logger.LogInformation($"\t={rt}${selectedTree.Tree.Name}@{selectedTree.Tree.CurrentNode}");
                 if (rt == KeyProcessState.Continue)
                 {
