@@ -10,6 +10,7 @@ namespace Metatool.MetaKeyboard
         {
             ToggleKeys.NumLock.AlwaysOn();
             ToggleKeys.CapsLock.AlwaysOff();
+            
             SetupWinLock();
             RegisterCommands();
 

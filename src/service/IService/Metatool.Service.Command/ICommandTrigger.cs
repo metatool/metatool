@@ -1,7 +1,10 @@
 ﻿using System;
 
 namespace Metatool.Service;
-
+/// <summary>
+/// trigger the execution of commands
+/// </summary>
+/// <typeparam name="TArgs"></typeparam>
 public interface ICommandTrigger<out TArgs>
 {
 	event Action<TArgs> Execute;

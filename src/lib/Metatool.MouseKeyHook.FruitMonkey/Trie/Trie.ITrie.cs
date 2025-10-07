@@ -11,11 +11,11 @@ public partial class Trie<TKey, TFruit> : ITrie<TKey, TFruit> where TKey : IComb
     /// <param name="path"></param>
     /// <returns></returns>
     public IEnumerable<TFruit> GetFruits(IList<TKey> path) => _root.Get(path, 0);
-
+    public bool TryGet(IList<TKey> path, out TrieNode<TKey, TFruit>? node) => _root.TryGet(path, 0, out node);
     /// <summary>
-    /// start from root, and go to(set current state to) the state specified by path
+    /// start from root, and go to and set current state to the state specified by path
     /// </summary>
-    public bool TryGet(IList<TKey> path, out TrieNode<TKey, TFruit>? node)
+    public bool TryGoTo(IList<TKey> path, out TrieNode<TKey, TFruit>? node)
     {
         var r = _root.TryGet(path, 0, out node);
 

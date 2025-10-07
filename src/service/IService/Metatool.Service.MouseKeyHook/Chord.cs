@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Metatool.Service.MouseKey;
 
 public class Chord : IEnumerable<Key>
 {
-    private readonly Key[] _keys;
+    private readonly ImmutableList<Key> _keys;
 
     internal Chord(IEnumerable<Key> chordKeys)
     {
-        _keys = chordKeys.OrderBy(k => k).ToArray();
+        _keys = chordKeys.OrderBy(k => k).ToImmutableList();
     }
 
     internal Chord(IEnumerable<KeyCodes> chordKeys) : this(chordKeys.Select(k => new Key(k)))
     {
+
     }
 
-    public int Count => _keys.Length;
+    public int Count => _keys.Count;
 
     public IEnumerator<Key> GetEnumerator()
     {
-        return _keys.Cast<Key>().GetEnumerator();
+        return _keys.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -32,7 +34,7 @@ public class Chord : IEnumerable<Key>
 
     public override string ToString()
     {
-        return string.Join("+", _keys as IEnumerable<Key>);
+        return string.Join("+", _keys);
     }
 
     public static Chord FromString(string chord)
@@ -46,7 +48,7 @@ public class Chord : IEnumerable<Key>
 
     protected bool Equals(Chord other)
     {
-        if (_keys.Length != other._keys.Length) 
+        if (_keys.Count != other._keys.Count) 
             return false;
 
         return _keys.SequenceEqual(other._keys);
@@ -69,7 +71,7 @@ public class Chord : IEnumerable<Key>
     public override int GetHashCode()
     {
         var hash = 0;
-        var hc = _keys.Length;
+        var hc = _keys.Count;
         foreach (var t in _keys)
         {
             hc = unchecked(hc * 314159 + t.GetHashCode());

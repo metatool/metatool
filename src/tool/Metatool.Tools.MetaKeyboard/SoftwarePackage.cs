@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using Metatool.Service;
 using Microsoft.Win32;
 using static Metatool.Service.MouseKey.Key;

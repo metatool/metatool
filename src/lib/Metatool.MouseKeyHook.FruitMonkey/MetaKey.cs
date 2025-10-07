@@ -16,7 +16,7 @@ public class MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombinati
 				return new Sequence(_token._hotkey.ToArray());
 
 			var first = _token._hotkey.First();
-			if (first.ChordLength > 0) 
+			if (first.ChordCount > 0) 
 				return first as Combination;
 
 			return first.TriggerKey;

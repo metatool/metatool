@@ -7,7 +7,7 @@ namespace Metatool.Input;
 
 public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 {
-    List<SelectionResult> selectedTrees = new();
+    List<SelectionResult> _selectedTrees = new();
     Forest forest = new (notify);
     public IForest Forest => forest;
 
@@ -19,32 +19,35 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 
     List<SelectionResult> SelectTree(KeyEventType eventType, IKeyEventArgs args, ILogger logger)
     {
-        var selectedNodes = new List<SelectionResult>();
+        var selectionResults = new List<SelectionResult>();
         //all on root, find current trees
         foreach (var stateTree in forest.ForestGround.Values)
         {
             Debug.Assert(stateTree.IsOnRoot);
-            if (stateTree.ProcessState == KeyProcessState.Yield) continue;
+
+            if (stateTree.ClimbingState == TreeClimbingState.Landing)
+                continue;
 
             var selectionResult = stateTree.TrySelect(eventType, args);
-            if (selectionResult.CandidateNode == null) continue;
+            if (selectionResult.SelectedNode == null)
+                continue;
 
-            if (selectedNodes.Count == 0)
+            if (selectionResults.Count == 0)
             {
-                selectedNodes.Add(selectionResult);
+                selectionResults.Add(selectionResult);
             }
-            else if (selectionResult.CandidateNode.Key.ChordLength > selectedNodes[0].CandidateNode.Key.ChordLength)
+            else if (selectionResult.SelectedNode.Key.ChordCount > selectionResults[0].SelectedNode!.Key.ChordCount)
             {
-                selectedNodes.Clear();
-                selectedNodes.Add(selectionResult);
+                selectionResults.Clear();
+                selectionResults.Add(selectionResult);
             }
         }
 
-        if (selectedNodes.Count > 0)
+        if (selectionResults.Count > 0)
             logger.LogInformation(
-                $"ToClimb:{string.Join(",", selectedNodes.Select(t => $"${t.Tree.Name}_{t.CandidateNode}"))}");
+                $"ToClimb:{string.Join(",", selectionResults.Select(t => $"${t.Tree.Name}_{t.SelectedNode}"))}");
 
-        return selectedNodes;
+        return selectionResults;
     }
 
     public void ClimbTree(KeyEventType eventType, IKeyEventArgs args)
@@ -57,44 +60,46 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
         {
             reprocess = false;
             var onGround = false;
-            if (selectedTrees.Count == 0)
+
+            if (_selectedTrees.Count == 0)
             {
                 onGround = true;
-                selectedTrees = SelectTree(eventType, args, logger);
+                _selectedTrees = SelectTree(eventType, args, logger);
             }
 
-            var hasSelectedNodes = selectedTrees.Count > 0;
+            var hasSelectedNodes = _selectedTrees.Count > 0;
             if (!hasSelectedNodes) goto @return;
 
-            var trees = selectedTrees.GetRange(0, selectedTrees.Count);
+            List<SelectionResult> trees = [.. _selectedTrees]; // reference copy
             foreach (var c in trees)
             {
                 var selectedTree = c; // should not remove this line
                 if (!onGround)
                 {
                     var result = selectedTree.Tree.TrySelect(eventType, args);
-                    var index = selectedTrees.IndexOf(selectedTree);
-                    selectedTrees[index] = result;
+                    var index = _selectedTrees.IndexOf(selectedTree);
+                    _selectedTrees[index] = result;
                     selectedTree = result;
                 }
 
-                var rt = selectedTree.Tree.Climb(eventType, args, selectedTree.CandidateNode, selectedTree.DownInChord);
+                var rt = selectedTree.Tree.Climb(eventType, args, selectedTree.SelectedNode, selectedTree.DownInChord);
                 logger.LogInformation($"\t={rt}${selectedTree.Tree.Name}@{selectedTree.Tree.CurrentNode}");
-                if (rt == KeyProcessState.Continue)
+                if (rt == TreeClimbingState.Continue)
                 {
+                    // continue on this tree
                 }
-                else if (rt == KeyProcessState.Done)
+                else if (rt == TreeClimbingState.Done)
                 {
-                    selectedTrees.Remove(selectedTree);
+                    _selectedTrees.Remove(selectedTree);
                 }
-                else if (rt == KeyProcessState.NoFurtherProcess)
+                else if (rt == TreeClimbingState.NoFurtherProcess)
                 {
-                    selectedTrees.Remove(selectedTree);
+                    _selectedTrees.Remove(selectedTree);
                     goto @return;
                 }
-                else if (rt == KeyProcessState.Reprocess || rt == KeyProcessState.Yield)
+                else if (rt == TreeClimbingState.LandingAndClimbing || rt == TreeClimbingState.Landing)
                 {
-                    selectedTrees.Remove(selectedTree);
+                    _selectedTrees.Remove(selectedTree);
                     reprocess = true;
                 }
                 else
@@ -102,11 +107,11 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
                     throw new ArgumentOutOfRangeException();
                 }
             }
-        } while (selectedTrees.Count == 0 && /*no KeyProcessState.Continue*/
-                 reprocess /*Yield or Reprocess*/);
+        } while (_selectedTrees.Count == 0 && /*no TreeClimbingState.Continue*/
+                 reprocess /*Landing or LandingAndClimbing*/);
 
-        @return:
-        foreach (var stateTree in forest.ForestGround.Values) stateTree.MarkDoneIfYield();
+    @return:
+        foreach (var stateTree in forest.ForestGround.Values) stateTree.MarkDoneIfLanding();
     }
 
 }

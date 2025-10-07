@@ -7,13 +7,16 @@ namespace Metatool.Service.MouseKey;
 
 /// <summary>
 /// https://www.w3.org/TR/uievents-key/
+/// A|B, A|B*, A*|B*
 /// </summary>
 // [DebuggerDisplay("{this}")]
 public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, ISequencable
 {
     private SortedSet<KeyCodes> _codes;
     private int _val;
-
+    /// <summary>
+    /// codes of A|B|...
+    /// </summary>
     public SortedSet<KeyCodes> Codes
     {
         get => _codes;
@@ -34,7 +37,11 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
         Codes = new(keys.SelectMany(k => k.Codes));
         Handled = keys.Aggregate(Handled, (a, c) => a |= c.Handled);
     }
-
+    /// <summary>
+    /// A|B, A|B*, A*|B*
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
     public static Key Parse(string str)
     {
         var handled = KeyEventType.None;

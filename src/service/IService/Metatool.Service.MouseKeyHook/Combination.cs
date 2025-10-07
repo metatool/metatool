@@ -62,7 +62,7 @@ public partial class Combination : ICombination
 
 	public IEnumerable<Key> Chord => _chord;
 
-	public int ChordLength => _chord.Count;
+	public int ChordCount => _chord.Count;
 
 	public IEnumerable<Key> AllKeys => _chord.Append(TriggerKey);
 

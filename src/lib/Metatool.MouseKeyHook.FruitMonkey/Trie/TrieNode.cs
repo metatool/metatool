@@ -64,15 +64,4 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
             )
         );
 
-    internal TrieNode<TKey, TFruit>? GetChildOrNull(Func<TKey, TKey, TKey> aggregateFunc, TKey initKey = default(TKey))
-    {
-        var key = _childrenDictionary.Keys.Aggregate(initKey, aggregateFunc);
-
-        if (EqualityComparer<TKey>.Default.Equals(key, default(TKey)))
-            return null;
-
-        _childrenDictionary.TryGetValue(key, out var childNode);
-        return childNode; // null if not exist
-    }
-
 }

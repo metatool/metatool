@@ -10,7 +10,7 @@ public interface IKeyboard : IKeyboardVirtual
 {
 	IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
 	IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
-	/// down up happened successively
+	/// down and up happened successively
 	IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
 	IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
 	IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEventType keyEventType, string stateTree = KeyStateTrees.Default);
@@ -66,7 +66,7 @@ public enum KeyMaps
 	/// </summary>
 	MapOnDownUp,
 	/// <summary>
-	/// replay the broken key, i.e. Num0 for RCtrl
+	/// replace the broken key, i.e. Num0 for RCtrl
 	/// </summary>
 	HardMap,
 	/// <summary>

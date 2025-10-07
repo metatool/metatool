@@ -49,8 +49,8 @@ public static class CombinationExtensions
 			{
 				var matches = current.Key.Chord.All(state.IsDown);
 				if (!matches) continue;
-				if (maxLength > current.Key.ChordLength) continue;
-				maxLength = current.Key.ChordLength;
+				if (maxLength > current.Key.ChordCount) continue;
+				maxLength = current.Key.ChordCount;
 				action = current.Value;
 			}
 			action?.Invoke();

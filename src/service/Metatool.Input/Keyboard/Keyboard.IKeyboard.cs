@@ -115,8 +115,7 @@ public partial class Keyboard
         return HotKeyMap(source, target, predicate, false, false);
     }
 
-    IKeyCommand HotKeyMap(IHotkey source, ISequenceUnit target,
-        Predicate<IKeyEventArgs> predicate, bool isHardMap, bool isAsync = false)
+    IKeyCommand HotKeyMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate, bool isHardMap, bool isAsync = false)
     {
         void Call(IKeyEventArgs e, Action action)
         {
@@ -131,6 +130,7 @@ public partial class Keyboard
 
         var handled = false;
         var combination = target.ToCombination();
+        
         return new KeyCommandTokens()
         {
             source.OnDown(e =>
@@ -138,6 +138,7 @@ public partial class Keyboard
                 handled   = true;
                 e.Handled = true;
                 if (isAsync) e.NoFurtherProcess = true;
+                
                 if (combination.TriggerKey == KeyCodes.LButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.LeftDown());
@@ -160,6 +161,7 @@ public partial class Keyboard
                 handled   = false;
                 e.Handled = true;
                 if (isAsync) e.NoFurtherProcess = true;
+
                 if (combination.TriggerKey == KeyCodes.LButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.LeftUp());
@@ -231,8 +233,7 @@ public partial class Keyboard
 
     private const int StateResetTime = 5000;
 
-    private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target,
-        Predicate<IKeyEventArgs> predicate = null, bool allUp = false)
+    private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, bool allUp = false)
     {
         var delay = _config.CurrentValue?.Services.Input.Keyboard.RepeatDelay ?? 3000;
         var noEventTimer = new NoEventTimer();
@@ -305,8 +306,7 @@ public partial class Keyboard
         };
     }
 
-    public IKeyCommand Map(IHotkey source, IHotkey target, KeyMaps keyMaps,
-        Predicate<IKeyEventArgs> predicate = null)
+    public IKeyCommand Map(IHotkey source, IHotkey target, KeyMaps keyMaps, Predicate<IKeyEventArgs> predicate = null)
     {
         switch (keyMaps)
         {
@@ -340,8 +340,7 @@ public partial class Keyboard
         }
     }
 
-    public IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target,
-        Predicate<IKeyEventArgs> predicate = null)
+    public IKeyCommand ChordMap(ISequenceUnit source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
     {
         var sourCombination = source.ToCombination();
         var delay = _config?.CurrentValue?.Services?.Input?.Keyboard?.RepeatDelay ?? 3000;

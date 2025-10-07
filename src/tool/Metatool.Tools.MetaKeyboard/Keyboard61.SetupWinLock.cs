@@ -9,14 +9,23 @@ namespace Metatool.MetaKeyboard
 {
 	partial class Keyboard61
 	{
+		/// <summary>
+		/// goal: librate the *+Win+L to be used by other commands, by default it will trigger the system win lock,
+		///		but only enable the winLock with exact LWin+L hotkey.
+		/// solution: disable the Win+L by config the registry key at startup, when the exact LWin+L hotkey down enable WinLock,
+		///		then the next down of L will trigger the WinLock, when the L is up, disable the winLock again.
+		/// problem: when other key is down the keyboard of the app is in a wrong state. i.e. A is down, we can not lock the screen.
+		/// solution: create a keybard state reset command() to clear all down keys. but need to remember the hot key to use it.
+		/// idea(todo): can we periodly sync system keyboard state to the app keyboard state or auto reset all key down? i.e. 3 seconds when no key is pressed.
+		/// </summary>
 		private void SetupWinLock()
 		{
 			void EnableWinLock()
 			{
 				try
 				{
-					Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")?
-						.SetValue("DisableLockWorkstation", 0, RegistryValueKind.DWord);
+					Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")
+					?.SetValue("DisableLockWorkstation", 0, RegistryValueKind.DWord);
 					Logger.LogInformation("WinLock Enabled");
 				}
 				catch (UnauthorizedAccessException)
@@ -30,8 +39,8 @@ namespace Metatool.MetaKeyboard
 			{
 				try
 				{
-					Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")?
-						.SetValue("DisableLockWorkstation", 1, RegistryValueKind.DWord);
+					Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Policies\System")
+					?.SetValue("DisableLockWorkstation", 1, RegistryValueKind.DWord);
 					Logger.LogInformation("WinLock disabled!");
 				}
 				catch (UnauthorizedAccessException)

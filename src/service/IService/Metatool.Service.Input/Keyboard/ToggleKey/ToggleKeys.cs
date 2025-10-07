@@ -10,8 +10,8 @@ public class ToggleKeys
 	private static IKeyboardInternal Keyboard =>
 		_keyboard ??= (IKeyboardInternal)Services.Get<IKeyboard, IKeyboard>();
 
-	public static IToggleKey NumLock    = Keyboard.GeToggleKey(Key.Num);
-	public static IToggleKey CapsLock   = Keyboard.GeToggleKey(Key.Caps);
-	public static IToggleKey ScrollLock = Keyboard.GeToggleKey(Key.Scroll);
-	public static IToggleKey Insert     = Keyboard.GeToggleKey(Key.Ins);
+	public static IToggleKey NumLock    = Keyboard.GetToggleKey(Key.Num);
+	public static IToggleKey CapsLock   = Keyboard.GetToggleKey(Key.Caps);
+	public static IToggleKey ScrollLock = Keyboard.GetToggleKey(Key.Scroll);
+	public static IToggleKey Insert     = Keyboard.GetToggleKey(Key.Ins);
 }

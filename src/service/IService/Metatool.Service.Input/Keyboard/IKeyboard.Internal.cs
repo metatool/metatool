@@ -7,5 +7,5 @@ public interface IKeyboardInternal
 	IKeyCommand GetToken(ICommandToken<IKeyEventArgs> commandToken,
 		IKeyboardCommandTrigger trigger);
 
-	IToggleKey GeToggleKey(Key key);
+	IToggleKey GetToggleKey(Key key);
 }

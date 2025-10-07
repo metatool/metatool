@@ -7,7 +7,7 @@ public interface ITrie<TKey,TFruit> where TKey : ICombination where TFruit : Key
 {
 	void Add(IList<TKey> query, TFruit value);
 	IEnumerable<TFruit> GetFruits(IList<TKey> query);
-	bool TryGet(IList<TKey> path, out TrieNode<TKey, TFruit>? node);
+	bool TryGoTo(IList<TKey> path, out TrieNode<TKey, TFruit>? node);
 
     bool Remove(IList<TKey> query, Predicate<TFruit>? predicate = null);
 	void Clear();

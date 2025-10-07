@@ -27,7 +27,6 @@ public class ToggleKey : IToggleKey
 
 			return Control.IsKeyLocked(_key.ToKeys()) ? ToggleKeyState.On : ToggleKeyState.Off;
 		}
-
 	}
 
 	void InstallHook()
@@ -38,7 +37,6 @@ public class ToggleKey : IToggleKey
 			_keyCommandDownActionToken = _key.OnDown(e =>
 			{
 				if (!_isAlwaysOn.HasValue) return;
-
 
 				if (_key == KeyCodes.NumLock)
 				{

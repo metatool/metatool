@@ -6,10 +6,10 @@ namespace Metatool.Input;
 
 partial class Keyboard
 {
-	public IKeyCommand GetToken(ICommandToken<IKeyEventArgs> commandToken,
-		IKeyboardCommandTrigger trigger) => new KeyCommandToken(commandToken, trigger);
+	public IKeyCommand GetToken(ICommandToken<IKeyEventArgs> commandToken, IKeyboardCommandTrigger trigger) => new KeyCommandToken(commandToken, trigger);
 
-	public IToggleKey GeToggleKey(Key key) => new ToggleKey(key);
+	public IToggleKey GetToggleKey(Key key) => new ToggleKey(key);
+	
 	public void ReleaseDownKeys()
 	{
 		var downKeys = KeyboardState.Current().AllDownKeys;

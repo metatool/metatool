@@ -10,27 +10,27 @@ public class Forest(IKeyTipNotifier notify): IForest
     {
 		// keep the order
 		{KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap, notify)},
-        {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap, notify) {TreeType = TreeType.SingleEventCommand}},
+        {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap, notify) {TreeType = TreeType.SingleFruitPerEventType}},
         {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default, notify)},
         {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map, notify)},
         {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString, notify)}
     };
 
-    internal KeyStateTree GetOrCreateStateTree(string stateTree)
+    internal KeyStateTree GetOrCreateStateTree(string stateTreeName)
     {
-        if (ForestGround.TryGetValue(stateTree, out var keyStateTree))
+        if (ForestGround.TryGetValue(stateTreeName, out var keyStateTree))
         {
             return keyStateTree;
         }
 
-        keyStateTree = new KeyStateTree(stateTree, notify);
-        ForestGround.Add(stateTree, keyStateTree);
+        keyStateTree = new KeyStateTree(stateTreeName, notify);
+        ForestGround.Add(stateTreeName, keyStateTree);
         return keyStateTree;
     }
 
-    public void DisableChord(Chord chord, string? stateTree = null)
+    public void DisableChord(Chord chord, string? stateTreeName = null)
     {
-        if (stateTree == null)
+        if (stateTreeName == null)
         {
             foreach (var tree in ForestGround.Values)
             {
@@ -38,8 +38,8 @@ public class Forest(IKeyTipNotifier notify): IForest
             }
             return;
         }
-        var tre = GetOrCreateStateTree(stateTree);
-        tre.DisableChord(chord);
+        var stateTree = GetOrCreateStateTree(stateTreeName);
+        stateTree.DisableChord(chord);
     }
 
     public void EnableChord(Chord chord, string? stateTree = null)
