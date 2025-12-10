@@ -11,8 +11,7 @@ public class HotkeyToken : IChangeRemove<IHotkey>
 	internal readonly IList<ICombination>                  _hotkey;
 	internal readonly KeyEventCommand                      EventCommand;
 
-	public HotkeyToken(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> hotkey,
-		KeyEventCommand eventCommand)
+	public HotkeyToken(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> hotkey, KeyEventCommand eventCommand)
 	{
 		_trie   = trie;
 		_hotkey = hotkey;

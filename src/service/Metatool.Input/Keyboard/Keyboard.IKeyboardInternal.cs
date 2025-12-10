@@ -1,10 +1,11 @@
 ﻿using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
+using Metatool.Service.Internal;
 using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 
-partial class Keyboard
+partial class Keyboard: IKeyboardInternal
 {
 	public IKeyCommand GetToken(ICommandToken<IKeyEventArgs> commandToken, IKeyboardCommandTrigger trigger) => new KeyCommandToken(commandToken, trigger);
 

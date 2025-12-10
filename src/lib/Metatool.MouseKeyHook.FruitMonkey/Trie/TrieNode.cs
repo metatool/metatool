@@ -3,8 +3,6 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
-
-/// <param name="key"></param>
 /// <param name="parent"> used to generate KeyPath</param>
 public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _parent = null) where TKey : ICombination where TFruit : KeyEventCommand
 {

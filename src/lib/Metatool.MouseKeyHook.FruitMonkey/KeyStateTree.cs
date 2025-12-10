@@ -102,23 +102,27 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
 
     /// <summary>
     /// with the key event, try to find the best matching child node from current node
-    /// best matching: chord is not disabled in current tree, is not marked disabled in tree node, chord+trigger are all down, the one with most chord keys down.
+    /// best matching: chord is not disabled in current tree, is not marked disabled in tree node,
+    /// chord+trigger are all down, the one with most chord keys down.
     /// </summary>
     /// <param name="eventType"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    internal SelectionResult TrySelect(KeyEventType eventType, IKeyEventArgs args)
+    internal SelectionResult TrySelectNode(KeyEventType eventType, IKeyEventArgs args)
     {
         // to handle A+B+C(B is currently down in Chord)
         var downInChord = false;
-        ICombination? candidate = null;
+        ICombination? candidateKey = null;
+
         foreach (var childKey in _trie.CurrentNode.ChildrenDictionary.Keys)
         {
             if (_disabledChords.Contains(childKey.Chord))
                 continue;
 
             // mark down_in_chord and continue try to find trigger
-            // todo: no other key not in chord down: A+B+C, if D is down too, this is not considered next. means only exact chord mach will trigger the hotkey
+            // currently no exact match:
+            // other key not in chord down will still trigger: A+B+C, if D is down too.
+            // question: should we just do exact match? means only exact chord match will trigger the hotkey
             if (eventType == KeyEventType.Down && childKey.Chord.Contains(args.KeyCode))
                 downInChord = true;
 
@@ -131,21 +135,21 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
                 continue;
 
             // here: current's all chord is down
-            if (candidate == null)
+            if (candidateKey == null)
             {
-                candidate = childKey;
+                candidateKey = childKey;
                 continue;
             }
             // select the one with most chord keys down: A+B+C vs A+C -> A+B+C when A and B are down
-            if (candidate.ChordCount < childKey.ChordCount)
+            if (candidateKey.ChordCount < childKey.ChordCount)
             {
-                candidate = childKey;
+                candidateKey = childKey;
             }
         }
 
-        if (candidate != null)
+        if (candidateKey != null)
         {
-            _trie.CurrentNode.ChildrenDictionary.TryGetValue(candidate, out var candidateNode);
+            _trie.CurrentNode.ChildrenDictionary.TryGetValue(candidateKey, out var candidateNode);
             return new SelectionResult(this, candidateNode, downInChord);
         }
 
@@ -153,7 +157,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
     }
 
     //eventType is only Down or Up
-    internal TreeClimbingState Climb(KeyEventType eventType, IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand> candidateNode, bool downInChord)
+    internal TreeClimbingState Climb(KeyEventType eventType, IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand>? candidateNode, bool downInChord)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
 
@@ -166,9 +170,9 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
         {
             if (eventType == KeyEventType.Down)
             {
-                if (_trie.IsOnRoot)
+                if (_trie.IsOnRoot) // no child found and current node is root
                 {
-                    // AnyKeyNotInRoot_down_or_up: *A_down *A_up is not registered in root
+                    // AnyKeyNotInRoot_down: i.e. *+A_down is not registered in root
                     _lastKeyDownNodeForAllUp = null;
                     return ClimbingState = TreeClimbingState.Landing;
                 }
@@ -298,7 +302,9 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
             _lastKeyDownNodeForAllUp = null;
             return ClimbingState = TreeClimbingState.Continue;
         }
+        //
         // goto candidateNode
+        //
         switch (eventType)
         {
             case KeyEventType.Up:

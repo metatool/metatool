@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.Service;
+using Metatool.Service.Internal;
+using Metatool.Service.MouseKey;
+using Metatool.WindowsInput.Native;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,11 +12,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Metatool.Input.MouseKeyHook.Implementation;
-using Metatool.Service;
-using Metatool.Service.MouseKey;
-using Metatool.WindowsInput.Native;
-using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input;
 
@@ -33,7 +34,7 @@ public class KeyboardCommandTrigger : CommandTrigger<IKeyEventArgs>, IKeyboardCo
     }
 }
 
-public partial class Keyboard
+public partial class Keyboard : IKeyboard
 {
     public IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
     {
@@ -99,7 +100,8 @@ public partial class Keyboard
                                     InputSimu.Inst.Keyboard.Type(target);
                                 }
                             ))
-                    }, k => { InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)k); });
+                    },
+                        k => { InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)k); });
                 }
             );
         }, predicate, "", KeyStateTrees.HotString);
@@ -130,7 +132,7 @@ public partial class Keyboard
 
         var handled = false;
         var combination = target.ToCombination();
-        
+
         return new KeyCommandTokens()
         {
             source.OnDown(e =>
@@ -138,7 +140,7 @@ public partial class Keyboard
                 handled   = true;
                 e.Handled = true;
                 if (isAsync) e.NoFurtherProcess = true;
-                
+
                 if (combination.TriggerKey == KeyCodes.LButton)
                 {
                     Call(e, () => InputSimu.Inst.Mouse.LeftDown());
@@ -297,10 +299,10 @@ public partial class Keyboard
                         return true;
                     if (stopwatch.IsRunning) stopwatch.Stop();
                     return false; // disable map
-			    }, 
+			    },
                 "", KeyStateTrees.ChordMap
             ),
-            allUp? 
+            allUp?
             source.OnAllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap):
             source.OnUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
         };

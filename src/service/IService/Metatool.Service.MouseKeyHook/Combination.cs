@@ -75,7 +75,6 @@ public partial class Combination : ICombination
 
 	internal Chord ToChord()=>new(AllKeys);
 
-
 	public override string ToString()
 	{
 		return string.Join(" + ", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)));

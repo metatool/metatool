@@ -11,9 +11,13 @@
 
   <ItemGroup>
     <Compile Remove="Keyboard\Implementation\**" />
+    <Compile Remove="Properties\**" />
     <EmbeddedResource Remove="Keyboard\Implementation\**" />
+    <EmbeddedResource Remove="Properties\**" />
     <None Remove="Keyboard\Implementation\**" />
+    <None Remove="Properties\**" />
     <Page Remove="Keyboard\Implementation\**" />
+    <Page Remove="Properties\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Mouse\" />
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

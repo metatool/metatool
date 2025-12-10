@@ -58,19 +58,20 @@ public partial class App : Application
 		_logger.LogInformation("Metatool started!");
 	}
 
-	internal static void RunApp()
+	internal static void RunApp(Action action = null)
 	{
-		var newWindowThread = new Thread(Start);
+		var newWindowThread = new Thread(()=>Start(action));
 		newWindowThread.SetApartmentState(ApartmentState.STA);
 		newWindowThread.IsBackground = true;
 		newWindowThread.Start();
 	}
 
-	private static void Start()
+	private static void Start(Action action = null)
 	{
 		var application = Services.Create<App>();
 		Context.Dispatcher = application.Dispatcher;
-
+        action?.Invoke();
+         
 		application.InitializeComponent();
 		application.Run();
 	}

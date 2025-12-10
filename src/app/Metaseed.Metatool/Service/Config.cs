@@ -10,7 +10,6 @@ internal class ToolConfig<T>: IConfig<T>
 
 	public ToolConfig()
 	{
-
 		_optionsAccessor = Services.Get<IOptionsMonitor<T>>();
 	}
 

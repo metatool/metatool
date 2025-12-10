@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Windows.Forms;
-using Metatool.Service;
 using Metatool.Service.MouseKey;
 using Metatool.WindowsInput.Native;
 

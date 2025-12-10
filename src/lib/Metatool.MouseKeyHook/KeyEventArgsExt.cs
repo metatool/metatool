@@ -127,6 +127,9 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 	/// </summary>
 	public bool IsExtendedKey { get; }
 
+	/// <summary>
+	/// is assigned when climbing the tree
+	/// </summary>
 	public KeyEventType KeyEventType { get; set; }
 
 	public new bool Handled

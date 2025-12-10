@@ -4,13 +4,12 @@ using System.Diagnostics;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
-using Metatool.Service.Internal;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input;
 
-public partial class Keyboard : IKeyboard, IKeyboardInternal
+public partial class Keyboard
 {
 	private readonly ILogger<Keyboard>       _logger;
 	private readonly IConfig<MetatoolConfig> _config;

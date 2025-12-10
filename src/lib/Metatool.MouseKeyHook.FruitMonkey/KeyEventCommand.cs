@@ -2,14 +2,21 @@
 
 namespace Metatool.Input.MouseKeyHook.Implementation;
 
+/// <summary>
+/// values(fruits) stored in trie
+/// </summary>
 public class KeyEventCommand(KeyEventType keyEventType, KeyCommand command)
 {
+    /// <summary>
+    /// why store KeyEventType in command? because the trie only has hotkeys.
+    /// different commands can be triggered by different event types.
+    /// </summary>
     public KeyEventType KeyEventType { get; } = keyEventType;
-    public KeyCommand Command { get; } = command;
+	public KeyCommand Command { get; } = command;
 
-    public override int GetHashCode()
+	public override int GetHashCode()
 	{
-		return (int) KeyEventType | Command?.GetHashCode() ?? 0;
+		return (int)KeyEventType | Command?.GetHashCode() ?? 0;
 	}
 
 	public override string ToString()
@@ -27,6 +34,6 @@ public class KeyEventCommand(KeyEventType keyEventType, KeyCommand command)
 		if (ReferenceEquals(null, obj)) return false;
 		if (ReferenceEquals(this, obj)) return true;
 		if (obj.GetType() != GetType()) return false;
-		return Equals((KeyEventCommand) obj);
+		return Equals((KeyEventCommand)obj);
 	}
 }

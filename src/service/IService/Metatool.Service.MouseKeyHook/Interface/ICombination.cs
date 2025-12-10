@@ -7,7 +7,11 @@ public interface ICombination :IKeyPath, ISequencable, ICombinable, ISequenceUni
 	Key TriggerKey { get; }
 	IEnumerable<Key> Chord { get; }
 	int ChordCount { get; }
-	IEnumerable<Key> AllKeys { get; }
+    /// <summary>
+    /// chord keys and trigger key
+    /// </summary>
+    IEnumerable<Key> AllKeys { get; }
 
 	bool IsAnyKey(KeyCodes key);
+    //string Description { get; }
 }

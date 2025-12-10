@@ -28,7 +28,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             if (stateTree.ClimbingState == TreeClimbingState.Landing)
                 continue;
 
-            var selectionResult = stateTree.TrySelect(eventType, args);
+            var selectionResult = stateTree.TrySelectNode(eventType, args);
             if (selectionResult.SelectedNode == null)
                 continue;
 
@@ -76,7 +76,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
                 var selectedTree = c; // should not remove this line
                 if (!onGround)
                 {
-                    var result = selectedTree.Tree.TrySelect(eventType, args);
+                    var result = selectedTree.Tree.TrySelectNode(eventType, args);
                     var index = _selectedTrees.IndexOf(selectedTree);
                     _selectedTrees[index] = result;
                     selectedTree = result;

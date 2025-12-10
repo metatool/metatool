@@ -10,7 +10,7 @@ namespace Metatool.MetaKeyboard
 	partial class Keyboard61
 	{
 		/// <summary>
-		/// goal: librate the *+Win+L to be used by other commands, by default it will trigger the system win lock,
+		/// goal: liberate the *+Win+L to be used by other commands, by default it will trigger the system win lock, i.e. win+z+l will lock too.
 		///		but only enable the winLock with exact LWin+L hotkey.
 		/// solution: disable the Win+L by config the registry key at startup, when the exact LWin+L hotkey down enable WinLock,
 		///		then the next down of L will trigger the WinLock, when the L is up, disable the winLock again.

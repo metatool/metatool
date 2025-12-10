@@ -146,26 +146,27 @@ public class ArgumentProcessor
 				}
 			}
 
-			if (fullPath.EndsWith(".dll"))
-			{
-				try
-				{
-					Services.GetOrCreate<PluginManager>().LoadDll(fullPath);
-				}
-				catch (Exception ex)
-				{
-					_logger.LogError(ex,
-						$"Error while loading tool {fullPath}! No tools loaded! Please fix it then restart!");
-				}
-			}
-			else if (fullPath.EndsWith(".csx"))
-			{
-				var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
-				_logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
-				Services.GetOrCreate<PluginManager>().BuildReload(fullPath, assemblyName, false);
-			}
-
-			App.RunApp();
+			App.RunApp(() =>
+            {
+                if (fullPath.EndsWith(".dll"))
+                {
+                    try
+                    {
+                        Services.GetOrCreate<PluginManager>().LoadDll(fullPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex,
+                            $"Error while loading tool {fullPath}! No tools loaded! Please fix it then restart!");
+                    }
+                }
+                else if (fullPath.EndsWith(".csx"))
+                {
+                    var assemblyName = Path.GetFileName(Path.GetDirectoryName(fullPath));
+                    _logger.LogInformation($"Compile&Run: {fullPath}, {assemblyName}");
+                    Services.GetOrCreate<PluginManager>().BuildReload(fullPath, assemblyName, false);
+                }
+            });
 		}, pathArg);
 
 		// on windows we have command to register .csx files to be executed by dotnet-script
