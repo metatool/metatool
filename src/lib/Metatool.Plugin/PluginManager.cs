@@ -12,6 +12,7 @@ using Metatool.NugetPackage;
 using Metatool.Reactive;
 using Metatool.Script;
 using Metatool.Service;
+using Metatool.Service.Keyboard;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -298,13 +299,30 @@ public class PluginManager
 			var config = configRoot.GetSection("Tools").GetSection(id);
 			services.Configure<MetatoolConfig>(configRoot);
 
-			// call services.Configure<optionType>(config);
-			var method = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
-				nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
-				new[] { typeof(IServiceCollection), typeof(IConfiguration) }).MakeGenericMethod(optionType);
-			method.Invoke(null, new object[] { services, config });
+            //// this works for IConfig<Config>, we want custom parsing of the json for ContextHotkey<TContext>
+            //// call services.Configure<optionType>(config); because the optionType is only known at runtime
+            //var method = typeof(OptionsConfigurationServiceCollectionExtensions).GetMethod(
+            //	nameof(OptionsConfigurationServiceCollectionExtensions.Configure),
+            //	new[] { typeof(IServiceCollection), typeof(IConfiguration) }).MakeGenericMethod(optionType);
+            //method.Invoke(null, new object[] { services, config });
 
-			provider = Services.AddServices(services);
+            void OptionObjInit(object toolConfig)
+            {
+                config.Bind(toolConfig);
+
+                var conf = Services.Get<IConfiguration>();
+                var properties = toolConfig.GetPropertiesOfType(typeof(ContextHotkey<>));
+                foreach (var prop in properties)
+                {
+                    var contextType = prop.Property.PropertyType.GetGenericArguments()[0];
+                    var value = new ContextHotkeyCommandConfig(conf).Generate(contextType, $"{config.Path}:{prop.Path}");
+                    prop.Property.SetValue(prop.Parent, value);
+                }
+            }
+
+            services.Config(optionType, OptionObjInit);
+
+            provider = Services.AddServices(services);
 		}
 
 		(Assembly assembly, IEnumerable<Type> types) pluginTypes = (loader.MainAssembly, GetPluginTypes(allTypes));
@@ -325,7 +343,9 @@ public class PluginManager
 		_logger.LogInformation($"Tool Loaded: {assemblyName} - Version: {token.Version}");
 	}
 
-	private void Unload(string dllPath)
+    
+
+    private void Unload(string dllPath)
 	{
 		var assemblyName = Path.GetFileName(dllPath);
 		_logger.LogInformation($"{assemblyName}: start unloading...");
@@ -450,4 +470,36 @@ public class PluginManager
 		=> types
 			.Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsAbstract)
 			.ToList();
+}
+
+public static class IServiceCollectionExt
+{
+    /// <summary>
+    /// call services.Configure<optionType>(Action<optionType>) in no generic way
+    /// </summary>
+    public static void Config(this IServiceCollection services, Type optionType, Action<object> optionObjInit)
+    {
+        // call services.Configure<optionType>(Action<optionType>); to dynamically create optionType instance
+        //Type actionType = typeof(Action<>).MakeGenericType(optionType);
+        //var methodG = typeof(OptionsServiceCollectionExtensions).GetMethod(
+        //	nameof(OptionsServiceCollectionExtensions.Configure),
+        //	[typeof(IServiceCollection), typeof(Action<>)]); // can not get the method, so we do filtering
+
+        var methodGeneric = typeof(OptionsServiceCollectionExtensions)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Where(m => m.Name == "Configure"
+                        && m.IsGenericMethod
+                        && m.GetGenericArguments().Length == 1
+                        && m.GetParameters().Length == 2)
+            .FirstOrDefault(m =>
+            {
+                var parameters = m.GetParameters();
+                return parameters.Length == 2
+                       && parameters[0].ParameterType == typeof(IServiceCollection)
+                       && parameters[1].ParameterType.IsGenericType
+                       && parameters[1].ParameterType.GetGenericTypeDefinition() == typeof(Action<>);
+            });
+        var methodConfigure = methodGeneric!.MakeGenericMethod(optionType);
+        methodConfigure.Invoke(null, [services, optionObjInit]);
+    }
 }

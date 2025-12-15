@@ -5,6 +5,9 @@
     <RootNamespace>Metatool.Service</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Metatool.Service.Core\Metatool.Service.Core.csproj" />
     <ProjectReference Include="..\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj" />
   </ItemGroup>

@@ -21,7 +21,7 @@ public static class CombinationExtensions
 	///     create it.
 	/// </param>
 	/// <param name="map">
-	///     This map contains the list of key combinations mapped to corresponding actions. You can use a dictionary initilizer
+	///     This map contains the list of key combinations mapped to corresponding actions. You can use a dictionary initializer
 	///     to easily create it.
 	///     Whenever a listed combination will be detected a corresponding action will be triggered.
 	/// </param>
@@ -31,12 +31,11 @@ public static class CombinationExtensions
 	public static void OnCombination(this IKeyboardEvents source,
 		IEnumerable<KeyValuePair<ICombination, Action>> map, Action reset = null)
 	{
-		var watchlists = map.GroupBy(k => k.Key.TriggerKey)
+		var watchlist = map.GroupBy(k => k.Key.TriggerKey)
 			.ToDictionary(g => g.Key, g => g.ToArray());
 		source.KeyDown += (sender, e) =>
 		{
-			KeyValuePair<ICombination, Action>[] element;
-			var found = watchlists.TryGetValue(e.KeyValues, out element);
+            var found = watchlist.TryGetValue(e.KeyValues, out var element);
 			if (!found)
 			{
 				reset?.Invoke();

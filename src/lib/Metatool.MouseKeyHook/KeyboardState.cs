@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Metatool.Input.MouseKeyHook.WinApi;
+using Metatool.Service.MouseKey;
+using System;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
-using Metatool.Input.MouseKeyHook.WinApi;
-using Metatool.Service.MouseKey;
 
 namespace Metatool.Input.MouseKeyHook.Implementation;
 
@@ -16,7 +17,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation;
 ///     This class is basically a managed wrapper of GetKeyboardState API function
 ///     http://msdn.microsoft.com/en-us/library/ms646299
 /// </remarks>
-public class KeyboardState : IKeyboardState
+public partial class KeyboardState : IKeyboardState
 {
     private static MemoryMappedViewAccessor accessor;
 
@@ -66,6 +67,7 @@ public class KeyboardState : IKeyboardState
         KeyboardNativeMethods.GetKeyboardState(keyboardStateNative);
         return new KeyboardState(keyboardStateNative);
     }
+
 
     internal byte[] GetNativeState()
     {

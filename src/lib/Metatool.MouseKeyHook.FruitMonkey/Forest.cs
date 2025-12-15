@@ -4,17 +4,19 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.FruitMonkey;
 
-public class Forest(IKeyTipNotifier notify): IForest
+public class Forest(IKeyTipNotifier notify) : IForest
 {
     internal Dictionary<string, KeyStateTree> ForestGround = new()
     {
-		// keep the order
-		{KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap, notify)},
+        // keep the order
+        {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap, notify)},
         {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap, notify) {TreeType = TreeType.SingleFruitPerEventType}},
         {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default, notify)},
         {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map, notify)},
         {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString, notify)}
     };
+
+    // keep the order
 
     internal KeyStateTree GetOrCreateStateTree(string stateTreeName)
     {

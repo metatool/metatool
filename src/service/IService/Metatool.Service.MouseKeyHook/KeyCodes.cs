@@ -1,6 +1,15 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Metatool.Service.MouseKey;
+
+public class KeyAttribute(string key) : Attribute
+{
+    /// <summary>
+    /// use friend name, i.e. used in key to type for user in tooltip
+    /// </summary>
+    public string KeyLetter { get; set; } = key;
+}
 // from System.Windows.Forms.Keys
 [Flags]
 public enum KeyCodes
@@ -36,16 +45,22 @@ public enum KeyCodes
     /// <summary>The ENTER key.</summary>
     Enter = Return, // 0x0000000D
     /// <summary>The SHIFT key.</summary>
+    [Key("Shift")]
     ShiftKey = 16, // 0x00000010
     /// <summary>The CTRL key.</summary>
+    [Key("Ctrl")]
     ControlKey = ShiftKey | LButton, // 0x00000011
     /// <summary>The ALT key.</summary>
+    [Key("Alt")]
     Menu = ShiftKey | RButton, // 0x00000012
     /// <summary>The PAUSE key.</summary>
+    [Key("Pause")]
     Pause = Menu | LButton, // 0x00000013
     /// <summary>The CAPS LOCK key.</summary>
+    [Key("Caps")]
     Capital = ShiftKey | MButton, // 0x00000014
     /// <summary>The CAPS LOCK key.</summary>
+    [Key("Caps")]
     CapsLock = Capital, // 0x00000014
     /// <summary>The IME Kana mode key.</summary>
     KanaMode = CapsLock | LButton, // 0x00000015
@@ -112,76 +127,112 @@ public enum KeyCodes
     /// <summary>The HELP key.</summary>
     Help = Delete | LButton, // 0x0000002F
     /// <summary>The 0 key.</summary>
+    [Key("0")]
     D0 = Space | ShiftKey, // 0x00000030
     /// <summary>The 1 key.</summary>
+    [Key("1")]
     D1 = D0 | LButton, // 0x00000031
     /// <summary>The 2 key.</summary>
+    [Key("2")]
     D2 = D0 | RButton, // 0x00000032
     /// <summary>The 3 key.</summary>
+    [Key("3")]
     D3 = D2 | LButton, // 0x00000033
     /// <summary>The 4 key.</summary>
+    [Key("4")]
     D4 = D0 | MButton, // 0x00000034
     /// <summary>The 5 key.</summary>
+    [Key("5")]
     D5 = D4 | LButton, // 0x00000035
     /// <summary>The 6 key.</summary>
+    [Key("6")]
     D6 = D4 | RButton, // 0x00000036
     /// <summary>The 7 key.</summary>
+    [Key("7")]
     D7 = D6 | LButton, // 0x00000037
     /// <summary>The 8 key.</summary>
+    [Key("8")]
     D8 = D0 | Back, // 0x00000038
     /// <summary>The 9 key.</summary>
+    [Key("9")]
     D9 = D8 | LButton, // 0x00000039
     /// <summary>The A key.</summary>
+    [Key("a")]
     A = 65, // 0x00000041
     /// <summary>The B key.</summary>
+    [Key("b")]
     B = 66, // 0x00000042
     /// <summary>The C key.</summary>
+    [Key("c")]
     C = B | LButton, // 0x00000043
     /// <summary>The D key.</summary>
+    [Key("d")]
     D = 68, // 0x00000044
     /// <summary>The E key.</summary>
+    [Key("e")]
     E = D | LButton, // 0x00000045
     /// <summary>The F key.</summary>
+
     F = D | RButton, // 0x00000046
     /// <summary>The G key.</summary>
+    [Key("g")]
     G = F | LButton, // 0x00000047
     /// <summary>The H key.</summary>
+    [Key("h")]
     H = 72, // 0x00000048
     /// <summary>The I key.</summary>
+    [Key("i")]
     I = H | LButton, // 0x00000049
     /// <summary>The J key.</summary>
+    [Key("j")]
     J = H | RButton, // 0x0000004A
     /// <summary>The K key.</summary>
+    [Key("k")]
     K = J | LButton, // 0x0000004B
     /// <summary>The L key.</summary>
+    [Key("l")]
     L = H | MButton, // 0x0000004C
     /// <summary>The M key.</summary>
+    [Key("m")]
     M = L | LButton, // 0x0000004D
     /// <summary>The N key.</summary>
+    [Key("n")]
     N = L | RButton, // 0x0000004E
     /// <summary>The O key.</summary>
+    [Key("o")]
     O = N | LButton, // 0x0000004F
     /// <summary>The P key.</summary>
+    [Key("p")]
     P = 80, // 0x00000050
     /// <summary>The Q key.</summary>
+    [Key("q")]
     Q = P | LButton, // 0x00000051
     /// <summary>The R key.</summary>
+    [Key("r")]
     R = P | RButton, // 0x00000052
     /// <summary>The S key.</summary>
+    [Key("s")]
     S = R | LButton, // 0x00000053
     /// <summary>The T key.</summary>
+    [Key("t")]
     T = P | MButton, // 0x00000054
     /// <summary>The U key.</summary>
+    [Key("u")]
     U = T | LButton, // 0x00000055
     /// <summary>The V key.</summary>
+    [Key("v")]
     V = T | RButton, // 0x00000056
     /// <summary>The W key.</summary>
+    [Key("w")]
     W = V | LButton, // 0x00000057
     /// <summary>The X key.</summary>
+    [Key("x")]
     X = P | Back, // 0x00000058
     /// <summary>The Y key.</summary>
+    [Key("y")]
     Y = X | LButton, // 0x00000059
     /// <summary>The Z key.</summary>
+    [Key("z")]
     Z = X | RButton, // 0x0000005A
     /// <summary>The left Windows logo key (Microsoft Natural Keyboard).</summary>
     LWin = Z | LButton, // 0x0000005B
@@ -276,16 +327,22 @@ public enum KeyCodes
     /// <summary>The SCROLL LOCK key.</summary>
     Scroll = NumLock | LButton, // 0x00000091
     /// <summary>The left SHIFT key.</summary>
+    [Key("LShift")]
     LShiftKey = F17 | Space, // 0x000000A0
     /// <summary>The right SHIFT key.</summary>
+    [Key("RShift")]
     RShiftKey = LShiftKey | LButton, // 0x000000A1
     /// <summary>The left CTRL key.</summary>
+    [Key("LCtrl")]
     LControlKey = LShiftKey | RButton, // 0x000000A2
     /// <summary>The right CTRL key.</summary>
+    [Key("RCtrl")]
     RControlKey = LControlKey | LButton, // 0x000000A3
     /// <summary>The left ALT key.</summary>
+    [Key("LAlt")]
     LMenu = LShiftKey | MButton, // 0x000000A4
     /// <summary>The right ALT key.</summary>
+    [Key("RAlt")]
     RMenu = LMenu | LButton, // 0x000000A5
     /// <summary>The browser back key.</summary>
     BrowserBack = LMenu | RButton, // 0x000000A6
@@ -324,26 +381,38 @@ public enum KeyCodes
     /// <summary>The start application two key.</summary>
     LaunchApplication2 = LaunchApplication1 | LButton, // 0x000000B7
     /// <summary>The OEM Semicolon key on a US standard keyboard.</summary>
+
+    [Key(";")]
     OemSemicolon = MediaStop | Back, // 0x000000BA
     /// <summary>The OEM 1 key.</summary>
     Oem1 = OemSemicolon, // 0x000000BA
     /// <summary>The OEM plus key on any country/region keyboard.</summary>
+    [Key("=")]
     Oemplus = Oem1 | LButton, // 0x000000BB
     /// <summary>The OEM comma key on any country/region keyboard.</summary>
+    [Key(",")]
     Oemcomma = LaunchMail | Back, // 0x000000BC
     /// <summary>The OEM minus key on any country/region keyboard.</summary>
+    [Key("-")]
     OemMinus = Oemcomma | LButton, // 0x000000BD
     /// <summary>The OEM period key on any country/region keyboard.</summary>
+
+    [Key(".")]
     OemPeriod = Oemcomma | RButton, // 0x000000BE
     /// <summary>The OEM question mark key on a US standard keyboard.</summary>
+    [Key("/")]
     OemQuestion = OemPeriod | LButton, // 0x000000BF
     /// <summary>The OEM 2 key.</summary>
     Oem2 = OemQuestion, // 0x000000BF
     /// <summary>The OEM 3 key.</summary>
     Oem3 = 192, // 0x000000C0
     /// <summary>The OEM tilde key on a US standard keyboard.</summary>
+
+    [Key("`")]
     Oemtilde = Oem3, // 0x000000C0
     /// <summary>The OEM open bracket key on a US standard keyboard.</summary>
+
+    [Key("[")]
     OemOpenBrackets = Oemtilde | Escape, // 0x000000DB
     /// <summary>The OEM 4 key.</summary>
     Oem4 = OemOpenBrackets, // 0x000000DB
@@ -352,18 +421,22 @@ public enum KeyCodes
     /// <summary>The OEM 5 key.</summary>
     Oem5 = OemPipe, // 0x000000DC
     /// <summary>The OEM close bracket key on a US standard keyboard.</summary>
+    [Key("]")]
     OemCloseBrackets = Oem5 | LButton, // 0x000000DD
     /// <summary>The OEM 6 key.</summary>
     Oem6 = OemCloseBrackets, // 0x000000DD
     /// <summary>The OEM 7 key.</summary>
     Oem7 = Oem5 | RButton, // 0x000000DE
     /// <summary>The OEM singled/double quote key on a US standard keyboard.</summary>
+    [Key("'")]
     OemQuotes = Oem7, // 0x000000DE
     /// <summary>The OEM 8 key.</summary>
     Oem8 = OemQuotes | LButton, // 0x000000DF
     /// <summary>The OEM 102 key.</summary>
     Oem102 = Oemtilde | PageDown, // 0x000000E2
     /// <summary>The OEM angle bracket or backslash key on the RT 102 key keyboard.</summary>
+
+    [Key("\\")]
     OemBackslash = Oem102, // 0x000000E2
     /// <summary>The PROCESS KEY key.</summary>
     ProcessKey = Oemtilde | Left, // 0x000000E5
@@ -390,7 +463,30 @@ public enum KeyCodes
     /// <summary>The SHIFT modifier key.</summary>
     Shift = 65536, // 0x00010000
     /// <summary>The CTRL modifier key.</summary>
+    [Key("Ctrl")]
     Control = 131072, // 0x00020000
     /// <summary>The ALT modifier key.</summary>
     Alt = 262144, // 0x00040000
+}
+
+public static class KeyCodesEnumExtensions
+{
+    public static string KeyName(this KeyCodes value)
+    {
+        var field = value.GetType().GetField(value.ToString());
+        var attribute = field?.GetCustomAttribute<KeyAttribute>();
+        return attribute?.KeyLetter ?? value.ToString();
+    }
+    public static bool IsLetterKey(this KeyCodes value)
+    {
+        return (value >= KeyCodes.A && value <= KeyCodes.Z) || (value >= KeyCodes.D0 && value <= KeyCodes.D9)|| (value >= KeyCodes.NumPad0 && value <= KeyCodes.NumPad9);
+    }
+    public static bool IsAToZKey(this KeyCodes value)
+    {
+        return (value >= KeyCodes.A && value <= KeyCodes.Z);
+    }
+    public static bool IsShiftKey(this KeyCodes value)
+    {
+        return value == KeyCodes.ShiftKey || value == KeyCodes.LShiftKey || value == KeyCodes.RShiftKey;
+    }
 }

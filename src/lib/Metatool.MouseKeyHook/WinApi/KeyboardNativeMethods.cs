@@ -272,21 +272,23 @@ internal static class KeyboardNativeMethods
 		int wFlags,
 		IntPtr dwhkl);
 
-	/// <summary>
-	///     The GetKeyboardState function copies the status of the 256 virtual keys to the
-	///     specified buffer.
-	/// </summary>
-	/// <param name="pbKeyState">
-	///     [in] Pointer to a 256-byte array that contains keyboard key states.
-	/// </param>
-	/// <returns>
-	///     If the function succeeds, the return value is nonzero.
-	///     If the function fails, the return value is zero. To get extended error information, call GetLastError.
-	/// </returns>
-	/// <remarks>
-	///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/toascii.asp
-	/// </remarks>
-	[DllImport("user32.dll")]
+    [DllImport("user32.dll")]
+    public static extern bool SetKeyboardState(byte[] lpKeyState);
+    /// <summary>
+    ///     The GetKeyboardState function copies the status of the 256 virtual keys to the
+    ///     specified buffer.
+    /// </summary>
+    /// <param name="pbKeyState">
+    ///     [in] Pointer to a 256-byte array that contains keyboard key states.
+    /// </param>
+    /// <returns>
+    ///     If the function succeeds, the return value is nonzero.
+    ///     If the function fails, the return value is zero. To get extended error information, call GetLastError.
+    /// </returns>
+    /// <remarks>
+    ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/toascii.asp
+    /// </remarks>
+    [DllImport("user32.dll")]
 	public static extern int GetKeyboardState(byte[] pbKeyState);
 
 	/// <summary>

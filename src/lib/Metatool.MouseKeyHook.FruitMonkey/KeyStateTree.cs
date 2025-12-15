@@ -248,6 +248,9 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
 
         // execute
         var handled = candidateNode.Key.TriggerKey.Handled;
+        if ((eventType & handled) != 0) 
+            args.Handled = true; // even there is not action in list we still hide as required
+
         var oneExecuted = false;
         foreach (var keyCommand in actionList[eventType])
         {
@@ -259,8 +262,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
 
             oneExecuted = true;
             var execute = keyCommand.Execute;
-            if ((eventType & handled) != 0)
-                args.Handled = true;
+
             var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
             Console.WriteLine(
                 $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");

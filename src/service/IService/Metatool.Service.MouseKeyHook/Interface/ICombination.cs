@@ -14,4 +14,6 @@ public interface ICombination :IKeyPath, ISequencable, ICombinable, ISequenceUni
 
 	bool IsAnyKey(KeyCodes key);
     //string Description { get; }
+    // user friendly name, not as tostring which return the keyCode
+    string KeyName { get; }
 }

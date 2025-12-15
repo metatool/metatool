@@ -54,7 +54,7 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
     internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip =>
         _childrenDictionary.Select(
             p => (
-                $"{p.Key}",
+                $"{p.Key.KeyName}",
                 p.Value._values
                     .Where(ea => !string.IsNullOrEmpty(ea.Command.Description))
                     .Select(ea =>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Metatool.Service;
+using Metatool.Service.Keyboard;
 using Metatool.Tools.MetaKeyboard;
 
 namespace Metatool.MetaKeyboard
@@ -122,6 +123,7 @@ namespace Metatool.MetaKeyboard
     [ToolConfig]
     public class Config
     {
+        public ContextHotkey<string> SpecialCharsPackage { get; set; }
         public KeyboardPackage KeyboardPackage { get; set; }
 
         public FileExplorerPackage FileExplorerPackage { get; set; }

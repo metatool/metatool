@@ -80,6 +80,22 @@ public partial class Combination : ICombination
 		return string.Join(" + ", Chord.Concat(Enumerable.Repeat(TriggerKey, 1)));
 	}
 
+	public string KeyName
+    {
+        get
+        {
+			if(TriggerKey.Codes.Count == 1 && (TriggerKey.Codes.First().IsAToZKey()&&
+			Chord.Count() == 1&&(Chord.Contains(KeyCodes.ShiftKey)|| Chord.Contains(KeyCodes.LShiftKey)| Chord.Contains(KeyCodes.RShiftKey))))
+			{
+				// For A-Z keys with Shift in chord, we just return uppercase letter without Shift
+				return $"{TriggerKey.KeyName.ToUpper()}";
+			}
+
+            return string.Join(" + ", Chord.Select(c=>c.KeyName).Concat(Enumerable.Repeat(TriggerKey.KeyName, 1)));
+        }
+
+    }
+
 	public static Combination Parse(string str)
 	{
 		var parts = str

@@ -28,7 +28,8 @@ public partial class TrieNode<TKey, TFruit>
         var childKey = path[position];
         var child = GetOrCreateChild(childKey);
 
-        child.Key.TriggerKey.Handled = childKey.TriggerKey.Handled;
+        // if one required to be handled, set it handled for the event. i.e. C+A* and C+A,B, if not |=, it will override the trigger's handled value  
+        child.Key.TriggerKey.Handled |= childKey.TriggerKey.Handled;
         child.Add(path, position + 1, fruit);
     }
     private TrieNode<TKey, TFruit> GetOrCreateChild(TKey childKey)

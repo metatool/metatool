@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34202.233
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11205.157 d18.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{920963F4-8205-4A1E-8ED3-9467B5D94794}"
 EndProject
@@ -112,6 +112,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "others", "others", "{F88A2637-31D7-4442-A2C6-3C8EF5C066C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Tools.MetaKeyboard", "tool\Metatool.Tools.MetaKeyboard\Metatool.Tools.MetaKeyboard.csproj", "{3FBCC029-512A-44A4-8EC3-DE50B68270A3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5C767EA7-F0F8-46DB-ABAE-564CA48F4763} = {5C767EA7-F0F8-46DB-ABAE-564CA48F4763}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScriptTemplate", "ScriptTemplate", "{75F2277D-D989-416C-86AE-6396A0FD4CF1}"
 EndProject
@@ -126,6 +129,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Service.CoreLib", "service\IService\Metatool.Service.CoreLib\Metatool.Service.CoreLib.csproj", "{B7C31548-8DA8-E5E1-68A7-F0BEC2A9D0AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.MouseKeyHook.FruitMonkey", "lib\Metatool.MouseKeyHook.FruitMonkey\Metatool.MouseKeyHook.FruitMonkey.csproj", "{F3A82E89-840C-459C-BD91-86AB2D03D906}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommenKeyTreeProcessingTests", "CommenKeyTreeProcessingTests\CommenKeyTreeProcessingTests.csproj", "{97348524-0391-4648-BD6A-1C56E66E2C36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -731,6 +736,22 @@ Global
 		{F3A82E89-840C-459C-BD91-86AB2D03D906}.Release|x64.Build.0 = Release|Any CPU
 		{F3A82E89-840C-459C-BD91-86AB2D03D906}.Release|x86.ActiveCfg = Release|Any CPU
 		{F3A82E89-840C-459C-BD91-86AB2D03D906}.Release|x86.Build.0 = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|x64.Build.0 = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Debug|x86.Build.0 = Debug|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|ARM64.Build.0 = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|x64.ActiveCfg = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|x64.Build.0 = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|x86.ActiveCfg = Release|Any CPU
+		{97348524-0391-4648-BD6A-1C56E66E2C36}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -777,6 +798,7 @@ Global
 		{675E133B-A96D-417F-AA6D-6A1A3C3B1FDF} = {8BB4C4E1-0E14-46FD-9BF5-28D8A629A8E7}
 		{B7C31548-8DA8-E5E1-68A7-F0BEC2A9D0AA} = {39AB1C15-8D6C-4039-8FF4-B25ADB5A1BA3}
 		{F3A82E89-840C-459C-BD91-86AB2D03D906} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
+		{97348524-0391-4648-BD6A-1C56E66E2C36} = {920963F4-8205-4A1E-8ED3-9467B5D94794}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}
