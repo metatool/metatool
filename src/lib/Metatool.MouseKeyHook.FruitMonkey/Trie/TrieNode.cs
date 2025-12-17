@@ -3,7 +3,7 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
-/// <param name="parent"> used to generate KeyPath</param>
+/// <param name="_parent"> used to generate KeyPath</param>
 public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _parent = null) where TKey : ICombination where TFruit : KeyEventCommand
 {
     public TKey Key { get; } = key;
@@ -38,11 +38,12 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
 
     public override string ToString()
     {
-        return Key == null ? // || Parent == null too
+        var k = Key == null ? // || Parent == null too
             "Root" :
             parent!.Key == null ?
                 $"{Key}" :
                 $"{parent.Key}, {Key}";
+        return $"{k}; {ValuesDescriptions}";
     }
 
     internal void Clear()
@@ -51,6 +52,8 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
         _values.Clear();
     }
 
+    private string ValuesDescriptions => $"Commands: {string.Join(",", _values)}";
+    
     internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip =>
         _childrenDictionary.Select(
             p => (

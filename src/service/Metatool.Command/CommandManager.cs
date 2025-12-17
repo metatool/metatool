@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Metaseed;
 using Metatool.Service;
 
 namespace Metatool.Command;
 
 public class CommandManager : ICommandManager
 {
-	private class CommandEntry
-	{
-		public object   Trigger { get; }
-		public ICommand Command { get; }
+	[DebuggerDisplay("{ToString()}")]
+	private class CommandEntry(object trigger, ICommand command)
+    {
+		public object Trigger { get; } = trigger;
+        public ICommand Command { get; } = command;
 
-		public CommandEntry(object trigger, ICommand command)
-		{
-			Trigger = trigger;
-			Command = command;
-		}
-	}
+        public override string ToString()
+        {
+            return $"Trigger:{Trigger}; Command:{Command}";
+        }
+    }
+
+    public CommandManager()
+    {
+		DebugState.Add("CommandManager",this);
+    }
 
 	readonly Dictionary<ICommandToken, CommandEntry> _commands = new();
 

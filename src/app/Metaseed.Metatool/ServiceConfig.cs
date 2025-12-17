@@ -44,8 +44,8 @@ public class ServiceConfig
 					//     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
 					//     new TextWriterTraceListener(writer: Console.Out)));
 					.AddProvider(new SimpleConsoleLoggerProvider())
-					//.AddFile(o => o.RootPath = hostingContext.HostingEnvironment.ContentRootPath);
-					.AddFile(o => o.RootPath = Context.AppDirectory);
+					// disable file log for now: not needed and better performance
+					//.AddFile(o => o.RootPath = Context.AppDirectory);
 				;
 			})
 			.ConfigureServices((hostContext, services) =>

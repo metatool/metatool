@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Metatool.Service;
 
 namespace Metatool.Command;
 
-public class CommandToken<T> : ICommandToken<T>
+[DebuggerDisplay("{ToString()}")]
+public class CommandToken<T>(ICommandManager manager) : ICommandToken<T>
 {
-	internal readonly CommandManager Manager;
+	internal readonly CommandManager Manager = manager as CommandManager;
 
-	public CommandToken(ICommandManager manager)
-	{
-		Manager = manager as CommandManager;
-	}
-
-	public string Id { get; set; }
+    public string Id { get; set; }
 
 	public bool IsDisabled
 	{
@@ -30,6 +27,11 @@ public class CommandToken<T> : ICommandToken<T>
 	{
 		Manager.Remove(this);
 	}
+
+    public override string ToString()
+    {
+        return $"Id:{Id},Disabled:{IsDisabled}";
+    }
 }
 
 public class CommandTokens<T, TArg> : List<T>, ICommandToken<TArg> where T : ICommandToken<TArg>

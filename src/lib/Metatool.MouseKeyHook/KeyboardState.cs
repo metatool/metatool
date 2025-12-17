@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Metatool.Input.MouseKeyHook.Implementation;
@@ -19,12 +18,12 @@ namespace Metatool.Input.MouseKeyHook.Implementation;
 /// </remarks>
 public partial class KeyboardState : IKeyboardState
 {
-    private static MemoryMappedViewAccessor accessor;
+    private static readonly MemoryMappedViewAccessor Accessor;
 
     static KeyboardState()
     {
         var m = MemoryMappedFile.CreateOrOpen("Metatool.HandledDownKeys", 256);
-        accessor = m.CreateViewAccessor(0, 256);
+        Accessor = m.CreateViewAccessor(0, 256);
     }
 
     public static KeyboardState HandledDownKeys;
@@ -39,7 +38,7 @@ public partial class KeyboardState : IKeyboardState
     {
         var sb = new StringBuilder();
         if (this != HandledDownKeys)
-            sb.Append(HandledDownKeys.ToString() + "|");
+            sb.Append(HandledDownKeys.ToString() + "|real:  ");
         for (var i = 0; i < 256; i++)
         {
             var key = (KeyCodes)i;
@@ -61,7 +60,7 @@ public partial class KeyboardState : IKeyboardState
     public static KeyboardState Current()
     {
         var bytes = new byte[256];
-        accessor.ReadArray<byte>(0, bytes, 0, 256);
+        Accessor.ReadArray<byte>(0, bytes, 0, 256);
         HandledDownKeys = new KeyboardState(bytes);
         var keyboardStateNative = new byte[256];
         KeyboardNativeMethods.GetKeyboardState(keyboardStateNative);
@@ -128,7 +127,7 @@ public partial class KeyboardState : IKeyboardState
     {
         get
         {
-            IEnumerable<KeyCodes> getDownKeys()
+            IEnumerable<KeyCodes> GetDownKeys()
             {
                 for (var i = 0; i < _keyboardStateNative.Length; i++)
                 {
@@ -138,8 +137,8 @@ public partial class KeyboardState : IKeyboardState
             }
 
             return (this != HandledDownKeys
-                ? HandledDownKeys.AllDownKeys.Concat(getDownKeys())
-                : getDownKeys()).Distinct();
+                ? HandledDownKeys.AllDownKeys.Concat(GetDownKeys())
+                : GetDownKeys()).Distinct();
         }
     }
 
@@ -176,7 +175,7 @@ public partial class KeyboardState : IKeyboardState
 
         if (this == HandledDownKeys)
         {
-            accessor.Write(virtualKeyCode, v);
+            Accessor.Write(virtualKeyCode, v);
         }
     }
 
@@ -190,7 +189,7 @@ public partial class KeyboardState : IKeyboardState
 
         if (this == HandledDownKeys)
         {
-            accessor.Write(virtualKeyCode, v);
+            Accessor.Write(virtualKeyCode, v);
         }
     }
 

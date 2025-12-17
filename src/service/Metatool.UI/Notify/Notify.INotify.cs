@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using Metatool.NotifyIcon;
 using Metatool.Utils.Notify;
 using UI.Notify;
@@ -14,159 +15,189 @@ namespace Metatool.UI.Notify;
 
 public partial class Notify
 {
-	public void ShowMessage(string msg)
-	{
-		if (msg == "") return;
-		TrayIcon?.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
-	}
+    public void ShowMessage(string msg)
+    {
+        if (msg == "") return;
+        TrayIcon?.ShowBalloonTip(string.Empty, msg, BalloonIcon.None);
+    }
 
-	public NotifyToken ShowMessage(System.Windows.FrameworkElement control, int? timeout,
-		NotifyPosition position = NotifyPosition.ActiveScreen, bool onlyCloseByToken = false)
-	{
-		TaskbarIcon.GetCustomPopupPosition func = null;
-		switch (position)
-		{
-			case NotifyPosition.ActiveWindowCenter:
-				func = () =>
-				{
-					var rect = WindowManager.CurrentWindow.Rect;
-					return new NotifyIcon.Interop.Point()
-					{
-						X = (int) (rect.X + rect.Width / 2 - control.ActualWidth / 2),
-						Y = (int) (rect.Y + rect.Height / 2 - control.ActualHeight / 2)
-					};
-				};
-				break;
-			case NotifyPosition.ActiveScreen:
-				func = () =>
-				{
-					var screen = Screen.FromHandle(WindowManager.CurrentWindow.Handle);
-					if (screen.Equals(Screen.PrimaryScreen))
-					{
-						return TrayIcon.GetPopupTrayPosition();
-					}
+    public NotifyToken ShowMessage(System.Windows.FrameworkElement control, int? timeout,
+        NotifyPosition position = NotifyPosition.ActiveScreen, bool onlyCloseByToken = false)
+    {
+        TaskbarIcon.GetCustomPopupPosition func = null;
+        switch (position)
+        {
+            case NotifyPosition.ActiveWindowCenter:
+                func = () =>
+                {
+                    var rect = WindowManager.CurrentWindow.Rect;
+                    return new NotifyIcon.Interop.Point()
+                    {
+                        X = (int)(rect.X + rect.Width / 2 - control.ActualWidth / 2),
+                        Y = (int)(rect.Y + rect.Height / 2 - control.ActualHeight / 2)
+                    };
+                };
+                break;
+            case NotifyPosition.ActiveScreen:
+                func = () =>
+                {
+                    var screen = Screen.FromHandle(WindowManager.CurrentWindow.Handle);
+                    if (screen.Equals(Screen.PrimaryScreen))
+                    {
+                        return TrayIcon.GetPopupTrayPosition();
+                    }
 
-					var bounds = screen.Bounds;
-					return new NotifyIcon.Interop.Point()
-					{
-						X = bounds.X + bounds.Width,
-						Y = bounds.Y + bounds.Height
-					};
-				};
-				break;
-			case NotifyPosition.Default:
-				break;
-			default:
-				throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
-		}
+                    var bounds = screen.Bounds;
+                    return new NotifyIcon.Interop.Point()
+                    {
+                        X = bounds.X + bounds.Width,
+                        Y = bounds.Y + bounds.Height
+                    };
+                };
+                break;
+            case NotifyPosition.Default:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(position) + " not supported", position, null);
+        }
 
-		TrayIcon.CustomPopupPosition = func;
-		return TrayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
-	}
+        TrayIcon.CustomPopupPosition = func;
+        return TrayIcon.ShowCustomBalloon(control, PopupAnimation.None, timeout, onlyCloseByToken);
+    }
 
-	public MenuItem AddContextMenuItem(string header, Action<MenuItem> execute,
-		Func<MenuItem, bool> canExecute = null, bool isCheckable = false, bool? isChecked = null)
-	{
-		var item = new MenuItem() {Header = header, IsCheckable = isCheckable};
-		if (isChecked.HasValue)
-			item.IsChecked = isChecked.Value;
-		item.Command = new DelegateCommand<MenuItem>()
-			{CanExecuteFunc = canExecute, CommandAction = execute};
-		item.CommandParameter = item;
-		TrayIcon.ContextMenu?.Items.Insert(0, item);
+    public MenuItem AddContextMenuItem(string header, Action<MenuItem> execute,
+        Func<MenuItem, bool> canExecute = null, bool isCheckable = false, bool? isChecked = null)
+    {
+        var item = new MenuItem() { Header = header, IsCheckable = isCheckable };
+        if (isChecked.HasValue)
+            item.IsChecked = isChecked.Value;
+        item.Command = new DelegateCommand<MenuItem>()
+        { CanExecuteFunc = canExecute, CommandAction = execute };
+        item.CommandParameter = item;
+        TrayIcon.ContextMenu?.Items.Insert(0, item);
 
-		return item;
-	}
+        return item;
+    }
 
-	public void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
-		NotifyPosition position = NotifyPosition.ActiveScreen)
-	{
-		if (tips == null) return;
-            
-		var description =
-			tips.SelectMany(t => t.descriptions.Select(d => new TipItem() {Key = t.key, DescriptionInfo = d}));
-		var t = new ObservableCollection<TipItem>(description);
-		if (t.Count == 0) return;
+    public void ShowKeysTip(IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
+        NotifyPosition position = NotifyPosition.ActiveScreen)
+    {
+        if (tips == null) return;
+        var dispatcher = Application.Current.Dispatcher;
+        if (!dispatcher.CheckAccess())
+        {
+            dispatcher.Invoke(DispatcherPriority.Background,
+                () => ShowKeysTip(tips, position));
+            return;
+        }
 
-		var keytipsBalloon = new FancyBalloon() {Tips = t};
-		ShowMessage(keytipsBalloon, 8888);
-	}
+        var description =
+            tips.SelectMany(t => t.descriptions.Select(d => new TipItem() { Key = t.key, DescriptionInfo = d }));
+        var t = new ObservableCollection<TipItem>(description);
+        if (t.Count == 0) return;
 
-	readonly Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> _tipDictionary = new();
+        var keytipsBalloon = new FancyBalloon() { Tips = t };
+        ShowMessage(keytipsBalloon, 8888);
+    }
 
-	public void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
-		NotifyPosition position = NotifyPosition.ActiveScreen)
-	{
-		var keyAndTips = tips as (string key, IEnumerable<string> descriptions)[] ?? tips.ToArray();
-		if (_tipDictionary.Count == 0 && !keyAndTips.Any())
-		{
-			return;
-		}
+    readonly Dictionary<string, IEnumerable<(string key, IEnumerable<string> descriptions)>> _tipDictionary = new();
 
-		_tipDictionary.TryGetValue(name, out var tp);
-		if (tp != null && keyAndTips.SequenceEqual(tp)) return;
+    public void ShowKeysTip(string name, IEnumerable<(string key, IEnumerable<string> descriptions)> tips,
+        NotifyPosition position = NotifyPosition.ActiveScreen)
+    {
+        var keyAndTips = tips as (string key, IEnumerable<string> descriptions)[] ?? tips.ToArray();
+        if (_tipDictionary.Count == 0 && !keyAndTips.Any())
+        {
+            return;
+        }
+        //// to improve key handling performance:
+        //// if  in ui thread, ui-showing related computation send to another loop
+        //// if not in ui thread, send to ui thread !dispatcher.CheckAccess()
+        var dispatcher = Application.Current.Dispatcher;
+        // priority lower than Input, otherwise i.e. Normal, the following key events i.e. keyUP can not be processed on time,
+        // would be lost from global hook because of long processing time, windows kick off the hook for following event, and the keyboard state is not right, i.e. some key is down.
+        // Note: already moved the hook from UI thread into a dedicated high priority thread. Normal should ok now.
+        if (!dispatcher.CheckAccess())
+            dispatcher.Invoke(DispatcherPriority.Background,
+         () => ShowKeysTipInternal(name, keyAndTips, position));
+        else
+        {
+            ShowKeysTipInternal(name, keyAndTips, position);
+        }
+    }
 
-		_tipDictionary[name] = keyAndTips;
-		var t = _tipDictionary.SelectMany(pair => pair.Value).ToList();
-		t.Sort((a,b)=>string.Compare(a.key, b.key, StringComparison.Ordinal));
-		if (t.Any())
-			ShowKeysTip(t, position);
-		else
-		{
-			CloseKeysTip();
-		}
-	}
+    void ShowKeysTipInternal(string name, (string key, IEnumerable<string> descriptions)[] keyAndTips,
+        NotifyPosition position = NotifyPosition.ActiveScreen)
+    {
+        _tipDictionary.TryGetValue(name, out var tp);
+        if (tp != null && keyAndTips.SequenceEqual(tp)) return;
 
+        _tipDictionary[name] = keyAndTips;
+        var t = _tipDictionary.SelectMany(pair => pair.Value).ToList();
+        t.Sort((a, b) => string.Compare(a.key, b.key, StringComparison.Ordinal));
+        if (t.Any())
+            ShowKeysTip(t, position);
+        else
+        {
+            CloseKeysTip();
+        }
+    }
 
-	public void CloseKeysTip(string name)
-	{
-		ShowKeysTip(name, []);
-	}
+    public void CloseKeysTip(string name)
+    {
+        ShowKeysTip(name, []);
+    }
 
-	public void CloseKeysTip()
-	{
-		if (Application.Current.Dispatcher != null && !Application.Current.Dispatcher.CheckAccess())
-			Application.Current.Dispatcher.BeginInvoke((Action)CloseKeysTip);
+    public void CloseKeysTip()
+    {
+        if (Application.Current.Dispatcher != null && !Application.Current.Dispatcher.CheckAccess())
+            Application.Current.Dispatcher.BeginInvoke((Action)CloseKeysTip);
 
-		TrayIcon?.CloseBalloon();
-	}
+        TrayIcon?.CloseBalloon();
+    }
 
-	private ObservableCollection<TipItem> selectActions;
-	public MessageToken<TipItem> SelectionToken;
+    private ObservableCollection<TipItem> selectActions;
+    public MessageToken<TipItem> SelectionToken;
 
-	public MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips,
-		Action<int> closeViaKey = null)
-	{
-		var valueTuples = tips.ToArray();
-		var description =
-			valueTuples.Select((d, i) =>
-			{
-				i = selectActions?.Count ?? 0 + i;
-				string key;
-				if (i < 9)
-				{
-					key = i.ToString();
-				}
-				else
-				{
-					key = (Keys.D0 + i).ToString();
-				}
+    public MessageToken<TipItem> ShowSelectionAction(IEnumerable<(string des, Action action)> tips,
+        Action<int> closeViaKey = null)
+    {
+        var dispatcher = Application.Current.Dispatcher;
+        if (!dispatcher.CheckAccess())
+        {
+            return dispatcher.Invoke((Func<MessageToken<TipItem>>)(() => ShowSelectionAction(tips, closeViaKey)));
+        }
 
-				return new TipItem()
-					{Key = key, DescriptionInfo = d.des, Action = d.action};
-			});
-		if (selectActions == null || (SelectionToken != null && SelectionToken.IsClosed))
-		{
-			selectActions = new ObservableCollection<TipItem>(description);
-			var b = new SelectableMessage();
-			b.CloseViaKey += closeViaKey;
-			return SelectionToken = ShowMessage(b, selectActions, 8888, NotifyPosition.Caret);
-		}
-		else
-		{
-			description.ToList().ForEach(tt => selectActions.Add(tt));
-			SelectionToken.Refresh();
-			return SelectionToken;
-		}
-	}
+        var valueTuples = tips.ToArray();
+        var description =
+            valueTuples.Select((d, i) =>
+            {
+                i = selectActions?.Count ?? 0 + i;
+                string key;
+                if (i < 9)
+                {
+                    key = i.ToString();
+                }
+                else
+                {
+                    key = (Keys.D0 + i).ToString();
+                }
+
+                return new TipItem()
+                { Key = key, DescriptionInfo = d.des, Action = d.action };
+            });
+        if (selectActions == null || (SelectionToken != null && SelectionToken.IsClosed))
+        {
+            selectActions = new ObservableCollection<TipItem>(description);
+            var b = new SelectableMessage();
+            b.CloseViaKey += closeViaKey;
+            return SelectionToken = ShowMessage(b, selectActions, 8888, NotifyPosition.Caret);
+        }
+        else
+        {
+            description.ToList().ForEach(tt => selectActions.Add(tt));
+            SelectionToken.Refresh();
+            return SelectionToken;
+        }
+    }
 }

@@ -60,6 +60,9 @@ public partial class KeyboardState
         }
     }
 
+    /// <summary>
+    /// not work
+    /// </summary>
     public static void ClearAllDownStateKeys()
     {
         var keyState = new byte[256];
@@ -87,7 +90,6 @@ public partial class KeyboardState
 
             }
         }
-
         if (needsUpdate)
         {
             KeyboardNativeMethods.SetKeyboardState(keyState);

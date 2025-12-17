@@ -22,6 +22,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
     internal TrieNode<ICombination, KeyEventCommand> CurrentNode => _trie.CurrentNode;
 
     internal bool IsOnRoot => _trie.IsOnRoot;
+    internal TrieNode<ICombination, KeyEventCommand> Root => _trie.Root;
 
     public void Reset()
     {
@@ -33,7 +34,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
 
         Console.WriteLine($"${Name}{lastDownHit}");
 
-        Task.Run(() => notify?.CloseKeysTip(Name)); // use task here, because the slow startup
+        notify?.CloseKeysTip(Name);
         _trie.GoToRoot();
     }
 
@@ -110,7 +111,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
     /// <returns></returns>
     internal SelectionResult TrySelectNode(KeyEventType eventType, IKeyEventArgs args)
     {
-        // to handle A+B+C(B is currently down in Chord)
+        // to handle A+B+C(B is currently down in Chord)eventType == KeyEventType.Down && args.KeyCode == KeyCodes.RShiftKey
         var downInChord = false;
         ICombination? candidateKey = null;
 
@@ -159,6 +160,8 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
     //eventType is only Down or Up
     internal TreeClimbingState Climb(KeyEventType eventType, IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand>? candidateNode, bool downInChord)
     {
+        // conditional dbg:
+        // Name == "ChordMap" && eventType == KeyEventType.Up && args.KeyCode == KeyCodes.Enter
         Debug.Assert(args != null, nameof(args) + " != null");
 
         if (args.NoFurtherProcess)
@@ -188,8 +191,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
             // allUp design goal:
             // 1. could register allUp event
             // 2. still navigate when A+B+C_up event not triggered because of chord_up before trigger_up
-            if (_lastKeyDownNodeForAllUp != null &&
-                _lastKeyDownNodeForAllUp.Key.IsAnyKey(args.KeyCode))
+            if (_lastKeyDownNodeForAllUp != null && _lastKeyDownNodeForAllUp.Key.IsAnyKey(args.KeyCode))
             {
                 if (args.KeyboardState.AreAllUp(_lastKeyDownNodeForAllUp.Key.AllKeys))
                 {
@@ -239,44 +241,52 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
 
         var lastDownHit = "";
         if (_lastKeyDownNodeForAllUp != null)
-            lastDownHit = $"last↓@{_lastKeyDownNodeForAllUp}";
+            lastDownHit = $":lastKeyDownNodeForAllUpEvent@{_lastKeyDownNodeForAllUp}";
         Console.WriteLine($"${Name}{lastDownHit}");
+
+
+        var handled = candidateNode.Key.TriggerKey.Handled;
+        if ((eventType == KeyEventType.Down || eventType == KeyEventType.Up) && (eventType & handled) != 0)
+            args.Handled = true; // even there is not action in list we still hide as required,for all up 
 
         // matched
         var actionList = candidateNode.Values as KeyActionList<KeyEventCommand>;
         Debug.Assert(actionList != null, nameof(actionList) + " != null");
 
         // execute
-        var handled = candidateNode.Key.TriggerKey.Handled;
-        if ((eventType & handled) != 0) 
-            args.Handled = true; // even there is not action in list we still hide as required
 
         var oneExecuted = false;
-        foreach (var keyCommand in actionList[eventType])
+        //KeyEventType[] eventTypes = [eventType];
+        //if (eventType == KeyEventType.AllUp) eventTypes = [KeyEventType.Up, KeyEventType.AllUp];
+        //foreach (var eventTyp in eventTypes)
+        var eventTyp = eventType;
         {
-            if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
+            foreach (var keyCommand in actionList[eventTyp])
             {
-                Console.WriteLine($"\t/!{eventType}\t{keyCommand.Id}\t{keyCommand.Description}");
-                continue;
-            }
-
-            oneExecuted = true;
-            var execute = keyCommand.Execute;
-
-            var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
-            Console.WriteLine(
-                $"\t!{eventType}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
-            try
-            {
-                execute?.Invoke(args);
-                if (args.NoFurtherProcess)
+                if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
                 {
-                    break;
+                    Console.WriteLine($"\t/!{eventTyp}\t{keyCommand.Id}\t{keyCommand.Description}");
+                    continue;
                 }
-            }
-            catch (Exception e) when (!Debugger.IsAttached)
-            {
-                Services.CommonLogger.LogError(e.ToString());
+
+                oneExecuted = true;
+                var execute = keyCommand.Execute;
+
+                var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
+                Console.WriteLine(
+                    $"\t!{eventTyp}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
+                try
+                {
+                    execute?.Invoke(args);
+                    if (args.NoFurtherProcess)
+                    {
+                        break;
+                    }
+                }
+                catch (Exception e) when (!Debugger.IsAttached)
+                {
+                    Services.CommonLogger.LogError(e.ToString());
+                }
             }
         }
 
@@ -328,6 +338,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
                     }
 
                     notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
+                    // A, B: waiting for B
                     return ClimbingState = TreeClimbingState.Continue;
                 }
 

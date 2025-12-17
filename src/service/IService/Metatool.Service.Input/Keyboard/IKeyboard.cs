@@ -18,9 +18,9 @@ public interface IKeyboard : IKeyboardVirtual
 	IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
 	IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
     // down up happened successively
-    IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
+    IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "");
     //  down up happened successively, and all keys are released
-    IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null);
+    IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "");
 	/// <summary>
 	/// i.e. Z: LCtrl+LShift, then press Z+A = LCtrl+LShift+A
 	/// if Z pressed and then release, z would be typed

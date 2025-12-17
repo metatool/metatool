@@ -33,6 +33,8 @@ try {
     if ($localRelease) {
         spps -n metatool -ErrorAction Ignore
         # note: we need also close the metatool in the vm, otherwise error: The process cannot access the file 'M:\Workspace\metatool\exe\publish\Metatool.exe' because it is being used by another process.
+        ri "$metatoolDir\exe\publish\appsettings.Production.json"
+        ri "$metatoolDir\exe\publish\appsettings.json"
         Copy-Item "$metatoolDir\exe\publishing\Metatool.exe" "$metatoolDir\exe\publish" -Force
     }
     . $PSScriptRoot/lib/Build-Tool.ps1

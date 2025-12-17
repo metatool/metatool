@@ -1,9 +1,11 @@
-﻿using Metatool.Input.MouseKeyHook.Implementation;
+﻿using System.Diagnostics;
+using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.MouseKeyHook.FruitMonkey.Trie;
 using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 
+[DebuggerDisplay("{ToString()}")]
 public class MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> path, KeyEventCommand command) : IMetaKey
 {
 	internal readonly HotkeyToken _token = new HotkeyToken(trie, path, command);
@@ -53,4 +55,9 @@ public class MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombinati
 		get => _token._hotkey.Last().Disabled;
 		set => _token._hotkey.Last().Disabled = value;
 	}
+
+    public override string ToString()
+    {
+        return $"HotKey:{Hotkey},EventType{KeyEventType},Disabled:{Disable},Id:{Id}";
+    }
 }

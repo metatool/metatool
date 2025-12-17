@@ -1,6 +1,5 @@
 ﻿using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
-using Metatool.Service.Internal;
 using Metatool.Service.MouseKey;
 using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
@@ -15,6 +14,7 @@ using System.Windows.Forms;
 
 namespace Metatool.Input;
 
+[DebuggerDisplay("{ToString()}")]
 public class KeyboardCommandTrigger : CommandTrigger<IKeyEventArgs>, IKeyboardCommandTrigger
 {
     internal IMetaKey _metaKey;
@@ -31,6 +31,11 @@ public class KeyboardCommandTrigger : CommandTrigger<IKeyEventArgs>, IKeyboardCo
     {
         _metaKey?.Remove();
         base.OnRemove(command);
+    }
+
+    public override string ToString()
+    {
+        return $"MetaKey:{MetaKey},Execute:{ExecuteCount},CanExecute:{CanExecuteCount}";
     }
 }
 
@@ -204,79 +209,94 @@ public partial class Keyboard : IKeyboard
     ///  Note: A+ B -> C become A+C 
     /// </summary>
     public IKeyCommand MapOnHit(IHotkey source, IHotkey target,
-        Predicate<IKeyEventArgs> predicate = null)
+        Predicate<IKeyEventArgs> predicate = null, string description = "")
     {
-        return MapOnHitOrAllUp(source, target, predicate, false);
+        return MapOnHitOrAllUp(source, target, predicate, false, description);
     }
 
     public IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target,
-        Predicate<IKeyEventArgs> predicate = null)
+        Predicate<IKeyEventArgs> predicate = null, string description = "")
     {
-        return MapOnHitOrAllUp(source, target, predicate, true);
+        return MapOnHitOrAllUp(source, target, predicate, true, description);
     }
 
-    class NoEventTimer
+    class NoEventTimer(long eventDuration = 800)
     {
-        private readonly long _eventDuration;
         readonly Stopwatch sw = new();
-
-        public NoEventTimer(long eventDuration = 800)
-        {
-            _eventDuration = eventDuration;
-        }
 
         public void EventPulse()
         {
             sw.Restart();
         }
 
-        public long NoEventDuration => sw.ElapsedMilliseconds - _eventDuration;
+        public long NoEventDuration => sw.ElapsedMilliseconds - eventDuration;
     }
-
+    // on key is hold for 5s
     private const int StateResetTime = 5000;
 
-    private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, bool allUp = false)
+    /// <summary>
+    /// hit: the trigger key down and up
+    /// allUp: trigger key and the chords are all up
+    ///
+    /// for A: A down, within delay of RepeatDelay(2000) B down: A is considered as Chord of A+B
+    /// </summary>
+    private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, bool allUp = false, string description = "")
     {
         var delay = _config.CurrentValue?.Services.Input.Keyboard.RepeatDelay ?? 3000;
-        var noEventTimer = new NoEventTimer();
-        // state
-        var handling = false;
+        // up event is lost. i.e. because of hook take too long for previous event
+        var noUpEventTimer = new NoEventTimer();
+        // when holding the key
+        var holding = false;
         IKeyEventArgs keyDownEvent = null;
-        var stopwatch =
-            new Stopwatch(); // used when tartet = source and allUp = false => turn a normal key to the chord, so within the delay it can act as a Chord
+
+        // used when target = source and allUp = false => turn a normal key to the chord, so within the delay it can act as a Chord
+        var holdingTimer = new Stopwatch(); 
 
         void Reset()
         {
-            handling = false;
+            holding = false;
             keyDownEvent = null;
-            stopwatch.Reset();
+            holdingTimer.Reset();
+            Console.WriteLine("MapOnHitOrAllUp-Reset");
         }
 
         void KeyUpAsyncCall(IKeyEventArgs e)
         {
             e.Handled = true;
-            e.BeginInvoke(() => Type(target));
+            //e.BeginInvoke(() => Type(target));
+            Type(target);
+
         }
 
         bool KeyUpPredicate(IKeyEventArgs e)
         {
-            if (!handling)
+            if (!holding)
             {
-                Console.WriteLine("\t/!Predicate Handling:false");
+                Console.WriteLine("\t/!MapOnHitOrAllUp-Predicate: Handling==false");
                 return false;
             }
 
-            handling = false;
+            holding = false;
             if (keyDownEvent != e.LastKeyDownEvent)
             {
                 Console.WriteLine(allUp
-                    ? "\t/!allUp: keyDownEvent != e.LastKeyDownEvent"
-                    : "\t/!up: keyDownEvent != e.LastKeyDownEvent");
+                    ? "\t/!MapOnHitOrAllUp-allUp: keyDownEvent != e.LastKeyDownEvent"
+                    : "\t/!MapOnHitOrAllUp-up: keyDownEvent != e.LastKeyDownEvent");
+                Reset();
                 return false;
             }
-
+            Reset();
             return true;
         }
+
+        KeyDown += (_,e) =>
+        {
+            if (keyDownEvent != null && e.KeyCode != keyDownEvent.KeyCode)
+            {
+                Console.WriteLine($"MapOnHitOrAllUp:{e.KeyCode} canceled because other key is down!");
+                Reset();
+            }
+        };
 
         return new KeyCommandTokens()
         {
@@ -284,27 +304,33 @@ public partial class Keyboard : IKeyboard
                     e =>
                 {
                     e.Handled    = true;
+
                     keyDownEvent = e;
-                    if (handling) return; // repeated long press key, within duration
-				    handling = true;
-                    stopwatch.Restart();
+                    if (holding) 
+                        return; // repeated long press key, within duration, when holding the key as the chord
+
+				    holding = true;
+                    holdingTimer.Restart();
                 },
                     e =>
                 {
-                    var noEventDuration = noEventTimer.NoEventDuration;
-                    if (noEventDuration > StateResetTime) Reset();
-                    noEventTimer.EventPulse();
+                    var noEventDuration = noUpEventTimer.NoEventDuration;
+                    if (noEventDuration > StateResetTime) Reset(); // do remedy
+                    noUpEventTimer.EventPulse();
 
-                    if ((!handling || stopwatch.ElapsedMilliseconds <= delay) && (predicate == null || predicate(e)))
+                    if ((!holding || holdingTimer.ElapsedMilliseconds <= delay) && (predicate == null || predicate(e)))
                         return true;
-                    if (stopwatch.IsRunning) stopwatch.Stop();
+
+                    if (holdingTimer.IsRunning) holdingTimer.Reset();
+                    Console.WriteLine($"holding:{holding}, holdingTimer.ElapsedMilliseconds:{holdingTimer.ElapsedMilliseconds}>delay:{delay}");
+                    
                     return false; // disable map
 			    },
-                "", KeyStateTrees.ChordMap
+                description, KeyStateTrees.ChordMap
             ),
             allUp?
-            source.OnAllUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap):
-            source.OnUp(KeyUpAsyncCall, KeyUpPredicate, "", KeyStateTrees.ChordMap)
+            source.OnAllUp(KeyUpAsyncCall, KeyUpPredicate, description, KeyStateTrees.ChordMap):
+            source.OnUp(KeyUpAsyncCall, KeyUpPredicate, description, KeyStateTrees.ChordMap)
         };
     }
 

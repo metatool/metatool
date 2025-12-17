@@ -1,11 +1,13 @@
-﻿using Metatool.Input.MouseKeyHook.Implementation;
+﻿using Metaseed;
+using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Metaseed;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace Metatool.Input.MouseKeyHook;
 
@@ -50,10 +52,10 @@ public class KeyboardHook
     {
         _logger = logger;
         _eventSource = Hook.GlobalEvents();
-        _monkey = new FruitMonkey(logger, new KeyTipNotifier((string key, IEnumerable<(string key, IEnumerable<string> descriptions)> tips) => notify.ShowKeysTip(key, tips), key => notify.CloseKeysTip(key)));
-#if DEBUG
-        DebugState.Watcher.Add("Forest", _monkey.Forest);
-#endif
+        _monkey = new FruitMonkey(logger, new KeyTipNotifier((key, tips) => notify.ShowKeysTip(key, tips), key => notify.CloseKeysTip(key)));
+        //_monkey = new FruitMonkey(logger, new KeyTipNotifier((key, tips) => {}, key => {}));
+
+        DebugState.Add("Forest", _monkey.Forest);
     }
 
     private readonly List<KeyEventHandler> _keyUpHandlers = [];
@@ -95,14 +97,6 @@ public class KeyboardHook
     public void Run()
     {
         if (_isRunning) return;
-        Debug.Assert(System.Windows.Application.Current.Dispatcher != null,
-            "System.Windows.Application.Current.Dispatcher != null");
-        var access = System.Windows.Application.Current.Dispatcher.CheckAccess();
-        if (!access)
-        {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)Run);
-            return;
-        }
 
         _isRunning = true;
         _logger.LogInformation($"Keyboard hook is running...");
@@ -129,5 +123,20 @@ public class KeyboardHook
             List<KeyEventHandler> handlers = [.. _keyUpHandlers]; // a copy
             handlers.ForEach(h => h?.Invoke(sender, args));
         };
+
+        while (GetMessage(out var msg, IntPtr.Zero, 0, 0) > 0)
+        {
+            TranslateMessage(ref msg);
+            DispatchMessage(ref msg);
+        }
     }
+
+    [DllImport("user32.dll")]
+    private static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+    [DllImport("user32.dll")]
+    private static extern bool TranslateMessage([In] ref MSG lpMsg);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
 }

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Metatool.Input.MouseKeyHook;
+﻿using Metatool.Input.MouseKeyHook;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Metatool.Input;
 
@@ -69,7 +70,7 @@ public partial class Keyboard
 					if (!key.IsCommonChordKey())
 					{
 						if(!_hook.Contains(key, KeyStateTrees.ChordMap))
-							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual);
+							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, "MapOnHit$ChordMapTree");
 					}
 				}
 			}
@@ -165,8 +166,15 @@ public partial class Keyboard
 		remove => _hook.KeyUp -= value;
 	}
 
-	private void Hook()
+    private Thread _hookThread;
+    private void Hook()
 	{
-		_hook.Run();
-	}
+        _hookThread = new Thread(_hook.Run)
+        {
+            Name = "Keyboard/Mouse Hook Thread",
+            IsBackground = true,
+            Priority = ThreadPriority.Highest
+        };
+        _hookThread.Start();
+    }
 }

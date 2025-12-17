@@ -11,6 +11,8 @@ public partial class Trie<TKey, TFruit> where TKey : ICombination where TFruit :
         currentNode = _root;
     }
 
+    internal TrieNode<TKey, TFruit> Root => _root;
+
     private TrieNode<TKey, TFruit> currentNode;
     internal TrieNode<TKey, TFruit> CurrentNode
     {

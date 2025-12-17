@@ -49,7 +49,7 @@ internal abstract class KeyListener : BaseListener, IKeyboardEvents
 			return;
 
 		handler(this, e);
-		_logger.LogDebug(new String('\t', _indentCounter) + e.ToString());
+		_logger.LogDebug(new String('\t', _indentCounter) + e);
 	}
 
 	public void InvokeKeyUp(IKeyEventArgs e)
@@ -121,7 +121,7 @@ internal abstract class KeyListener : BaseListener, IKeyboardEvents
 		var args = GetDownUpEventArgs(data);
 		if (Disable)
 		{
-			_logger.LogDebug('\t' + "NotHandled " + args.ToString());
+			_logger.LogDebug('\t' + "NotHandled " + args);
 			return true;
 		}
 
@@ -129,18 +129,18 @@ internal abstract class KeyListener : BaseListener, IKeyboardEvents
 		argExt.listener = this;
 		if (args.IsVirtual && !HandleVirtualKey)
 		{
-			_logger.LogDebug('\t' + "NotHandled " + args.ToString());
+			_logger.LogDebug('\t' + "NotHandled " + args);
 			return true;
 		}
 
-		_logger.LogDebug(new String('\t', _indentCounter++) + "→" + args.ToString());
+		_logger.LogDebug(new String('\t', _indentCounter++) + "→" + args);
 		InvokeKeyDown(args);
 
 		var pressEventArgs = GetPressEventArgs(data, args).ToList();
 		foreach (var pressEventArg in pressEventArgs)
 			InvokeKeyPress(pressEventArg);
 		InvokeKeyUp(args);
-		_logger.LogDebug(new String('\t', --_indentCounter) + "←" + args.ToString());
+		_logger.LogDebug(new String('\t', --_indentCounter) + "←" + args);
 		if (argExt.HandleVirtualKeyBackup.HasValue)
 		{
 			HandleVirtualKey = argExt.HandleVirtualKeyBackup.Value;

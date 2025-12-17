@@ -45,7 +45,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 
         if (selectionResults.Count > 0)
             logger.LogInformation(
-                $"ToClimb:{string.Join(",", selectionResults.Select(t => $"${t.Tree.Name}_{t.SelectedNode}"))}");
+                $"ToClimb:{string.Join(",", selectionResults.Select(t => $"${t.Tree.Name}@{t.SelectedNode}"))}");
 
         return selectionResults;
     }

@@ -45,27 +45,29 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 		KeyboardState = keyboardState;
 	}
 
-	static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+	//static Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
 	public IKeyPath PathToGo { get; internal set; }
 
 	public void BeginInvoke(Action action)
 	{
-		_dispatcher.BeginInvoke(DispatcherPriority.Send, action);
-	}
+		//_dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+        action();
+    }
 
 	public void BeginInvoke(Action<IKeyEventArgs> action)
 	{
-		_dispatcher.BeginInvoke(DispatcherPriority.Send, action, this);
-	}
+		//_dispatcher.BeginInvoke(DispatcherPriority.Send, action, this);
+        action(this);
+    }
 
-	public static async Task<T> InvokeAsync<T>(Func<T> action,
-		DispatcherPriority priority = DispatcherPriority.Send)
-	{
-		var o = _dispatcher.BeginInvoke(priority, action);
-		await o;
-		return (T) (o.Result);
-	}
+	public static Task<T> InvokeAsync<T>(Func<T> action, DispatcherPriority priority = DispatcherPriority.Send)
+    {
+        //var o = _dispatcher.BeginInvoke(priority, action);
+		//await o;
+		//return (T) (o.Result);
+        return Task.FromResult(action());
+    }
 
 	public static async Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Send)
 	{
@@ -122,10 +124,12 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 	/// </summary>
 	public bool IsKeyUp { get; }
 
-	/// <summary>
-	///     True if event signals, that the key is an extended key
-	/// </summary>
-	public bool IsExtendedKey { get; }
+    /// <summary>
+    ///     beyond the basic typing keys (letters, numbers, and common punctuation)
+    /// These keys don’t usually produce characters directly but perform control, navigation, or system functions. note: LCtrl, LAlt is not extend key. LCtrl and RCtrl with same scan code 0x1D, the RCtrl with E0(Extended Flag) set.
+    /// Extended keys often don’t map to ASCII characters, They’re detected via scan codes or virtual key codes. Examples: arrow keys, function keys, Ctrl/Alt combinations
+    /// </summary>
+    public bool IsExtendedKey { get; }
 
 	/// <summary>
 	/// is assigned when climbing the tree
@@ -152,7 +156,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
 		dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
 		var d = IsKeyUp ? "Up" : "Down";
 		return
-			$"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:{ScanCode,-8} Extended:{IsExtendedKey}  With: {KeyboardState}";
+			$"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:0x{ScanCode,-8:X} Extended:{IsExtendedKey}  State: {KeyboardState}";
 	}
 
 	private static KeyEventArgsExt _lastKeyEventGloable = new(Keys.None);

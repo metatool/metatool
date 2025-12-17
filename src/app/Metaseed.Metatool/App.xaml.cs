@@ -60,7 +60,7 @@ public partial class App : Application
 
 	internal static void RunApp(Action action = null)
 	{
-		var newWindowThread = new Thread(()=>Start(action));
+		var newWindowThread = new Thread(()=>Start(action)){Name = "UI Thread"};
 		newWindowThread.SetApartmentState(ApartmentState.STA);
 		newWindowThread.IsBackground = true;
 		newWindowThread.Start();
