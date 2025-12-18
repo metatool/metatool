@@ -4,15 +4,9 @@ using System;
 
 namespace Metatool.Input.MouseKeyHook.WinApi;
 
-internal struct CallbackData
+internal readonly struct CallbackData(IntPtr wParam, IntPtr lParam)
 {
-	public CallbackData(IntPtr wParam, IntPtr lParam)
-	{
-		WParam = wParam;
-		LParam = lParam;
-	}
+    public IntPtr WParam { get; } = wParam;
 
-	public IntPtr WParam { get; }
-
-	public IntPtr LParam { get; }
+    public IntPtr LParam { get; } = lParam;
 }

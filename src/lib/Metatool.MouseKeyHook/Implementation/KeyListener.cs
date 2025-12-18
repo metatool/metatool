@@ -116,12 +116,13 @@ internal abstract class KeyListener : BaseListener, IKeyboardEvents
 		}
 	}
 
+	/// <returns>false: to block the system to continue processing in other hooks, i.e. prevent the key typing</returns>
 	protected override bool Callback(CallbackData data)
 	{
 		var args = GetDownUpEventArgs(data);
 		if (Disable)
 		{
-			_logger.LogDebug('\t' + "NotHandled " + args);
+			_logger.LogDebug('\t' + "KeyListener is disable, NotHandled: " + args);
 			return true;
 		}
 
@@ -129,18 +130,23 @@ internal abstract class KeyListener : BaseListener, IKeyboardEvents
 		argExt.listener = this;
 		if (args.IsVirtual && !HandleVirtualKey)
 		{
-			_logger.LogDebug('\t' + "NotHandled " + args);
+			_logger.LogDebug('\t' + "KeyListener configured to Not HandleVirtualKey, Not Handled " + args);
 			return true;
 		}
 
 		_logger.LogDebug(new String('\t', _indentCounter++) + "→" + args);
+		// down 
 		InvokeKeyDown(args);
+		// press
+		var pressEventArgs =GetPressEventArgs(data, args).ToArray();
 
-		var pressEventArgs = GetPressEventArgs(data, args).ToList();
 		foreach (var pressEventArg in pressEventArgs)
 			InvokeKeyPress(pressEventArg);
+		// up
 		InvokeKeyUp(args);
+
 		_logger.LogDebug(new String('\t', --_indentCounter) + "←" + args);
+
 		if (argExt.HandleVirtualKeyBackup.HasValue)
 		{
 			HandleVirtualKey = argExt.HandleVirtualKeyBackup.Value;
