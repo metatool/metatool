@@ -8,17 +8,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Metatool.Input.MouseKeyHook.Implementation;
 
-internal abstract class KeyListener : BaseListener, IKeyboardEvents
+internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscribe), IKeyboardEvents
 {
-	private ILogger _logger;
+	private readonly ILogger _logger = Services.Get<ILogger<KeyListener>>();
 
-	protected KeyListener(Subscribe subscribe)
-		: base(subscribe)
-	{
-		_logger = Services.Get<ILogger<KeyListener>>();
-	}
-
-	public event KeyEventHandler      KeyDown;
+    public event KeyEventHandler      KeyDown;
 	public event KeyPressEventHandler KeyPress;
 	public event KeyEventHandler      KeyUp;
 
@@ -56,7 +50,6 @@ internal abstract class KeyListener : BaseListener, IKeyboardEvents
 	{
 		var handler = KeyUp;
 
-
 		if (handler == null || !e.IsKeyUp || e.Handled)
 			return;
 
@@ -72,7 +65,6 @@ internal abstract class KeyListener : BaseListener, IKeyboardEvents
 		}
 
 		handler(this, e);
-
 
 	}
 

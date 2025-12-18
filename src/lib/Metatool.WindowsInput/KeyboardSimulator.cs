@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Metatool.Service.MouseKey;
 using Metatool.WindowsInput.Native;
 
 namespace Metatool.WindowsInput;
@@ -55,19 +56,19 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// <value>The <see cref="IMouseSimulator"/> instance.</value>
 	public IMouseSimulator Mouse => inputSimulator.Mouse;
 
-	private static void ModifiersDown(InputBuilder builder, IEnumerable<VirtualKeyCode> modifierKeyCodes)
+	private static void ModifiersDown(InputBuilder builder, IEnumerable<KeyCodes> modifierKeyCodes)
 	{
 		if (modifierKeyCodes == null) return;
 		foreach (var key in modifierKeyCodes) builder.AddKeyDown(key);
 	}
 
-	private static void ModifiersUp(InputBuilder builder, IEnumerable<VirtualKeyCode> modifierKeyCodes)
+	private static void ModifiersUp(InputBuilder builder, IEnumerable<KeyCodes> modifierKeyCodes)
 	{
 		if (modifierKeyCodes == null) return;
 		foreach (var key in modifierKeyCodes.Reverse()) builder.AddKeyUp(key);
 	}
 
-	private void KeysPress(InputBuilder builder, IEnumerable<VirtualKeyCode> keyCodes)
+	private void KeysPress(InputBuilder builder, IEnumerable<KeyCodes> keyCodes)
 	{
 		if (keyCodes == null) return;
 		foreach (var key in keyCodes) builder.AddKeyPress(key);
@@ -85,10 +86,10 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// <summary>
 	/// Calls the Win32 SendInput method to simulate a KeyDown.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> to press</param>
-	public IKeyboardSimulator KeyDown(VirtualKeyCode keyCode)
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> to press</param>
+	public IKeyboardSimulator KeyDown(KeyCodes keyCodes)
 	{
-		var inputList = new InputBuilder().AddKeyDown(keyCode).ToArray();
+		var inputList = new InputBuilder().AddKeyDown(keyCodes).ToArray();
 		SendSimulatedInput(inputList);
 		return this;
 	}
@@ -96,10 +97,10 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// <summary>
 	/// Calls the Win32 SendInput method to simulate a KeyUp.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> to lift up</param>
-	public IKeyboardSimulator KeyUp(VirtualKeyCode keyCode)
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> to lift up</param>
+	public IKeyboardSimulator KeyUp(KeyCodes keyCodes)
 	{
-		var inputList = new InputBuilder().AddKeyUp(keyCode).ToArray();
+		var inputList = new InputBuilder().AddKeyUp(keyCodes).ToArray();
 		SendSimulatedInput(inputList);
 		return this;
 	}
@@ -107,10 +108,10 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// <summary>
 	/// Calls the Win32 SendInput method with a KeyDown and KeyUp message in the same input sequence in order to simulate a Key PRESS.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> to press</param>
-	public IKeyboardSimulator KeyPress(VirtualKeyCode keyCode)
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> to press</param>
+	public IKeyboardSimulator KeyPress(KeyCodes keyCodes)
 	{
-		var inputList = new InputBuilder().AddKeyPress(keyCode).ToArray();
+		var inputList = new InputBuilder().AddKeyPress(keyCodes).ToArray();
 		SendSimulatedInput(inputList);
 		return this;
 	}
@@ -119,7 +120,7 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// Simulates a key press for each of the specified key codes in the order they are specified.
 	/// </summary>
 	/// <param name="keyCodes"></param>
-	public IKeyboardSimulator KeyPress(params VirtualKeyCode[] keyCodes)
+	public IKeyboardSimulator KeyPress(params KeyCodes[] keyCodes)
 	{
 		var builder = new InputBuilder();
 		KeysPress(builder, keyCodes);
@@ -131,11 +132,11 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// Simulates a simple modified keystroke like CTRL-C where CTRL is the modifierKey and C is the key.
 	/// The flow is Modifier KeyDown, Key Press, Modifier KeyUp.
 	/// </summary>
-	/// <param name="modifierKeyCode">The modifier key</param>
-	/// <param name="keyCode">The key to simulate</param>
-	public IKeyboardSimulator ModifiedKeyStroke(VirtualKeyCode modifierKeyCode, VirtualKeyCode keyCode)
+	/// <param name="modifierKeyCodes">The modifier key</param>
+	/// <param name="keyCodes">The key to simulate</param>
+	public IKeyboardSimulator ModifiedKeyStroke(KeyCodes modifierKeyCodes, KeyCodes keyCodes)
 	{
-		ModifiedKeyStroke(new[] { modifierKeyCode }, new[] { keyCode });
+		ModifiedKeyStroke(new[] { modifierKeyCodes }, new[] { keyCodes });
 		return this;
 	}
 
@@ -144,10 +145,10 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// The flow is Modifiers KeyDown in order, Key Press, Modifiers KeyUp in reverse order.
 	/// </summary>
 	/// <param name="modifierKeyCodes">The list of modifier keys</param>
-	/// <param name="keyCode">The key to simulate</param>
-	public IKeyboardSimulator ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode)
+	/// <param name="keyCodes">The key to simulate</param>
+	public IKeyboardSimulator ModifiedKeyStroke(IEnumerable<KeyCodes> modifierKeyCodes, KeyCodes keyCodes)
 	{
-		ModifiedKeyStroke(modifierKeyCodes, new[] { keyCode });
+		ModifiedKeyStroke(modifierKeyCodes, new[] { keyCodes });
 		return this;
 	}
 
@@ -157,7 +158,7 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// </summary>
 	/// <param name="modifierKey">The modifier key</param>
 	/// <param name="keyCodes">The list of keys to simulate</param>
-	public IKeyboardSimulator ModifiedKeyStroke(VirtualKeyCode modifierKey, IEnumerable<VirtualKeyCode> keyCodes)
+	public IKeyboardSimulator ModifiedKeyStroke(KeyCodes modifierKey, IEnumerable<KeyCodes> keyCodes)
 	{
 		ModifiedKeyStroke(new[] { modifierKey }, keyCodes);
 		return this;
@@ -169,7 +170,7 @@ public class KeyboardSimulator : IKeyboardSimulator
 	/// </summary>
 	/// <param name="modifierKeyCodes">The list of modifier keys</param>
 	/// <param name="keyCodes">The list of keys to simulate</param>
-	public IKeyboardSimulator ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes)
+	public IKeyboardSimulator ModifiedKeyStroke(IEnumerable<KeyCodes> modifierKeyCodes, IEnumerable<KeyCodes> keyCodes)
 	{
 		var builder = new InputBuilder();
 		ModifiersDown(builder, modifierKeyCodes);
@@ -180,7 +181,7 @@ public class KeyboardSimulator : IKeyboardSimulator
 		return this;
 	}
 
-	public IKeyboardSimulator ModifiedKeyDown(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes)
+	public IKeyboardSimulator ModifiedKeyDown(IEnumerable<KeyCodes> modifierKeyCodes, IEnumerable<KeyCodes> keyCodes)
 	{
 		var builder = new InputBuilder();
 		ModifiersDown(builder, modifierKeyCodes);
@@ -190,16 +191,16 @@ public class KeyboardSimulator : IKeyboardSimulator
 
 	}
 
-	public IKeyboardSimulator ModifiedKeyDown(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode)
+	public IKeyboardSimulator ModifiedKeyDown(IEnumerable<KeyCodes> modifierKeyCodes, KeyCodes keyCodes)
 	{
-		return ModifiedKeyDown(modifierKeyCodes, new List<VirtualKeyCode>() {keyCode});
+		return ModifiedKeyDown(modifierKeyCodes, new List<KeyCodes>() {keyCodes});
 	}
 
-	public IKeyboardSimulator ModifiedKeyUp(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode)
+	public IKeyboardSimulator ModifiedKeyUp(IEnumerable<KeyCodes> modifierKeyCodes, KeyCodes keyCodes)
 	{
-		return ModifiedKeyUp(modifierKeyCodes, new List<VirtualKeyCode>() {keyCode});
+		return ModifiedKeyUp(modifierKeyCodes, new List<KeyCodes>() {keyCodes});
 	}
-	public IKeyboardSimulator ModifiedKeyUp(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes)
+	public IKeyboardSimulator ModifiedKeyUp(IEnumerable<KeyCodes> modifierKeyCodes, IEnumerable<KeyCodes> keyCodes)
 	{
 		var builder = new InputBuilder();
 		foreach (var key in keyCodes) builder.AddKeyUp(key);
@@ -209,11 +210,11 @@ public class KeyboardSimulator : IKeyboardSimulator
 	}
 	class ToggleKeyCarer : IDisposable
 	{
-		private readonly VirtualKeyCode _key;
+		private readonly KeyCodes _key;
 		private readonly InputBuilder _inputBuilder;
 		private readonly IInputDeviceStateAdaptor _inputDeviceState = new WindowsInputDeviceStateAdaptor();
 		readonly bool _isCapsLockToggled = false;
-		public ToggleKeyCarer(VirtualKeyCode key, InputBuilder inputBuilder)
+		public ToggleKeyCarer(KeyCodes key, InputBuilder inputBuilder)
 		{
 			_key = key;
 			_inputBuilder = inputBuilder;
@@ -247,7 +248,7 @@ public class KeyboardSimulator : IKeyboardSimulator
 
 		if (takeCareOfCapsLock)
 		{
-			using (var capsLockCare = new ToggleKeyCarer(VirtualKeyCode.CAPITAL, inputBuilder))
+			using (var capsLockCare = new ToggleKeyCarer(KeyCodes.Capital, inputBuilder))
 			{
 				inputBuilder = inputBuilder.AddCharacters(text);
 			}
@@ -299,18 +300,18 @@ public class KeyboardSimulator : IKeyboardSimulator
 	///    Keyboard.Type(VirtualKeyCode.VK_E);
 	/// }
 	/// </summary>
-	public static IDisposable Pressing(params VirtualKeyCode[] virtualKeys)
+	public static IDisposable Pressing(params KeyCodes[] virtualKeys)
 	{
 		return new KeyPressingActivation(virtualKeys);
 	}
 
 	private class KeyPressingActivation : IDisposable
 	{
-		private readonly VirtualKeyCode[] _virtualKeys;
+		private readonly KeyCodes[] _virtualKeys;
 		private readonly WindowsInputMessageDispatcher _messageDispatcher = new();
 		private readonly InputBuilder _builder = new();
 
-		public KeyPressingActivation(VirtualKeyCode[] virtualKeys)
+		public KeyPressingActivation(KeyCodes[] virtualKeys)
 		{
 			_virtualKeys = virtualKeys;
 			ModifiersDown(_builder, _virtualKeys);

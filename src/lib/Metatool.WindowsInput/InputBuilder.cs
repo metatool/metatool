@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Metatool.Service.MouseKey;
 using Metatool.WindowsInput.Native;
 
 namespace Metatool.WindowsInput;
@@ -68,36 +69,36 @@ internal class InputBuilder : IEnumerable<INPUT>
 	public INPUT this[int position] => _inputList[position];
 
 	/// <summary>
-	/// Determines if the <see cref="VirtualKeyCode"/> is an ExtendedKey
+	/// Determines if the <see cref="KeyCodes"/> is an ExtendedKey
 	/// </summary>
-	/// <param name="keyCode">The key code.</param>
+	/// <param name="keyCodes">The key code.</param>
 	/// <returns>true if the key code is an extended key; otherwise, false.</returns>
 	/// <remarks>
 	/// The extended keys consist of the ALT and CTRL keys on the right-hand side of the keyboard; the INS, DEL, HOME, END, PAGE UP, PAGE DOWN, and arrow keys in the clusters to the left of the numeric keypad; the NUM LOCK key; the BREAK (CTRL+PAUSE) key; the PRINT SCRN key; and the divide (/) and ENTER keys in the numeric keypad.
-	/// 
+	///
 	/// See http://msdn.microsoft.com/en-us/library/ms646267(v=vs.85).aspx Section "Extended-Key Flag"
 	/// </remarks>
-	public static bool IsExtendedKey(VirtualKeyCode keyCode)
+	public static bool IsExtendedKey(KeyCodes keyCodes)
 	{
-		if (keyCode == VirtualKeyCode.MENU ||
-		    keyCode == VirtualKeyCode.LMENU ||
-		    keyCode == VirtualKeyCode.RMENU ||
-		    keyCode == VirtualKeyCode.CONTROL ||
-		    keyCode == VirtualKeyCode.RCONTROL ||
-		    keyCode == VirtualKeyCode.INSERT ||
-		    keyCode == VirtualKeyCode.DELETE ||
-		    keyCode == VirtualKeyCode.HOME ||
-		    keyCode == VirtualKeyCode.END ||
-		    keyCode == VirtualKeyCode.PRIOR ||
-		    keyCode == VirtualKeyCode.NEXT ||
-		    keyCode == VirtualKeyCode.RIGHT ||
-		    keyCode == VirtualKeyCode.UP ||
-		    keyCode == VirtualKeyCode.LEFT ||
-		    keyCode == VirtualKeyCode.DOWN ||
-		    keyCode == VirtualKeyCode.NUMLOCK ||
-		    keyCode == VirtualKeyCode.CANCEL ||
-		    keyCode == VirtualKeyCode.SNAPSHOT ||
-		    keyCode == VirtualKeyCode.DIVIDE)
+		if (keyCodes == KeyCodes.Menu ||
+		    keyCodes == KeyCodes.LMenu ||
+		    keyCodes == KeyCodes.RMenu ||
+		    keyCodes == KeyCodes.Control ||
+		    keyCodes == KeyCodes.RControlKey ||
+		    keyCodes == KeyCodes.Insert ||
+		    keyCodes == KeyCodes.Delete ||
+		    keyCodes == KeyCodes.Home ||
+		    keyCodes == KeyCodes.End ||
+		    keyCodes == KeyCodes.Prior ||
+		    keyCodes == KeyCodes.Next ||
+		    keyCodes == KeyCodes.Right ||
+		    keyCodes == KeyCodes.Up ||
+		    keyCodes == KeyCodes.Left ||
+		    keyCodes == KeyCodes.Down ||
+		    keyCodes == KeyCodes.NumLock ||
+		    keyCodes == KeyCodes.Cancel ||
+		    keyCodes == KeyCodes.Snapshot ||
+		    keyCodes == KeyCodes.Divide)
 		{
 			return true;
 		}
@@ -111,9 +112,9 @@ internal class InputBuilder : IEnumerable<INPUT>
 	/// <summary>
 	/// Adds a key down to the list of <see cref="INPUT"/> messages.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/>.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/>.</param>
 	/// <returns>This <see cref="InputBuilder"/> instance.</returns>
-	public InputBuilder AddKeyDown(VirtualKeyCode keyCode)
+	public InputBuilder AddKeyDown(KeyCodes keyCodes)
 	{
 		var down =
 			new INPUT
@@ -124,9 +125,9 @@ internal class InputBuilder : IEnumerable<INPUT>
 					Keyboard =
 						new KEYBDINPUT
 						{
-							KeyCode = (UInt16) keyCode,
+							KeyCode = (UInt16) keyCodes,
 							Scan = 0,
-							Flags = IsExtendedKey(keyCode) ? (UInt32) KeyboardFlag.ExtendedKey : 0,
+							Flags = IsExtendedKey(keyCodes) ? (UInt32) KeyboardFlag.ExtendedKey : 0,
 							Time = 0,
 							ExtraInfo = (IntPtr) EXTRA_INFO_IS_VIRTUAL_KEY
 						}
@@ -140,9 +141,9 @@ internal class InputBuilder : IEnumerable<INPUT>
 	/// <summary>
 	/// Adds a key up to the list of <see cref="INPUT"/> messages.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/>.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/>.</param>
 	/// <returns>This <see cref="InputBuilder"/> instance.</returns>
-	public InputBuilder AddKeyUp(VirtualKeyCode keyCode)
+	public InputBuilder AddKeyUp(KeyCodes keyCodes)
 	{
 		var up =
 			new INPUT
@@ -153,9 +154,9 @@ internal class InputBuilder : IEnumerable<INPUT>
 					Keyboard =
 						new KEYBDINPUT
 						{
-							KeyCode = (UInt16) keyCode,
+							KeyCode = (UInt16) keyCodes,
 							Scan = 0,
-							Flags = (UInt32) (IsExtendedKey(keyCode)
+							Flags = (UInt32) (IsExtendedKey(keyCodes)
 								? KeyboardFlag.KeyUp | KeyboardFlag.ExtendedKey
 								: KeyboardFlag.KeyUp),
 							Time = 0,
@@ -171,12 +172,12 @@ internal class InputBuilder : IEnumerable<INPUT>
 	/// <summary>
 	/// Adds a key press to the list of <see cref="INPUT"/> messages which is equivalent to a key down followed by a key up.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/>.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/>.</param>
 	/// <returns>This <see cref="InputBuilder"/> instance.</returns>
-	public InputBuilder AddKeyPress(VirtualKeyCode keyCode)
+	public InputBuilder AddKeyPress(KeyCodes keyCodes)
 	{
-		AddKeyDown(keyCode);
-		AddKeyUp(keyCode);
+		AddKeyDown(keyCodes);
+		AddKeyUp(keyCodes);
 		return this;
 	}
 
@@ -226,7 +227,7 @@ internal class InputBuilder : IEnumerable<INPUT>
 
 		// Handle extended keys:
 		// If the scan code is preceded by a prefix byte that has the value 0xE0 (224),
-		// we need to include the KEYEVENTF_EXTENDEDKEY flag in the Flags property. 
+		// we need to include the KEYEVENTF_EXTENDEDKEY flag in the Flags property.
 		if ((scanCode & 0xFF00) == 0xE000)
 		{
 			down.Data.Keyboard.Flags |= (UInt32)KeyboardFlag.ExtendedKey;

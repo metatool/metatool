@@ -10,4 +10,8 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.CoreLib\Metatool.Service.CoreLib.csproj" />
+  </ItemGroup>
+
 </Project>

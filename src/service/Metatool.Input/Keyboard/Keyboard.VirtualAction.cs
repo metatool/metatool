@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Metatool.Service.MouseKey;
-using Metatool.WindowsInput.Native;
 
 namespace Metatool.Input;
 
@@ -14,19 +13,19 @@ public partial class Keyboard
             switch (key)
             {
                 case Key k:
-                    InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)(KeyCodes)k);
+                    InputSimu.Inst.Keyboard.KeyPress((KeyCodes)(KeyCodes)k);
                     break;
                 case ICombination combination:
                     InputSimu.Inst.Keyboard.ModifiedKeyStroke(
-                        combination.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
-                        (VirtualKeyCode)(KeyCodes)combination.TriggerKey);
+                        combination.Chord.Select(k => (KeyCodes)(KeyCodes)k),
+                        (KeyCodes)(KeyCodes)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                     {
                         foreach (var comb in sequence)
                         {
-                            InputSimu.Inst.Keyboard.ModifiedKeyStroke(comb.Chord.Cast<VirtualKeyCode>(),
-                                (VirtualKeyCode)(KeyCodes)comb.TriggerKey);
+                            InputSimu.Inst.Keyboard.ModifiedKeyStroke(comb.Chord.Cast<KeyCodes>(),
+                                (KeyCodes)(KeyCodes)comb.TriggerKey);
                         }
 
                         break;
@@ -44,19 +43,19 @@ public partial class Keyboard
             switch (key)
             {
                 case Key k:
-                    InputSimu.Inst.Keyboard.KeyDown((VirtualKeyCode)(KeyCodes)k);
+                    InputSimu.Inst.Keyboard.KeyDown((KeyCodes)(KeyCodes)k);
                     break;
                 case ICombination combination:
                     InputSimu.Inst.Keyboard.ModifiedKeyDown(
-                        combination.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
-                        (VirtualKeyCode)(KeyCodes)combination.TriggerKey);
+                        combination.Chord.Select(k => (KeyCodes)(KeyCodes)k),
+                        (KeyCodes)(KeyCodes)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                     {
                         foreach (var comb in sequence)
                         {
-                            InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
-                                (VirtualKeyCode)(KeyCodes)comb.TriggerKey);
+                            InputSimu.Inst.Keyboard.ModifiedKeyDown(comb.Chord.Select(k => (KeyCodes)(KeyCodes)k),
+                                (KeyCodes)(KeyCodes)comb.TriggerKey);
                         }
 
                         break;
@@ -73,18 +72,18 @@ public partial class Keyboard
             switch (key)
             {
                 case Key k:
-                    InputSimu.Inst.Keyboard.KeyUp((VirtualKeyCode)(KeyCodes)k);
+                    InputSimu.Inst.Keyboard.KeyUp((KeyCodes)(KeyCodes)k);
                     break;
                 case ICombination combination:
-                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
-                        (VirtualKeyCode)(KeyCodes)combination.TriggerKey);
+                    InputSimu.Inst.Keyboard.ModifiedKeyUp(combination.Chord.Select(k => (KeyCodes)(KeyCodes)k),
+                        (KeyCodes)(KeyCodes)combination.TriggerKey);
                     break;
                 case ISequence sequence:
                     {
                         foreach (var comb in sequence)
                         {
-                            InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Select(k => (VirtualKeyCode)(KeyCodes)k),
-                                (VirtualKeyCode)(KeyCodes)comb.TriggerKey);
+                            InputSimu.Inst.Keyboard.ModifiedKeyUp(comb.Chord.Select(k => (KeyCodes)(KeyCodes)k),
+                                (KeyCodes)(KeyCodes)comb.TriggerKey);
                         }
 
                         break;

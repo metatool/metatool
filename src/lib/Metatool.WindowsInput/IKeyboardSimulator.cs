@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Metatool.Service.MouseKey;
 using Metatool.WindowsInput.Native;
 
 namespace Metatool.WindowsInput;
@@ -18,61 +19,61 @@ public interface IKeyboardSimulator
 	/// <summary>
 	/// Simulates the key down gesture for the specified key.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
-	IKeyboardSimulator KeyDown(VirtualKeyCode keyCode);
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
+	IKeyboardSimulator KeyDown(KeyCodes keyCodes);
 
 	/// <summary>
 	/// Simulates the key press gesture for the specified key.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
-	IKeyboardSimulator KeyPress(VirtualKeyCode keyCode);
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
+	IKeyboardSimulator KeyPress(KeyCodes keyCodes);
 
 	/// <summary>
 	/// Simulates a key press for each of the specified key codes in the order they are specified.
 	/// </summary>
 	/// <param name="keyCodes"></param>
-	IKeyboardSimulator KeyPress(params VirtualKeyCode[] keyCodes);
+	IKeyboardSimulator KeyPress(params KeyCodes[] keyCodes);
 
 	/// <summary>
 	/// Simulates the key up gesture for the specified key.
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
-	IKeyboardSimulator KeyUp(VirtualKeyCode keyCode);
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
+	IKeyboardSimulator KeyUp(KeyCodes keyCodes);
 
 	/// <summary>
 	/// Simulates a modified keystroke where there are multiple modifiers and multiple keys like CTRL-ALT-K-C where CTRL and ALT are the modifierKeys and K and C are the keys.
 	/// The flow is Modifiers KeyDown in order, Keys Press in order, Modifiers KeyUp in reverse order.
 	/// </summary>
-	/// <param name="modifierKeyCodes">The list of <see cref="VirtualKeyCode"/>s for the modifier keys.</param>
-	/// <param name="keyCodes">The list of <see cref="VirtualKeyCode"/>s for the keys to simulate.</param>
-	IKeyboardSimulator ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes);
-	IKeyboardSimulator ModifiedKeyDown(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCode);
-	IKeyboardSimulator ModifiedKeyUp(IEnumerable<VirtualKeyCode>   modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCode);
+	/// <param name="modifierKeyCodes">The list of <see cref="KeyCodes"/>s for the modifier keys.</param>
+	/// <param name="keyCodes">The list of <see cref="KeyCodes"/>s for the keys to simulate.</param>
+	IKeyboardSimulator ModifiedKeyStroke(IEnumerable<KeyCodes> modifierKeyCodes, IEnumerable<KeyCodes> keyCodes);
+	IKeyboardSimulator ModifiedKeyDown(IEnumerable<KeyCodes> modifierKeyCodes, IEnumerable<KeyCodes> keyCode);
+	IKeyboardSimulator ModifiedKeyUp(IEnumerable<KeyCodes>   modifierKeyCodes, IEnumerable<KeyCodes> keyCode);
 	/// <summary>
 	/// Simulates a modified keystroke where there are multiple modifiers and one key like CTRL-ALT-C where CTRL and ALT are the modifierKeys and C is the key.
 	/// The flow is Modifiers KeyDown in order, Key Press, Modifiers KeyUp in reverse order.
 	/// </summary>
-	/// <param name="modifierKeyCodes">The list of <see cref="VirtualKeyCode"/>s for the modifier keys.</param>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
-	IKeyboardSimulator ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode);
-	IKeyboardSimulator ModifiedKeyDown(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode);
-	IKeyboardSimulator ModifiedKeyUp(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode);
+	/// <param name="modifierKeyCodes">The list of <see cref="KeyCodes"/>s for the modifier keys.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
+	IKeyboardSimulator ModifiedKeyStroke(IEnumerable<KeyCodes> modifierKeyCodes, KeyCodes keyCodes);
+	IKeyboardSimulator ModifiedKeyDown(IEnumerable<KeyCodes> modifierKeyCodes, KeyCodes keyCodes);
+	IKeyboardSimulator ModifiedKeyUp(IEnumerable<KeyCodes> modifierKeyCodes, KeyCodes keyCodes);
 
 	/// <summary>
 	/// Simulates a modified keystroke where there is one modifier and multiple keys like CTRL-K-C where CTRL is the modifierKey and K and C are the keys.
 	/// The flow is Modifier KeyDown, Keys Press in order, Modifier KeyUp.
 	/// </summary>
-	/// <param name="modifierKey">The <see cref="VirtualKeyCode"/> for the modifier key.</param>
-	/// <param name="keyCodes">The list of <see cref="VirtualKeyCode"/>s for the keys to simulate.</param>
-	IKeyboardSimulator ModifiedKeyStroke(VirtualKeyCode modifierKey, IEnumerable<VirtualKeyCode> keyCodes);
+	/// <param name="modifierKey">The <see cref="KeyCodes"/> for the modifier key.</param>
+	/// <param name="keyCodes">The list of <see cref="KeyCodes"/>s for the keys to simulate.</param>
+	IKeyboardSimulator ModifiedKeyStroke(KeyCodes modifierKey, IEnumerable<KeyCodes> keyCodes);
 
 	/// <summary>
 	/// Simulates a simple modified keystroke like CTRL-C where CTRL is the modifierKey and C is the key.
 	/// The flow is Modifier KeyDown, Key Press, Modifier KeyUp.
 	/// </summary>
-	/// <param name="modifierKeyCode">The <see cref="VirtualKeyCode"/> for the  modifier key.</param>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
-	IKeyboardSimulator ModifiedKeyStroke(VirtualKeyCode modifierKeyCode, VirtualKeyCode keyCode);
+	/// <param name="modifierKeyCodes">The <see cref="KeyCodes"/> for the  modifier key.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
+	IKeyboardSimulator ModifiedKeyStroke(KeyCodes modifierKeyCodes, KeyCodes keyCodes);
 
 	/// <summary>
 	/// Simulates uninterrupted text entry via the keyboard.

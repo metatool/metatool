@@ -15,7 +15,7 @@ public class KeyAttribute(string key) : Attribute
 public enum KeyCodes
 {
     /// <summary>The bitmask to extract a key code from a key value.</summary>
-    KeyCode = 65535, // 0x0000FFFF
+    KeyCode = 0x0000FFFF, // 65535
     /// <summary>The bitmask to extract modifiers from a key value.</summary>
     Modifiers = -65536, // 0xFFFF0000
     /// <summary>No key pressed.</summary>
@@ -156,6 +156,9 @@ public enum KeyCodes
     /// <summary>The 9 key.</summary>
     [Key("9")]
     D9 = D8 | LButton, // 0x00000039
+
+    // 0x3A - 0x40 undefined
+
     /// <summary>The A key.</summary>
     [Key("a")]
     A = 65, // 0x00000041
@@ -240,6 +243,9 @@ public enum KeyCodes
     RWin = X | MButton, // 0x0000005C
     /// <summary>The application key (Microsoft Natural Keyboard).</summary>
     Apps = RWin | LButton, // 0x0000005D
+
+    // 0x5E reserved
+
     /// <summary>The computer sleep key.</summary>
     Sleep = Apps | RButton, // 0x0000005F
     /// <summary>The 0 key on the numeric keypad.</summary>
@@ -322,10 +328,27 @@ public enum KeyCodes
     F23 = F21 | RButton, // 0x00000086
     /// <summary>The F24 key.</summary>
     F24 = F23 | LButton, // 0x00000087
+
+    //
+    // 0x88 - 0x8F : Unassigned
+    //
+
     /// <summary>The NUM LOCK key.</summary>
     NumLock = F17 | ShiftKey, // 0x00000090
     /// <summary>The SCROLL LOCK key.</summary>
     Scroll = NumLock | LButton, // 0x00000091
+
+
+    // 0x92 - 0x96 : OEM Specific
+
+    // 0x97 - 0x9F : Unassigned
+
+    //
+    // L* & R* - left and right Alt, Ctrl and Shift virtual keys.
+    // Used only as parameters to GetAsyncKeyState() and GetKeyState().
+    // No other API or message will distinguish left and right keys in this way.
+    //
+
     /// <summary>The left SHIFT key.</summary>
     [Key("LShift")]
     LShiftKey = F17 | Space, // 0x000000A0
@@ -380,8 +403,12 @@ public enum KeyCodes
     LaunchApplication1 = LaunchMail | RButton, // 0x000000B6
     /// <summary>The start application two key.</summary>
     LaunchApplication2 = LaunchApplication1 | LButton, // 0x000000B7
-    /// <summary>The OEM Semicolon key on a US standard keyboard.</summary>
 
+    //
+    // 0xB8 - 0xB9 : Reserved
+    //
+
+    /// <summary>The OEM Semicolon key on a US standard keyboard.</summary>
     [Key(";")]
     OemSemicolon = MediaStop | Back, // 0x000000BA
     /// <summary>The OEM 1 key.</summary>
@@ -402,46 +429,88 @@ public enum KeyCodes
     /// <summary>The OEM question mark key on a US standard keyboard.</summary>
     [Key("/")]
     OemQuestion = OemPeriod | LButton, // 0x000000BF
-    /// <summary>The OEM 2 key.</summary>
+    /// <summary>The OEM 2 key.  Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '/?' key </summary>
     Oem2 = OemQuestion, // 0x000000BF
-    /// <summary>The OEM 3 key.</summary>
+    /// <summary>The OEM 3 key.  Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '`~' key </summary>
     Oem3 = 192, // 0x000000C0
     /// <summary>The OEM tilde key on a US standard keyboard.</summary>
 
     [Key("`")]
     Oemtilde = Oem3, // 0x000000C0
-    /// <summary>The OEM open bracket key on a US standard keyboard.</summary>
 
+    //
+    // 0xC1 - 0xD7 : Reserved
+    //
+
+    //
+    // 0xD8 - 0xDA : Unassigned
+    //
+
+    /// <summary>The OEM open bracket key on a US standard keyboard.</summary>
     [Key("[")]
     OemOpenBrackets = Oemtilde | Escape, // 0x000000DB
-    /// <summary>The OEM 4 key.</summary>
+    /// <summary>The OEM 4 key. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '[{' key</summary>
     Oem4 = OemOpenBrackets, // 0x000000DB
     /// <summary>The OEM pipe key on a US standard keyboard.</summary>
     OemPipe = Oemtilde | IMEConvert, // 0x000000DC
-    /// <summary>The OEM 5 key.</summary>
+    /// <summary>The OEM 5 key. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '\|' key</summary>
     Oem5 = OemPipe, // 0x000000DC
     /// <summary>The OEM close bracket key on a US standard keyboard.</summary>
     [Key("]")]
     OemCloseBrackets = Oem5 | LButton, // 0x000000DD
-    /// <summary>The OEM 6 key.</summary>
+    /// <summary>The OEM 6 key. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the ']}' key</summary>
     Oem6 = OemCloseBrackets, // 0x000000DD
-    /// <summary>The OEM 7 key.</summary>
+    /// <summary>The OEM 7 key.
+    /// </summary>
     Oem7 = Oem5 | RButton, // 0x000000DE
-    /// <summary>The OEM singled/double quote key on a US standard keyboard.</summary>
+    /// <summary>The OEM singled/double quote key on a US standard keyboard. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the 'single-quote/double-quote' key</summary>
     [Key("'")]
     OemQuotes = Oem7, // 0x000000DE
-    /// <summary>The OEM 8 key.</summary>
+    /// <summary>The OEM 8 key.Used for miscellaneous characters; it can vary by keyboard.</summary>
     Oem8 = OemQuotes | LButton, // 0x000000DF
-    /// <summary>The OEM 102 key.</summary>
+
+    //
+    // 0xE0 : Reserved
+    //
+
+    //
+    // 0xE1 : OEM Specific
+    //
+
+    /// <summary>
+    /// The OEM 102 key.
+    /// Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
+    /// </summary>
     Oem102 = Oemtilde | PageDown, // 0x000000E2
     /// <summary>The OEM angle bracket or backslash key on the RT 102 key keyboard.</summary>
 
     [Key("\\")]
     OemBackslash = Oem102, // 0x000000E2
+
+    //
+    // (0xE3-E4) : OEM specific
+    //
+
     /// <summary>The PROCESS KEY key.</summary>
     ProcessKey = Oemtilde | Left, // 0x000000E5
-    /// <summary>Used to pass Unicode characters as if they were keystrokes. The Packet key value is the low word of a 32-bit virtual-key value used for non-keyboard input methods.</summary>
+
+    //
+    // 0xE6 : OEM specific
+    //
+
+    /// <summary>
+    /// Used to pass Unicode characters as if they were keystrokes. The Packet key value is the low word of a 32-bit virtual-key value used for non-keyboard input methods.
+    /// Windows 2000/XP: Used to pass Unicode characters as if they were keystrokes. The PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods.
+    /// For more information, see Remark in KEYBDINPUT, SendInput, WM_KEYDOWN, and WM_KEYUP
+    /// </summary>
     Packet = ProcessKey | RButton, // 0x000000E7
+    //
+    // 0xE8 : Unassigned
+    //
+
+    //
+    // 0xE9-F5 : OEM specific
+    //
     /// <summary>The ATTN key.</summary>
     Attn = OemBackslash | CapsLock, // 0x000000F6
     /// <summary>The CRSEL key.</summary>

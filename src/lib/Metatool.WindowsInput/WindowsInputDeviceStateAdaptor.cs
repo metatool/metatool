@@ -1,4 +1,5 @@
 ﻿using System;
+using Metatool.Service.MouseKey;
 using Metatool.WindowsInput.Native;
 
 namespace Metatool.WindowsInput;
@@ -12,7 +13,7 @@ public class WindowsInputDeviceStateAdaptor : IInputDeviceStateAdaptor
 	/// <summary>
 	/// Determines whether the specified key is up or down by calling the GetKeyState function. (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
 	/// <returns>
 	/// 	<c>true</c> if the key is down; otherwise, <c>false</c>.
 	/// </returns>
@@ -30,16 +31,16 @@ public class WindowsInputDeviceStateAdaptor : IInputDeviceStateAdaptor
 	/// 
 	/// These left- and right-distinguishing constants are available to an application only through the GetKeyboardState, SetKeyboardState, GetAsyncKeyState, GetKeyState, and MapVirtualKey functions. 
 	/// </remarks>
-	public bool IsKeyDown(VirtualKeyCode keyCode)
+	public bool IsKeyDown(KeyCodes keyCodes)
 	{
-		var result = NativeMethods.GetKeyState((UInt16)keyCode);
+		var result = NativeMethods.GetKeyState((UInt16)keyCodes);
 		return (result < 0);
 	}
 
 	/// <summary>
 	/// Determines whether the specified key is up or downby calling the <see cref="NativeMethods.GetKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
 	/// <returns>
 	/// 	<c>true</c> if the key is up; otherwise, <c>false</c>.
 	/// </returns>
@@ -57,15 +58,15 @@ public class WindowsInputDeviceStateAdaptor : IInputDeviceStateAdaptor
 	/// 
 	/// These left- and right-distinguishing constants are available to an application only through the GetKeyboardState, SetKeyboardState, GetAsyncKeyState, GetKeyState, and MapVirtualKey functions. 
 	/// </remarks>
-	public bool IsKeyUp(VirtualKeyCode keyCode)
+	public bool IsKeyUp(KeyCodes keyCodes)
 	{
-		return !IsKeyDown(keyCode);
+		return !IsKeyDown(keyCodes);
 	}
 
 	/// <summary>
 	/// Determines whether the physical key is up or down at the time the function is called regardless of whether the application thread has read the keyboard event from the message pump by calling the <see cref="NativeMethods.GetAsyncKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646293(VS.85).aspx)
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
 	/// <returns>
 	/// 	<c>true</c> if the key is down; otherwise, <c>false</c>.
 	/// </returns>
@@ -89,16 +90,16 @@ public class WindowsInputDeviceStateAdaptor : IInputDeviceStateAdaptor
 	/// 
 	/// These left- and right-distinguishing constants are only available when you call the GetKeyboardState, SetKeyboardState, GetAsyncKeyState, GetKeyState, and MapVirtualKey functions. 
 	/// </remarks>
-	public bool IsHardwareKeyDown(VirtualKeyCode keyCode)
+	public bool IsHardwareKeyDown(KeyCodes keyCodes)
 	{
-		var result = NativeMethods.GetAsyncKeyState((UInt16)keyCode);
+		var result = NativeMethods.GetAsyncKeyState((UInt16)keyCodes);
 		return (result < 0);
 	}
 
 	/// <summary>
 	/// Determines whether the physical key is up or down at the time the function is called regardless of whether the application thread has read the keyboard event from the message pump by calling the <see cref="NativeMethods.GetAsyncKeyState"/> function. (See: http://msdn.microsoft.com/en-us/library/ms646293(VS.85).aspx)
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
 	/// <returns>
 	/// 	<c>true</c> if the key is up; otherwise, <c>false</c>.
 	/// </returns>
@@ -122,15 +123,15 @@ public class WindowsInputDeviceStateAdaptor : IInputDeviceStateAdaptor
 	/// 
 	/// These left- and right-distinguishing constants are only available when you call the GetKeyboardState, SetKeyboardState, GetAsyncKeyState, GetKeyState, and MapVirtualKey functions. 
 	/// </remarks>
-	public bool IsHardwareKeyUp(VirtualKeyCode keyCode)
+	public bool IsHardwareKeyUp(KeyCodes keyCodes)
 	{
-		return !IsHardwareKeyDown(keyCode);
+		return !IsHardwareKeyDown(keyCodes);
 	}
 
 	/// <summary>
 	/// Determines whether the toggling key is toggled on (in-effect) or not by calling the <see cref="NativeMethods.GetKeyState"/> function.  (See: http://msdn.microsoft.com/en-us/library/ms646301(VS.85).aspx)
 	/// </summary>
-	/// <param name="keyCode">The <see cref="VirtualKeyCode"/> for the key.</param>
+	/// <param name="keyCodes">The <see cref="KeyCodes"/> for the key.</param>
 	/// <returns>
 	/// 	<c>true</c> if the toggling key is toggled on (in-effect); otherwise, <c>false</c>.
 	/// </returns>
@@ -148,13 +149,13 @@ public class WindowsInputDeviceStateAdaptor : IInputDeviceStateAdaptor
 	/// 
 	/// These left- and right-distinguishing constants are available to an application only through the GetKeyboardState, SetKeyboardState, GetAsyncKeyState, GetKeyState, and MapVirtualKey functions. 
 	/// </remarks>
-	public bool IsToggleKeyOn(VirtualKeyCode keyCode)
+	public bool IsToggleKeyOn(KeyCodes keyCodes)
 	{
-		if (keyCode != VirtualKeyCode.INSERT && keyCode != VirtualKeyCode.NUMLOCK &&
-		    (keyCode != VirtualKeyCode.CAPITAL && keyCode != VirtualKeyCode.SCROLL))
+		if (keyCodes != KeyCodes.Insert && keyCodes != KeyCodes.NumLock &&
+		    (keyCodes != KeyCodes.Capital && keyCodes != KeyCodes.Scroll))
 			throw new NotSupportedException("Numlock,CapsLock,ScrollLock and Insert Keys Supported Only.");
-		var keyState = NativeMethods.GetKeyState((UInt16)keyCode);
-		if (keyCode == VirtualKeyCode.INSERT || keyCode == VirtualKeyCode.CAPITAL)
+		var keyState = NativeMethods.GetKeyState((UInt16)keyCodes);
+		if (keyCodes == KeyCodes.Insert || keyCodes == KeyCodes.Capital)
 			return (uint)(keyState & 1) > 0U;
 		return (uint)(keyState & 32769) > 0U;
 	}

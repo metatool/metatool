@@ -1,7 +1,6 @@
 ﻿using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.Service.MouseKey;
-using Metatool.WindowsInput.Native;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -90,7 +89,7 @@ public partial class Keyboard : IKeyboard
     public IKeyCommand HotString(string source, string target, Predicate<IKeyEventArgs> predicate = null)
     {
         var sequence = Sequence.FromHotString(source);
-        var send = Enumerable.Repeat(Keys.Back, source.Length).Cast<VirtualKeyCode>();
+        var send = Enumerable.Repeat(Keys.Back, source.Length).Cast<KeyCodes>();
         return sequence.OnUp(e =>
         {
             e.BeginInvoke(() =>
@@ -106,7 +105,7 @@ public partial class Keyboard : IKeyboard
                                 }
                             ))
                     },
-                        k => { InputSimu.Inst.Keyboard.KeyPress((VirtualKeyCode)k); });
+                        k => { InputSimu.Inst.Keyboard.KeyPress((KeyCodes)k); });
                 }
             );
         }, predicate, "", KeyStateTrees.HotString);
