@@ -35,7 +35,7 @@ public static class CombinationExtensions
 			.ToDictionary(g => g.Key, g => g.ToArray());
 		source.KeyDown += (sender, e) =>
 		{
-            var found = watchlist.TryGetValue(e.KeyValues, out var element);
+            var found = watchlist.TryGetValue(e.KeyData, out var element);
 			if (!found)
 			{
 				reset?.Invoke();

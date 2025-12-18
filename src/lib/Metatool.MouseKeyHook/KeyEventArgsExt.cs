@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.WinApi;
@@ -13,20 +12,14 @@ namespace Metatool.Input;
 ///     Provides extended argument data for the <see cref='KeyListener.KeyDown' /> or
 ///     <see cref='KeyListener.KeyUp' /> event.
 /// </summary>
-public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
+public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="IKeyEventArgs" /> class.
     /// </summary>
     /// <param name="keyData"></param>
-    public KeyEventArgsExt(Keys keyData)
-        : base(keyData)
-    {
-    }
-
-    internal KeyEventArgsExt(Keys keyData, int scanCode, int timestamp, bool isKeyDown, bool isKeyUp,
-        bool isExtendedKey, IKeyEventArgs lastKeyEvent, IKeyboardState keyboardState)
-        : this(keyData)
+    internal KeyEventArgsExt(KeyCodes keyData, int scanCode, int timestamp, bool isKeyDown, bool isKeyUp,
+        bool isExtendedKey, IKeyEventArgs lastKeyEvent, IKeyboardState keyboardState):this(keyData)
     {
         ScanCode = scanCode;
         Timestamp = timestamp;
@@ -88,7 +81,27 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
             return null;
         }, priority);
     }
+    public KeyCodes KeyData { get; } = keyData;
 
+    /// <summary>
+    ///  Gets the keyboard code for a <see cref="Control.KeyDown"/> or
+    /// <see cref="Control.KeyUp"/> event.
+    /// </summary>
+    public KeyCodes KeyCode
+    {
+        get
+        {
+            var keyGenerated = KeyData & KeyCodes.KeyCode;
+
+            // since Keys can be discontiguous, keeping Enum.IsDefined.
+            if (!Enum.IsDefined(keyGenerated))
+            {
+                return KeyCodes.None;
+            }
+
+            return keyGenerated;
+        }
+    }
 
     /// <summary>
     ///     The hardware scan code.
@@ -96,10 +109,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
     public int ScanCode { get; }
 
     private Key _key;
-    public Key Key => _key ??= new Key(KeyValues);
-    public KeyCodes KeyValues => KeyData.ToKeyValues();
-
-    public new KeyCodes KeyCode => base.KeyCode.ToKeyValues();
+    public Key Key => _key ??= new Key(KeyData);
 
     /// <summary>
 	/// is it from the keyboard simulator?
@@ -123,6 +133,11 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
     public IKeyEventArgs LastKeyEvent_NoneVirtual { get; private set; }
     internal KeyListener listener;
     internal bool? HandleVirtualKeyBackup;
+    public virtual bool Shift => (KeyData & KeyCodes.Shift) == KeyCodes.Shift;
+
+    public virtual bool Alt => (KeyData & KeyCodes.Alt) == KeyCodes.Alt;
+
+    public bool Control => (KeyData & KeyCodes.Control) == KeyCodes.Control;
 
     public void DisableVirtualKeyHandlingInThisEvent()
     {
@@ -147,14 +162,15 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
     /// </summary>
     public KeyEventType KeyEventType { get; set; }
 
+    private bool _handled;
     public new bool Handled
     {
-        get => base.Handled;
+        get => _handled;
         set
         {
             if (IsKeyDown && value) MouseKeyHook.Implementation.KeyboardState.HandledDownKeys.SetKeyDown(KeyCode);
 
-            base.Handled = value;
+            _handled = value;
         }
     }
 
@@ -170,8 +186,8 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
             $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:0x{ScanCode,-8:X} Extended:{IsExtendedKey}  State: {KeyboardState}";
     }
 
-    private static KeyEventArgsExt _lastKeyEventGlobalBuffer = new(Keys.None);
-    private static KeyEventArgsExt _lastKeyEventApp = new(Keys.None);
+    private static KeyEventArgsExt _lastKeyEventGlobalBuffer = new(KeyCodes.None);
+    private static KeyEventArgsExt _lastKeyEventApp = new(KeyCodes.None);
 
     internal static IKeyEventArgs FromRawDataApp(CallbackData data)
     {
@@ -196,9 +212,9 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
         var isExtendedKey = (flags & maskExtendedKey) > 0;
 
 
-        var keyData = AppendModifierStates((Keys)wParam);
-        var scanCode = (int)(((flags & 0x10000) | (flags & 0x20000) | (flags & 0x40000) | (flags & 0x80000) |
-                               (flags & 0x100000) | (flags & 0x200000) | (flags & 0x400000) | (flags & 0x800000)) >>
+        var keyData = AppendModifierStates((KeyCodes)wParam);
+        var scanCode = (int)(((flags & 0x1_0000) | (flags & 0x2_0000) | (flags & 0x4_0000) | (flags & 0x8_0000) |
+                               (flags & 0x10_0000) | (flags & 0x20_0000) | (flags & 0x40_0000) | (flags & 0x80_0000)) >>
                               16);
 
         var isKeyDown = !isKeyReleased;
@@ -221,7 +237,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
         var lParam = data.LParam;
         var keyboardHookStruct = (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct))!;
 
-        var keyData = AppendModifierStates((Keys)keyboardHookStruct.VirtualKeyCode);
+        var keyData = AppendModifierStates((KeyCodes)keyboardHookStruct.VirtualKeyCode);
         var isVirtual = (keyboardHookStruct.ExtraInfo & 0x01) == 0x01;
 
         var keyCode = (int)wParam;
@@ -256,7 +272,7 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
         return (KeyboardNativeMethods.GetKeyState(vKey) & 0x8000) > 0;
     }
 
-    private static Keys AppendModifierStates(Keys keyData)
+    private static KeyCodes AppendModifierStates(KeyCodes keyData)
     {
         // Is Control being held down?
         var control = CheckModifier(KeyboardNativeMethods.VK_CONTROL);
@@ -275,8 +291,8 @@ public class KeyEventArgsExt : KeyEventArgs, IKeyEventArgs
         // See http://en.wikipedia.org/wiki/Fn_key#Technical_details #
 
         return keyData |
-               (control ? Keys.Control : Keys.None) |
-               (shift ? Keys.Shift : Keys.None) |
-               (alt ? Keys.Alt : Keys.None);
+               (control ? KeyCodes.Control : KeyCodes.None) |
+               (shift ? KeyCodes.Shift : KeyCodes.None) |
+               (alt ? KeyCodes.Alt : KeyCodes.None);
     }
 }

@@ -115,17 +115,17 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
             var codesClone = new SortedSet<KeyCodes>(Codes);
             if (codesClone.Contains(KeyCodes.LShiftKey) && codesClone.Contains(KeyCodes.RShiftKey))
             {
-                codesClone = new(codesClone.Except(new[] { KeyCodes.LShiftKey, KeyCodes.RShiftKey }));
+                codesClone = new(codesClone.Except([KeyCodes.LShiftKey, KeyCodes.RShiftKey]));
                 codesClone.Add(KeyCodes.ShiftKey);
             }
             if (codesClone.Contains(KeyCodes.LControlKey) && codesClone.Contains(KeyCodes.RControlKey))
             {
-                codesClone = new(codesClone.Except(new[] { KeyCodes.LControlKey, KeyCodes.RControlKey }));
+                codesClone = new(codesClone.Except([KeyCodes.LControlKey, KeyCodes.RControlKey]));
                 codesClone.Add(KeyCodes.ControlKey);
             }
             if (codesClone.Contains(KeyCodes.LMenu) && codesClone.Contains(KeyCodes.RMenu))
             {
-                codesClone = new(codesClone.Except(new[] { KeyCodes.LMenu, KeyCodes.RMenu }));
+                codesClone = new(codesClone.Except([KeyCodes.LMenu, KeyCodes.RMenu]));
                 codesClone.Add(KeyCodes.Menu);
             }
 

@@ -17,9 +17,8 @@ public interface IKeyEventArgs
 {
 	bool Handled { get; set; }
 	Key  Key { get; }
-    KeyCodes KeyValues { get; }
+    KeyCodes KeyData { get; }
     KeyCodes KeyCode { get; }
-	int KeyValue { get; }
 
     bool Alt { get; }
 	bool Control { get; }

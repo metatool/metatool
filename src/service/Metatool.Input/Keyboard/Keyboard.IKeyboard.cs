@@ -388,10 +388,10 @@ public partial class Keyboard : IKeyboard
         void Handler(object o, IKeyEventArgs e)
         {
             _hook.KeyDown -= Handler;
-            if (sourCombination.IsAnyKey(e.KeyValues)) return; // repeated long press key, > duration
+            if (sourCombination.IsAnyKey(e.KeyData)) return; // repeated long press key, > duration
 
             e.Handled = true;
-            Down(new Combination(e.KeyValues, target));
+            Down(new Combination(e.KeyData, target));
             targetDown = true;
         }
 

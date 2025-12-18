@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Windows.Threading;
+using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.Service.MouseKey;
 
@@ -24,7 +24,7 @@ public class ToggleKey : IToggleKey
 		{
 			if (_isAlwaysOn.HasValue) return _isAlwaysOn.Value ? ToggleKeyState.AlwaysOn : ToggleKeyState.AlwaysOff;
 
-			return Control.IsKeyLocked(_key.ToKeys()) ? ToggleKeyState.On : ToggleKeyState.Off;
+			return KeyboardState.Current().IsKeyLocked((KeyCodes)_key) ? ToggleKeyState.On : ToggleKeyState.Off;
 		}
 	}
 
@@ -39,7 +39,7 @@ public class ToggleKey : IToggleKey
 
 				if (_key == KeyCodes.NumLock)
 				{
-					var isOn = Control.IsKeyLocked(_key.ToKeys());
+					var isOn = KeyboardState.Current().IsKeyLocked((KeyCodes)_key);
 					if (isOn && !_isAlwaysOn.Value || !isOn && _isAlwaysOn.Value)
 					{
 						handleViaSystem = true;
@@ -51,7 +51,7 @@ public class ToggleKey : IToggleKey
 				if (_confirmAlwaysOnOffSate)
 				{
 					_confirmAlwaysOnOffSate = false;
-					var isOn = Control.IsKeyLocked(_key.ToKeys());
+					var isOn = KeyboardState.Current().IsKeyLocked((KeyCodes)_key);
 					if (isOn && !_isAlwaysOn.Value || !isOn && _isAlwaysOn.Value)
 					{
 						handleViaSystem = true;

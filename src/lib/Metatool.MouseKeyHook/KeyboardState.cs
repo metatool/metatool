@@ -96,6 +96,34 @@ public partial class KeyboardState : IKeyboardState
     {
         return key.Codes.Any(IsDown);
     }
+    /// <summary>
+    ///  This Function will return a Boolean as to whether the Key value passed in is Locked...
+    /// </summary>
+    public bool IsKeyLocked(KeyCodes keyVal)
+    {
+        if (keyVal is KeyCodes.Insert or KeyCodes.NumLock or KeyCodes.CapsLock or KeyCodes.Scroll)
+        {
+            int result = GetKeyState(keyVal);
+
+            // If the high-order bit is 1, the key is down; otherwise, it is up.
+            // If the low-order bit is 1, the key is toggled. A key, such as the CAPS LOCK key,
+            // is toggled if it is turned on. The key is off and untoggled if the low-order bit is 0.
+            // A toggle key's indicator light (if any) on the keyboard will be on when the key is toggled,
+            // and off when the key is untoggled.
+
+            // Toggle keys (only low bit is of interest).
+            if (keyVal is KeyCodes.Insert or KeyCodes.CapsLock)
+            {
+                return (result & 0x1) != 0x0;
+            }
+
+            return (result & 0x8001) != 0x0;
+        }
+
+        // else - it's an un-lockable key.
+        // Actually get the exception string from the system resource.
+        throw new NotSupportedException("IsKeyLockedNumCapsScrollLockKeysSupportedOnly");
+    }
 
     /// <summary>
     /// current down keys has some key not in the key's codes.
