@@ -40,6 +40,7 @@ public class KeyboardCommandTrigger : CommandTrigger<IKeyEventArgs>, IKeyboardCo
 
 public partial class Keyboard : IKeyboard
 {
+
     public IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
     {
         return OnEvent(hotkey, KeyEventType.Down, stateTree);
@@ -269,6 +270,10 @@ public partial class Keyboard : IKeyboard
 
         bool KeyUpPredicate(IKeyEventArgs e)
         {
+            if (e.IsVirtual)
+            {
+                return false;
+            }
             if (!holding)
             {
                 Console.WriteLine("\t/!MapOnHitOrAllUp-Predicate: Handling==false");
@@ -314,14 +319,14 @@ public partial class Keyboard : IKeyboard
                     e =>
                 {
                     var noEventDuration = noUpEventTimer.NoEventDuration;
-                    if (noEventDuration > StateResetTime) Reset(); // do remedy
+                    if (noEventDuration > StateResetTime) Reset();
                     noUpEventTimer.EventPulse();
 
                     if ((!holding || holdingTimer.ElapsedMilliseconds <= delay) && (predicate == null || predicate(e)))
                         return true;
 
-                    if (holdingTimer.IsRunning) holdingTimer.Reset();
-                    Console.WriteLine($"holding:{holding}, holdingTimer.ElapsedMilliseconds:{holdingTimer.ElapsedMilliseconds}>delay:{delay}");
+                    if (holdingTimer.IsRunning) holdingTimer.Stop();
+                    Console.WriteLine($"!holding:{holding} && holdingTimer.ElapsedMilliseconds:{holdingTimer.ElapsedMilliseconds}<=delay:{delay}");
                     
                     return false; // disable map
 			    },

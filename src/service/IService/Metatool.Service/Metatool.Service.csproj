@@ -10,7 +10,7 @@
     <ProjectReference Include="..\Metatool.Service.Command\Metatool.Service.Command.csproj" />
     <ProjectReference Include="..\Metatool.Service.Core\Metatool.Service.Core.csproj" />
     <ProjectReference Include="..\Metatool.Service.Input\Metatool.Service.Input.csproj" />
-    <ProjectReference Include="..\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKey.csproj" />
     <ProjectReference Include="..\Metatool.Service.ScreenHint\Metatool.Service.ScreenHint.csproj" />
     <ProjectReference Include="..\Metatool.Service.UI\Metatool.Service.UI.csproj" />
     <ProjectReference Include="..\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />

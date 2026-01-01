@@ -19,7 +19,8 @@ public enum TreeClimbingState
     LandingAndClimbing,
 
     /// <summary>
-    /// current tree is done, could not process the event, try to process this event with other trees at root. this event is dropped(exclude this event) for processing on current tree, reschedule next event, state reset
+    /// current tree is done, could not process the event, try to process this event with other trees at root. this event is dropped(exclude this event) for processing on current tree,
+    /// reschedule next event, state reset
     /// </summary>
     Landing,
 

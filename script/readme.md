@@ -5,5 +5,5 @@ build
 
 ## local publish
 ```pwsh
-.\script\publishing.ps1 --localRelease
+.\script\publishing.ps1 -localRelease
 ```

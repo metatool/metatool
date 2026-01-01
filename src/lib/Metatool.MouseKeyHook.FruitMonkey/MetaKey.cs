@@ -4,7 +4,9 @@ using Metatool.MouseKeyHook.FruitMonkey.Trie;
 using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
-
+/// <summary>
+/// token representing a hotkey mapping in the trie
+/// </summary>
 [DebuggerDisplay("{ToString()}")]
 public class MetaKey(ITrie<ICombination, KeyEventCommand> trie, IList<ICombination> path, KeyEventCommand command) : IMetaKey
 {

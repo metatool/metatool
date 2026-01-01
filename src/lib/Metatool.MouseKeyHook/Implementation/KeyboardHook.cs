@@ -5,7 +5,6 @@ using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 
@@ -25,7 +24,7 @@ public class KeyboardHook
     private readonly ILogger<KeyboardHook> _logger;
     private readonly IKeyboardMouseEvents _eventSource;
     private bool _isRunning;
-    private IFruitMonkey _monkey;
+    private readonly IFruitMonkey _monkey;
 
     public bool Disable
     {

@@ -9,6 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Metatool.Service.Core\Metatool.Service.Core.csproj" />
-    <ProjectReference Include="..\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKey.csproj" />
   </ItemGroup>
 </Project>

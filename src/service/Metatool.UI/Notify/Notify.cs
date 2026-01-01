@@ -39,18 +39,18 @@ public partial class Notify: INotify
 		}
 	}
 
-	public static MessageToken<TipItem> ShowMessage(FrameworkElement balloon,
+	 private static MessageToken<TipItem> ShowMessage(FrameworkElement balloon,
 		ObservableCollection<TipItem> data, int? timeout,
 		NotifyPosition position = NotifyPosition.ActiveScreen, PopupAnimation animation = PopupAnimation.None)
 	{
-		var dispatcher = balloon.Dispatcher;
-		if (!dispatcher.CheckAccess())
-		{
-			return dispatcher.Invoke(DispatcherPriority.Normal,
-					(Func<MessageToken<TipItem>>) (() =>
-						ShowMessage(balloon, data, timeout, position, animation))) as
-				MessageToken<TipItem>;
-		}
+		//var dispatcher = balloon.Dispatcher;
+		//if (!dispatcher.CheckAccess())
+		//{
+		//	return dispatcher.Invoke(DispatcherPriority.Normal,
+		//			(Func<MessageToken<TipItem>>) (() =>
+		//				ShowMessage(balloon, data, timeout, position, animation))) as
+		//		MessageToken<TipItem>;
+		//}
 
 		if (balloon == null) throw new ArgumentNullException("balloon");
 		if (timeout.HasValue && timeout < 500)

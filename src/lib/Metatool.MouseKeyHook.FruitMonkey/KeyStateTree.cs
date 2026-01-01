@@ -10,12 +10,12 @@ using Microsoft.Extensions.Logging;
 namespace Metatool.Input;
 
 [DebuggerDisplay("${Name}")]
-public class KeyStateTree(string name, IKeyTipNotifier notify)
+public class KeyStateTree
 {
     public TreeType TreeType = TreeType.Default;
 
     private readonly Trie<ICombination, KeyEventCommand> _trie = new();
-    public string Name = name;
+    public string Name;
 
     internal TreeClimbingState ClimbingState;
 
@@ -23,7 +23,13 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
 
     internal bool IsOnRoot => _trie.IsOnRoot;
     internal TrieNode<ICombination, KeyEventCommand> Root => _trie.Root;
-
+    private SequenceHotKeyStateResetter _resetter;
+    public KeyStateTree(string name, IKeyTipNotifier notify)
+    {
+        _notify = notify;
+        Name = name;
+        _resetter = new SequenceHotKeyStateResetter(this);
+    }
     public void Reset()
     {
         var lastDownHit = "";
@@ -32,9 +38,9 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
             lastDownHit = $"last↓@ {_lastKeyDownNodeForAllUp}";
         _lastKeyDownNodeForAllUp = null;
 
-        Console.WriteLine($"${Name}{lastDownHit}");
+        Console.WriteLine($"${Name} tree reset, lastDownHit:{lastDownHit}");
 
-        notify?.CloseKeysTip(Name);
+        _notify?.CloseKeysTip(Name);
         _trie.GoToRoot();
     }
 
@@ -90,6 +96,8 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
     /// these chords are disabled, the key can not be used in the chord part of combination
     /// </summary>
     private readonly HashSet<Chord> _disabledChords = [];
+
+    private readonly IKeyTipNotifier _notify;
 
     internal void DisableChord(Chord chord)
     {
@@ -160,6 +168,7 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
     //eventType is only Down or Up
     internal TreeClimbingState Climb(KeyEventType eventType, IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand>? candidateNode, bool downInChord)
     {
+        _resetter.Pulse();
         // conditional dbg:
         // Name == "ChordMap" && eventType == KeyEventType.Up && args.KeyCode == KeyCodes.Enter
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -332,12 +341,12 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
                             return ClimbingState = TreeClimbingState.Continue;
                         }
 
-                        notify?.CloseKeysTip(Name);
+                        _notify?.CloseKeysTip(Name);
                         Reset();
                         return ClimbingState = TreeClimbingState.Done;
                     }
 
-                    notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
+                    _notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
                     // A, B: waiting for B
                     return ClimbingState = TreeClimbingState.Continue;
                 }
@@ -356,11 +365,11 @@ public class KeyStateTree(string name, IKeyTipNotifier notify)
                 if (candidateNode.ChildrenDictionary.Count == 0)
                 {
                     Reset();
-                    notify?.CloseKeysTip(Name);
+                    _notify?.CloseKeysTip(Name);
                     return ClimbingState = TreeClimbingState.Done;
                 }
 
-                notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
+                _notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
                 return ClimbingState = TreeClimbingState.Continue;
 
             case KeyEventType.Down:

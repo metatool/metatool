@@ -17,7 +17,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             stateTree.Reset();
     }
 
-    List<SelectionResult> SelectTree(KeyEventType eventType, IKeyEventArgs args, ILogger logger)
+    List<SelectionResult> SelectTree(KeyEventType eventType, IKeyEventArgs args)
     {
         var selectionResults = new List<SelectionResult>();
         //all on root, find current trees
@@ -45,7 +45,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 
         if (selectionResults.Count > 0)
             logger.LogInformation(
-                $"ToClimb:{string.Join(",", selectionResults.Select(t => $"${t.Tree.Name}@{t.SelectedNode}"))}");
+                $"ToClimbTrees:{string.Join(",", selectionResults.Select(t => $"${t.Tree.Name}@{t.SelectedNode}"))}");
 
         return selectionResults;
     }
@@ -64,7 +64,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             if (_selectedTrees.Count == 0)
             {
                 onGround = true;
-                _selectedTrees = SelectTree(eventType, args, logger);
+                _selectedTrees = SelectTree(eventType, args);
             }
 
             var hasSelectedNodes = _selectedTrees.Count > 0;
@@ -111,7 +111,8 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
                  reprocess /*Landing or LandingAndClimbing*/);
 
     @return:
-        foreach (var stateTree in forest.ForestGround.Values) stateTree.MarkDoneIfLanding();
+        foreach (var stateTree in forest.ForestGround.Values) 
+            stateTree.MarkDoneIfLanding();
     }
 
 }

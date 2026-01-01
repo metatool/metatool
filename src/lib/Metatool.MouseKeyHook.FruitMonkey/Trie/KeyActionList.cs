@@ -33,6 +33,7 @@ internal class KeyActionList<TValue> : ObservableCollection<TValue> where TValue
         get
         {
             if (_down != null && !_refresh) return _down;
+
             _down = this.Where(e => e.KeyEventType == KeyEventType.Down).Select(e => e.Command);
             _refresh = false;
             return _down;
@@ -46,6 +47,7 @@ internal class KeyActionList<TValue> : ObservableCollection<TValue> where TValue
         get
         {
             if (_up != null && !_refresh) return _up;
+
             _up = this.Where(e => e.KeyEventType == KeyEventType.Up).Select(e => e.Command);
             _refresh = false;
             return _up;
@@ -59,6 +61,7 @@ internal class KeyActionList<TValue> : ObservableCollection<TValue> where TValue
         get
         {
             if (_allUp != null && !_refresh) return _allUp;
+
             _allUp = this.Where(e => e.KeyEventType == KeyEventType.AllUp).Select(e => e.Command);
             _refresh = false;
             return _allUp;

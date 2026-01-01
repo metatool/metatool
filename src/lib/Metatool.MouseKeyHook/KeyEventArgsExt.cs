@@ -41,6 +41,14 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
             KeyboardState);
     }
 
+    public override bool Equals(object obj)
+    {
+        if (obj == null) return false;
+        if (obj is not KeyEventArgsExt arg) return false;
+        return KeyData == arg.KeyData && ScanCode == arg.ScanCode && Timestamp == arg.Timestamp &&
+               IsKeyDown == arg.IsKeyDown && IsKeyUp == arg.IsKeyUp;
+    }
+    // no mem leak
     public void ClearLastEventLink()
     {
         LastKeyDownEvent = null;
@@ -223,9 +231,10 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
         var r = new KeyEventArgsExt(keyData, scanCode, timestamp, isKeyDown, isKeyUp, isExtendedKey,
             _lastKeyEventApp,
             MouseKeyHook.Implementation.KeyboardState.Current());
-        _lastKeyEventApp.ClearLastEventLink();// no mem leak
+        var copy = r.Copy();
+        _lastKeyEventApp.ClearLastEventLink();
 
-        _lastKeyEventApp = r.Copy();
+        _lastKeyEventApp = copy;
         if (isKeyDown) _lastKeyEventApp.LastKeyDownEvent = r;
 
         return r;
@@ -249,12 +258,13 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
 
         var r = new KeyEventArgsExt(keyData, keyboardHookStruct.ScanCode, keyboardHookStruct.Time, isKeyDown,
             isKeyUp, isExtendedKey, _lastKeyEventGlobalBuffer, MouseKeyHook.Implementation.KeyboardState.Current());
+        var copy = r.Copy(); // create a copy of r and then set. with copy, we need to override equal
         // no mem leak
         _lastKeyEventGlobalBuffer.ClearLastEventLink();
 
-        _lastKeyEventGlobalBuffer = r.Copy(); // create a copy of r and then set.
-        if (isKeyDown) _lastKeyEventGlobalBuffer.LastKeyDownEvent = r; // if not clone: circular ref when key down
-        if (!isVirtual) _lastKeyEventGlobalBuffer.LastKeyEvent_NoneVirtual = r;
+        _lastKeyEventGlobalBuffer = copy;
+        if (isKeyDown) _lastKeyEventGlobalBuffer.LastKeyDownEvent = r;// if not copy, LastKeyDownEvent is right for current keydown
+        if (!isVirtual) _lastKeyEventGlobalBuffer.LastKeyEvent_NoneVirtual = r; 
         if (isKeyDown && !isVirtual) _lastKeyEventGlobalBuffer.LastKeyDownEvent_NoneVirtual = r;
 
         r.IsVirtual = isVirtual;

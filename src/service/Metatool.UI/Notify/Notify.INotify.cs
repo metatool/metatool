@@ -86,7 +86,7 @@ public partial class Notify
         var dispatcher = Application.Current.Dispatcher;
         if (!dispatcher.CheckAccess())
         {
-            dispatcher.Invoke(DispatcherPriority.Background,
+            dispatcher.BeginInvoke(DispatcherPriority.Background,
                 () => ShowKeysTip(tips, position));
             return;
         }
@@ -118,7 +118,7 @@ public partial class Notify
         // would be lost from global hook because of long processing time, windows kick off the hook for following event, and the keyboard state is not right, i.e. some key is down.
         // Note: already moved the hook from UI thread into a dedicated high priority thread. Normal should ok now.
         if (!dispatcher.CheckAccess())
-            dispatcher.Invoke(DispatcherPriority.Background,
+            dispatcher.BeginInvoke(DispatcherPriority.Background,
          () => ShowKeysTipInternal(name, keyAndTips, position));
         else
         {
@@ -165,7 +165,8 @@ public partial class Notify
         var dispatcher = Application.Current.Dispatcher;
         if (!dispatcher.CheckAccess())
         {
-            return dispatcher.Invoke((Func<MessageToken<TipItem>>)(() => ShowSelectionAction(tips, closeViaKey)));
+            var op = dispatcher.BeginInvoke((Func<MessageToken<TipItem>>)(() => ShowSelectionAction(tips, closeViaKey)));
+            return new MessageToken<TipItem>(op);
         }
 
         var valueTuples = tips.ToArray();

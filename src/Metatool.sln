@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11205.157 d18.0
+VisualStudioVersion = 18.0.11205.157
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{920963F4-8205-4A1E-8ED3-9467B5D94794}"
 EndProject
@@ -75,7 +75,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Core", "se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.Input", "service\IService\Metatool.Service.Input\Metatool.Service.Input.csproj", "{D04EACFB-A7A1-4E80-8BF3-65E80AD5C9F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.MouseKeyHook", "service\IService\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKeyHook.csproj", "{DFDA3343-DBDA-4264-BF27-A59617C389E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.MouseKey", "service\IService\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKey.csproj", "{DFDA3343-DBDA-4264-BF27-A59617C389E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metatool.Service.NotifyIcon", "service\IService\Metatool.Service.NotifyIcon\Metatool.Service.NotifyIcon.csproj", "{77B7E55C-33CB-4C5B-9DA1-0AE7261FA6A2}"
 EndProject
@@ -128,7 +128,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaveScr", "app\LeaveScr\Le
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Service.CoreLib", "service\IService\Metatool.Service.CoreLib\Metatool.Service.CoreLib.csproj", "{B7C31548-8DA8-E5E1-68A7-F0BEC2A9D0AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.MouseKeyHook.FruitMonkey", "lib\Metatool.MouseKeyHook.FruitMonkey\Metatool.MouseKeyHook.FruitMonkey.csproj", "{F3A82E89-840C-459C-BD91-86AB2D03D906}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.MouseKey.FruitMonkey", "lib\Metatool.MouseKeyHook.FruitMonkey\Metatool.MouseKey.FruitMonkey.csproj", "{F3A82E89-840C-459C-BD91-86AB2D03D906}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommenKeyTreeProcessingTests", "CommenKeyTreeProcessingTests\CommenKeyTreeProcessingTests.csproj", "{97348524-0391-4648-BD6A-1C56E66E2C36}"
 EndProject

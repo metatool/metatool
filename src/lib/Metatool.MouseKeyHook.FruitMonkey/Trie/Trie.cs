@@ -8,22 +8,22 @@ public partial class Trie<TKey, TFruit> where TKey : ICombination where TFruit :
     private readonly TrieNode<TKey, TFruit> _root = new TrieNode<TKey, TFruit>(default(TKey));
     public Trie()
     {
-        currentNode = _root;
+        _currentNode = _root;
     }
 
     internal TrieNode<TKey, TFruit> Root => _root;
 
-    private TrieNode<TKey, TFruit> currentNode;
+    private TrieNode<TKey, TFruit> _currentNode;
     internal TrieNode<TKey, TFruit> CurrentNode
     {
-        get => currentNode;
+        get => _currentNode;
         set
         {
-            if (currentNode == value)
+            if (_currentNode == value)
                 return;
 
-            currentNode = value;
-            Console.WriteLine($"\t@{currentNode}");
+            _currentNode = value;
+            Console.WriteLine($"\t@{_currentNode}");
         }
     }
 

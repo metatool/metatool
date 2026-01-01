@@ -5,7 +5,8 @@ namespace Metatool.Service;
 public class KeyboardConfig
 {
 	public OrderedDictionary<string, string> KeyAliases { get; set; }
-	public int RepeatDelay { get; set; } = 3000;
+    // if holding a key for more than RepeatDelay ms, it will be treated as repeating key press
+    public int RepeatDelay { get; set; } = 3000;
 	public IDictionary<string, HotStringDef> HotStrings { get; set; }
 	public IDictionary<string, HotkeyTrigger> Hotkeys { get; set; }
 }
