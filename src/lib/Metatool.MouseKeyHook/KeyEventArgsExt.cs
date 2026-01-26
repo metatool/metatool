@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Input.MouseKeyHook.WinApi;
 using Metatool.Service.MouseKey;
@@ -61,34 +59,6 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
 
     public IKeyPath PathToGo { get; internal set; }
 
-    public void BeginInvoke(Action action)
-    {
-        //_dispatcher.BeginInvoke(DispatcherPriority.Send, action);
-        action();
-    }
-
-    public void BeginInvoke(Action<IKeyEventArgs> action)
-    {
-        //_dispatcher.BeginInvoke(DispatcherPriority.Send, action, this);
-        action(this);
-    }
-
-    public static Task<T> InvokeAsync<T>(Func<T> action, DispatcherPriority priority = DispatcherPriority.Send)
-    {
-        //var o = _dispatcher.BeginInvoke(priority, action);
-        //await o;
-        //return (T) (o.Result);
-        return Task.FromResult(action());
-    }
-
-    public static async Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Send)
-    {
-        await InvokeAsync<object>(() =>
-        {
-            action();
-            return null;
-        }, priority);
-    }
     public KeyCodes KeyData { get; } = keyData;
 
     /// <summary>

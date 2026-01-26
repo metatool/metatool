@@ -11,18 +11,17 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.ScreenHint;
 
-public sealed class ScreenHint: IScreenHint
+public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher) : IScreenHint
 {
-	private readonly IKeyboard _keyboard;
-
-	public ScreenHint(IKeyboard keyboard)
-	{
-		_keyboard = keyboard;
-	}
-	static (Rect windowRect, Dictionary<string, Rect> rects) _positions;
+    static (Rect windowRect, Dictionary<string, Rect> rects) _positions;
 
 	public  async Task Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true)
 	{
+        if (!dispatcher.CheckAccess())
+        {
+            await dispatcher.DispatchAsync(() => Show(action, buildHints));
+            return;
+        }
 		buildHints = buildHints || _positions.Equals(default);
 		if (buildHints)
 		{
@@ -40,12 +39,12 @@ public sealed class ScreenHint: IScreenHint
 		var hits = new StringBuilder();
 		while (true)
 		{
-			var downArg = await _keyboard.KeyDownAsync(true);
+			var downArg = await keyboard.KeyDownAsync(true);
 
 			if (downArg.KeyCode == KeyCodes.LShiftKey)
 			{
 				HintUI.Inst.HideHints();
-				var upArg = await _keyboard.KeyUpAsync();
+				var upArg = await keyboard.KeyUpAsync();
 				HintUI.Inst.ShowHints();
 				continue;
 			}

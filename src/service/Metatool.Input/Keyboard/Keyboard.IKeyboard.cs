@@ -93,11 +93,9 @@ public partial class Keyboard : IKeyboard
         var send = Enumerable.Repeat(Keys.Back, source.Length).Cast<KeyCodes>();
         return sequence.OnUp(e =>
         {
-            e.BeginInvoke(() =>
-                {
-                    var notify = Services.Get<INotify>();
-                    notify.ShowSelectionAction(new[]
-                    {
+            var notify = Services.Get<INotify>();
+            notify.ShowSelectionAction(new[]
+            {
                         (target,
                             (Action) (() =>
                                 {
@@ -106,9 +104,8 @@ public partial class Keyboard : IKeyboard
                                 }
                             ))
                     },
-                        k => { InputSimu.Inst.Keyboard.KeyPress((KeyCodes)k); });
-                }
-            );
+                k => { InputSimu.Inst.Keyboard.KeyPress((KeyCodes)k); });
+
         }, predicate, "", KeyStateTrees.HotString);
     }
 
@@ -128,7 +125,7 @@ public partial class Keyboard : IKeyboard
         {
             if (isAsync)
             {
-                e.BeginInvoke(action);
+                Task.Run(action);
                 return;
             }
 
@@ -206,7 +203,7 @@ public partial class Keyboard : IKeyboard
     }
 
     /// <summary>
-    ///  Note: A+ B -> C become A+C 
+    ///  Note: A+ B -> C become A+C
     /// </summary>
     public IKeyCommand MapOnHit(IHotkey source, IHotkey target,
         Predicate<IKeyEventArgs> predicate = null, string description = "")
@@ -250,7 +247,7 @@ public partial class Keyboard : IKeyboard
         IKeyEventArgs keyDownEvent = null;
 
         // used when target = source and allUp = false => turn a normal key to the chord, so within the delay it can act as a Chord
-        var holdingTimer = new Stopwatch(); 
+        var holdingTimer = new Stopwatch();
 
         void Reset()
         {
@@ -293,7 +290,7 @@ public partial class Keyboard : IKeyboard
             return true;
         }
 
-        KeyDown += (_,e) =>
+        KeyDown += (_, e) =>
         {
             if (keyDownEvent != null && e.KeyCode != keyDownEvent.KeyCode)
             {
@@ -310,10 +307,10 @@ public partial class Keyboard : IKeyboard
                     e.Handled    = true;
 
                     keyDownEvent = e;
-                    if (holding) 
+                    if (holding)
                         return; // repeated long press key, within duration, when holding the key as the chord
 
-				    holding = true;
+                    holding = true;
                     holdingTimer.Restart();
                 },
                     e =>
@@ -327,9 +324,9 @@ public partial class Keyboard : IKeyboard
 
                     if (holdingTimer.IsRunning) holdingTimer.Stop();
                     Console.WriteLine($"!holding:{holding} && holdingTimer.ElapsedMilliseconds:{holdingTimer.ElapsedMilliseconds}<=delay:{delay}");
-                    
+
                     return false; // disable map
-			    },
+                },
                 description, KeyStateTrees.ChordMap
             ),
             allUp?
@@ -408,10 +405,12 @@ public partial class Keyboard : IKeyboard
                 keyDownEvent = e;
                 if (handling) return; // repeated long press key, within duration
 
-				handling = true;
+                handling = true;
                 stopwatch.Restart();
-                e.BeginInvoke(()=>_hook.KeyDown += Handler); //have to be async to handle next key down event, otherwise can't capture it.
-			}, e =>
+                _hook.KeyDown += Handler; // not tested, removed async register.
+                //e.BeginInvoke(()=>_hook.KeyDown += Handler); //have to be async to handle next key down event, otherwise can't capture it.
+            },
+                e =>
             {
                 var noEventDuration = noEventTimer.NoEventDuration;
                 if (noEventDuration > StateResetTime) Reset();
@@ -430,7 +429,7 @@ public partial class Keyboard : IKeyboard
                 {
                     e.Handled = true;
                     if (targetDown) Up(target); // fix: for logic wrong, if typing fast, the up event of source is not fired but another key down happens.
-					targetDown = false;
+                    targetDown = false;
                     var downKeysLast = keyDownEvent.KeyboardState.DownKeys;
                     var downKeys = e.KeyboardState.DownKeys;
                     downKeysLast = downKeysLast.Where(k => !downKeys.Contains(k));

@@ -9,5 +9,7 @@ public static class Main
 		services.AddSingleton<IShell, Shell>()
 			.AddSingleton<IWindowManager, WindowManager>()
 			.AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>()
+            .AddSingleton<IClipboard, Clipboard>()
+            .AddSingleton<IUiDispatcher,UiDispatcher>()
 			.AddSingleton<IFileExplorer, FileExplorer>();
 }

@@ -18,7 +18,7 @@ namespace Metatool.MetaKeyboard
 
             var hotkeys = conf.KeyboardMousePackage.Hotkeys;
 
-            hotkeys.MouseToFocus.OnEvent(e => e.BeginInvoke(MoveCursorToActiveControl));
+            hotkeys.MouseToFocus.OnEvent(e => MoveCursorToActiveControl());
 
             hotkeys.MouseScrollUp.OnEvent(e =>
             {
@@ -34,13 +34,13 @@ namespace Metatool.MetaKeyboard
             hotkeys.MouseLeftClick.OnEvent(e =>
             {
                 e.Handled = true;
-                e.BeginInvoke(() => screenHint.Show(DoMouseLeftClick));
+                screenHint.Show(DoMouseLeftClick);
             });
 
             hotkeys.MouseLeftClickLast.OnEvent(e =>
             {
                 e.Handled = true;
-                e.BeginInvoke(() => screenHint.Show(DoMouseLeftClick, false));
+                screenHint.Show(DoMouseLeftClick, false);
             });
 
             if (conf.KeyboardMousePackage.MouseFollowActiveWindow)

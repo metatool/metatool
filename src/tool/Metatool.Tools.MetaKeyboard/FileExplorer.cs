@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Metatool.Service;
+using Metatool.Service.MouseKey;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Automation;
-using Metatool.Service;
-using Metatool.Service.MouseKey;
 using static Metatool.Service.MouseKey.Key;
 
 namespace Metatool.MetaKeyboard;
@@ -11,7 +11,7 @@ namespace Metatool.MetaKeyboard;
 public class FileExplorer : CommandPackage
 {
 
-	public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IConfig<Config> config, INotify notify, IKeyboard keyboard)
+	public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IClipboard clipboard,IUiDispatcher dispatcher, IConfig<Config> config, INotify notify, IKeyboard keyboard)
 	{
 		RegisterCommands();
 		var hotKeys = config.CurrentValue.FileExplorerPackage.Hotkeys;
@@ -43,12 +43,12 @@ public class FileExplorer : CommandPackage
 			var paths = await fileExplorer.GetSelectedPaths(handle);
 			var r = string.Join(';', paths);
 			notify.ShowMessage($"Path Copied: {r}");
-			System.Windows.Clipboard.SetText(r);
-		}, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
+            clipboard.SetText(r);
+
+        }, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
 
 		hotKeys.NewFile.OnEvent(async e =>
 		{
-			e.Handled = true;
 			const string newFileName = "NewFile";
 			var handle = windowManager.CurrentWindow.Handle;
 			var fullPath = await fileExplorer.CurrentDirectory(handle);
@@ -61,10 +61,9 @@ public class FileExplorer : CommandPackage
 
 			var file = File.Create(fullPath + "\\" + fileName);
 			file.Close();
-			var keyboard = Services.Get<IKeyboard>();
-			fileExplorer.Select(handle, new[] { fileName });
-			e.BeginInvoke(() => keyboard.Type(Key.F2));
-		}, _ => windowManager.CurrentWindow.IsExplorer);
+			fileExplorer.Select(handle, [fileName]);
+            keyboard.Type(Key.F2); // have to be triggered when no other keys are down.
+        }, _ => windowManager.CurrentWindow.IsExplorer);
 
 		hotKeys.ShowDesktopFolder.OnEvent(e =>
 		{

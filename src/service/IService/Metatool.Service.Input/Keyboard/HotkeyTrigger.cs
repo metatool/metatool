@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Metatool.Service.MouseKey;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using Metatool.Service.MouseKey;
-using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service;
 
@@ -36,7 +36,7 @@ public interface IHotkeyTrigger
 {
 	string Hotkey { get; set; }
 	IHotkey Key { get; }
-	KeyEventType EventType { get; set; }
+	KeyEventType Event { get; set; }
 	string Tree { get; set; }
 	bool Handled { get; set; }
 	bool Enabled { get; set; }
@@ -85,7 +85,7 @@ public class HotkeyTrigger : IHotkeyTrigger
 	public bool Handled { get; set; } = true;
 	public string Hotkey { get; set; }
 
-	public KeyEventType EventType { get; set; } = KeyEventType.Down;
+	public KeyEventType Event { get; set; } = KeyEventType.Down;
 	public string Description { get; set; }
 
 	public string Tree { get; set; } = KeyStateTrees.Default;
@@ -95,7 +95,7 @@ public class HotkeyTrigger : IHotkeyTrigger
 	public IKeyCommand OnEvent(Action<IKeyEventArgs> execute,
 		Predicate<IKeyEventArgs> canExecute = null)
 	{
-		var trigger = Keyboard.OnEvent(Key, EventType, Tree);
+		var trigger = Keyboard.OnEvent(Key, Event, Tree);
 		var token = trigger.Register(execute, canExecute, Description);
 		return token;
 	}
@@ -185,8 +185,8 @@ public class HotkeyTrigger : IHotkeyTrigger
 					if (prop.TryGetValue(d, out desc)) trigger.Enabled = bool.Parse(desc);
 					d = nameof(HotkeyTrigger.Handled);
 					if (prop.TryGetValue(d, out desc)) trigger.Handled = bool.Parse(desc);
-					d = nameof(HotkeyTrigger.EventType);
-					if (prop.TryGetValue(d, out desc)) trigger.EventType = Enum.Parse<KeyEventType>(desc);
+					d = nameof(HotkeyTrigger.Event);
+					if (prop.TryGetValue(d, out desc)) trigger.Event = Enum.Parse<KeyEventType>(desc);
 					d = nameof(HotkeyTrigger.Tree);
 					if (prop.TryGetValue(d, out desc)) trigger.Tree = desc;
 					d = nameof(HotkeyTrigger.Hotkey);

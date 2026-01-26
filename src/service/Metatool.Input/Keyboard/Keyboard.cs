@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Metatool.Input;
 
@@ -19,17 +20,15 @@ public partial class Keyboard
 	public static Keyboard Default =>
 		_default ??= Services.Get<IKeyboard, Keyboard>();
 
-	public Keyboard(ILogger<Keyboard> logger, IConfig<MetatoolConfig> config)
+	public Keyboard(ILogger<Keyboard> logger, IConfig<MetatoolConfig> config, IUiDispatcher dispatcher)
 	{
 		_logger = logger;
 		_config = config;
 		var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
 		AddAliases(aliases);
 		Hook();
-		Debug.Assert(System.Windows.Application.Current.Dispatcher != null,
-			"System.Windows.Application.Current.Dispatcher != null");
-		System.Windows.Application.Current.Dispatcher.BeginInvoke((Action) (() =>
-			InitService(config))); // workaround to use the Keyboard Service itself via DI in initService
+        // workaround to use the Keyboard Service itself via DI in initService
+        Task.Run(() => InitService(config));
 	}
 
 	private void InitService(IConfig<MetatoolConfig> config)

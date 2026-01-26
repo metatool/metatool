@@ -39,8 +39,6 @@ public interface IKeyEventArgs
 
 	IKeyEventArgs LastKeyDownEvent_NoneVirtual { get; }
 	IKeyEventArgs LastKeyEvent_NoneVirtual     { get; }
-	void BeginInvoke(Action<IKeyEventArgs> action);
-	void BeginInvoke(Action action);
 	bool IsActive(ISequenceUnit hotKey)
 	{
 		var comb = hotKey.ToCombination();
