@@ -24,7 +24,7 @@ public class KeyStateTree
     internal bool IsOnRoot => _trie.IsOnRoot;
     internal TrieNode<ICombination, KeyEventCommand> Root => _trie.Root;
     private SequenceHotKeyStateResetter _resetter;
-    public KeyStateTree(string name, IKeyTipNotifier notify)
+    public KeyStateTree(string name, IKeyTipNotifier notify, ILogger logger)
     {
         _notify = notify;
         Name = name;
@@ -61,7 +61,7 @@ public class KeyStateTree
         if (ClimbingState == TreeClimbingState.Landing)
         {
             ClimbingState = TreeClimbingState.Done;
-            Console.WriteLine($"${Name}@Landing->@Done");
+            Console.WriteLine($"tree:{Name}@Landing->@Done");
         }
     }
 
@@ -248,10 +248,12 @@ public class KeyStateTree
 
         args.KeyEventType = eventType;
 
-        var lastDownHit = "";
         if (_lastKeyDownNodeForAllUp != null)
+        {
+            var lastDownHit = "";
             lastDownHit = $":lastKeyDownNodeForAllUpEvent@{_lastKeyDownNodeForAllUp}";
-        Console.WriteLine($"${Name}{lastDownHit}");
+            Console.WriteLine($"${Name}{lastDownHit}");
+        }
 
 
         var handled = candidateNode.Key.TriggerKey.Handled;

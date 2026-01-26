@@ -8,12 +8,12 @@ namespace Metatool.Input;
 public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 {
     List<SelectionResult> _selectedTrees = new();
-    Forest forest = new (notify);
-    public IForest Forest => forest;
+    private readonly Forest _forest = new (notify, logger);
+    public IForest Forest => _forest;
 
     public void Reset()
     {
-        foreach (var stateTree in forest.ForestGround.Values) 
+        foreach (var stateTree in _forest.ForestGround.Values) 
             stateTree.Reset();
     }
 
@@ -21,7 +21,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
     {
         var selectionResults = new List<SelectionResult>();
         //all on root, find current trees
-        foreach (var stateTree in forest.ForestGround.Values)
+        foreach (var stateTree in _forest.ForestGround.Values)
         {
             Debug.Assert(stateTree.IsOnRoot);
 
@@ -111,7 +111,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
                  reprocess /*Landing or LandingAndClimbing*/);
 
     @return:
-        foreach (var stateTree in forest.ForestGround.Values) 
+        foreach (var stateTree in _forest.ForestGround.Values) 
             stateTree.MarkDoneIfLanding();
     }
 

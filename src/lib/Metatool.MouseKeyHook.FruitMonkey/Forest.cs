@@ -1,19 +1,20 @@
 ﻿using Metatool.Input;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service.MouseKey;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.MouseKeyHook.FruitMonkey;
 
-public class Forest(IKeyTipNotifier notify) : IForest
+internal class Forest(IKeyTipNotifier notify, ILogger logger) : IForest
 {
     internal Dictionary<string, KeyStateTree> ForestGround = new()
     {
         // keep the order
-        {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap, notify)},
-        {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap, notify) {TreeType = TreeType.SingleFruitPerEventType}},
-        {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default, notify)},
-        {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map, notify)},
-        {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString, notify)}
+        {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap, notify, logger)},
+        {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap, notify, logger) {TreeType = TreeType.SingleFruitPerEventType}},
+        {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default, notify, logger)},
+        {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map, notify, logger)},
+        {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString, notify, logger)}
     };
 
     // keep the order
@@ -25,7 +26,7 @@ public class Forest(IKeyTipNotifier notify) : IForest
             return keyStateTree;
         }
 
-        keyStateTree = new KeyStateTree(stateTreeName, notify);
+        keyStateTree = new KeyStateTree(stateTreeName, notify, logger);
         ForestGround.Add(stateTreeName, keyStateTree);
         return keyStateTree;
     }
