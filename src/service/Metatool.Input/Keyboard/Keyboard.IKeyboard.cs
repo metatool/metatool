@@ -203,7 +203,7 @@ public partial class Keyboard : IKeyboard
     }
 
     /// <summary>
-    ///  Note: A+ B -> C become A+C
+    ///  Note: A+ (B -> C) become A+C
     /// </summary>
     public IKeyCommand MapOnHit(IHotkey source, IHotkey target,
         Predicate<IKeyEventArgs> predicate = null, string description = "")

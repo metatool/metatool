@@ -69,7 +69,7 @@ public partial class Keyboard
 					if (!key.IsCommonChordKey())
 					{
 						if(!_hook.Contains(key, KeyStateTrees.ChordMap))
-							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, "MapOnHit$ChordMapTree");
+							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, "MapOnHit on ChordMapTree");
 					}
 				}
 			}

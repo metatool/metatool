@@ -79,7 +79,7 @@
 					//"LMenu + N": "PageDown",
 					//
 					"GK + Back": "Del",
-					// "GK + P": "PrintScreen",
+					"GK + P": "PrintScreen",
 					"GK + Pipe": "Insert",
 					"GK + '": "Apps" // context menu
 				}

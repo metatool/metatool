@@ -13,7 +13,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 
     public void Reset()
     {
-        foreach (var stateTree in _forest.ForestGround.Values) 
+        foreach (var stateTree in _forest.ForestGround.Values)
             stateTree.Reset();
     }
 
@@ -45,7 +45,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
 
         if (selectionResults.Count > 0)
             logger.LogInformation(
-                $"ToClimbTrees:{string.Join(",", selectionResults.Select(t => $"${t.Tree.Name}@{t.SelectedNode}"))}");
+                $"TreeSelected:{string.Join(",", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{t.SelectedNode}}}"))}");
 
         return selectionResults;
     }
@@ -111,7 +111,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
                  reprocess /*Landing or LandingAndClimbing*/);
 
     @return:
-        foreach (var stateTree in _forest.ForestGround.Values) 
+        foreach (var stateTree in _forest.ForestGround.Values)
             stateTree.MarkDoneIfLanding();
     }
 

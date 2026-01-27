@@ -52,8 +52,8 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
         _values.Clear();
     }
 
-    private string ValuesDescriptions => $"Commands: {string.Join(",", _values)}";
-    
+    private string ValuesDescriptions => $"Commands:[{string.Join(",", _values)}]";
+
     internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip =>
         _childrenDictionary.Select(
             p => (

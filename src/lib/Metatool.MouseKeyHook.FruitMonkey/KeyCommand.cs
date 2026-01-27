@@ -12,6 +12,6 @@ public class KeyCommand : Command<IKeyEventArgs>
     public KeyCommand(Action<IKeyEventArgs> action) => Execute = action;
     public override string ToString()
     {
-        return $"Id:{{Id}}, Execute:{{ExecuteCount}},CanExecute:{{CanExecuteCount}}";
+        return $"{{Description:{Description},Id:{Id},Disabled:{Disabled}}}";
     }
 }

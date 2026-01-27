@@ -21,7 +21,7 @@ public class KeyEventCommand(KeyEventType keyEventType, KeyCommand command)
 
 	public override string ToString()
 	{
-		return $"{{{KeyEventType}: {Command.Description}}}";
+		return $"{KeyEventType}:{Command}";
 	}
 
 	protected bool Equals(KeyEventCommand other)
