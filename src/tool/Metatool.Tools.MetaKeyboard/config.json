@@ -1,6 +1,10 @@
 ﻿{
 	"Tools": {
 		"Metatool.Tools.MetaKeyboard": {
+			"KeyAliases": {
+				// accent key
+				"ACK": "Pipe"
+			},
 			"KeyboardPackage": {
 				"Hotkeys": {
 					"ToggleCaps": {
@@ -84,76 +88,71 @@
 					"GK + '": "Apps" // context menu
 				}
 			},
-			"SpecialCharsPackage": {
-				"Description": "Special Chars",
-				"CK+a": {
-					"Description": "Special Characters of French",
-					"a": {
-						"`": "à",
-						"6": "â",
-						"e": "æ",
-						"Description": "a's Specail Chars"
-					},
-					"shift+a": {
-						"`": "À",
-						"6": "Â",
-						"e": "Æ",
-						"Description": "A's Specail Chars"
-					},
-					"c": "ç",
-					"shift+c": "Ç",
-					"e": {
-						"1": "é",
-						"`": "è",
-						"6": "ê",
-						"5": "ë",
-						"Description": "e's Specail Chars"
-					},
-					"shift+e": {
-						"1": "É",
-						"`": "È",
-						"6": "Ê",
-						"5": "Ë",
-						"Description": "E's Specail Chars"
-					},
-					"i": {
-						"6": "î",
-						"5": "ï",
-						"Description": "i's Specail Chars"
-					},
-					"shift+i": {
-						"6": "Î",
-						"5": "Ï",
-						"Description": "I's Specail Chars"
-					},
-					"o": {
-						"6": "ô",
-						"e": "œ",
-						"Description": "o's Specail Chars"
-					},
-					"shift+o": {
-						"6": "Ô",
-						"e": "Œ",
-						"Description": "O's Specail Chars"
-					},
-					"u": {
-						"6": "û",
-						"`": "ù",
-						"5": "ü",
-						"Description": "u's Specail Chars"
-					},
-					"shift+u": {
-						"6": "Û",
-						"`": "Ù",
-						"5": "Ü",
-						"Description": "U's Specail Chars"
-					},
-					",": "«",
-					".": "»"
-				}
-
+			"SpecialFrenchChars": {
+				"Description": "Special Characters of French",
+				"ACK+a": {
+					"`": "à",
+					"6": "â",
+					"e": "æ",
+					"Description": "a's Special Chars"
+				},
+				"ACK+shift+a": {
+					"`": "À",
+					"6": "Â",
+					"e": "Æ",
+					"Description": "A's Special Chars"
+				},
+				"ACK+c": "ç",
+				"ACK+shift+c": "Ç",
+				"ACK+e": {
+					"1": "é",
+					"`": "è",
+					"6": "ê",
+					"5": "ë",
+					"Description": "e's Special Chars"
+				},
+				"ACK+shift+e": {
+					"1": "É",
+					"`": "È",
+					"6": "Ê",
+					"5": "Ë",
+					"Description": "E's Special Chars"
+				},
+				"ACK+i": {
+					"6": "î",
+					"5": "ï",
+					"Description": "i's Special Chars"
+				},
+				"ACK+shift+i": {
+					"6": "Î",
+					"5": "Ï",
+					"Description": "I's Special Chars"
+				},
+				"ACK+o": {
+					"6": "ô",
+					"e": "œ",
+					"Description": "o's Special Chars"
+				},
+				"ACK+shift+o": {
+					"6": "Ô",
+					"e": "Œ",
+					"Description": "O's Special Chars"
+				},
+				"ACK+u": {
+					"6": "û",
+					"`": "ù",
+					"5": "ü",
+					"Description": "u's Special Chars"
+				},
+				"ACK+shift+u": {
+					"6": "Û",
+					"`": "Ù",
+					"5": "Ü",
+					"Description": "U's Special Chars"
+				},
+				"ACK+,": "«",
+				"ACK+.": "»"
 			},
-
 			"KeyboardMousePackage": {
 				// not work well, if click to change active window
 				// need to just handle alt+tab switch

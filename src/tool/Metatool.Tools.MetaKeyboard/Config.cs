@@ -123,7 +123,8 @@ namespace Metatool.MetaKeyboard
     [ToolConfig]
     public class Config
     {
-        public ContextHotkey<string> SpecialCharsPackage { get; set; }
+        public OrderedDictionary<string, string> KeyAliases { get; set; }
+        public ContextHotkey<string> SpecialFrenchChars { get; set; }
         public KeyboardPackage KeyboardPackage { get; set; }
 
         public FileExplorerPackage FileExplorerPackage { get; set; }

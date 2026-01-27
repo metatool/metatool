@@ -4,7 +4,10 @@ using System.Collections.Generic;
 
 
 namespace Metatool.Service.Keyboard;
-
+/// <summary>
+/// the data of T is the context, it is dynamic
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public class ContextHotkey<T>
 {
     public Dictionary<string, ContextHotkey<T>>? Children { get; set; }

@@ -1,18 +1,21 @@
-﻿using Metatool.Service;
+﻿using System.Collections.Generic;
+using Metatool.Service;
 using Metatool.Service.Keyboard;
 using Metatool.Service.MouseKey;
 
 namespace Metatool.MetaKeyboard;
 
-public class SpecialChars : CommandPackage
+public class SpecialCharsPackage : CommandPackage
 {
     private readonly IKeyboard _keyboard;
+	private readonly OrderedDictionary<string, string> alias;
 
-    public SpecialChars(IKeyboard keyboard, IConfig<Config> config)
+	public SpecialCharsPackage(IKeyboard keyboard, IConfig<Config> config)
     {
         _keyboard = keyboard;
-        var cfg = config.CurrentValue.SpecialCharsPackage;
-        Hotkey.Parse("shift+a");
+        var cfg = config.CurrentValue.SpecialFrenchChars;
+        alias = config.CurrentValue.KeyAliases;
+        // Hotkey.Parse("shift+a");
         RegisterSpecialChars(cfg);
     }
 
@@ -20,12 +23,12 @@ public class SpecialChars : CommandPackage
     {
         conf.Visit((path, c) =>
         {
-            if (path == "") return;// this inial 
+            if (path == "") return;// this inial
 
-            path = _keyboard.ReplaceAlias(path);
+            path = _keyboard.ReplaceAlias(path, alias);
 
             if (c.Children != null)
-            { 
+            {
                 Hotkey.Parse(path).SetHandled().OnUp(null, description: c.Description);
             }
             else
