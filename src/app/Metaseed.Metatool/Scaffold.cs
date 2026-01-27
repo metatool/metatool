@@ -124,16 +124,32 @@ public class Scaffold
 		var description = "Metatool for your professional life";
 		var desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 		var targetPath = Path.Combine(Context.AppDirectory, "Metatool.exe");
-		var shortcutPath = Path.Combine(desktop, "Metatool.lnk");
-		var shortcutPathAdmin = Path.Combine(desktop, "Metatool (Admin).lnk");
+        var userShortcutName = "Metatool.lnk";
+        var shortcutPath = Path.Combine(desktop, userShortcutName);
+        var adminShortcutName = "Metatool (Admin).lnk";
+
+        var shortcutPathAdmin = Path.Combine(desktop, adminShortcutName);
 
 		var shell = _shell;
 		var shortcut = shell.ReadShortcut(shortcutPath);
 		var shortcutAdmin = shell.ReadShortcut(shortcutPathAdmin);
 
-		if (shortcut == null || shortcut.TargetPath != targetPath)
-			shell.CreateShortcut(targetPath, shortcutPath, "Ctrl+Alt+X", description);
-		if (shortcut == null || shortcutAdmin.TargetPath != targetPath)
-			shell.CreateShortcut(targetPath, shortcutPathAdmin, "Ctrl+Alt+Z", description + "- Admin", true);
-	}
+        if (shortcut == null || shortcut.TargetPath != targetPath)
+        {
+            shell.CreateShortcut(targetPath, shortcutPath, "Ctrl+Alt+X", description);
+            // to appear in shell:AppsFolder
+            var programsPath = Environment.GetFolderPath(Environment.SpecialFolder.Programs);
+            var destinationPath = Path.Combine(programsPath, userShortcutName);
+            File.Copy(shortcutPath, destinationPath, true);
+        }
+
+        if (shortcut == null || shortcutAdmin.TargetPath != targetPath)
+        {
+            shell.CreateShortcut(targetPath, shortcutPathAdmin, "Ctrl+Alt+Z", description + "- Admin", true);
+            // to appear in shell:AppsFolder
+            var programsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms);
+            var destinationPath = Path.Combine(programsPath, adminShortcutName);
+            File.Copy(shortcutPathAdmin, destinationPath, true);
+        }
+    }
 }

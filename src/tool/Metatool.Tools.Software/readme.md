@@ -1,11 +1,12 @@
-﻿MetaApp plugin tool launch frequently used application via sequential-hotkeys, i.e (AK+Space, N) too open notepad.exe, the hotkey sequences are defined by a tree of folders, just put the application shortcut into the folder to configure launched applications, i.e. put notepad.lnk shortcut into the 'AK + Space' folder.
+﻿MetaApp plugin tool launch frequently used application via sequential-hotkeys, i.e (AK+Space, N) to open notepad.exe, the hotkey sequences are defined by a tree of folders, just put the application shortcut into the folder to configure launched applications, i.e. put notepad.lnk shortcut into the 'AK + Space' folder.
 
 
 > TIP: to create a Desktop shortcut for a Store app in Windows 10
-> 1. Press the Win + R keys together to open the Run dialog and type shell:AppsFolder in the run box.
+> 1. Press the Win + R keys together to open the Run dialog and type shell:AppsFolder in the run box. or opkf AppsFolder
 > 1. Hit the Enter key to open the Applications folder.
 > 1. Now, drag and drop the desired app to the Desktop. Windows will create a new shortcut for it instantly!
 
+> Tip: to open shortcut properties dialog, select the shortcut and press Alt+Enter.
 
 ## Example
 * Folder: `AK +`

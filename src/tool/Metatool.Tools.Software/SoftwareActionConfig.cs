@@ -11,12 +11,16 @@ public class SoftwareActionConfig
 	public bool   Handled      { get; set; } = true;
 	public string ActionId     { get; set; } = "ShortcutLaunch";
 	public string Args         { get; set; }
-	public bool   ShowIfOpened { get; set; } = true;
+    /// <summary>
+    /// if the exe path is the same as any opened process, do not launch a new one
+    /// </summary>
+    public bool   ShowIfOpened { get; set; } = true;
 
-	/// <summary>
-	/// regex
-	/// </summary>
-	public string ShowIfOpenedTitle { get; set; }
+    /// <summary>
+    /// regex,
+    /// if the title of any opened process of same exe path, which matches this, do not launch a new one
+    /// </summary>
+    public string ShowIfOpenedTitle { get; set; }
 
 	public RunMode RunMode { get; set; } = RunMode.Inherit;
 

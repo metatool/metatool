@@ -27,7 +27,7 @@ public static class Program
 			{
 				// so you could pin metatool to the first windows task bar shortcut,
 				// and use Win+Shift+1 then Alt+Y to launch as admin,
-				// note: could not use Win+Alt+1, it's used to do right click on the first task bar item
+				// note: could not use Win+Alt+1, it's used to do right-click on the first task bar item
 				args = args.Where(i => i != AdminFlagLong).ToArray();
 				return Context.Restart(0, true, args);
 			}

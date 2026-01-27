@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
-using System.Text;
 using System.Threading.Tasks;
 using IWshRuntimeLibrary;
 using Metatool.Service;
@@ -27,7 +24,7 @@ public class Shell : IShell
 
 			return (paths != null && paths.Length != 0)
 				? paths
-				: new string[] {await CurrentDirectory()};
+				: [await CurrentDirectory()];
 		});
 	}
 
