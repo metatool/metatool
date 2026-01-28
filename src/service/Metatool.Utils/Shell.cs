@@ -13,11 +13,12 @@ namespace Metatool.Utils;
 public class Shell : IShell
 {
 	private readonly ILogger _logger = Services.Get<ILogger<Shell>>();
-
-	public Shell(IContextVariable contextVariable)
+	static string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+    public Shell(IContextVariable contextVariable)
 	{
 		contextVariable.AddVariable("IShell.SelectedPaths", async () => await SelectedPaths());
-		contextVariable.AddVariable("IShell.CurrentDirectory", async () => await CurrentDirectory());
+        contextVariable.AddVariable("IShell.CurrentDirectoryOrHome", async () => await CurrentDirectory() ?? homePath);
+        contextVariable.AddVariable("IShell.CurrentDirectory", async () => await CurrentDirectory());
 		contextVariable.AddVariable("IShell.SelectedPathsOrCurrentDirectory", async () =>
 		{
 			var paths = await SelectedPaths();

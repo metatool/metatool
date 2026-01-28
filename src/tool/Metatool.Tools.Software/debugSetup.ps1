@@ -3,7 +3,7 @@ $SolutionDir = $PSScriptRoot.Replace("tool\Metatool.Tools.Software","")
 $TargetDir = "$SolutionDir..\exe\debug\tools\Metatool.Tools.Software"
 $sourceSoftwarePath = "$SolutionDir..\exe\publish\tools\Metatool.Tools.Software\software"
 $targetSoftwarePath = "$TargetDir\software"
-$sourceSoftwareConfigPath = "$SolutionDir..\exe\publish\tools\Metatool.Tools.Software\softwareConfig"
+$sourceSoftwareConfigPath = "$SolutionDir..\exe\publish\tools\Metatool.Tools.Softcware\softwareConfig"
 $targetSoftwareConfigPath = "$TargetDir\softwareConfig"
 if (!(Test-Path -Path $targetSoftwarePath)) {
 	New-Item -ItemType SymbolicLink -Path $targetSoftwarePath -Target $sourceSoftwarePath

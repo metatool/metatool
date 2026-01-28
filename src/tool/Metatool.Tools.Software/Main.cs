@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Metatool.Service;
+﻿using Metatool.Service;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 
@@ -47,8 +40,6 @@ public partial class SoftwareTool : ToolBase
 
 	void ConfigShortcuts(IEnumerable<string> files, string rootFolder)
 	{
-		var hotKeys = new List<IHotkeyTrigger>();
-
 		foreach (var file in files)
 		{
 			var keys = file.Replace(rootFolder, "").Split(Path.DirectorySeparatorChar).Select(k => k.Trim())
@@ -67,7 +58,6 @@ public partial class SoftwareTool : ToolBase
 			}
 
 			hotkeyTrigger.Hotkey = sb.ToString();
-			hotKeys.Add(hotkeyTrigger);
 			if (Path.GetExtension(file) == ".lnk")
 			{
 				ConfigShortcut(file, hotkeyTrigger);
@@ -210,11 +200,19 @@ public partial class SoftwareTool : ToolBase
 		{
 			var arg = await ExpandVariableString(_contextVariable, config.Args, o =>
 			{
+				string argHandler(string[] strA)
+				{
+					strA = strA.Where(str => !string.IsNullOrEmpty(str)).ToArray();
+					if (strA.Length == 0) return "";
+
+					return string.Join(" ",
+						strA.Select(str => str.Contains(' ') && isPwsh ? $"`\"{str}`\"" : str));
+				}
+
 				return o switch
 				{
 					string str => str.Contains(' ') && isPwsh ? $"`\"{str}`\"" : str,
-					string[] strA => string.Join(" ",
-						strA.Select(str => str.Contains(' ') && isPwsh ? $"`\"{str}`\"" : str)),
+					string[] strA => argHandler(strA),
 					null => "",
 					_ => throw new Exception(
 						"unsupported context variable type when parse shortcut arguments")
@@ -228,7 +226,7 @@ public partial class SoftwareTool : ToolBase
 			case RunMode.Inherit:
 				//if(string.IsNullOrEmpty(arg))
 				//    shell.RunWithExplorer(shortcut);
-				//else 
+				//else
 				shell.RunWithPowershell(shell.NormalizeCmd(shortcut), await getArg(true));
 
 				break;
