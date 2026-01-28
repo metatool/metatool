@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;

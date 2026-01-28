@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Threading;
+﻿using System.Windows.Threading;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service;
 using Metatool.Service.MouseKey;

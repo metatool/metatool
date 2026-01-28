@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Metatool.ToolDemo": {
+    "Metatool.Software": {
       "commandName": "Executable",
-      "executablePath": "$(MetatoolDir)\\Metatool.exe",
+      "executablePath": "$(SolutionDir)\\..\\exe\\debug\\Metatool.exe",
       "commandLineArgs": "run $(TargetPath)"
     }
   }
