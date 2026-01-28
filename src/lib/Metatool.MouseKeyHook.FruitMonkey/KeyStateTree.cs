@@ -234,9 +234,6 @@ public class KeyStateTree
                 // HaveChild & KeyInChord_up: A+B, C when A_up continue wait C
                 if (_trie.CurrentNode.Key.Chord.Contains(args.KeyCode))
                 {
-                    Console.WriteLine(
-                        " would never been here:treeWalker.CurrentNode.Key.Chord.Contains(args.KeyCode)");
-                    Debugger.Break();
                     return ClimbingState = TreeClimbingState.Continue;
                 }
 

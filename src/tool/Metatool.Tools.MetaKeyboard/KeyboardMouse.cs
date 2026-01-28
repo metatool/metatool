@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using Metatool.Service;
@@ -67,7 +68,7 @@ namespace Metatool.MetaKeyboard
                 rect.Y = winRect.Y + rect.Y;
                 var p = new Point((int)(rect.X + rect.Width / 2), (int)(rect.Y + rect.Height / 2));
                 mouse.Position = p;
-                mouse.LeftClick();  
+                mouse.LeftClick();
             }
 
             void MoveCursorToActiveControl()
@@ -83,7 +84,8 @@ namespace Metatool.MetaKeyboard
                     x = (int)(r.X + r.Width / 2);
                     y = (int)(r.Y + r.Height / 2);
                 }
-                mouse.MoveToLikeUser(x, y);
+                // we need to run in task to avoid blocking keyboard hook thread, otherwise the keyboard event(i.e. F_up) may be lost, then a 'F' is typed even we mark the 'F_down' as handled.
+                Task.Run(() => mouse.MoveToLikeUser(x, y));
             }
         }
 
