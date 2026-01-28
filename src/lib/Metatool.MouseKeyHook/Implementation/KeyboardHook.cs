@@ -104,7 +104,7 @@ public class KeyboardHook
 
         _eventSource.KeyDown += (sender, args) =>
         {
-            _monkey.ClimbTree(KeyEventType.Down, args);
+            _monkey.ClimbTree(args);
             // a copy, so newly added would be handled in next event.
             List<KeyEventHandler> handlers = [.. _keyDownHandlers];
             handlers.ForEach(h => h?.Invoke(sender, args));
@@ -118,7 +118,7 @@ public class KeyboardHook
 
         _eventSource.KeyUp += (sender, args) =>
         {
-            _monkey.ClimbTree(KeyEventType.Up, args);
+            _monkey.ClimbTree(args);
             List<KeyEventHandler> handlers = [.. _keyUpHandlers]; // a copy
             handlers.ForEach(h => h?.Invoke(sender, args));
         };

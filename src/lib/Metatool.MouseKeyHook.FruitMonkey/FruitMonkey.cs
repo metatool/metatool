@@ -17,7 +17,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             stateTree.Reset();
     }
 
-    List<SelectionResult> SelectTree(KeyEventType eventType, IKeyEventArgs args)
+    List<SelectionResult> SelectTree(IKeyEventArgs args)
     {
         var selectionResults = new List<SelectionResult>();
         //all on root, find current trees
@@ -28,7 +28,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             if (stateTree.ClimbingState == TreeClimbingState.Landing)
                 continue;
 
-            var selectionResult = stateTree.TrySelectNode(eventType, args);
+            var selectionResult = stateTree.TrySelectChildNode(args);
             if (selectionResult.SelectedNode == null)
                 continue;
 
@@ -50,7 +50,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
         return selectionResults;
     }
 
-    public void ClimbTree(KeyEventType eventType, IKeyEventArgs args)
+    public void ClimbTree(IKeyEventArgs args)
     {
         // * if tree1 has A+B and tree2 has A and B, and we press A+B, A+B on tree1 would be processed, but A on tree2 would not be process as the next event is not A_up but B_down.
         // * if tree1 has A and tree2 has A, both should be processed.
@@ -64,7 +64,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             if (_selectedTrees.Count == 0)
             {
                 onGround = true;
-                _selectedTrees = SelectTree(eventType, args);
+                _selectedTrees = SelectTree(args);
             }
 
             var hasSelectedNodes = _selectedTrees.Count > 0;
@@ -76,13 +76,13 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
                 var selectedTree = c; // should not remove this line
                 if (!onGround)
                 {
-                    var result = selectedTree.Tree.TrySelectNode(eventType, args);
+                    var result = selectedTree.Tree.TrySelectChildNode(args);
                     var index = _selectedTrees.IndexOf(selectedTree);
                     _selectedTrees[index] = result;
                     selectedTree = result;
                 }
 
-                var rt = selectedTree.Tree.Climb(eventType, args, selectedTree.SelectedNode, selectedTree.DownInChord);
+                var rt = selectedTree.Tree.Climb(args, selectedTree.SelectedNode, selectedTree.DownInChord);
                 logger.LogInformation($"\t={rt}${selectedTree.Tree.Name}@{selectedTree.Tree.CurrentNode}");
                 if (rt == TreeClimbingState.Continue)
                 {

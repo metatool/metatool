@@ -7,5 +7,5 @@ public interface IFruitMonkey
 {
     IForest Forest { get; }
     void Reset();
-    void ClimbTree(KeyEventType eventType, IKeyEventArgs args);
+    void ClimbTree(IKeyEventArgs args);
 }

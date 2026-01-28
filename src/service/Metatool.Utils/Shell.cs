@@ -55,7 +55,7 @@ public class Shell : IShell
 	}
 
 	/// <summary>
-	/// in it's own process without window
+	/// in its own process without window
 	/// </summary>
 	public CommandResult Run(string commandPath, string arguments, string workingDirectory = null)
 	{

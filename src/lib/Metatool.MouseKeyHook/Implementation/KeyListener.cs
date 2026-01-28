@@ -12,9 +12,9 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 {
 	private readonly ILogger _logger = Services.Get<ILogger<KeyListener>>();
 
-    public event KeyEventHandler      KeyDown;
+	public event KeyEventHandler KeyDown;
 	public event KeyPressEventHandler KeyPress;
-	public event KeyEventHandler      KeyUp;
+	public event KeyEventHandler KeyUp;
 
 	public void InvokeKeyDown(IKeyEventArgs e)
 	{
@@ -26,6 +26,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		}
 		if (handler == null || !e.IsKeyDown || e.Handled)
 			return;
+
 		handler(this, e);
 	}
 
@@ -39,11 +40,10 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		}
 
 		if (handler == null || e.Handled || e.IsNonChar)
-
 			return;
 
 		handler(this, e);
-		_logger.LogDebug(new String('\t', _indentCounter) + e);
+		_logger.LogDebug(new string('\t', _indentCounter) + e);
 	}
 
 	public void InvokeKeyUp(IKeyEventArgs e)
@@ -65,7 +65,6 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		}
 
 		handler(this, e);
-
 	}
 
 	private int _indentCounter = 0;
@@ -126,18 +125,18 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 			return true;
 		}
 
-		_logger.LogDebug(new String('\t', _indentCounter++) + "→" + args);
-		// down 
+		_logger.LogDebug(new string('\t', _indentCounter++) + "→" + args);
+		// down
 		InvokeKeyDown(args);
 		// press
-		var pressEventArgs =GetPressEventArgs(data, args).ToArray();
+		var pressEventArgs = GetPressEventArgs(data, args).ToArray();
 
 		foreach (var pressEventArg in pressEventArgs)
 			InvokeKeyPress(pressEventArg);
 		// up
 		InvokeKeyUp(args);
 
-		_logger.LogDebug(new String('\t', --_indentCounter) + "←" + args);
+		_logger.LogDebug(new string('\t', --_indentCounter) + "←" + args);
 
 		if (argExt.HandleVirtualKeyBackup.HasValue)
 		{

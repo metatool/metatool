@@ -91,13 +91,12 @@ public class KeyStateTree
     }
 
     private TrieNode<ICombination, KeyEventCommand>? _lastKeyDownNodeForAllUp = null;
+    private readonly IKeyTipNotifier _notify;
 
     /// <summary>
-    /// these chords are disabled, the key can not be used in the chord part of combination
+    /// these chord-keys are disabled: the key can not be used in the chord part of combination
     /// </summary>
     private readonly HashSet<Chord> _disabledChords = [];
-
-    private readonly IKeyTipNotifier _notify;
 
     internal void DisableChord(Chord chord)
     {
@@ -111,13 +110,10 @@ public class KeyStateTree
 
     /// <summary>
     /// with the key event, try to find the best matching child node from current node
-    /// best matching: chord is not disabled in current tree, is not marked disabled in tree node,
+    /// best matching: chord is not disabled in current tree, node is not marked disabled in tree node,
     /// chord+trigger are all down, the one with most chord keys down.
     /// </summary>
-    /// <param name="eventType"></param>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    internal SelectionResult TrySelectNode(KeyEventType eventType, IKeyEventArgs args)
+    internal SelectionResult TrySelectChildNode(IKeyEventArgs args)
     {
         // to handle A+B+C(B is currently down in Chord)eventType == KeyEventType.Down && args.KeyCode == KeyCodes.RShiftKey
         var downInChord = false;
@@ -132,7 +128,7 @@ public class KeyStateTree
             // currently no exact match:
             // other key not in chord down will still trigger: A+B+C, if D is down too.
             // question: should we just do exact match? means only exact chord match will trigger the hotkey
-            if (eventType == KeyEventType.Down && childKey.Chord.Contains(args.KeyCode))
+            if (args.IsKeyDown && childKey.Chord.Contains(args.KeyCode))
                 downInChord = true;
 
             if (args.KeyCode != childKey.TriggerKey || childKey.Disabled)
@@ -166,8 +162,9 @@ public class KeyStateTree
     }
 
     //eventType is only Down or Up
-    internal TreeClimbingState Climb(KeyEventType eventType, IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand>? candidateNode, bool downInChord)
+    internal TreeClimbingState Climb(IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand>? candidateNode, bool downInChord)
     {
+        KeyEventType eventType = args.IsKeyDown ? KeyEventType.Down : KeyEventType.Up;
         _resetter.Pulse();
         // conditional dbg:
         // Name == "ChordMap" && eventType == KeyEventType.Up && args.KeyCode == KeyCodes.Enter
@@ -180,7 +177,7 @@ public class KeyStateTree
         // Chord_downOrUp? or
         if (candidateNode == null)
         {
-            if (eventType == KeyEventType.Down)
+            if (args.IsKeyDown)
             {
                 if (_trie.IsOnRoot) // no child found and current node is root
                 {
@@ -254,8 +251,8 @@ public class KeyStateTree
 
 
         var handled = candidateNode.Key.TriggerKey.Handled;
-        if ((eventType == KeyEventType.Down || eventType == KeyEventType.Up) && (eventType & handled) != 0)
-            args.Handled = true; // even there is not action in list we still hide as required,for all up 
+        if ((eventType != KeyEventType.AllUp) && (eventType & handled) != 0)
+            args.Handled = true; // even there is not action in list we still hide as required,for all up
 
         // matched
         var actionList = candidateNode.Values as KeyActionList<KeyEventCommand>;
