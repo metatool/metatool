@@ -48,21 +48,22 @@ public class Chord : IEnumerable<Key>
 
     protected bool Equals(Chord other)
     {
-        if (_keys.Count != other._keys.Count) 
+        if (_keys.Count != other._keys.Count)
             return false;
 
+        // we have ordered keys in constructor
         return _keys.SequenceEqual(other._keys);
     }
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) 
+        if (ReferenceEquals(null, obj))
             return false;
 
-        if (ReferenceEquals(this, obj)) 
+        if (ReferenceEquals(this, obj))
             return true;
 
-        if (obj.GetType() != GetType()) 
+        if (obj.GetType() != GetType())
             return false;
 
         return Equals((Chord)obj);

@@ -5,7 +5,7 @@ namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 public partial class Trie<TKey, TFruit> : ITrie<TKey, TFruit> where TKey : ICombination where TFruit : KeyEventCommand
 {
     /// <summary>
-    /// get all the fruits stored in the node specified by path, and all its subtree nodes if any, 
+    /// get all the fruits stored in the node specified by path, and all its subtree nodes if any,
     /// raise exception if path is not existing
     /// </summary>
     /// <param name="path"></param>
@@ -29,10 +29,10 @@ public partial class Trie<TKey, TFruit> : ITrie<TKey, TFruit> where TKey : IComb
     /// </summary>
     /// <param name="path"></param>
     /// <param name="value"></param>
-    public void Add(IList<TKey> path, TFruit value) => _root.Add(path, 0, value);
+    public void Add(IList<TKey> path, TFruit value) => Root.Add(path, 0, value);
 
     /// <summary>
-    /// remove the fruit(s) stored in the node specified by path, 
+    /// remove the fruit(s) stored in the node specified by path,
     /// if predicate is provided, remove only the fruits matching.
     /// after removal, clean up the path to remove the node if no fruit on its node and its subtree.
     /// </summary>

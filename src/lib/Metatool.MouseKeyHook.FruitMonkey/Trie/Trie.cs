@@ -5,12 +5,14 @@ namespace Metatool.MouseKeyHook.FruitMonkey.Trie;
 
 public partial class Trie<TKey, TFruit> where TKey : ICombination where TFruit : KeyEventCommand
 {
-    private readonly TrieNode<TKey, TFruit> _root = new TrieNode<TKey, TFruit>(default(TKey));
+    private readonly TrieNode<TKey, TFruit> _root = new TrieNode<TKey, TFruit>(default);
     public Trie()
     {
         _currentNode = _root;
     }
-
+    /// <summary>
+    /// starting node of climbing
+    /// </summary>
     internal TrieNode<TKey, TFruit> Root => _root;
 
     private TrieNode<TKey, TFruit> _currentNode;

@@ -27,19 +27,15 @@ public class KeyStateTree
     public KeyStateTree(string name, IKeyTipNotifier notify, ILogger logger)
     {
         _notify = notify;
+        _logger = logger;
         Name = name;
         _resetter = new SequenceHotKeyStateResetter(this);
     }
     public void Reset()
     {
-        var lastDownHit = "";
+        _logger.LogInformation($"tree:{Name} reset, lastDownNodeForAllUp:{_lastKeyDownNodeForAllUp}");
 
-        if (_lastKeyDownNodeForAllUp != null)
-            lastDownHit = $"last↓@ {_lastKeyDownNodeForAllUp}";
         _lastKeyDownNodeForAllUp = null;
-
-        Console.WriteLine($"${Name} tree reset, lastDownHit:{lastDownHit}");
-
         _notify?.CloseKeysTip(Name);
         _trie.GoToRoot();
     }
@@ -61,7 +57,7 @@ public class KeyStateTree
         if (ClimbingState == TreeClimbingState.Landing)
         {
             ClimbingState = TreeClimbingState.Done;
-            Console.WriteLine($"tree:{Name}@Landing->@Done");
+            _logger.LogInformation($"Tree:{Name} State: Landing to Done");
         }
     }
 
@@ -91,12 +87,14 @@ public class KeyStateTree
     }
 
     private TrieNode<ICombination, KeyEventCommand>? _lastKeyDownNodeForAllUp = null;
-    private readonly IKeyTipNotifier _notify;
 
     /// <summary>
-    /// these chord-keys are disabled: the key can not be used in the chord part of combination
+    /// these chords are disabled, the key can not be used in the chord part of combination
     /// </summary>
     private readonly HashSet<Chord> _disabledChords = [];
+
+    private readonly IKeyTipNotifier _notify;
+    private readonly ILogger _logger;
 
     internal void DisableChord(Chord chord)
     {
@@ -110,9 +108,12 @@ public class KeyStateTree
 
     /// <summary>
     /// with the key event, try to find the best matching child node from current node
-    /// best matching: chord is not disabled in current tree, node is not marked disabled in tree node,
+    /// best matching: chord is not disabled in current tree, is not marked disabled in tree node,
     /// chord+trigger are all down, the one with most chord keys down.
     /// </summary>
+    /// <param name="eventType"></param>
+    /// <param name="args"></param>
+    /// <returns></returns>
     internal SelectionResult TrySelectChildNode(IKeyEventArgs args)
     {
         // to handle A+B+C(B is currently down in Chord)eventType == KeyEventType.Down && args.KeyCode == KeyCodes.RShiftKey
@@ -177,29 +178,32 @@ public class KeyStateTree
         // Chord_downOrUp? or
         if (candidateNode == null)
         {
-            if (args.IsKeyDown)
+            /// down event when no candidateNode:
+            if (eventType == KeyEventType.Down)
             {
-                if (_trie.IsOnRoot) // no child found and current node is root
-                {
-                    // AnyKeyNotInRoot_down: i.e. *+A_down is not registered in root
-                    _lastKeyDownNodeForAllUp = null;
-                    return ClimbingState = TreeClimbingState.Landing;
-                }
-
                 //  KeyInChord_down:C+D, A+B A_down
                 if (downInChord)
                     return ClimbingState = TreeClimbingState.Continue; // waiting for trigger key
 
-                Reset();
-                return ClimbingState = TreeClimbingState.LandingAndClimbing; // to process combination chord up
-            }
+                // down of trigger key
+                if (_trie.IsOnRoot) // no child found and current node is root
+                {
+                    // AnyKeyNotInRoot_down: i.e. *+A_now_down is not registered in root
+                    _lastKeyDownNodeForAllUp = null;
+                    return ClimbingState = TreeClimbingState.Landing;
+                }
 
+                Reset();
+                return ClimbingState = TreeClimbingState.LandingAndClimbing;
+            }
+            // up event when no candidateNode
+            //
             // allUp design goal:
             // 1. could register allUp event
-            // 2. still navigate when A+B+C_up event not triggered because of chord_up before trigger_up
-            if (_lastKeyDownNodeForAllUp != null && _lastKeyDownNodeForAllUp.Key.IsAnyKey(args.KeyCode))
+            // 2. still can trigger even when A+B+C_up has not triggered because of chord_up before trigger_up.
+            if (_lastKeyDownNodeForAllUp?.Key.IsAnyKey(args.KeyCode) == true)
             {
-                if (args.KeyboardState.AreAllUp(_lastKeyDownNodeForAllUp.Key.AllKeys))
+                if (args.KeyboardState.AreAllUp(_lastKeyDownNodeForAllUp.Key.AllKeys))// trigger AllUp event
                 {
                     candidateNode = _lastKeyDownNodeForAllUp;
                     eventType = KeyEventType.AllUp;
@@ -244,63 +248,21 @@ public class KeyStateTree
 
         if (_lastKeyDownNodeForAllUp != null)
         {
-            var lastDownHit = "";
-            lastDownHit = $":lastKeyDownNodeForAllUpEvent@{_lastKeyDownNodeForAllUp}";
-            Console.WriteLine($"${Name}{lastDownHit}");
+            _logger.LogInformation($"tree:{Name} lastKeyDownNodeForAllUpEvent:{_lastKeyDownNodeForAllUp}");
         }
-
 
         var handled = candidateNode.Key.TriggerKey.Handled;
         if ((eventType != KeyEventType.AllUp) && (eventType & handled) != 0)
             args.Handled = true; // even there is not action in list we still hide as required,for all up
 
         // matched
-        var actionList = candidateNode.Values as KeyActionList<KeyEventCommand>;
-        Debug.Assert(actionList != null, nameof(actionList) + " != null");
+        /// execute actions
+        var oneExecuted = ExecuteActions(eventType, args, candidateNode, _logger, Name);
 
-        // execute
-
-        var oneExecuted = false;
-        //KeyEventType[] eventTypes = [eventType];
-        //if (eventType == KeyEventType.AllUp) eventTypes = [KeyEventType.Up, KeyEventType.AllUp];
-        //foreach (var eventTyp in eventTypes)
-        var eventTyp = eventType;
+        if (oneExecuted == false)
         {
-            foreach (var keyCommand in actionList[eventTyp])
-            {
-                if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
-                {
-                    Console.WriteLine($"\t/!{eventTyp}\t{keyCommand.Id}\t{keyCommand.Description}");
-                    continue;
-                }
-
-                oneExecuted = true;
-                var execute = keyCommand.Execute;
-
-                var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
-                Console.WriteLine(
-                    $"\t!{eventTyp}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
-                try
-                {
-                    execute?.Invoke(args);
-                    if (args.NoFurtherProcess)
-                    {
-                        break;
-                    }
-                }
-                catch (Exception e) when (!Debugger.IsAttached)
-                {
-                    Services.CommonLogger.LogError(e.ToString());
-                }
-            }
-        }
-
-        if (!oneExecuted && actionList[eventType].Any())
-        {
-            Console.WriteLine($"All event of type:{eventType} not executable!");
-            if (eventType == KeyEventType.Up &&
-                _lastKeyDownNodeForAllUp != null &&
-                _lastKeyDownNodeForAllUp.Key.Chord.Contains(args.KeyCode))
+            _logger.LogInformation($"All event of type:{eventType} not executable!");
+            if (eventType == KeyEventType.Up && _lastKeyDownNodeForAllUp?.Key.Chord.Contains(args.KeyCode) == true)
             {
                 return ClimbingState = TreeClimbingState.Continue;
             }
@@ -313,7 +275,7 @@ public class KeyStateTree
         {
             if (!_trie.TryGoTo(args.PathToGo.ToList(), out var state))
             {
-                Console.WriteLine($"Couldn't go to state {state}");
+                _logger.LogInformation($"Couldn't go to state {state}");
             }
 
             _lastKeyDownNodeForAllUp = null;
@@ -331,6 +293,7 @@ public class KeyStateTree
 
                     if (candidateNode.ChildrenDictionary.Count == 0)
                     {
+                        var actionList = (KeyActionList<KeyEventCommand>)candidateNode.Values;
                         if (actionList[KeyEventType.AllUp].Any())
                         {
                             // wait for chord up
@@ -374,6 +337,48 @@ public class KeyStateTree
 
             default:
                 throw new Exception($"KeyEvent: {eventType} not supported");
+        }
+
+        static bool? ExecuteActions(KeyEventType eventType, IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand> candidateNode, ILogger logger, string treeName)
+        {
+            bool? oneExecuted = null;
+            var actionList = candidateNode.Values as KeyActionList<KeyEventCommand>;
+            Debug.Assert(actionList != null, $"{nameof(actionList)} should be the type of KeyActionList<KeyEventCommand>");
+            //KeyEventType[] eventTypes = [eventType];
+            //if (eventType == KeyEventType.AllUp) eventTypes = [KeyEventType.Up, KeyEventType.AllUp];
+            //foreach (var eventTyp in eventTypes)
+            var eventTyp = eventType;
+            {
+                foreach (var keyCommand in actionList[eventTyp])
+                {
+                    if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
+                    {
+                        logger.LogInformation($"\t/!{eventTyp}\t{keyCommand.Id}\t{keyCommand.Description}");
+                        oneExecuted ??= false;
+                        continue;
+                    }
+
+                    oneExecuted = true;
+                    var execute = keyCommand.Execute;
+
+                    var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
+                    logger.LogInformation($"\t!{eventTyp}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
+                    try
+                    {
+                        execute?.Invoke(args);
+                        if (args.NoFurtherProcess)
+                        {
+                            break;
+                        }
+                    }
+                    catch (Exception e) when (!Debugger.IsAttached)
+                    {
+                        logger.LogError(e, $"Error executing command:{keyCommand.Id} in tree:{treeName}");
+                    }
+                }
+            }
+
+            return oneExecuted;
         }
     }
 }
