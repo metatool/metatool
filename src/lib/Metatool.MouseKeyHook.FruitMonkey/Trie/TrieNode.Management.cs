@@ -34,13 +34,13 @@ public partial class TrieNode<TKey, TFruit>
     }
     private TrieNode<TKey, TFruit> GetOrCreateChild(TKey childKey)
     {
-        if (_childrenDictionary.TryGetValue(childKey, out var child))
+        if (_children.TryGetValue(childKey, out var child))
         {
             return child;
         }
 
         child = new TrieNode<TKey, TFruit>(childKey, this);
-        _childrenDictionary.Add(childKey, child);
+        _children.Add(childKey, child);
         return child;
     }
 
@@ -62,7 +62,7 @@ public partial class TrieNode<TKey, TFruit>
         else
         {
             var key = path[position];
-            _childrenDictionary.TryGetValue(key, out var child);
+            _children.TryGetValue(key, out var child);
 
             if (child == null)
                 throw new KeyNotFoundException($"Get: Key '{key}' in the path: {path} is not found in Trie");
@@ -87,7 +87,7 @@ public partial class TrieNode<TKey, TFruit>
         for (var i = position; i < path.Count; i++)
         {
             var key = path[i];
-            if (node.ChildrenDictionary.TryGetValue(key, out var child))
+            if (node.Children.TryGetValue(key, out var child))
             {
                 node = child;
                 continue;
@@ -102,7 +102,7 @@ public partial class TrieNode<TKey, TFruit>
 
     private IEnumerable<TrieNode<TKey, TFruit>> FlatCurrentAndSubtreeNodes()
     {
-        return Enumerable.Repeat(this, 1).Concat(ChildrenDictionary.Values.SelectMany(child => child.FlatCurrentAndSubtreeNodes()));
+        return Enumerable.Repeat(this, 1).Concat(Children.Values.SelectMany(child => child.FlatCurrentAndSubtreeNodes()));
     }
 
     /// <summary>
@@ -124,7 +124,7 @@ public partial class TrieNode<TKey, TFruit>
         else
         {
             var key = path[position];
-            _childrenDictionary.TryGetValue(key, out var child);
+            _children.TryGetValue(key, out var child);
 
             if (child == null)
                 throw new KeyNotFoundException($"CleanPath: Key '{key}' in the path: {path} is not found in Trie");
@@ -144,7 +144,7 @@ public partial class TrieNode<TKey, TFruit>
     {
         if (_values.Count == 0)
         {
-            parent!._childrenDictionary.Remove(Key);
+            parent!._children.Remove(Key);
             return true;
         }
         else
@@ -170,7 +170,7 @@ public partial class TrieNode<TKey, TFruit>
         {
             return RemoveFistValue(predicate);
         }
-        _childrenDictionary.TryGetValue(path[position], out var child);
+        _children.TryGetValue(path[position], out var child);
 
         if (child == null)
             throw new KeyNotFoundException($"Get: Key '{key}' in the path: {path} is not found in Trie");

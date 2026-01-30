@@ -13,8 +13,8 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
     private readonly IList<TFruit> _values = new KeyActionList<TFruit>();
     protected internal IEnumerable<TFruit> Values => _values;
 
-    private readonly Dictionary<TKey, TrieNode<TKey, TFruit>> _childrenDictionary = [];
-    internal Dictionary<TKey, TrieNode<TKey, TFruit>> ChildrenDictionary => _childrenDictionary;
+    private readonly Dictionary<TKey, TrieNode<TKey, TFruit>> _children = [];
+    internal Dictionary<TKey, TrieNode<TKey, TFruit>> Children => _children;
 
     private IKeyPath? _keyPath;
     public IKeyPath KeyPath
@@ -48,14 +48,14 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
 
     internal void Clear()
     {
-        _childrenDictionary.Clear();
+        _children.Clear();
         _values.Clear();
     }
 
     private string ValuesDescriptions => $"Commands:[{string.Join(",", _values)}]";
 
     internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip =>
-        _childrenDictionary.Select(
+        _children.Select(
             p => (
                 $"{p.Key.KeyName}",
                 p.Value._values
