@@ -47,7 +47,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
         }
 
         if (selectionResults.Count > 0)
-            logger.LogInformation($"TreeSelected:{string.Join(",", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{t.SelectedNode}}}"))}");
+            logger.LogInformation($"TreeSelected:\n{string.Join(",\n", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{{{t.SelectedNode}}}}}"))}");
 
         return selectionResults;
     }
@@ -88,7 +88,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                     treeState = selectionResult.Tree.Climb(args, selectionResult.SelectedNode);
                 }
 
-                logger.LogInformation($"\tClimbing result: {treeState}, on tree: {selectionResult.Tree.Name}, on node:{selectionResult.Tree.CurrentNode}");
+                logger.LogInformation($"\tResult:{treeState},Tree:{selectionResult.Tree.Name},Node:{{{selectionResult.Tree.CurrentNode}}}");
                 if (treeState == TreeClimbingState.Continue)
                 {
                     // continue on this tree

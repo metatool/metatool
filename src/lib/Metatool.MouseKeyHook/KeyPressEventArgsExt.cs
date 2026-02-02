@@ -1,4 +1,4 @@
-﻿// This code is distributed under MIT license. 
+﻿// This code is distributed under MIT license.
 // Copyright (c) 2015 George Mamaladze
 // See license.txt or https://mit-license.org/
 
@@ -40,10 +40,10 @@ public class KeyPressEventArgsExt : KeyPressEventArgs, IKeyPressEventArgs
 
 	public override string ToString()
 	{
-		var dt = DateTime.Now;
-		dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
-		var et = "Press";
-		return $"{dt:hh:mm:ss.fff}  {KeyChar,-16}{et,-6}Handled:{Handled,-8} IsNoChar:{IsNonChar,-8} ";
+		var time = DateTime.Now;
+		time = time.AddMilliseconds(Timestamp - Environment.TickCount);
+		var keyEvent = "Press";
+		return $"{time:hh:mm:ss.fff} Event:{keyEvent}, Char:{KeyChar}, Handled:{Handled}, IsNoChar:{IsNonChar} ";
 	}
 	/// <summary>
 	///     True if represents a system or functional non char key.

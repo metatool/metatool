@@ -25,7 +25,7 @@ public partial class Trie<TKey, TFruit> where TKey : ICombination where TFruit :
                 return;
 
             _currentNode = value;
-            Console.WriteLine($"\t@{_currentNode}");
+            //Console.WriteLine($"\tCurrentNode:{_currentNode}");
         }
     }
 

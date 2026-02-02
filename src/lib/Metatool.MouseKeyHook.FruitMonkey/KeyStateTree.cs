@@ -56,7 +56,7 @@ public class KeyStateTree
         if (ClimbingState == TreeClimbingState.Landing)
         {
             ClimbingState = TreeClimbingState.Done;
-            _logger.LogInformation($"Tree:{Name} State: Landing to Done");
+            //_logger.LogInformation($"Tree:{Name} State: Landing to Done");
         }
     }
 
@@ -303,7 +303,7 @@ public class KeyStateTree
             {
                 if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
                 {
-                    logger.LogInformation($"\t/!{eventTyp}\t{keyCommand.Id}\t{keyCommand.Description}");
+                    logger.LogInformation($"\tevent:{eventTyp},\tcommand({keyCommand.Id}, {keyCommand.Description}) can not execute.");
                     oneExecuted ??= false;
                     continue;
                 }
@@ -312,7 +312,7 @@ public class KeyStateTree
                 var execute = keyCommand.Execute;
 
                 var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
-                logger.LogInformation($"\t!{eventTyp}{(isAsync ? "_async" : "")}\t{keyCommand.Id}\t{keyCommand.Description}");
+                logger.LogInformation($"\tExecutedCommandId:{keyCommand.Id}, Des:{keyCommand.Description}, {(isAsync ? "Async" : "")}");
                 try
                 {
                     execute?.Invoke(args);

@@ -158,11 +158,11 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
 
     public override string ToString()
     {
-        var dt = DateTime.Now;
-        dt = dt.AddMilliseconds(Timestamp - Environment.TickCount);
-        var d = IsKeyUp ? "Up" : "Down";
+        var time = DateTime.Now;
+        time = time.AddMilliseconds(Timestamp - Environment.TickCount);
+        var keyEvent = IsKeyUp ? "Up" : "Down";
         return
-            $"{dt:hh:mm:ss.fff}  {KeyCode,-16}{d,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:0x{ScanCode,-8:X} Extended:{IsExtendedKey}  State: {KeyboardState}";
+            $"{time:hh:mm:ss.fff} {KeyCode,-16} {keyEvent,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:0x{ScanCode,-8:X} Extended:{IsExtendedKey}  State: {KeyboardState}";
     }
 
     private static KeyEventArgsExt _lastKeyEventGlobalBuffer = new(KeyCodes.None);
