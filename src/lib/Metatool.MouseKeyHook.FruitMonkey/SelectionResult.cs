@@ -4,9 +4,6 @@ using Metatool.Service.MouseKey;
 
 namespace Metatool.Input;
 
-internal record struct SelectionResult(KeyStateTree tree, TrieNode<ICombination, KeyEventCommand>? selectedNode, bool downInChord)
+internal readonly record struct SelectionResult(KeyStateTree Tree, TrieNode<ICombination, KeyEventCommand>? SelectedNode, TreeClimbingState treeState)
 {
-    internal KeyStateTree Tree = tree;
-    internal TrieNode<ICombination, KeyEventCommand>? SelectedNode = selectedNode;
-    internal bool DownInChord = downInChord;
 }

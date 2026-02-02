@@ -23,6 +23,7 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
         Timestamp = timestamp;
         IsKeyDown = isKeyDown;
         IsKeyUp = isKeyUp;
+        KeyEventType = isKeyDown ? KeyEventType.Down : KeyEventType.Up;
         IsExtendedKey = isExtendedKey;
 
         LastKeyEvent = lastKeyEvent;
@@ -234,7 +235,7 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
 
         _lastKeyEventGlobalBuffer = copy;
         if (isKeyDown) _lastKeyEventGlobalBuffer.LastKeyDownEvent = r;// if not copy, LastKeyDownEvent is right for current keydown
-        if (!isVirtual) _lastKeyEventGlobalBuffer.LastKeyEvent_NoneVirtual = r; 
+        if (!isVirtual) _lastKeyEventGlobalBuffer.LastKeyEvent_NoneVirtual = r;
         if (isKeyDown && !isVirtual) _lastKeyEventGlobalBuffer.LastKeyDownEvent_NoneVirtual = r;
 
         r.IsVirtual = isVirtual;

@@ -106,7 +106,7 @@ public partial class Keyboard : IKeyboard
 
     public IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
     {
-        return HotKeyMap(source, target, predicate, true);
+        return HotKeyMap(source, target, predicate, true, true);
     }
 
     public IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)

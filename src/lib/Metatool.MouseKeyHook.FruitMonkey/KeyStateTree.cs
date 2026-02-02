@@ -6,6 +6,7 @@ using Metatool.MouseKeyHook.FruitMonkey.Trie;
 using Metatool.Service;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 
 namespace Metatool.Input;
 
@@ -107,7 +108,8 @@ public class KeyStateTree
     }
 
     /// <summary>
-    /// with the key event, try to find the best matching child node from current node
+    /// only select candidate child node by its trigger key event
+    /// with the key event(down or up), try to find the best matching child node from current node
     /// best matching: chord is not disabled in current tree, is not marked disabled in tree node,
     /// chord+trigger are all down, the one with most chord keys down.
     /// </summary>
@@ -116,12 +118,14 @@ public class KeyStateTree
     /// <returns></returns>
     internal SelectionResult TrySelectChildNode(IKeyEventArgs args)
     {
+        _stateResetter.Pulse();
         // to handle A+B+C(B is currently down in Chord)eventType == KeyEventType.Down && args.KeyCode == KeyCodes.RShiftKey
         var downInChord = false;
         ICombination? candidateKey = null;
 
         foreach (var childKey in _trie.CurrentNode.Children.Keys)
         {
+            downInChord = false; // reset for every child
             if (_disabledChords.Contains(childKey.Chord))
                 continue;
 
@@ -155,17 +159,91 @@ public class KeyStateTree
 
         if (candidateKey != null)
         {
-            _trie.CurrentNode.Children.TryGetValue(candidateKey, out var candidateNode);
-            return new SelectionResult(this, candidateNode, downInChord);
+            _trie.CurrentNode.Children.TryGetValue(candidateKey, out var candidate);
+            if (args.IsKeyDown)
+            {
+                _lastKeyDownNodeForAllUp = candidate;
+            }
+            return new SelectionResult(this, candidate, TreeClimbingState.Continue);
         }
 
-        return new SelectionResult(this, null, downInChord);
+        TrieNode<ICombination, KeyEventCommand>? candidateNode = null; // only for allUP
+        var state = ProcessTreeStateWhenNoCandidate(args, downInChord, ref candidateNode);
+        return new SelectionResult(this, candidateNode, state);
     }
 
-    //eventType is only Down or Up
-    internal TreeClimbingState Climb(IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand>? candidateNode, bool downInChord)
+    internal TreeClimbingState ProcessTreeStateWhenNoCandidate(IKeyEventArgs args, bool downInChord, ref TrieNode<ICombination, KeyEventCommand>? candidateNode)
     {
-        _stateResetter.Pulse();
+        /// down event when no candidateNode:)
+        if (args.KeyEventType == KeyEventType.Down)
+        {
+            //  KeyInChord_down:(C+D, A+B) when A_down
+            if (downInChord)
+                return ClimbingState = TreeClimbingState.Continue; // waiting for trigger key
+
+            // down of trigger key
+            if (_trie.IsOnRoot) // no child found and current node is root
+            {
+                // AnyKeyNotInRoot_down: i.e. *+A_now_down is not registered in root
+                _lastKeyDownNodeForAllUp = null;
+                return ClimbingState = TreeClimbingState.Landing;
+            }
+            // on path, down of no trigger key, redo climbing
+            Reset();
+            return ClimbingState = TreeClimbingState.LandingAndClimbing;
+        }
+        // up event when no candidateNode
+        //
+        // allUp design goal:
+        // 1. could register allUp event
+        // 2. still can trigger even when A+B+C_up has not triggered because of chord_up before trigger_up.
+        if (_lastKeyDownNodeForAllUp?.Key.IsAnyKey(args.KeyCode) == true)
+        {
+            if (args.KeyboardState.AreAllUp(_lastKeyDownNodeForAllUp.Key.AllKeys))// trigger AllUp event
+            {
+                candidateNode = _lastKeyDownNodeForAllUp;
+                args.KeyEventType = KeyEventType.AllUp;
+                return ClimbingState = TreeClimbingState.Continue;
+            }
+            else
+            {
+                return ClimbingState = TreeClimbingState.Continue;
+            }
+        }
+        else
+        {
+            if (_trie.IsOnRoot)
+            {
+                // AnyKeyNotRegisteredInRoot_down_or_up: *A_down *A_up is not registered in root
+                _lastKeyDownNodeForAllUp = null;
+                return ClimbingState = TreeClimbingState.Landing;
+            }
+
+            // on path, up
+            if (_trie.CurrentNode.Children.Count == 0)
+            {
+                // NoChild & NotOnRoot:
+                //   KeyInChord_up : A+B when A_up.
+                //   other keyUp: A+B and B map to C??
+                Reset();
+                return ClimbingState = TreeClimbingState.LandingAndClimbing; // Chord_up would be processed on root
+            }
+
+            // HaveChild & KeyInChord_up: A+B, C when A_up continue wait C
+            if (_trie.CurrentNode.Key.Chord.Contains(args.KeyCode))
+            {
+                return ClimbingState = TreeClimbingState.Continue;
+            }
+
+            //HaveChild & KeyNotInChord_up: B+D, F when C_up.
+            Reset();
+            return ClimbingState = TreeClimbingState.LandingAndClimbing;
+        }
+    }
+
+    // climb to candidate node, execute actions
+    internal TreeClimbingState Climb(IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand> candidateNode)
+    {
         // conditional dbg:
         // Name == "ChordMap" && eventType == KeyEventType.Up && args.KeyCode == KeyCodes.Enter
         // Debug.Assert(args != null, nameof(args) + " != null");
@@ -173,90 +251,17 @@ public class KeyStateTree
         if (args.NoFurtherProcess)
             return ClimbingState = TreeClimbingState.NoFurtherProcess;
 
-        KeyEventType eventType = args.IsKeyDown ? KeyEventType.Down : KeyEventType.Up;
         // no match
         // Chord_downOrUp? or
-        if (candidateNode == null)
-        {
-            /// down event when no candidateNode:
-            if (eventType == KeyEventType.Down)
-            {
-                //  KeyInChord_down:C+D, A+B A_down
-                if (downInChord)
-                    return ClimbingState = TreeClimbingState.Continue; // waiting for trigger key
+        // Debug.Assert(candidateNode != null, "candidateNode != null");
 
-                // down of trigger key
-                if (_trie.IsOnRoot) // no child found and current node is root
-                {
-                    // AnyKeyNotInRoot_down: i.e. *+A_now_down is not registered in root
-                    _lastKeyDownNodeForAllUp = null;
-                    return ClimbingState = TreeClimbingState.Landing;
-                }
-
-                Reset();
-                return ClimbingState = TreeClimbingState.LandingAndClimbing;
-            }
-            // up event when no candidateNode
-            //
-            // allUp design goal:
-            // 1. could register allUp event
-            // 2. still can trigger even when A+B+C_up has not triggered because of chord_up before trigger_up.
-            if (_lastKeyDownNodeForAllUp?.Key.IsAnyKey(args.KeyCode) == true)
-            {
-                if (args.KeyboardState.AreAllUp(_lastKeyDownNodeForAllUp.Key.AllKeys))// trigger AllUp event
-                {
-                    candidateNode = _lastKeyDownNodeForAllUp;
-                    eventType = KeyEventType.AllUp;
-                }
-                else
-                {
-                    return ClimbingState = TreeClimbingState.Continue;
-                }
-            }
-            else
-            {
-                if (_trie.IsOnRoot)
-                {
-                    // AnyKeyNotRegisteredInRoot_down_or_up: *A_down *A_up is not registered in root
-                    _lastKeyDownNodeForAllUp = null;
-                    return ClimbingState = TreeClimbingState.Landing;
-                }
-
-                // on path, up
-                if (_trie.CurrentNode.Children.Count == 0)
-                {
-                    // NoChild & NotOnRoot:
-                    //   KeyInChord_up : A+B when A_up.
-                    //   other keyup: A+B and B map to C??
-                    Reset();
-                    return ClimbingState = TreeClimbingState.LandingAndClimbing; // Chord_up would be processed on root
-                }
-
-                // HaveChild & KeyInChord_up: A+B, C when A_up continue wait C
-                if (_trie.CurrentNode.Key.Chord.Contains(args.KeyCode))
-                {
-                    return ClimbingState = TreeClimbingState.Continue;
-                }
-
-                //HaveChild & KeyNotInChord_up: B+D, F when C_up.
-                Reset();
-                return ClimbingState = TreeClimbingState.LandingAndClimbing;
-            }
-        }
-
-        args.KeyEventType = eventType;
-
-        if (_lastKeyDownNodeForAllUp != null)
-        {
-            _logger.LogInformation($"tree:{Name} lastKeyDownNodeForAllUpEvent:{_lastKeyDownNodeForAllUp}");
-        }
-
+        var eventType = args.KeyEventType;
         var handled = candidateNode.Key.TriggerKey.Handled;
         if ((eventType != KeyEventType.AllUp) && (eventType & handled) != 0)
             args.Handled = true; // even there is not action in list we still mark it as required,for all up
 
         // matched
-        /// execute actions
+        /// execute actions of down/up/allUp
         var oneExecuted = ExecuteActions(args, candidateNode, _logger, Name);
 
         if (oneExecuted == false)
@@ -333,6 +338,9 @@ public class KeyStateTree
     {
         switch (eventType)
         {
+            case KeyEventType.Down:
+                return ClimbingState = TreeClimbingState.Continue;
+
             case KeyEventType.Up:
                 // only navigate on up/AllUp event
                 _trie.CurrentNode = candidateNode;
@@ -356,6 +364,8 @@ public class KeyStateTree
                 return ClimbingState = TreeClimbingState.Continue;
 
             case KeyEventType.AllUp:
+                _logger.LogInformation($"tree:{Name} run AllUp event, lastKeyDownNodeForAllUpEvent:{_lastKeyDownNodeForAllUp}");
+
                 _lastKeyDownNodeForAllUp = null;
                 // navigate on AllUp event only when not navigated by up
                 // A+B down then B_up then A_up would not execute this if-clause
@@ -374,10 +384,6 @@ public class KeyStateTree
                 }
 
                 _notify?.ShowKeysTip(Name, _trie.CurrentNode.Tip);
-                return ClimbingState = TreeClimbingState.Continue;
-
-            case KeyEventType.Down:
-                _lastKeyDownNodeForAllUp = candidateNode;
                 return ClimbingState = TreeClimbingState.Continue;
 
             default:
