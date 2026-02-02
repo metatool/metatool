@@ -6,4 +6,5 @@ public interface IKeyPath : IEnumerable<ICombination>
 {
 	bool   Disabled { get; set; }
 	object Context  { get; set; }
+	string PathString() => string.Join(" , ", this);
 }

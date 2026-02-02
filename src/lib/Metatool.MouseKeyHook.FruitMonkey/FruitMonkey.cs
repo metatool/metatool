@@ -1,14 +1,16 @@
-﻿using Metatool.MouseKeyHook.FruitMonkey;
+﻿using Metatool.Input.MouseKeyHook.Implementation;
+using Metatool.MouseKeyHook.FruitMonkey;
+using Metatool.MouseKeyHook.FruitMonkey.Trie;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace Metatool.Input;
 
-public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
+public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
 {
     List<SelectionResult> _selectedResults = new();
-    private readonly Forest _forest = new (notify, logger);
+    private readonly Forest _forest = new(notify, logger);
     public IForest Forest => _forest;
 
     public void Reset()
@@ -17,7 +19,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             stateTree.Reset();
     }
 
-    List<SelectionResult> SelectTree(IKeyEventArgs args)
+    List<SelectionResult> SelectTrees(IKeyEventArgs args)
     {
         var selectionResults = new List<SelectionResult>();
         //all on root, find current trees
@@ -28,24 +30,24 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             if (stateTree.ClimbingState == TreeClimbingState.Landing)
                 continue;
 
-            var selectionResult = stateTree.TrySelectChildNode(args);
-            if (selectionResult.SelectedNode == null)
+            TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
+            var state = stateTree.TrySelectChildNode(args, ref candidateNode);
+            if (candidateNode == null)
                 continue;
 
-            if (selectionResults.Count == 0)
-            {
-                selectionResults.Add(selectionResult);
-            }
-            else if (selectionResult.SelectedNode.Key.ChordCount > selectionResults[0].SelectedNode!.Key.ChordCount)// both A+B+C and A+C matched, prefer A+B+C
-            {
-                selectionResults.Clear();
-                selectionResults.Add(selectionResult);
-            }
+            selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
+            // if (selectionResults.Count == 0)
+            // {
+            // }
+            // else if (candidateNode.Key.ChordCount > selectionResults[0].SelectedNode!.Key.ChordCount)// both A+B+C and A+C matched, prefer A+B+C
+            // {
+            //     selectionResults.Clear();
+            //     selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
+            // }
         }
 
         if (selectionResults.Count > 0)
-            logger.LogInformation(
-                $"TreeSelected:{string.Join(",", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{t.SelectedNode}}}"))}");
+            logger.LogInformation($"TreeSelected:{string.Join(",", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{t.SelectedNode}}}"))}");
 
         return selectionResults;
     }
@@ -64,45 +66,43 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify): IFruitMonkey
             if (_selectedResults.Count == 0)
             {
                 onGround = true;
-                _selectedResults = SelectTree(args);
+                _selectedResults = SelectTrees(args);
             }
 
             var hasSelectedNodes = _selectedResults.Count > 0;
             if (!hasSelectedNodes) goto @return;
 
-            List<SelectionResult> selectionResults = [.. _selectedResults]; // snapshot
-            foreach (var res in selectionResults)
+            for (int i = 0; i < _selectedResults.Count; i++)
             {
-                var selectionResult = res; // should not remove this line
+                var selectionResult = _selectedResults[i];
                 if (!onGround)
                 {
-                    var newResult = selectionResult.Tree.TrySelectChildNode(args);
-                    var index = _selectedResults.IndexOf(selectionResult);
-                    _selectedResults[index] = newResult;
-                    selectionResult = newResult;
+                    TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
+                    var state = selectionResult.Tree.TrySelectChildNode(args, ref candidateNode);
+                    _selectedResults[i] = selectionResult = new SelectionResult(selectionResult.Tree, candidateNode, state);
                 }
 
-                var climbingResult = selectionResult.treeState;
-                if(selectionResult.SelectedNode != null)
+                var treeState = selectionResult.TreeState;
+                if (selectionResult.SelectedNode != null)
                 {
-                    climbingResult = selectionResult.Tree.Climb(args, selectionResult.SelectedNode);
+                    treeState = selectionResult.Tree.Climb(args, selectionResult.SelectedNode);
                 }
 
-                logger.LogInformation($"\tClimbing result: {climbingResult}, on tree: {selectionResult.Tree.Name}, on node:{selectionResult.Tree.CurrentNode}");
-                if (climbingResult == TreeClimbingState.Continue)
+                logger.LogInformation($"\tClimbing result: {treeState}, on tree: {selectionResult.Tree.Name}, on node:{selectionResult.Tree.CurrentNode}");
+                if (treeState == TreeClimbingState.Continue)
                 {
                     // continue on this tree
                 }
-                else if (climbingResult == TreeClimbingState.Done)
+                else if (treeState == TreeClimbingState.Done)
                 {
                     _selectedResults.Remove(selectionResult);
                 }
-                else if (climbingResult == TreeClimbingState.NoFurtherProcess)
+                else if (treeState == TreeClimbingState.NoFurtherProcess)
                 {
                     _selectedResults.Remove(selectionResult);
                     goto @return;
                 }
-                else if (climbingResult == TreeClimbingState.LandingAndClimbing || climbingResult == TreeClimbingState.Landing)
+                else if (treeState == TreeClimbingState.LandingAndClimbing || treeState == TreeClimbingState.Landing)
                 {
                     _selectedResults.Remove(selectionResult);
                     reprocess = true;

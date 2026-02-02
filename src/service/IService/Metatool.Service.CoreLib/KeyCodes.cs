@@ -91,13 +91,13 @@ public enum KeyCodes
     /// <summary>The SPACEBAR key.</summary>
     Space = 32, // 0x00000020
     /// <summary>The PAGE UP key.</summary>
-    Prior = Space | LButton, // 0x00000021
+    PageUp = Space | LButton, // 0x00000021
     /// <summary>The PAGE UP key.</summary>
-    PageUp = Prior, // 0x00000021
+    Prior = PageUp, // 0x00000021
     /// <summary>The PAGE DOWN key.</summary>
-    Next = Space | RButton, // 0x00000022
+    PageDown = Space | RButton, // 0x00000022
     /// <summary>The PAGE DOWN key.</summary>
-    PageDown = Next, // 0x00000022
+    Next = PageDown, // 0x00000022
     /// <summary>The END key.</summary>
     End = PageDown | LButton, // 0x00000023
     /// <summary>The HOME key.</summary>
@@ -450,15 +450,19 @@ public enum KeyCodes
     [Key("[")]
     OemOpenBrackets = Oemtilde | Escape, // 0x000000DB
     /// <summary>The OEM 4 key. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '[{' key</summary>
+    [Key("[")]
     Oem4 = OemOpenBrackets, // 0x000000DB
-    /// <summary>The OEM pipe key on a US standard keyboard.</summary>
+    /// <summary>The OEM pipe key on a US standard keyboard. on US keyboard the Pipe is the the '\' key </summary>
+    [Key(@"\")]
     OemPipe = Oemtilde | IMEConvert, // 0x000000DC
-    /// <summary>The OEM 5 key. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '\|' key</summary>
+    /// <summary>The OEM 5 key. on US keyboard the Pipe is the the '\' key. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '\|' key</summary>
+    [Key(@"\")]
     Oem5 = OemPipe, // 0x000000DC
     /// <summary>The OEM close bracket key on a US standard keyboard.</summary>
     [Key("]")]
     OemCloseBrackets = Oem5 | LButton, // 0x000000DD
     /// <summary>The OEM 6 key. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the ']}' key</summary>
+    [Key("]")]
     Oem6 = OemCloseBrackets, // 0x000000DD
     /// <summary>The OEM 7 key.
     /// </summary>
@@ -467,6 +471,7 @@ public enum KeyCodes
     [Key("'")]
     OemQuotes = Oem7, // 0x000000DE
     /// <summary>The OEM 8 key.Used for miscellaneous characters; it can vary by keyboard.</summary>
+    [Key("'")]
     Oem8 = OemQuotes | LButton, // 0x000000DF
 
     //
@@ -481,10 +486,10 @@ public enum KeyCodes
     /// The OEM 102 key.
     /// Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
     /// </summary>
+    [Key(@"\")]
     Oem102 = Oemtilde | PageDown, // 0x000000E2
     /// <summary>The OEM angle bracket or backslash key on the RT 102 key keyboard.</summary>
-
-    [Key("\\")]
+    [Key(@"\")]
     OemBackslash = Oem102, // 0x000000E2
 
     //
@@ -548,7 +553,7 @@ public static class KeyCodesEnumExtensions
     }
     public static bool IsLetterKey(this KeyCodes value)
     {
-        return (value >= KeyCodes.A && value <= KeyCodes.Z) || (value >= KeyCodes.D0 && value <= KeyCodes.D9)|| (value >= KeyCodes.NumPad0 && value <= KeyCodes.NumPad9);
+        return (value >= KeyCodes.A && value <= KeyCodes.Z) || (value >= KeyCodes.D0 && value <= KeyCodes.D9) || (value >= KeyCodes.NumPad0 && value <= KeyCodes.NumPad9);
     }
     public static bool IsAToZKey(this KeyCodes value)
     {

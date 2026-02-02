@@ -3,10 +3,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.MouseKeyHook.FruitMonkey.Trie;
-using Metatool.Service;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 
 namespace Metatool.Input;
 
@@ -113,10 +111,9 @@ public class KeyStateTree
     /// best matching: chord is not disabled in current tree, is not marked disabled in tree node,
     /// chord+trigger are all down, the one with most chord keys down.
     /// </summary>
-    /// <param name="eventType"></param>
     /// <param name="args"></param>
-    /// <returns></returns>
-    internal SelectionResult TrySelectChildNode(IKeyEventArgs args)
+    /// <returns>when return null, candidate node had value</returns>
+    internal TreeClimbingState? TrySelectChildNode(IKeyEventArgs args, ref TrieNode<ICombination, KeyEventCommand>? candidateNode)
     {
         _stateResetter.Pulse();
         // to handle A+B+C(B is currently down in Chord)eventType == KeyEventType.Down && args.KeyCode == KeyCodes.RShiftKey
@@ -164,15 +161,15 @@ public class KeyStateTree
             {
                 _lastKeyDownNodeForAllUp = candidate;
             }
-            return new SelectionResult(this, candidate, TreeClimbingState.Continue);
+            candidateNode = candidate;
+            return null;
         }
 
-        TrieNode<ICombination, KeyEventCommand>? candidateNode = null; // only for allUP
         var state = ProcessTreeStateWhenNoCandidate(args, downInChord, ref candidateNode);
-        return new SelectionResult(this, candidateNode, state);
+        return state;
     }
 
-    internal TreeClimbingState ProcessTreeStateWhenNoCandidate(IKeyEventArgs args, bool downInChord, ref TrieNode<ICombination, KeyEventCommand>? candidateNode)
+    internal TreeClimbingState? ProcessTreeStateWhenNoCandidate(IKeyEventArgs args, bool downInChord, ref TrieNode<ICombination, KeyEventCommand>? candidateNode)
     {
         /// down event when no candidateNode:)
         if (args.KeyEventType == KeyEventType.Down)
@@ -203,7 +200,7 @@ public class KeyStateTree
             {
                 candidateNode = _lastKeyDownNodeForAllUp;
                 args.KeyEventType = KeyEventType.AllUp;
-                return ClimbingState = TreeClimbingState.Continue;
+                return null;
             }
             else
             {

@@ -129,13 +129,13 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
                 codesClone.Add(KeyCodes.Menu);
             }
 
-            return $"{string.Join("|", Codes.Select(c => c.KeyName()))}";
+            return $"{string.Join("|", codesClone.Select(c => c.KeyName()))}";
         }
     }
 
 
     public override string ToString()
     {
-        return $"{string.Join("|", Codes)}{(Handled != KeyEventType.None ? $"*{{{Handled.ToString()}}}" : "")}";
+        return $"{KeyName}{(Handled != KeyEventType.None ? $"*{{{Handled.ToString()}}}" : "")}";
     }
 }

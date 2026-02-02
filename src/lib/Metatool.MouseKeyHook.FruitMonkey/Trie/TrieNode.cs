@@ -40,10 +40,8 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
     {
         var k = Key == null ? // || Parent == null too
             "Root" :
-            parent!.Key == null ?
-                $"{Key}" :
-                $"{parent.Key}, {Key}";
-        return $"{k}; {ValuesDescriptions}";
+            KeyPath.PathString();
+        return $"Key:{k}; {ValuesDescriptions}";
     }
 
     internal void Clear()
@@ -52,7 +50,7 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
         _values.Clear();
     }
 
-    private string ValuesDescriptions => $"Commands:[{string.Join(",", _values)}]";
+    private string ValuesDescriptions => $"Cmds:[{string.Join(",", _values)}]";
 
     internal IEnumerable<(string key, IEnumerable<string> descriptions)> Tip =>
         _children.Select(

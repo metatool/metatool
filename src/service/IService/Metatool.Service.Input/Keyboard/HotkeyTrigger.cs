@@ -106,8 +106,10 @@ public class HotkeyTrigger : IHotkeyTrigger
 		return Keyboard.MapOnHit(Key, target, predicate);
 	}
 
-	public IKeyCommand MapOnAllUp(ISequenceUnit target,
-		Predicate<IKeyEventArgs> predicate = null)
+	/// <summary>
+	///
+	/// </summary>
+	public IKeyCommand MapOnAllUp(ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
 	{
 		return Keyboard.MapOnHitAndAllUp(Key, target, predicate);
 	}

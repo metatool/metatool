@@ -101,7 +101,7 @@ public partial class Keyboard : IKeyboard
                     },
                 k => { InputSimu.Inst.Keyboard.KeyPress((KeyCodes)k); });
 
-        }, predicate, "", KeyStateTrees.HotString);
+        }, predicate, $"hotString: {source} -> {target}", KeyStateTrees.HotString);
     }
 
     public IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
@@ -154,7 +154,7 @@ public partial class Keyboard : IKeyboard
                 {
                     Call(e, () => Down(combination));
                 }
-            }, predicate, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
+            }, predicate, $"map:{source} -> {target}", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
             source.OnUp(e =>
             {
                 handled   = false;
@@ -193,7 +193,7 @@ public partial class Keyboard : IKeyboard
                 }
 
                 return true;
-            }, "", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map)
+            }, $"map:{source} -> {target}", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map)
         };
     }
 
