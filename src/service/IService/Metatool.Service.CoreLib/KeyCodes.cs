@@ -486,10 +486,10 @@ public enum KeyCodes
     /// The OEM 102 key.
     /// Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
     /// </summary>
-    [Key(@"\")]
+    // [Key(@"\")]
     Oem102 = Oemtilde | PageDown, // 0x000000E2
     /// <summary>The OEM angle bracket or backslash key on the RT 102 key keyboard.</summary>
-    [Key(@"\")]
+    // [Key(@"\")]
     OemBackslash = Oem102, // 0x000000E2
 
     //
