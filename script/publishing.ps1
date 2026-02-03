@@ -39,19 +39,22 @@ try {
     }
     . $PSScriptRoot/lib/Build-Tool.ps1
 
-    "Metatool.Tools.MetaKeyboard", "Metatool.Tools.Software" | ForEach-Object {
+    "Metatool.Tools.MetaKeyboard",
+    "Metatool.Tools.Software" | ForEach-Object {
         Build-Tool $_ -release: $true -rebuild: $rebuild
         if ($localRelease) {
+            ri "$metatoolDir\exe\publish\tools\$_" -Force -Recurse
             Copy-Item "$metatoolDir\exe\publishing\tools\$_" "$metatoolDir\exe\publish\tools" -Force -Recurse -Verbose
         }
     }
 
 
-    $metaSoftware = "$metatoolDir\exe\publish\tools\Metatool.Tools.Software"
-    $metaSoftwarePublishing = "$metatoolDir\exe\publishing\tools\Metatool.Tools.Software"
+    #$metaSoftwarePublish = "$metatoolDir\exe\publish\tools\Metatool.Tools.Software"
 
-    Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse -Force
-    Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse -Force
+    # # Copy-Item "$metaSoftware\software" -Destination "$metaSoftwarePublishing\software" -Recurse -Force
+    # # Copy-Item "$metaSoftware\softwareConfig" -Destination "$metaSoftwarePublishing\softwareConfig" -Recurse -Force
+    # new-item -ItemType SymbolicLink -Path "$metaSoftwarePublish\software" -Target "M:\App\software" -Force
+    # new-item -ItemType SymbolicLink -Path "$metaSoftwarePublish\softwareConfig" -Target "$metatoolDir\exe\softwareConfig" -Force
     start "$metatoolDir\exe\publish"
 }
 finally {

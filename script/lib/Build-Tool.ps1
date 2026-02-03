@@ -13,7 +13,7 @@ function Build-Tool {
     )
     $target = $rebuild ? "rebuild": "build"
     $config = $release ? "Release" : "Debug"
-    $metatool = "M:\Workspace\metatool" 
+    $metatool = "M:\Workspace\metatool"
     $tools = "$metatool\exe\release\tools"
     $publish = "$metatool\exe\publishing"
 
@@ -24,5 +24,8 @@ function Build-Tool {
     if ( $LASTEXITCODE -ne 0 ) {
         throw "build fail!"
     }
-    Copy-Item "$tools\$tool" -Destination "$publish\tools\$tool" -Recurse -Exclude *.nupkg, *.pdb, Metatool.Service*.dll -Force
+    # /XJ Exclude junctions & symlinks
+    # /XL Exclude symbolic links (alternative)
+    robocopy "$tools\$tool" "$publish\tools\$tool" /E /XD "ref" /XF "*.nupkg" "*.pdb" "Metatool.Service*.dll"
+    # Copy-Item "$tools\$tool" -Destination "$publish\tools\$tool" -Recurse -Exclude *.nupkg, *.pdb, Metatool.Service*.dll, ref -Force
 }
