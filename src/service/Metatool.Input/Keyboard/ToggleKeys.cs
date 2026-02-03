@@ -27,7 +27,7 @@ public class ToggleKey : IToggleKey
 		}
 	}
 
-	void InstallHook()
+	void InstallHook(string description)
 	{
 		bool handleViaSystem = false;
 
@@ -60,7 +60,7 @@ public class ToggleKey : IToggleKey
 
 				// prevent system to toggle it
 				e.Handled = true;
-			}, e=> !e.IsVirtual);
+			}, e => !e.IsVirtual, description);
 
 		if (_keyCommandUpActionToken == null)
 			_keyCommandUpActionToken = _key.OnUp(e =>
@@ -82,7 +82,7 @@ public class ToggleKey : IToggleKey
 				}
 
 				e.Handled = true;
-			}, e=>!e.IsVirtual);
+			}, e => !e.IsVirtual, description);
 	}
 
 	void RemoveHook()
@@ -95,7 +95,7 @@ public class ToggleKey : IToggleKey
 
 	public void AlwaysOn()
 	{
-		InstallHook();
+		InstallHook($"Key: {_key} AlwaysOn");
 
 		switch (State)
 		{
@@ -116,7 +116,7 @@ public class ToggleKey : IToggleKey
 	}
 	public void AlwaysOff()
 	{
-		InstallHook();
+		InstallHook($"Key: {_key} AlwaysOff");
 
 		switch (State)
 		{

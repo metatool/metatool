@@ -175,7 +175,7 @@ public enum KeyCodes
     [Key("e")]
     E = D | LButton, // 0x00000045
     /// <summary>The F key.</summary>
-
+    [Key("f")]
     F = D | RButton, // 0x00000046
     /// <summary>The G key.</summary>
     [Key("g")]

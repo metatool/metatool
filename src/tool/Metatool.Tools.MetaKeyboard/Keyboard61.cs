@@ -10,7 +10,7 @@ partial class Keyboard61 : CommandPackage
     {
         ToggleKeys.NumLock.AlwaysOn();
         ToggleKeys.CapsLock.AlwaysOff();
-            
+
         SetupWinLock();
         RegisterCommands();
 
@@ -30,5 +30,5 @@ partial class Keyboard61 : CommandPackage
         });
     }
 
-    public IKeyCommand Esc = Caps.MapOnHit(Key.Esc, e => !e.IsVirtual);
+    public IKeyCommand Esc = Caps.MapOnHit(Key.Esc, e => !e.IsVirtual, "CapsLock as Esc");
 }

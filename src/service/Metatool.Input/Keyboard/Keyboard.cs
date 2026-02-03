@@ -32,6 +32,7 @@ public partial class Keyboard
 		AddHotStrings(hotStrings);
 
 		keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
+		resetTrigger.Description = "Reset keyboard state, clean up stuck keys";
 		resetTrigger?.OnEvent(_ => ReleaseDownKeys());
 	}
 
