@@ -88,7 +88,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                     treeState = selectionResult.Tree.Climb(args, selectionResult.SelectedNode);
                 }
 
-                logger.LogInformation($"\tResult:{treeState},Tree:{selectionResult.Tree.Name},Node:{{{selectionResult.Tree.CurrentNode}}}");
+                logger.LogInformation($"\tState:{treeState},Tree:{selectionResult.Tree.Name},Node:{{{selectionResult.Tree.CurrentNode}}}");
                 if (treeState == TreeClimbingState.Continue)
                 {
                     // continue on this tree

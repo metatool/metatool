@@ -207,7 +207,7 @@ public partial class Keyboard : IKeyboard
     }
 
     public IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target,
-        Predicate<IKeyEventArgs> predicate = null, string description = "")
+        Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap)
     {
         return MapOnHitOrAllUp(source, target, predicate, true, description);
     }
@@ -232,7 +232,7 @@ public partial class Keyboard : IKeyboard
     ///
     /// for A: A down, within delay of RepeatDelay(2000) B down: A is considered as Chord of A+B
     /// </summary>
-    private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, bool allUp = false, string description = "")
+    private IKeyCommand MapOnHitOrAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, bool allUp = false, string description = "", string tree = KeyStateTrees.ChordMap)
     {
         var delay = _config.CurrentValue?.Services.Input.Keyboard.RepeatDelay ?? 3000;
         // up event is lost. i.e. because of hook take too long for previous event
@@ -268,14 +268,14 @@ public partial class Keyboard : IKeyboard
             }
             if (!holding)
             {
-                Console.WriteLine("\t/!MapOnHitOrAllUp-Predicate: Handling==false");
+                _logger.LogInformation("\t/!MapOnHitOrAllUp-Predicate: Handling==false");
                 return false;
             }
 
             holding = false;
             if (keyDownEvent != e.LastKeyDownEvent)
             {
-                Console.WriteLine(allUp
+                _logger.LogInformation(allUp
                     ? "\t/!MapOnHitOrAllUp-allUp: keyDownEvent != e.LastKeyDownEvent"
                     : "\t/!MapOnHitOrAllUp-up: keyDownEvent != e.LastKeyDownEvent");
                 Reset();
@@ -289,7 +289,7 @@ public partial class Keyboard : IKeyboard
         {
             if (keyDownEvent != null && e.KeyCode != keyDownEvent.KeyCode)
             {
-                Console.WriteLine($"MapOnHitOrAllUp:{e.KeyCode} canceled because other key is down!");
+                _logger.LogInformation($"MapOnHitOrAllUp: key:'{e.KeyCode}' canceled because other key:{keyDownEvent.KeyCode} is down!");
                 Reset();
             }
         };
@@ -322,11 +322,11 @@ public partial class Keyboard : IKeyboard
 
                     return false; // disable map
                 },
-                description, KeyStateTrees.ChordMap
+                description, tree
             ),
             allUp?
-            source.OnAllUp(KeyUpAsyncCall, KeyUpPredicate, description, KeyStateTrees.ChordMap):
-            source.OnUp(KeyUpAsyncCall, KeyUpPredicate, description, KeyStateTrees.ChordMap)
+            source.OnAllUp(KeyUpAsyncCall, KeyUpPredicate, description, tree):
+            source.OnUp(KeyUpAsyncCall, KeyUpPredicate, description, tree)
         };
     }
 

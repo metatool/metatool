@@ -263,7 +263,7 @@ public class KeyStateTree
 
         if (oneExecuted == false)
         {
-            _logger.LogInformation($"All event of type:{eventType} not executable!");
+            _logger.LogInformation($"All event of type:{eventType} not executable!(tree:{Name}, node:{candidateNode})");
             if (eventType == KeyEventType.Up && _lastKeyDownNodeForAllUp?.Key.Chord.Contains(args.KeyCode) == true)
             {
                 return ClimbingState = TreeClimbingState.Continue;
@@ -303,7 +303,7 @@ public class KeyStateTree
             {
                 if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
                 {
-                    logger.LogInformation($"\tevent:{eventTyp},\tcommand({keyCommand.Id}, {keyCommand.Description}) can not execute.");
+                    logger.LogInformation($"\tevent:{eventTyp},\tcommand({keyCommand.Id}, {keyCommand.Description}) can not execute.(tree:{treeName}, node:{candidateNode})");
                     oneExecuted ??= false;
                     continue;
                 }

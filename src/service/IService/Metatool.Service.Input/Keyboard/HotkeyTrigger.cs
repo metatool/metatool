@@ -51,7 +51,7 @@ public interface IHotkeyTrigger
 		Predicate<IKeyEventArgs> predicate = null);
 
 	IKeyCommand MapOnAllUp(ISequenceUnit target,
-		Predicate<IKeyEventArgs> predicate = null);
+		Predicate<IKeyEventArgs> predicate = null, string tree = KeyStateTrees.ChordMap);
 }
 
 [TypeConverter(typeof(AliasedSequenceTriggerConverter))]
@@ -109,9 +109,9 @@ public class HotkeyTrigger : IHotkeyTrigger
 	/// <summary>
 	///
 	/// </summary>
-	public IKeyCommand MapOnAllUp(ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
+	public IKeyCommand MapOnAllUp(ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, string tree = KeyStateTrees.ChordMap)
 	{
-		return Keyboard.MapOnHitAndAllUp(Key, target, predicate);
+		return Keyboard.MapOnHitAndAllUp(Key, target, predicate, description: Description, tree: tree);
 	}
 
 	private IDictionary<string, string>[] _tempAliasesDics;

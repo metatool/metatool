@@ -12,8 +12,8 @@ internal class Forest(IKeyTipNotifier notify, ILogger logger) : IForest
         // keep the order
         {KeyStateTrees.HardMap, new KeyStateTree(KeyStateTrees.HardMap, notify, logger)},
         {KeyStateTrees.ChordMap, new KeyStateTree(KeyStateTrees.ChordMap, notify, logger) {TreeType = TreeType.SingleFruitPerEventType}},
-        {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default, notify, logger)},
         {KeyStateTrees.Map, new KeyStateTree(KeyStateTrees.Map, notify, logger)},
+        {KeyStateTrees.Default, new KeyStateTree(KeyStateTrees.Default, notify, logger)},
         {KeyStateTrees.HotString, new KeyStateTree(KeyStateTrees.HotString, notify, logger)}
     };
 

@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using Metatool.Service;
+using Metatool.Service.MouseKey;
 using Microsoft.Win32;
 using static Metatool.Service.MouseKey.Key;
 
@@ -30,7 +32,7 @@ namespace Metatool.MetaKeyboard
                 {
                     notify.ShowMessage("Full Pinyin Enabled");
                     Registry.SetValue(keyName, valueName, 0);
-                } 
+                }
             });
 
             //hotKeys.Find.OnEvent(async e =>
@@ -145,9 +147,9 @@ namespace Metatool.MetaKeyboard
 
             //    if (hWnd != null)
             //    {
-            //        windowManager.Show(hWnd.Value);     
+            //        windowManager.Show(hWnd.Value);
             //        return;
-            //    } 
+            //    }
 
             //    shell.RunWithExplorer(swPaths.Inspect);
             //});
@@ -176,7 +178,7 @@ namespace Metatool.MetaKeyboard
 
             hotKeys.StartVisualStudio.WithAliases(software.KeyAliases).OnEvent(async e =>
             {
-                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return; 
+                if (!windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog) return;
 
                 e.Handled = true;
 
@@ -186,7 +188,6 @@ namespace Metatool.MetaKeyboard
                     shell.RunWithExplorer(swPaths.VisualStudio);
                     return;
                 }
-
                 Directory.CreateDirectory(path).EnumerateFiles("*.sln").Select(f => f.FullName).AsParallel().ForAll(s =>
                 {
                     Process.Start(new ProcessStartInfo(swPaths.VisualStudio)
@@ -200,7 +201,7 @@ namespace Metatool.MetaKeyboard
             //     shell.RunWithCmd(swPaths.GifTool);
             // });
 
-            hotKeys.ToggleDictionary.MapOnAllUp(Shift + LAlt + D);
+            hotKeys.ToggleDictionary.MapOnAllUp(Shift + LAlt + D, tree: KeyStateTrees.Map);
         }
 
     }

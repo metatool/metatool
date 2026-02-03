@@ -20,7 +20,7 @@ public interface IKeyboard : IKeyboardVirtual
     // down up happened successively
     IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "");
     //  down up happened successively, and all keys are released
-    IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "");
+    IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap);
 	/// <summary>
 	/// i.e. Z: LCtrl+LShift, then press Z+A = LCtrl+LShift+A
 	/// if Z pressed and then release, z would be typed
