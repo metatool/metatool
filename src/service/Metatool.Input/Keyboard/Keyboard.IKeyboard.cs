@@ -36,36 +36,36 @@ public class KeyboardCommandTrigger : CommandTrigger<IKeyEventArgs>, IKeyboardCo
 public partial class Keyboard : IKeyboard
 {
 
-    public IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+    public IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "")
     {
-        return OnEvent(hotkey, KeyEventType.Down, stateTree);
+        return OnEvent(hotkey, KeyEventType.Down, stateTree, description);
     }
 
-    public IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+    public IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "")
     {
-        return OnEvent(hotkey, KeyEventType.Up, stateTree);
+        return OnEvent(hotkey, KeyEventType.Up, stateTree, description);
     }
 
-    public IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+    public IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "")
     {
         var trigger = new KeyboardCommandTrigger();
         var token = Hit(hotkey,
-            trigger.OnExecute, trigger.OnCanExecute, "", stateTree) as KeyCommandTokens;
+            trigger.OnExecute, trigger.OnCanExecute, description, stateTree) as KeyCommandTokens;
         trigger._metaKey = token?.metaKey;
         return trigger;
     }
 
-    public IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default)
+    public IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "")
     {
-        return OnEvent(hotkey, KeyEventType.AllUp, stateTree);
+        return OnEvent(hotkey, KeyEventType.AllUp, stateTree, description);
     }
 
     public IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEventType keyEventType,
-        string stateTree = KeyStateTrees.Default)
+        string stateTree = KeyStateTrees.Default, string description = "")
     {
         if (keyEventType == KeyEventType.Hit)
         {
-            return OnHit(hotkey, stateTree);
+            return OnHit(hotkey, stateTree, description);
         }
 
         var sequence = hotkey switch
@@ -76,8 +76,8 @@ public partial class Keyboard : IKeyboard
         };
 
         var trigger = new KeyboardCommandTrigger();
-        var metaKey = Add(sequence, keyEventType,
-            new KeyCommand(trigger.OnExecute) { CanExecute = trigger.OnCanExecute }, stateTree) as MetaKey;
+        var command = new KeyCommand(trigger.OnExecute) { CanExecute = trigger.OnCanExecute, Description = description };
+        var metaKey = Add(sequence, keyEventType, command, stateTree) as MetaKey;
         trigger._metaKey = metaKey;
         return trigger;
     }
@@ -104,17 +104,17 @@ public partial class Keyboard : IKeyboard
         }, predicate, $"hotString: {source} -> {target}", KeyStateTrees.HotString);
     }
 
-    public IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
+    public IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, string description = "")
     {
-        return HotKeyMap(source, target, predicate, true, true);
+        return HotKeyMap(source, target, predicate, true, true, description);
     }
 
-    public IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null)
+    public IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, string description = "")
     {
-        return HotKeyMap(source, target, predicate, false, false);
+        return HotKeyMap(source, target, predicate, false, false, description);
     }
 
-    IKeyCommand HotKeyMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate, bool isHardMap, bool isAsync = false)
+    IKeyCommand HotKeyMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate, bool isHardMap, bool isAsync = false, string description = "")
     {
         void Call(IKeyEventArgs e, Action action)
         {
@@ -154,7 +154,7 @@ public partial class Keyboard : IKeyboard
                 {
                     Call(e, () => Down(combination));
                 }
-            }, predicate, $"map:{source} -> {target}", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
+            }, predicate, $"map:{source} -> {target}, {description}", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map),
             source.OnUp(e =>
             {
                 handled   = false;
@@ -182,28 +182,27 @@ public partial class Keyboard : IKeyboard
             {
                 if (!handled)
                 {
-                    Console.WriteLine("\t/!Handling:false");
+                    _logger.LogInformation("\tHotKeyMap: Handling:false");
                     return false;
                 }
 
                 if (predicate != null && !predicate(e))
                 {
-                    Console.WriteLine("\t/!predicate(e):false");
+                    _logger.LogInformation("\tHotKeyMap: predicate(e):false");
                     return false;
                 }
 
                 return true;
-            }, $"map:{source} -> {target}", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map)
+            }, $"map:{source} -> {target}, {description}", isHardMap ? KeyStateTrees.HardMap : KeyStateTrees.Map)
         };
     }
 
     /// <summary>
     ///  Note: A+ (B -> C) become A+C
     /// </summary>
-    public IKeyCommand MapOnHit(IHotkey source, IHotkey target,
-        Predicate<IKeyEventArgs> predicate = null, string description = "")
+    public IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap)
     {
-        return MapOnHitOrAllUp(source, target, predicate, false, description);
+        return MapOnHitOrAllUp(source, target, predicate, false, description, tree);
     }
 
     public IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target,

@@ -8,17 +8,16 @@ namespace Metatool.Service;
 
 public interface IKeyboard : IKeyboardVirtual
 {
-	IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
-	IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
+	IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "");
+	IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "");
 	/// down and up happened successively
-	IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
-	IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default);
-	IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEventType keyEventType, string stateTree = KeyStateTrees.Default);
-
-	IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
-	IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null);
+	IKeyboardCommandTrigger OnHit(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "");
+	IKeyboardCommandTrigger OnAllUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "");
+	IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEventType keyEventType, string stateTree = KeyStateTrees.Default, string description = "");
+	IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, string description = "");
+	IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, string description = "");
     // down up happened successively
-    IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "");
+    IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap);
     //  down up happened successively, and all keys are released
     IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap);
 	/// <summary>

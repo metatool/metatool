@@ -95,7 +95,7 @@ public class HotkeyTrigger : IHotkeyTrigger
 	public IKeyCommand OnEvent(Action<IKeyEventArgs> execute,
 		Predicate<IKeyEventArgs> canExecute = null)
 	{
-		var trigger = Keyboard.OnEvent(Key, Event, Tree);
+		var trigger = Keyboard.OnEvent(Key, Event, Tree, Description);
 		var token = trigger.Register(execute, canExecute, Description);
 		return token;
 	}
@@ -103,7 +103,7 @@ public class HotkeyTrigger : IHotkeyTrigger
 	public IKeyCommand MapOnHit(ISequenceUnit target,
 		Predicate<IKeyEventArgs> predicate = null)
 	{
-		return Keyboard.MapOnHit(Key, target, predicate);
+		return Keyboard.MapOnHit(Key, target, predicate, description: Description, tree: Tree);
 	}
 
 	/// <summary>

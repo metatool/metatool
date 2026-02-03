@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Metatool.Input.MouseKeyHook.Implementation;
 
-[DebuggerDisplay("{ToString()")]
+[DebuggerDisplay("{ToString()}")]
 public class KeyCommand : Command<IKeyEventArgs>
 {
 	public string Id { get; set; }

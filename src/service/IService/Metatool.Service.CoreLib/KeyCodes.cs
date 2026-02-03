@@ -430,6 +430,7 @@ public enum KeyCodes
     [Key("/")]
     OemQuestion = OemPeriod | LButton, // 0x000000BF
     /// <summary>The OEM 2 key.  Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '/?' key </summary>
+    [Key("/")]
     Oem2 = OemQuestion, // 0x000000BF
     /// <summary>The OEM 3 key.  Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the '`~' key </summary>
     Oem3 = 192, // 0x000000C0

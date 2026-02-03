@@ -10,13 +10,15 @@ namespace Metatool.MetaKeyboard
 	partial class Keyboard61
 	{
 		/// <summary>
-		/// goal: liberate the *+Win+L to be used by other commands, by default it will trigger the system win lock, i.e. win+z+l will lock too.
-		///		but only enable the winLock with exact LWin+L hotkey.
+		/// goal: liberate the *+Win+L to be used by other commands, i.e. moving window to another screen with shift+win+space+l,
+		/// by default it will trigger the system win lock, i.e. win+z+l will lock too.
+		///	so we want to but only enable the winLock with exact LWin+L hotkey.
+		///
 		/// solution: disable the Win+L by config the registry key at startup, when the exact LWin+L hotkey down enable WinLock,
-		///		then the next down of L will trigger the WinLock, when the L is up, disable the winLock again.
-		/// problem: when other key is down the keyboard of the app is in a wrong state. i.e. A is down, we can not lock the screen.
-		/// solution: create a keybard state reset command() to clear all down keys. but need to remember the hot key to use it.
-		/// idea(todo): can we periodly sync system keyboard state to the app keyboard state or auto reset all key down? i.e. 3 seconds when no key is pressed.
+		///		then the next down of L(the second repeating down when long pressing) will trigger the WinLock, when the L is up, disable the winLock again.
+		/// problem: when the keyboard of the app is in a wrong state. i.e. A is down, we can not lock the screen.
+		/// solution: create a keyboard state reset command() to clear all down keys. but need to remember the hot key to use it.
+		/// idea(todo): can we period sync system keyboard state to the app keyboard state or auto reset all key down? i.e. 3 seconds when no key is pressed.
 		/// </summary>
 		private void SetupWinLock()
 		{
@@ -60,7 +62,7 @@ namespace Metatool.MetaKeyboard
 				// next the down event go to the system handler, it will trigger the win lock function
 			},
 				// *+win+L disable winlock
-				e => !e.KeyboardState.IsOtherDown(winOrLKey));
+				e => !e.KeyboardState.IsOtherDown(winOrLKey), description: "Enable WinLock for Win+L");
 
 			var disableLock = winLock.OnUp(e =>
 			{
@@ -68,7 +70,7 @@ namespace Metatool.MetaKeyboard
 				DisableWinLock();
 			},
 				// *+Win+L up would not trigger this handler
-				e => !e.KeyboardState.IsOtherDown(winOrLKey));
+				e => !e.KeyboardState.IsOtherDown(winOrLKey), description: "Disable WinLock for Win+L");
 
 			// when the plugin application exits, reenable normal handling
 			Application.Current.Dispatcher.BeginInvoke((Action)(() =>

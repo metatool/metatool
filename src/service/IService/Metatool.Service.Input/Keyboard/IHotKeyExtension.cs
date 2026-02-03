@@ -26,45 +26,45 @@ public static class IHotKeyExtension
 	public static IKeyCommand OnDown(this IHotkey hotkey, Action<IKeyEventArgs> execute,
 		Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
 	{
-		var trigger = Keyboard.OnDown(hotkey, stateTree);
+		var trigger = Keyboard.OnDown(hotkey, stateTree, description);
 		return trigger.Register(execute, canExecute, description);
 	}
 
 	public static IKeyCommand OnUp(this IHotkey hotkey, Action<IKeyEventArgs> execute,
 		Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
 	{
-		var trigger = Keyboard.OnUp(hotkey, stateTree);
+		var trigger = Keyboard.OnUp(hotkey, stateTree, description);
 		return trigger.Register(execute, canExecute, description);
 	}
 	public static IKeyCommand OnAllUp(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
 		Predicate<IKeyEventArgs> canExecute = null, string description = "", string stateTree = KeyStateTrees.Default)
 	{
-		var trigger          = Keyboard.OnAllUp(sequenceUnit, stateTree);
+		var trigger          = Keyboard.OnAllUp(sequenceUnit, stateTree, description);
 		return trigger.Register(execute, canExecute, description);
 	}
 	public static IKeyCommand OnHit(this IHotkey sequenceUnit, Action<IKeyEventArgs> execute,
 		Predicate<IKeyEventArgs> canExecute=null, string description="", string stateTree = KeyStateTrees.Default)
 	{
-		var trigger          = Keyboard.OnHit(sequenceUnit, stateTree);
+		var trigger          = Keyboard.OnHit(sequenceUnit, stateTree, description);
 		return trigger.Register(execute, canExecute, description);
 	}
 	public static IKeyCommand MapOnHit(this IHotkey key, ISequenceUnit target,
-		Predicate<IKeyEventArgs> canExecute = null)
+		Predicate<IKeyEventArgs> canExecute = null, string description = "")
 	{
-		return Keyboard.MapOnHit(key, target, canExecute);
+		return Keyboard.MapOnHit(key, target, canExecute, description);
 	}
 	public static IKeyCommand MapOnAllUp(this IHotkey key, ISequenceUnit target,
-		Predicate<IKeyEventArgs> canExecute = null)
+		Predicate<IKeyEventArgs> canExecute = null, string description = "")
 	{
-		return Keyboard.MapOnHitAndAllUp(key, target, canExecute);
+		return Keyboard.MapOnHitAndAllUp(key, target, canExecute, description);
 	}
-	public static IKeyCommand MapOnDownUp(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null)
+	public static IKeyCommand MapOnDownUp(this IHotkey key, ISequenceUnit target, Predicate<IKeyEventArgs> canExecute = null, string description = "")
 	{
-		return Keyboard.MapOnDownUp(key, target, canExecute);
+		return Keyboard.MapOnDownUp(key, target, canExecute, description);
 	}
-	public static IKeyCommand HardMap(this IHotkey key, Key target, Predicate<IKeyEventArgs> canExecute = null)
+	public static IKeyCommand HardMap(this IHotkey key, Key target, Predicate<IKeyEventArgs> canExecute = null, string description = "")
 	{
-		return Keyboard.HardMap(key, new Combination(target), canExecute);
+		return Keyboard.HardMap(key, new Combination(target), canExecute, description);
 	}
 	/// <summary>
 	/// register the key to the state tree, and wait the down event;

@@ -7,9 +7,9 @@ namespace Metatool.Input;
 
 public partial class Keyboard
 {
-	private readonly ILogger<Keyboard>       _logger;
+	private readonly ILogger<Keyboard> _logger;
 	private readonly IConfig<MetatoolConfig> _config;
-	private static   Keyboard                _default;
+	private static Keyboard _default;
 
 	public static Keyboard Default =>
 		_default ??= Services.Get<IKeyboard, Keyboard>();
@@ -21,13 +21,13 @@ public partial class Keyboard
 		var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
 		AddAliases(aliases);
 		Hook();
-        // workaround to use the Keyboard Service itself via DI in initService
-        Task.Run(() => InitService(config));
+		// workaround to use the Keyboard Service itself via DI in initService
+		Task.Run(() => InitService(config));
 	}
 
 	private void InitService(IConfig<MetatoolConfig> config)
 	{
-		var keyboard   = config.CurrentValue.Services.Input.Keyboard;
+		var keyboard = config.CurrentValue.Services.Input.Keyboard;
 		var hotStrings = keyboard.HotStrings;
 		AddHotStrings(hotStrings);
 
@@ -59,17 +59,20 @@ public partial class Keyboard
 			{
 				foreach (var code in keyInChord.Codes)
 				{
-					var key = (Key) code;
-					if (!key.IsCommonChordKey())
+					var key = (Key)code;
+					if (!key.IsCommonChordKey()) // not shift, ctrl, alt, win
 					{
-						if(!_hook.Contains(key, KeyStateTrees.ChordMap))
-							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, "MapOnHit on ChordMapTree");
+						if (!_hook.Contains(key, KeyStateTrees.ChordMap))
+						{
+							// add a mapping to make this common key work as a chord key: only trigger this key when 'hit'
+							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, "MapOnHit on ChordMapTree", KeyStateTrees.ChordMap);
+						}
 					}
 				}
 			}
 		}
-
-		return _hook.Add(sequence, new KeyEventCommand(keyEventType, command), stateTree);
+		var keyCommand = new KeyEventCommand(keyEventType, command);
+		return _hook.Add(sequence, keyCommand, stateTree);
 	}
 
 	public void ShowTip()
@@ -86,12 +89,12 @@ public partial class Keyboard
 	{
 		var noEventTimer = new NoEventTimer();
 		// state
-		var           handling     = false;
+		var handling = false;
 		IKeyEventArgs keyDownEvent = null;
 
 		void Reset()
 		{
-			handling     = false;
+			handling = false;
 			keyDownEvent = null;
 		}
 
@@ -159,15 +162,15 @@ public partial class Keyboard
 		remove => _hook.KeyUp -= value;
 	}
 
-    private Thread _hookThread;
-    private void Hook()
+	private Thread _hookThread;
+	private void Hook()
 	{
-        _hookThread = new Thread(_hook.Run)
-        {
-            Name = "Keyboard/Mouse Hook Thread",
-            IsBackground = true,
-            Priority = ThreadPriority.Highest
-        };
-        _hookThread.Start();
-    }
+		_hookThread = new Thread(_hook.Run)
+		{
+			Name = "Keyboard/Mouse Hook Thread",
+			IsBackground = true,
+			Priority = ThreadPriority.Highest
+		};
+		_hookThread.Start();
+	}
 }
