@@ -175,3 +175,4 @@ coveragereport
 exe/publishing-cs/
 .ionide/symbolCache.db
 /script/.vscode
+**/node_modules/**

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Metatool.UIElementsDetector\Metatool.UIElementsDetector.csproj" />
+    <ProjectReference Include="..\..\service\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
+    <ProjectReference Include="..\..\lib\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj" />
+    <ProjectReference Include="..\..\lib\Metatool.WindowsInput\Metatool.WindowsInput.csproj" />
+  </ItemGroup>
+</Project>

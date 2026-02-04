@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Metatool.WebViewHost": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DEV_WEBUI": "1"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
+  </ItemGroup>
+  <Target Name="CopyFrontendDist" AfterTargets="Build">
+    <PropertyGroup>
+      <FrontendDir>$(MSBuildThisFileDirectory)..\frontend\dist\</FrontendDir>
+    </PropertyGroup>
+    <Message Importance="high" Text="Copying frontend dist from $(FrontendDir) to $(OutputPath)frontend\dist\" />
+    <ItemGroup>
+      <_FrontendFiles Include="$(FrontendDir)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_FrontendFiles)" DestinationFiles="@(_FrontendFiles->'$(OutputPath)frontend\dist\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

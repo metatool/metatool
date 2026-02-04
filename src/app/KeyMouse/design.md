@@ -4,6 +4,7 @@
 * get real-time performance on a CPU
 * ScreenCapture.NET for screen capture
 * Compunet.YoloV8 for object detection on screen
+* keep the python script that do the model conversion
 * ONNX (FP16 or INT8): Reduces file size and speeds up math on CPU.
 * zoom the screenshot of active app into the with of 640 but keep ratio of with/height
 * use the available api functions of projects in the Metatool folder as much as possible
