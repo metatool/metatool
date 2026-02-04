@@ -7,6 +7,10 @@ cd app/WebUI/frontend
 npm install
 npm run dev
 ```
+## debug
+and run backend in debug mode,
+open vscode in the frontend folder, and press f5 to start debug can set breakpoint in source code.
+
 
 Build (for production):
 

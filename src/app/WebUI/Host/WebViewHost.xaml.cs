@@ -30,22 +30,29 @@ namespace Metatool.WebViewHost
 
         private async void WebViewHost_Loaded(object sender, RoutedEventArgs e)
         {
-            await webView.EnsureCoreWebView2Async();
-
-            webView.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
-
             var dev = Environment.GetEnvironmentVariable("DEV_WEBUI");
+
             if (!string.IsNullOrEmpty(dev))
             {
+                // Set environment variable for remote debugging BEFORE creating WebView2
+                Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--remote-debugging-port=9222");
+
+                await webView.EnsureCoreWebView2Async();
+
+                Debug.WriteLine("Remote debugging enabled on port 9222. Open edge://inspect to debug.");
+
                 webView.Source = new Uri("http://localhost:5173");
             }
             else
             {
+                await webView.EnsureCoreWebView2Async();
                 var exeDir = AppDomain.CurrentDomain.BaseDirectory;
                 var index = System.IO.Path.Combine(exeDir, "frontend", "dist", "index.html");
                 if (System.IO.File.Exists(index))
                     webView.Source = new Uri(index);
             }
+
+            webView.CoreWebView2.WebMessageReceived += CoreWebView2_WebMessageReceived;
 
             var hwnd = new WindowInteropHelper(this).Handle;
             var vk = (uint)KeyInterop.VirtualKeyFromKey(System.Windows.Input.Key.F);

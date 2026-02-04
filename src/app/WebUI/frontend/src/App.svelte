@@ -71,6 +71,7 @@
           hotkeys = event.data.hotkeys
           filteredHotkeys = hotkeys
         }
+        document.dispatchEvent(new CustomEvent('focus-search'));
       }
     }
     window.addEventListener('message', handleMessage)
@@ -82,7 +83,6 @@
 </script>
 
 <div class="min-h-screen bg-gray-100 p-4">
-  {#if show}
     <div class="mt-4 p-4 bg-white rounded">
       <SearchBar
         {hotkeys}
@@ -92,5 +92,4 @@
         on:close={() => show = false}
       />
     </div>
-  {/if}
 </div>
