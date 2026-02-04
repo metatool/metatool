@@ -112,15 +112,60 @@ namespace Metatool.WebViewHost
                 if (!IsVisible)
                 {
                     Debug.WriteLine("Window not visible, calling Show()");
+                    // Set initial size
+                    this.Width = 700;
+                    this.Height = 300;
                     Show();
                 }
                 Debug.WriteLine("Calling Activate()");
                 Activate();
                 await webView.EnsureCoreWebView2Async();
                 Debug.WriteLine("Executing postMessage script via WebView2 postMessage");
-                // Use the WebView2 API to post a message
-                var json = "{\"type\":\"showSearch\"}";
-                webView.CoreWebView2.PostWebMessageAsJson(json);
+
+                // Create the message object with type and hotkeys data
+                var hotkeyJson = MockHotkeys.GetJson();
+                var messageJson = $"{{\"type\":\"showSearch\",\"hotkeys\":{hotkeyJson}}}";
+
+                webView.CoreWebView2.PostWebMessageAsJson(messageJson);
+
+                // Schedule a resize after content is rendered
+                await Task.Delay(100);
+                ResizeToContent();
+            });
+        }
+
+        private void ResizeToContent()
+        {
+            // Use ExecuteScriptAsync to get the document body scrollHeight
+            _ = webView.CoreWebView2.ExecuteScriptAsync(
+                "document.documentElement.scrollHeight.toString()"
+            ).ContinueWith(async task =>
+            {
+                try
+                {
+                    var result = task.Result;
+                    if (int.TryParse(result.Trim('"'), out int contentHeight))
+                    {
+                        Debug.WriteLine($"Content height: {contentHeight}");
+                        Dispatcher.Invoke(() =>
+                        {
+                            // Add padding for border and margins
+                            var newHeight = Math.Min(contentHeight + 40, 900);
+
+                            // Set WebView2 control height explicitly
+                            webView.Height = newHeight;
+
+                            // Set Window height
+                            this.Height = newHeight;
+
+                            Debug.WriteLine($"Window and WebView2 height adjusted to: {newHeight}");
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error measuring content: {ex.Message}");
+                }
             });
         }
 

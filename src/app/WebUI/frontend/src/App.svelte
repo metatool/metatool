@@ -3,14 +3,31 @@
   import { onMount } from 'svelte'
 
   let show = false
-  let results = []
+  let hotkeys = []
+  let filteredHotkeys = []
 
   function handleSearch(e) {
     const query = e.detail
     console.log('Search query:', query)
+
+    // Filter hotkeys based on query
+    if (query.trim() === '') {
+      filteredHotkeys = hotkeys
+    } else {
+      filteredHotkeys = hotkeys.filter(item =>
+        item.hotkey.toLowerCase().includes(query.toLowerCase()) ||
+        item.description.toLowerCase().includes(query.toLowerCase())
+      )
+    }
+  }
+
+  function handleSelection(e) {
+    const selectedItem = e.detail
+    console.log('Selected item:', selectedItem)
     sendMessage({
-      type: 'searchPerformed',
-      query: query
+      type: 'hotkeySelected',
+      hotkey: selectedItem.hotkey,
+      description: selectedItem.description
     })
   }
 
@@ -32,6 +49,12 @@
 
         if (data.type === 'showSearch') {
           console.log('Show search triggered by backend')
+          show = true
+          // Data should be an array of hotkey items
+          if (Array.isArray(data.hotkeys)) {
+            hotkeys = data.hotkeys
+            filteredHotkeys = hotkeys
+          }
         }
       })
       console.log('WebView2 message listener initialized')
@@ -42,8 +65,12 @@
     // Also listen via window.addEventListener for broader compatibility
     const handleMessage = (event) => {
       if (event.data && event.data.type === 'showSearch') {
-
         console.log('Show search triggered via window message')
+        show = true
+        if (Array.isArray(event.data.hotkeys)) {
+          hotkeys = event.data.hotkeys
+          filteredHotkeys = hotkeys
+        }
       }
     }
     window.addEventListener('message', handleMessage)
@@ -55,7 +82,15 @@
 </script>
 
 <div class="min-h-screen bg-gray-100 p-4">
+  {#if show}
     <div class="mt-4 p-4 bg-white rounded">
-      <SearchBar on:search={handleSearch} on:close={() => show = false} />
+      <SearchBar
+        {hotkeys}
+        {filteredHotkeys}
+        on:search={handleSearch}
+        on:selection={handleSelection}
+        on:close={() => show = false}
+      />
     </div>
+  {/if}
 </div>
