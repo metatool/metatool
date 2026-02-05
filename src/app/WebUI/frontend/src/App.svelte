@@ -9,8 +9,7 @@
     sendMessage({ type: 'close' })
   }
 
-  function handleSearch(e) {
-    const query = e.detail
+  function handleSearch(query) {
     console.log('Search query:', query)
 
     // Filter hotkeys based on query
@@ -24,8 +23,7 @@
     }
   }
 
-  function handleSelection(e) {
-    const selectedItem = e.detail
+  function handleSelection(selectedItem) {
     console.log('Selected item:', selectedItem)
     sendMessage({
       type: 'hotkeySelected',
@@ -99,9 +97,9 @@
       <SearchBar
         {hotkeys}
         {filteredHotkeys}
-        on:search={handleSearch}
-        on:selection={handleSelection}
-        on:close={() => show = false}
+        onSearch={handleSearch}
+        onSelection={handleSelection}
+        onClose={() => show = false}
       />
     </div>
 </div>

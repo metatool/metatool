@@ -1,16 +1,18 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte'
-  const dispatch = createEventDispatcher()
+  import { onMount } from 'svelte'
   let query = ''
   let inputEl
   let selectedIndex = 0
 
   export let hotkeys = []
   export let filteredHotkeys = []
+  export let onSearch = (query) => {}
+  export let onSelection = (item) => {}
+  export let onClose = () => {}
 
   function handleInput(e) {
     query = e.target.value
-    dispatch('search', query)
+    onSearch(query)
 
     selectedIndex = 0 // Reset selection when typing
   }
@@ -22,7 +24,7 @@
   function submitSelection() {
     if (selectedIndex >= 0 && filteredHotkeys[selectedIndex]) {
       const item = filteredHotkeys[selectedIndex]
-      dispatch('selection', item)
+      onSelection(item)
       query = ''
       selectedIndex = 0
     }
@@ -30,7 +32,7 @@
 
   function onKey(e) {
     if (e.key === 'Escape') {
-      dispatch('close')
+      onClose()
     } else if (e.key === 'Enter') {
       submitSelection()
     } else if (e.key === 'ArrowDown') {
