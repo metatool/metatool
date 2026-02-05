@@ -20,7 +20,7 @@ namespace Metatool.WebViewHost
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             _hotkeyHandler = new HotkeyHandler(MainWindow, HOTKEY_ID, ModifierKeys.Control | ModifierKeys.Shift, Key.F);
-            _hotkeyHandler.HotkeyPressed += () => ((WebViewHost)MainWindow).ShowSearch();
+            _hotkeyHandler.HotkeyPressed += () => ((WebViewHost)MainWindow).ShowSearch(MockHotkeys.GetJson());
         }
 
         protected override void OnExit(ExitEventArgs e)

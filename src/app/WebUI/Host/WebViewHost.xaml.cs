@@ -71,7 +71,7 @@ namespace Metatool.WebViewHost
             }
         }
 
-        public async void ShowSearch()
+        public async void ShowSearch(string hotkeyJson)
         {
             Debug.WriteLine("ShowSearch() called");
             Dispatcher.Invoke(async () => {
@@ -89,7 +89,6 @@ namespace Metatool.WebViewHost
                 Debug.WriteLine("Executing postMessage script via WebView2 postMessage");
 
                 // Create the message object with type and hotkeys data
-                var hotkeyJson = MockHotkeys.GetJson();
                 var messageJson = $"{{\"type\":\"showSearch\",\"hotkeys\":{hotkeyJson}}}";
 
                 webView.CoreWebView2.PostWebMessageAsJson(messageJson);
@@ -116,7 +115,7 @@ namespace Metatool.WebViewHost
                         Dispatcher.Invoke(() =>
                         {
                             // Add padding for border and margins
-                            var newHeight = Math.Min(contentHeight + 40, 900);
+                            var newHeight = Math.Min(contentHeight + 40, this.MaxHeight);
 
                             // Set WebView2 control height explicitly
                             webView.Height = newHeight;
