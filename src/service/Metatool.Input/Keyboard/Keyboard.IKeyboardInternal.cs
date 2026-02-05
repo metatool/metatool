@@ -10,12 +10,13 @@ partial class Keyboard: IKeyboardInternal
 	public IKeyCommand GetToken(ICommandToken<IKeyEventArgs> commandToken, IKeyboardCommandTrigger trigger) => new KeyCommandToken(commandToken, trigger);
 
 	public IToggleKey GetToggleKey(Key key) => new ToggleKey(key);
-	
+
 	public void ReleaseDownKeys()
 	{
 		var downKeys = KeyboardState.Current().AllDownKeys;
 		foreach (var downKey in downKeys)
 		{
+			_logger.LogInformation($"Rest down key: {downKey}");
 			Up((Key)downKey);
 		}
 	}

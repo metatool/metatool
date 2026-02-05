@@ -38,7 +38,7 @@ public partial class KeyboardState : IKeyboardState
     {
         var sb = new StringBuilder();
         if (this != HandledDownKeys)
-            sb.Append(HandledDownKeys.ToString() + "|real:  ");
+            sb.Append(HandledDownKeys.ToString() + "(real:  ");
         for (var i = 0; i < 256; i++)
         {
             var key = (KeyCodes)i;
@@ -48,6 +48,7 @@ public partial class KeyboardState : IKeyboardState
                 if (IsToggled(key)) sb.Append($"{key}~ ");
             }
         }
+        sb.Append(")");
 
         return sb.ToString();
     }
@@ -238,7 +239,7 @@ public partial class KeyboardState : IKeyboardState
 
     /// <summary>
     ///     Indicate weather specified key was toggled at the moment when snapshot was created or not.
-    ///     The low-order bit is meaningless for non-toggle keys.  
+    ///     The low-order bit is meaningless for non-toggle keys.
     /// </summary>
     /// <param name="key">Key (corresponds to the virtual code of the key)</param>
     /// <returns>
