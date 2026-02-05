@@ -150,20 +150,18 @@ internal abstract class EventFacade : IKeyboardMouseEvents
 
 	private KeyListener GetKeyListener()
 	{
-		var target = m_KeyListenerCache;
-		if (target != null) return target;
-		target = CreateKeyListener();
-		m_KeyListenerCache = target;
-		return target;
+		if (m_KeyListenerCache != null)
+			return m_KeyListenerCache;
+		m_KeyListenerCache = CreateKeyListener();
+		return m_KeyListenerCache;
 	}
 
 	private MouseListener GetMouseListener()
 	{
-		var target = m_MouseListenerCache;
-		if (target != null) return target;
-		target = CreateMouseListener();
-		m_MouseListenerCache = target;
-		return target;
+		if (m_MouseListenerCache != null)
+			return m_MouseListenerCache;
+		m_MouseListenerCache = CreateMouseListener();
+		return m_MouseListenerCache;
 	}
 
 	protected abstract MouseListener CreateMouseListener();

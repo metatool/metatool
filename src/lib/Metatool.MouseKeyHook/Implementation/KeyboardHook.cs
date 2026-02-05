@@ -4,8 +4,10 @@ using Metatool.Service;
 using Metatool.Service.MouseKey;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Interop;
 
 namespace Metatool.Input.MouseKeyHook;
@@ -21,10 +23,15 @@ public record KeyTipNotifier(Action<string, IEnumerable<(string key, IEnumerable
 
 public class KeyboardHook
 {
+    private const uint WM_USER = 0x0400;
+    private const uint WM_EXECUTE_ACTION = WM_USER + 1;
+
     private readonly ILogger<KeyboardHook> _logger;
     private readonly IKeyboardMouseEvents _eventSource;
     private bool _isRunning;
     private readonly IFruitMonkey _monkey;
+    private readonly ConcurrentQueue<Action> _actionQueue = new();
+    private uint _threadId;
 
     public bool Disable
     {
@@ -93,6 +100,55 @@ public class KeyboardHook
     public void EnableChord(Chord chord, string stateTree = null) => _monkey.Forest.EnableChord(chord, stateTree);
     public bool Contains(IHotkey hotKey, string stateTree = null) => _monkey.Forest.Contains(hotKey, stateTree);
 
+    /// <summary>
+    /// Posts an action to be executed on the message loop thread.
+    /// </summary>
+    public void Post(Action action)
+    {
+        if (action == null) return;
+        _actionQueue.Enqueue(action);
+        PostThreadMessage(_threadId, WM_EXECUTE_ACTION, IntPtr.Zero, IntPtr.Zero);
+    }
+
+    /// <summary>
+    /// Sends an action to be executed on the message loop thread and waits for completion.
+    /// </summary>
+    public void Send(Action action)
+    {
+        if (action == null) return;
+
+        if (GetCurrentThreadId() == _threadId)
+        {
+            action();
+            return;
+        }
+
+        using var completionEvent = new ManualResetEventSlim(false);
+        Exception capturedException = null;
+
+        _actionQueue.Enqueue(() =>
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                capturedException = ex;
+            }
+            finally
+            {
+                completionEvent.Set();
+            }
+        });
+
+        PostThreadMessage(_threadId, WM_EXECUTE_ACTION, IntPtr.Zero, IntPtr.Zero);
+        completionEvent.Wait();
+
+        if (capturedException != null)
+            throw new AggregateException("send Action execution failed on KeyboardHook message loop thread:{Thread.CurrentThread.Name}", capturedException);
+    }
+
     public void Run()
     {
         if (_isRunning) return;
@@ -123,10 +179,33 @@ public class KeyboardHook
             handlers.ForEach(h => h?.Invoke(sender, args));
         };
 
+        _threadId = GetCurrentThreadId();
+
         while (GetMessage(out var msg, IntPtr.Zero, 0, 0) > 0)
         {
+            if (msg.message == WM_EXECUTE_ACTION)
+            {
+                ProcessActionQueue();
+                continue;
+            }
+
             TranslateMessage(ref msg);
             DispatchMessage(ref msg);
+        }
+    }
+
+    private void ProcessActionQueue()
+    {
+        while (_actionQueue.TryDequeue(out var action))
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error executing action on message KeyboardHook thread: {Thread.CurrentThread.Name}");
+            }
         }
     }
 
@@ -138,4 +217,10 @@ public class KeyboardHook
 
     [DllImport("user32.dll")]
     private static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
+
+    [DllImport("user32.dll")]
+    private static extern bool PostThreadMessage(uint idThread, uint msg, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("kernel32.dll")]
+    private static extern uint GetCurrentThreadId();
 }

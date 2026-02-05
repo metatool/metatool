@@ -120,7 +120,7 @@ public partial class Keyboard : IKeyboard
         {
             if (isAsync)
             {
-                Task.Run(action);
+                Post(action);
                 return;
             }
 

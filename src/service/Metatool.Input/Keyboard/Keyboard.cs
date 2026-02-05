@@ -47,7 +47,7 @@ public partial class Keyboard
 		}
 	}
 
-	public IKeyPath Root = null;
+    public IKeyPath Root = null;
 
 	readonly KeyboardHook _hook = new(Services.Get<ILogger<KeyboardHook>>(), Services.Get<INotify>());
 

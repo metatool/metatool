@@ -8,6 +8,10 @@ namespace Metatool.Service;
 
 public interface IKeyboard : IKeyboardVirtual
 {
+	static IKeyboard _keyboard;
+	public static IKeyboard Inst =>
+	_keyboard ??= Services.Get<IKeyboard>();
+
 	IKeyboardCommandTrigger OnDown(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "");
 	IKeyboardCommandTrigger OnUp(IHotkey hotkey, string stateTree = KeyStateTrees.Default, string description = "");
 	/// down and up happened successively
@@ -16,10 +20,10 @@ public interface IKeyboard : IKeyboardVirtual
 	IKeyboardCommandTrigger OnEvent(IHotkey hotkey, KeyEventType keyEventType, string stateTree = KeyStateTrees.Default, string description = "");
 	IKeyCommand HardMap(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, string description = "");
 	IKeyCommand MapOnDownUp(IHotkey source, ISequenceUnit target, Predicate<IKeyEventArgs> predicate = null, string description = "");
-    // down up happened successively
-    IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap);
-    //  down up happened successively, and all keys are released
-    IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap);
+	// down up happened successively
+	IKeyCommand MapOnHit(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap);
+	//  down up happened successively, and all keys are released
+	IKeyCommand MapOnHitAndAllUp(IHotkey source, IHotkey target, Predicate<IKeyEventArgs> predicate = null, string description = "", string tree = KeyStateTrees.ChordMap);
 	/// <summary>
 	/// i.e. Z: LCtrl+LShift, then press Z+A = LCtrl+LShift+A
 	/// if Z pressed and then release, z would be typed
@@ -57,6 +61,9 @@ public interface IKeyboard : IKeyboardVirtual
 	IKeyboardState State { get; }
 	void DisableChord(ISequenceUnit chord);
 	void EnableChord(ISequenceUnit chord);
+
+	void Post(Action action);
+	void Send(Action action);
 
 }
 
