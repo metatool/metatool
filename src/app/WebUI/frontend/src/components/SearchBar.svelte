@@ -63,6 +63,7 @@
       bind:value={query}
       on:input={handleInput}
       on:keydown={onKey}
+      on:blur={() => inputEl?.focus()}
       class="flex-1 px-4 py-3 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       placeholder="Search hotkeys... (use ↑↓ to navigate, Enter to select)"
       autocomplete="off"
