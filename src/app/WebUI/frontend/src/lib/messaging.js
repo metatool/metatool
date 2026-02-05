@@ -35,16 +35,7 @@ export function initMessageListeners(onShowSearch) {
     }
   };
 
-  // Window message listener for broader compatibility
-  const windowHandler = (event) => {
-    if (event.data && event.data.type === 'showSearch') {
-      console.log('Show search triggered via window message');
-      onShowSearch(event.data);
-      document.dispatchEvent(new CustomEvent('focus-search'));
-    }
-  };
-
-  // Attach listeners
+  // Attach listener
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener('message', webviewHandler);
     console.log('WebView2 message listener initialized');
@@ -52,14 +43,11 @@ export function initMessageListeners(onShowSearch) {
     console.warn('WebView2 API not available - running in non-WebView2 environment');
   }
 
-  window.addEventListener('message', windowHandler);
-
   // Return cleanup function
   return () => {
     if (window.chrome && window.chrome.webview) {
       window.chrome.webview.removeEventListener('message', webviewHandler);
     }
-    window.removeEventListener('message', windowHandler);
   };
 }
 
