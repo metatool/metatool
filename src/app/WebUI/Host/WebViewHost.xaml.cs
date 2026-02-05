@@ -83,7 +83,11 @@ namespace Metatool.WebViewHost
                 if (doc.RootElement.TryGetProperty("type", out var t))
                 {
                     var type = t.GetString();
-                    if (type == "searchPerformed")
+                    if (type == "close")
+                    {
+                        Dispatcher.Invoke(Close);
+                    }
+                    else if (type == "searchPerformed")
                     {
                         var query = doc.RootElement.GetProperty("query").GetString();
 

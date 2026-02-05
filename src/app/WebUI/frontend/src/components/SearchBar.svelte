@@ -3,7 +3,7 @@
   const dispatch = createEventDispatcher()
   let query = ''
   let inputEl
-  let selectedIndex = -1
+  let selectedIndex = 0
 
   export let hotkeys = []
   export let filteredHotkeys = []
@@ -11,7 +11,8 @@
   function handleInput(e) {
     query = e.target.value
     dispatch('search', query)
-    selectedIndex = -1 // Reset selection when typing
+
+    selectedIndex = 0 // Reset selection when typing
   }
 
   function selectItem(index) {
@@ -80,6 +81,7 @@
           on:keydown={() => {}}
           role="option"
           aria-selected={selectedIndex === index}
+          tabindex="0"
         >
           <div class="font-semibold text-gray-900">{item.hotkey}</div>
           <div class="text-sm text-gray-600">{item.description}</div>
