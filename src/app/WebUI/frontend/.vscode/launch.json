@@ -2,6 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Attach to WebView2 (port 9222)",
+      "type": "msedge",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/*": "${workspaceFolder}/*"
+      },
+      "preLaunchTask": "npm: dev"
+    },
+    {
       "name": "Debug Svelte (Chrome)",
       "type": "chrome",
       "request": "launch",
@@ -17,17 +29,6 @@
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}/src",
-      "sourceMaps": true,
-      "sourceMapPathOverrides": {
-        "/*": "${workspaceFolder}/*"
-      }
-    },
-    {
-      "name": "Attach to WebView2 (port 9222)",
-      "type": "msedge",
-      "request": "attach",
-      "port": 9222,
       "webRoot": "${workspaceFolder}/src",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
