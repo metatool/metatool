@@ -297,7 +297,7 @@ public class KeyStateTree
                 var execute = keyCommand.Execute;
 
                 var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
-                logger.LogInformation($"\tExecutedCommandId:{keyCommand.Id}, Des:{keyCommand.Description}, {(isAsync ? "Async" : "")}");
+                logger.LogInformation($"\tExecutedCommand:'{keyCommand.Description}',{(isAsync ? "Async," : "")} (tree:{treeName}, KeyPath:{candidateNode.KeyPath})"); // id:{keyCommand.Id}
                 try
                 {
                     execute?.Invoke(args);

@@ -248,7 +248,7 @@ public partial class Keyboard : IKeyboard
             holding = false;
             keyDownEvent = null;
             holdingTimer.Reset();
-            Console.WriteLine("MapOnHitOrAllUp-Reset");
+            //Console.WriteLine("MapOnHitOrAllUp-Reset");
         }
 
         void KeyUpAsyncCall(IKeyEventArgs e)

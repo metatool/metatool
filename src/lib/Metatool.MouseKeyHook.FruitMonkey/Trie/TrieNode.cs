@@ -41,7 +41,7 @@ public partial class TrieNode<TKey, TFruit>(TKey key, TrieNode<TKey, TFruit>? _p
         var k = Key == null ? // || Parent == null too
             "Root" :
             KeyPath.PathString();
-        return $"{{Key:{k}; {ValuesDescriptions}}}";
+        return $"{{KeyPath:{k}; {ValuesDescriptions}}}";
     }
 
     internal void Clear()

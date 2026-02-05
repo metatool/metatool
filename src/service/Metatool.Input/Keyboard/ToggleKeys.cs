@@ -60,7 +60,7 @@ public class ToggleKey : IToggleKey
 
 				// prevent system to toggle it
 				e.Handled = true;
-			}, e => !e.IsVirtual, description);
+			}, e => !e.IsVirtual, description, stateTree:KeyStateTrees.Map);
 
 		if (_keyCommandUpActionToken == null)
 			_keyCommandUpActionToken = _key.OnUp(e =>
@@ -82,7 +82,7 @@ public class ToggleKey : IToggleKey
 				}
 
 				e.Handled = true;
-			}, e => !e.IsVirtual, description);
+			}, e => !e.IsVirtual, description, stateTree:KeyStateTrees.Map);
 	}
 
 	void RemoveHook()
