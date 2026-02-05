@@ -7,162 +7,167 @@ namespace Metatool.Input.MouseKeyHook.Implementation;
 
 internal abstract class EventFacade : IKeyboardMouseEvents
 {
-	private KeyListener m_KeyListenerCache;
-	private MouseListener m_MouseListenerCache;
+	private KeyListener _keyListener;
+	private MouseListener _mouseListener;
 
 	public event KeyEventHandler KeyDown
 	{
-		add => GetKeyListener().KeyDown += value;
-		remove => GetKeyListener().KeyDown -= value;
+		add => KeyListener.KeyDown += value;
+		remove => KeyListener.KeyDown -= value;
 	}
 	public bool HandleVirtualKey
 	{
-		get => GetKeyListener().HandleVirtualKey;
-		set => GetKeyListener().HandleVirtualKey = value;
+		get => KeyListener.HandleVirtualKey;
+		set => KeyListener.HandleVirtualKey = value;
 	}
 
 	public event KeyPressEventHandler KeyPress
 	{
-		add => GetKeyListener().KeyPress += value;
-		remove => GetKeyListener().KeyPress -= value;
+		add => KeyListener.KeyPress += value;
+		remove => KeyListener.KeyPress -= value;
 	}
 
 	public event KeyEventHandler KeyUp
 	{
-		add => GetKeyListener().KeyUp += value;
-		remove => GetKeyListener().KeyUp -= value;
+		add => KeyListener.KeyUp += value;
+		remove => KeyListener.KeyUp -= value;
 	}
 
 	public event MouseEventHandler MouseMove
 	{
-		add => GetMouseListener().MouseMove += value;
-		remove => GetMouseListener().MouseMove -= value;
+		add => MouseListener.MouseMove += value;
+		remove => MouseListener.MouseMove -= value;
 	}
 
 	public event EventHandler<MouseEventExtArgs> MouseMoveExt
 	{
-		add => GetMouseListener().MouseMoveExt += value;
-		remove => GetMouseListener().MouseMoveExt -= value;
+		add => MouseListener.MouseMoveExt += value;
+		remove => MouseListener.MouseMoveExt -= value;
 	}
 
 	public event MouseEventHandler MouseClick
 	{
-		add => GetMouseListener().MouseClick += value;
-		remove => GetMouseListener().MouseClick -= value;
+		add => MouseListener.MouseClick += value;
+		remove => MouseListener.MouseClick -= value;
 	}
 
 	public event MouseEventHandler MouseDown
 	{
-		add => GetMouseListener().MouseDown += value;
-		remove => GetMouseListener().MouseDown -= value;
+		add => MouseListener.MouseDown += value;
+		remove => MouseListener.MouseDown -= value;
 	}
 
 	public event EventHandler<MouseEventExtArgs> MouseDownExt
 	{
-		add => GetMouseListener().MouseDownExt += value;
-		remove => GetMouseListener().MouseDownExt -= value;
+		add => MouseListener.MouseDownExt += value;
+		remove => MouseListener.MouseDownExt -= value;
 	}
 
 	public event MouseEventHandler MouseUp
 	{
-		add => GetMouseListener().MouseUp += value;
-		remove => GetMouseListener().MouseUp -= value;
+		add => MouseListener.MouseUp += value;
+		remove => MouseListener.MouseUp -= value;
 	}
 
 	public event EventHandler<MouseEventExtArgs> MouseUpExt
 	{
-		add => GetMouseListener().MouseUpExt += value;
-		remove => GetMouseListener().MouseUpExt -= value;
+		add => MouseListener.MouseUpExt += value;
+		remove => MouseListener.MouseUpExt -= value;
 	}
 
 	public event MouseEventHandler MouseWheel
 	{
-		add => GetMouseListener().MouseWheel += value;
-		remove => GetMouseListener().MouseWheel -= value;
+		add => MouseListener.MouseWheel += value;
+		remove => MouseListener.MouseWheel -= value;
 	}
 
 	public event EventHandler<MouseEventExtArgs> MouseWheelExt
 	{
-		add => GetMouseListener().MouseWheelExt += value;
-		remove => GetMouseListener().MouseWheelExt -= value;
+		add => MouseListener.MouseWheelExt += value;
+		remove => MouseListener.MouseWheelExt -= value;
 	}
 
 	public event MouseEventHandler MouseDoubleClick
 	{
-		add => GetMouseListener().MouseDoubleClick += value;
-		remove => GetMouseListener().MouseDoubleClick -= value;
+		add => MouseListener.MouseDoubleClick += value;
+		remove => MouseListener.MouseDoubleClick -= value;
 	}
 
 	public event MouseEventHandler MouseDragStarted
 	{
-		add => GetMouseListener().MouseDragStarted += value;
-		remove => GetMouseListener().MouseDragStarted -= value;
+		add => MouseListener.MouseDragStarted += value;
+		remove => MouseListener.MouseDragStarted -= value;
 	}
 
 	public event EventHandler<MouseEventExtArgs> MouseDragStartedExt
 	{
-		add => GetMouseListener().MouseDragStartedExt += value;
-		remove => GetMouseListener().MouseDragStartedExt -= value;
+		add => MouseListener.MouseDragStartedExt += value;
+		remove => MouseListener.MouseDragStartedExt -= value;
 	}
 
 	public event MouseEventHandler MouseDragFinished
 	{
-		add => GetMouseListener().MouseDragFinished += value;
-		remove => GetMouseListener().MouseDragFinished -= value;
+		add => MouseListener.MouseDragFinished += value;
+		remove => MouseListener.MouseDragFinished -= value;
 	}
 
 	public event EventHandler<MouseEventExtArgs> MouseDragFinishedExt
 	{
-		add => GetMouseListener().MouseDragFinishedExt += value;
-		remove => GetMouseListener().MouseDragFinishedExt -= value;
+		add => MouseListener.MouseDragFinishedExt += value;
+		remove => MouseListener.MouseDragFinishedExt -= value;
 	}
 
 	public bool Disable
 	{
-		get => GetMouseListener().Disable && GetKeyListener().Disable;
+		get => MouseListener.Disable && KeyListener.Disable;
 		set
 		{
-			GetMouseListener().Disable = value;
-			GetKeyListener().Disable = value;
+			MouseListener.Disable = value;
+			KeyListener.Disable = value;
 		}
 	}
 
 	public bool DisableDownEvent
 	{
-		get => GetKeyListener().DisableDownEvent;
-		set => GetKeyListener().DisableDownEvent = value;
+		get => KeyListener.DisableDownEvent;
+		set => KeyListener.DisableDownEvent = value;
 	}
 	public bool DisableUpEvent
 	{
-		get => GetKeyListener().DisableUpEvent;
-		set => GetKeyListener().DisableUpEvent = value;
+		get => KeyListener.DisableUpEvent;
+		set => KeyListener.DisableUpEvent = value;
 	}
 	public bool DisablePressEvent
 	{
-		get => GetKeyListener().DisablePressEvent;
-		set => GetKeyListener().DisablePressEvent = value;
+		get => KeyListener.DisablePressEvent;
+		set => KeyListener.DisablePressEvent = value;
 	}
 	public void Dispose()
 	{
-		if (m_MouseListenerCache != null) m_MouseListenerCache.Dispose();
-		if (m_KeyListenerCache != null) m_KeyListenerCache.Dispose();
+		if (_mouseListener != null) _mouseListener.Dispose();
+		if (_keyListener != null) _keyListener.Dispose();
 	}
 
-	private KeyListener GetKeyListener()
+	private KeyListener KeyListener
 	{
-		if (m_KeyListenerCache != null)
-			return m_KeyListenerCache;
-		m_KeyListenerCache = CreateKeyListener();
-		return m_KeyListenerCache;
+		get {
+			if (_keyListener != null)
+				return _keyListener;
+			_keyListener = CreateKeyListener();
+			return _keyListener;
+		}
 	}
 
-	private MouseListener GetMouseListener()
+	private MouseListener MouseListener
 	{
-		if (m_MouseListenerCache != null)
-			return m_MouseListenerCache;
-		m_MouseListenerCache = CreateMouseListener();
-		return m_MouseListenerCache;
-	}
+        get
+        {
+            if (_mouseListener != null)
+                return _mouseListener;
+            _mouseListener = CreateMouseListener();
+            return _mouseListener;
+        }
+    }
 
 	protected abstract MouseListener CreateMouseListener();
 	protected abstract KeyListener CreateKeyListener();
