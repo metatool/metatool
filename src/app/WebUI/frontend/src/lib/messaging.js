@@ -25,7 +25,7 @@ export function sendMessage(data) {
  */
 export function initMessageListeners(onShowSearch) {
   // WebView2 specific listener
-  const webviewHandler = (event) => {
+  const webviewMsgHandler = (event) => {
     const data = event.data;
     console.log('Message from backend:', data);
 
@@ -37,7 +37,7 @@ export function initMessageListeners(onShowSearch) {
 
   // Attach listener
   if (window.chrome && window.chrome.webview) {
-    window.chrome.webview.addEventListener('message', webviewHandler);
+    window.chrome.webview.addEventListener('message', webviewMsgHandler);
     console.log('WebView2 message listener initialized');
   } else {
     console.warn('WebView2 API not available - running in non-WebView2 environment');
@@ -46,7 +46,7 @@ export function initMessageListeners(onShowSearch) {
   // Return cleanup function
   return () => {
     if (window.chrome && window.chrome.webview) {
-      window.chrome.webview.removeEventListener('message', webviewHandler);
+      window.chrome.webview.removeEventListener('message', webviewMsgHandler);
     }
   };
 }
