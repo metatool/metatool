@@ -23,10 +23,11 @@
     }
   }
 
-  function handleSelection(selectedItem) {
+  function handleSelection(selectedItem, index) {
     console.log('Selected item:', selectedItem)
     sendMessage({
       type: 'hotkeySelected',
+      index,
       hotkey: selectedItem.hotkey,
       description: selectedItem.description
     })

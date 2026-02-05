@@ -1,59 +1,59 @@
 <script>
-  import { onMount } from 'svelte'
-  let query = ''
-  let inputEl
-  let selectedIndex = 0
+  import { onMount } from "svelte";
+  let query = "";
+  let inputEl;
+  let selectedIndex = 0;
 
-  export let hotkeys = []
-  export let filteredHotkeys = []
-  export let onSearch = (query) => {}
-  export let onSelection = (item) => {}
-  export let onClose = () => {}
+  export let hotkeys = [];
+  export let filteredHotkeys = [];
+  export let onSearch = (query) => {};
+  export let onSelection = (item, index) => {};
+  export let onClose = () => {};
 
   function handleInput(e) {
-    query = e.target.value
-    onSearch(query)
+    query = e.target.value;
+    onSearch(query);
 
-    selectedIndex = 0 // Reset selection when typing
+    selectedIndex = 0; // Reset selection when typing
   }
 
   function selectItem(index) {
-    selectedIndex = index
+    selectedIndex = index;
   }
 
   function submitSelection() {
     if (selectedIndex >= 0 && filteredHotkeys[selectedIndex]) {
-      const item = filteredHotkeys[selectedIndex]
-      onSelection(item)
-      query = ''
-      selectedIndex = 0
+      const item = filteredHotkeys[selectedIndex];
+      onSelection(item, selectedIndex);
+      query = "";
+      selectedIndex = 0;
     }
   }
 
   function onKey(e) {
-    if (e.key === 'Escape') {
-      onClose()
-    } else if (e.key === 'Enter') {
-      submitSelection()
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      selectedIndex = Math.min(selectedIndex + 1, filteredHotkeys.length - 1)
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      selectedIndex = Math.max(selectedIndex - 1, -1)
+    if (e.key === "Escape") {
+      onClose();
+    } else if (e.key === "Enter") {
+      submitSelection();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, filteredHotkeys.length - 1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, -1);
     }
   }
 
   function focusHandler() {
-    if (inputEl) inputEl.focus()
+    if (inputEl) inputEl.focus();
   }
 
   onMount(() => {
-    const listener = () => focusHandler()
-    document.addEventListener('focus-search', listener)
-    setTimeout(focusHandler, 30)
-    return () => document.removeEventListener('focus-search', listener)
-  })
+    const listener = () => focusHandler();
+    document.addEventListener("focus-search", listener);
+    setTimeout(focusHandler, 30);
+    return () => document.removeEventListener("focus-search", listener);
+  });
 </script>
 
 <div class="bg-white rounded-lg shadow-lg p-4 max-w-2xl mx-auto">
@@ -78,8 +78,8 @@
           class:bg-indigo-100={selectedIndex === index}
           class:hover:bg-gray-50={selectedIndex !== index}
           on:click={() => {
-            selectedIndex = index
-            submitSelection()
+            selectedIndex = index;
+            submitSelection();
           }}
           on:keydown={() => {}}
           role="option"
