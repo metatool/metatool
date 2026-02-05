@@ -50,7 +50,8 @@ namespace Metatool.WebViewHost
             try
             {
                 using var doc = JsonDocument.Parse(json);
-                if (doc.RootElement.TryGetProperty("type", out var t))
+                var msg = doc.RootElement;
+                if (msg.TryGetProperty("type", out var t))
                 {
                     var type = t.GetString();
                     if (type == "close")
@@ -59,7 +60,7 @@ namespace Metatool.WebViewHost
                     }
                     else if (type == "searchPerformed")
                     {
-                        var query = doc.RootElement.GetProperty("query").GetString();
+                        var query = msg.GetProperty("query").GetString();
 
                     }
                 }
