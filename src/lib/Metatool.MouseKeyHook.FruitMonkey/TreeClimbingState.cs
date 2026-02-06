@@ -16,6 +16,7 @@ public enum TreeClimbingState
 
     /// <summary>
     /// current tree is done, reprocess this event on the root of trees, and the tree is at root: event reschedule(include the current event), state reset from path node to root
+    /// vs Landing, current tree will process this even again too.
     /// </summary>
     LandingAndClimbing,
 

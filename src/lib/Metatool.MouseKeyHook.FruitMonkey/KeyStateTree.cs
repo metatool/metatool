@@ -119,13 +119,13 @@ public class KeyStateTree
     internal TreeClimbingState? TrySelectChildNode(IKeyEventArgs args, ref TrieNode<ICombination, KeyEventCommand>? candidateNode)
     {
         _stateResetter.Pulse();
-        // to handle A+B+C(B is currently down in Chord)eventType == KeyEventType.Down && args.KeyCode == KeyCodes.RShiftKey
+        // to handle A+B+C(B is currently down in Chord)eventType == KeyEventType.Down && args.KeyCode == KeyCodes.RShiftKey/
+        // for all children, if any is downInChord, we mark the state to continue
         var downInChord = false;
         ICombination? candidateKey = null;
 
         foreach (var childKey in _trie.CurrentNode.Children.Keys)
         {
-            downInChord = false; // reset for every child
             if (_disabledChords.Contains(childKey.Chord))
                 continue;
 
@@ -318,6 +318,7 @@ public class KeyStateTree
 
     private TreeClimbingState GotoCandidate(IKeyEventArgs args, TrieNode<ICombination, KeyEventCommand> candidateNode, KeyEventType eventType)
     {
+        
         if (args.PathToGo != null && !args.PathToGo.SequenceEqual(candidateNode.KeyPath)) // goto state by requiring
         {
             if (!_trie.TryGoTo(args.PathToGo.ToList(), out var state))
@@ -329,7 +330,7 @@ public class KeyStateTree
             return ClimbingState = TreeClimbingState.Continue;
         }
 
-        switch (eventType)
+         switch (eventType)
         {
             case KeyEventType.Down:
                 return ClimbingState = TreeClimbingState.Continue;
