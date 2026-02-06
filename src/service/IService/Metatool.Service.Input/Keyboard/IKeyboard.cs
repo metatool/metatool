@@ -7,7 +7,7 @@ using Metatool.Service.MouseKey;
 namespace Metatool.Service;
 
 public interface IKeyboard : IKeyboardVirtual
-{
+{void ShowTip();
 	static IKeyboard _keyboard;
 	public static IKeyboard Inst =>
 	_keyboard ??= Services.Get<IKeyboard>();

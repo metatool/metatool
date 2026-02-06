@@ -9,6 +9,7 @@ namespace Metatool.Input;
 
 public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
 {
+    // for sequence keys: A,B (B is a child of A)
     List<SelectionResult> _selectedResults = new();
     private readonly Forest _forest = new(notify, logger);
     public IForest Forest => _forest;

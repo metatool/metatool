@@ -103,9 +103,6 @@ public class ToggleKey : IToggleKey
 			case ToggleKeyState.AlwaysOff:
 				_isAlwaysOn = true;
 				_confirmAlwaysOnOffSate = true;
-				// Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
-				// 		InputSimu.Inst.Keyboard.KeyPress((KeyCodes)(KeyCodes)_key)
-				//	));
 				IKeyboard.Inst.Send(() => IKeyboard.Inst.Type(_key));
 				break;
 			case ToggleKeyState.On:
@@ -127,9 +124,6 @@ public class ToggleKey : IToggleKey
 			case ToggleKeyState.AlwaysOn:
 				_confirmAlwaysOnOffSate = true;
 				_isAlwaysOn = false;
-				// Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, (Action)(() =>
-				// 		InputSimu.Inst.Keyboard.KeyPress((KeyCodes)(KeyCodes)_key)
-				// 	));
 				IKeyboard.Inst.Send(() => IKeyboard.Inst.Type(_key));
 
 				break;
