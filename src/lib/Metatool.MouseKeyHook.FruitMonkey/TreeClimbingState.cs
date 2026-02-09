@@ -18,13 +18,13 @@ public enum TreeClimbingState
     /// current tree is done, reprocess this event on the root of trees, and the tree is at root: event reschedule(include the current event), state reset from path node to root
     /// vs Landing, current tree will process this even again too.
     /// </summary>
-    LandingAndClimbing,
+    LandingAndReclimbingAll,
 
     /// <summary>
     /// current tree is done, could not process the event, try to process this event with other trees at root. this event is dropped(exclude this event) for processing on current tree,
     /// reschedule next event, state reset
     /// </summary>
-    Landing,
+    LandingAndReclimbingOthers,
 
     /// <summary>
     /// current tree is done, stop further process for this event on any further tree: event consumed, state unknown

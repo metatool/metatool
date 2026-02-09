@@ -28,7 +28,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
         {
             Debug.Assert(stateTree.IsOnRoot);
 
-            if (stateTree.ClimbingState == TreeClimbingState.Landing)
+            if (stateTree.ClimbingState == TreeClimbingState.LandingAndReclimbingOthers)
                 continue;
 
             TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
@@ -45,6 +45,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 selectionResults.Clear();
                 selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
             }
+            // note: may select several trees(hotkey with no chords). i.e. Caps to select ChoreMap and Map
         }
 
         if (selectionResults.Count > 0)
@@ -71,13 +72,13 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
             }
             else
             {
-                logger.LogInformation($"NoTreeSelection, trees:\n`{string.Join('\n',_selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.SelectedNode}}}"))} ");
+                logger.LogInformation($"NoTreeSelection, trees:\n{string.Join('\n',_selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.SelectedNode}}}"))} ");
             }
 
             var hasSelectedNodes = _selectedResults.Count > 0;
             if (!hasSelectedNodes) goto @return;
 
-            var selectionsToRemove = new List<int>();
+            var selectionsToRemove = new List<SelectionResult>();
 
             for (int i = 0; i < _selectedResults.Count; i++)
             {
@@ -102,14 +103,14 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 }
                 else if (treeState == TreeClimbingState.Done)
                 {
-                    selectionsToRemove.Add(i);
+                    selectionsToRemove.Add(selectionResult);
                 }
                 else if (treeState == TreeClimbingState.NoFurtherProcess)
                 {
-                    selectionsToRemove.Add(i);
+                    selectionsToRemove.Add(selectionResult);
                     goto @return;
                 }
-                else if (treeState == TreeClimbingState.LandingAndClimbing || treeState == TreeClimbingState.Landing)
+                else if (treeState == TreeClimbingState.LandingAndReclimbingAll || treeState == TreeClimbingState.LandingAndReclimbingOthers)
                 {
                     _selectedResults.Remove(selectionResult);
                     reprocess = true;
@@ -118,9 +119,8 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                selectionsToRemove.ForEach(s => _selectedResults.RemoveAt(s));
-
             }
+            selectionsToRemove.ForEach(s => _selectedResults.Remove(s));
         } while (_selectedResults.Count == 0 && /*no TreeClimbingState.Continue*/
                  reprocess /*Landing or LandingAndClimbing*/);
 

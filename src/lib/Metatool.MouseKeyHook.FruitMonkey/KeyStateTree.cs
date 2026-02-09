@@ -53,7 +53,7 @@ public class KeyStateTree
 
     internal void MarkDoneIfLanding()
     {
-        if (ClimbingState == TreeClimbingState.Landing)
+        if (ClimbingState == TreeClimbingState.LandingAndReclimbingOthers)
         {
             ClimbingState = TreeClimbingState.Done;
             //_logger.LogInformation($"Tree:{Name} State: Landing to Done");
@@ -185,11 +185,11 @@ public class KeyStateTree
             if (_trie.IsOnRoot) // no child found and current node is root
             {
                 // AnyKeyNotInRoot_down: i.e. *+A_now_down is not registered in root
-                return ClimbingState = TreeClimbingState.Landing;
+                return ClimbingState = TreeClimbingState.LandingAndReclimbingOthers;
             }
             // on path, down of no trigger key, redo climbing
             Reset();
-            return ClimbingState = TreeClimbingState.LandingAndClimbing;
+            return ClimbingState = TreeClimbingState.LandingAndReclimbingAll;
         }
         // up event when no candidateNode
         //
@@ -215,7 +215,7 @@ public class KeyStateTree
             if (_trie.IsOnRoot)
             {
                 // AnyKeyNotRegisteredInRoot_down_or_up: *A_down *A_up is not registered in root
-                return ClimbingState = TreeClimbingState.Landing;
+                return ClimbingState = TreeClimbingState.LandingAndReclimbingOthers;
             }
 
             // on path, up
@@ -225,7 +225,7 @@ public class KeyStateTree
                 //   KeyInChord_up : A+B when A_up.
                 //   other keyUp: A+B and B map to C??
                 Reset();
-                return ClimbingState = TreeClimbingState.LandingAndClimbing; // Chord_up would be processed on root
+                return ClimbingState = TreeClimbingState.LandingAndReclimbingAll; // Chord_up would be processed on root
             }
 
             // HaveChild & KeyInChord_up: A+B, C when A_up continue wait C
@@ -236,7 +236,7 @@ public class KeyStateTree
 
             //HaveChild & KeyNotInChord_up: B+D, F when C_up.
             Reset();
-            return ClimbingState = TreeClimbingState.LandingAndClimbing;
+            return ClimbingState = TreeClimbingState.LandingAndReclimbingAll;
         }
     }
 
