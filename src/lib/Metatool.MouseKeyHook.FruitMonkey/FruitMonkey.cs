@@ -48,7 +48,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
         }
 
         if (selectionResults.Count > 0)
-            logger.LogInformation($"\tTreeSelected:\n\t{string.Join(",\n\t", selectionResults.Select(t => $"{t.Tree}"))}");
+            logger.LogInformation($"\tTreeSelected:\n\t{string.Join(",\n\t\t", selectionResults.Select(t => $"candidateNode:{t.CandidateNode}, tree:{t.Tree}"))}");
 
         return selectionResults;
     }
@@ -71,7 +71,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
             }
             else
             {
-                logger.LogInformation($"\tNoTreeSelection, AlreadySelectedTrees:\n\t{string.Join("\n\t", _selectedResults.Select(t => $"{t.Tree}"))} ");
+                logger.LogInformation($"\tNoTreeSelection, AlreadySelectedTrees:\n\t{string.Join("\n\t\t", _selectedResults.Select(t => $"candidateNode:{t.CandidateNode}, tree:{t.Tree}"))} ");
             }
 
             var hasSelectedNodes = _selectedResults.Count > 0;
@@ -94,17 +94,17 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 }
 
                 var treeState = selectionResult.Tree.ClimbingState;
-                logger.LogInformation($"\tAfterClimbingTree:{selectionResult.Tree}");
+                logger.LogInformation($"\tAfterExecutionAndClimbingTree:{selectionResult.Tree}");
                 switch (treeState)
                 {
-                    case TreeClimbingState.Continue_ChordUp_WaitForTriggerOrOtherChordUp:
                     case TreeClimbingState.Continue_ChordDown_WaitForTrigger:
                     case TreeClimbingState.Continue_TriggerDown_WaitForUp:
+                    case TreeClimbingState.Continue_ChordUp_WaitForTriggerOrOtherChordUp:
+                    case TreeClimbingState.Continue_ChordUp_TriggerAlreadyUp_WaitForChildKeys:
                     case TreeClimbingState.Continue_TriggerUp_WaitForChordUpForAllUp:
                     case TreeClimbingState.Continue_TriggerUp_WaitForChildKeys:
                     case TreeClimbingState.Continue_AllUp_WaitForChildKeys:
                     case TreeClimbingState.Continue_AfterGoToPath:
-                    case TreeClimbingState.Continue_ChordUp_TriggerAlreadyUp_WaitForChildKeys:
                         // continue on this tree
                         break;
                     case TreeClimbingState.Done:
@@ -122,6 +122,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                         throw new ArgumentOutOfRangeException();
                 }
             }
+
             selectionsToRemove.ForEach(s => _selectedResults.Remove(s));
         } while (_selectedResults.Count == 0 && /*no TreeClimbingState.Continue*/
                  reprocess /*Landing or LandingAndClimbing*/);

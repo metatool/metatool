@@ -9,7 +9,8 @@ public partial class Keyboard
 {
 	private readonly ILogger<Keyboard> _logger;
 	private readonly IConfig<MetatoolConfig> _config;
-	private static Keyboard _default;
+    private readonly IUiDispatcher _dispatcher;
+    private static Keyboard _default;
 
 	public static Keyboard Default =>
 		_default ??= Services.Get<IKeyboard, Keyboard>();
@@ -18,7 +19,8 @@ public partial class Keyboard
 	{
 		_logger = logger;
 		_config = config;
-		var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
+        _dispatcher = dispatcher;
+        var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
 		AddAliases(aliases);
 		Hook();
 		// workaround to use t0``he Keyboard Service itself via DI in initService
@@ -34,10 +36,12 @@ public partial class Keyboard
 		keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
 		resetTrigger.Description = "Reset keyboard state, clean up stuck keys";
         resetTrigger.Event = KeyEventType.Up;
-		resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
-	}
+        //resetTrigger?.OnEvent(_ => _dispatcher.Dispatch(ReleaseDownKeys));
+        resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
 
-	public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
+    }
+
+    public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
 	{
 		foreach (var (key, strings) in hotStrings)
 		{
