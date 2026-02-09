@@ -33,6 +33,7 @@ public partial class Keyboard
 
 		keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
 		resetTrigger.Description = "Reset keyboard state, clean up stuck keys";
+        //resetTrigger.Event = KeyEventType.Up;
 		resetTrigger?.OnEvent(_ => ReleaseDownKeys());
 	}
 
@@ -66,7 +67,8 @@ public partial class Keyboard
 						if (!_hook.Contains(key, KeyStateTrees.ChordMap))
 						{
 							// add a mapping to make this common key work as a chord key: only trigger this key when 'hit'
-							MapOnHit(key.ToCombination(), key.ToCombination(), e => !e.IsVirtual, "MapOnHit on ChordMapTree", KeyStateTrees.ChordMap);
+                            var comb = key.ToCombination();
+                            MapOnHit(comb, comb, e => !e.IsVirtual, $"MapOnHit({key}->{key}) on ChordMapTree", KeyStateTrees.ChordMap);
 						}
 					}
 				}

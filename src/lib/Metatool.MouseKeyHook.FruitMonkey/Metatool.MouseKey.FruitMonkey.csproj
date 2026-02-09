@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Metatool.MouseKeyHook.FruitMonkey.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\service\IService\Metatool.Service.MouseKeyHook\Metatool.Service.MouseKey.csproj" />
   </ItemGroup>
 

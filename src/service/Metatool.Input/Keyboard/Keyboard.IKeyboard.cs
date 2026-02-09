@@ -255,23 +255,26 @@ public partial class Keyboard : IKeyboard
         {
             e.Handled = true;
             //e.BeginInvoke(() => Type(target));
-            Type(target);
-
+            Post(() => Type(target));
+            //Type(target);
         }
 
         bool KeyUpPredicate(IKeyEventArgs e)
         {
             if (e.IsVirtual)
             {
-                return false;
-            }
-            if (!holding)
-            {
-                _logger.LogInformation("\t/!MapOnHitOrAllUp-Predicate: Handling==false");
+                _logger.LogInformation($"\t/NOT execute MapOnHitOrAllUp, KeyUp({e.Key}): is virtual key");
+                Reset();
                 return false;
             }
 
-            holding = false;
+            if (!holding)
+            {
+                _logger.LogInformation($"\t/!MapOnHitOrAllUp-Predicate, KeyUp({e.Key}: holding==false");
+                Reset();
+                return false;
+            }
+
             if (keyDownEvent != e.LastKeyDownEvent)
             {
                 _logger.LogInformation(allUp

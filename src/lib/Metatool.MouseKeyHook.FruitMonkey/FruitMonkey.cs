@@ -26,7 +26,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
         //all on root, find current trees
         foreach (var stateTree in _forest.ForestGround.Values)
         {
-            //Debug.Assert(stateTree.IsOnRoot);
+            Debug.Assert(stateTree.IsOnRoot);
 
             if (stateTree.ClimbingState == TreeClimbingState.Landing)
                 continue;
@@ -55,82 +55,76 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
 
     public void ClimbTree(IKeyEventArgs args)
     {
-        // * if tree1 has A+B and tree2 has A,B, and we press A+B. A+B on tree1 would be processed, but A on tree2 would not be process as the next event is not A_up but B_down: state transit on up event
+        // * if tree1 has A+B and tree2 has A,B, and we press A+B, A+B on tree1 would be processed, but A on tree2 would not be process as the next event is not A_up but B_down.
         // * if tree1 has A and tree2 has A, both should be processed.
         // * the ground is the root of every tree, runs like all are in the same tree, but provide state jump for every tree
-        //bool reprocess;
-        //do
-        //{
-        //    reprocess = false;
-        //var onGround = false;
-
-        //if (_selectedResults.Count == 0)
-        //{
-        //    onGround = true;
-        _selectedResults = SelectTrees(args);
-        //}
-        //else
-        //{
-        //    logger.LogInformation($"NoTreeSelection, trees:{string.Join(',',_selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.SelectedNode.KeyPath}}}"))} ");
-        //}
-
-        var hasSelectedNodes = _selectedResults.Count > 0;
-        if (!hasSelectedNodes) goto @return;
-        List<SelectionResult> selections = [.. _selectedResults];
-
-        for (int i = 0; i < selections.Count; i++)
+        bool reprocess;
+        do
         {
-            var selectionResult = selections[i];
-            //if (!onGround)
-            //{
-            //    TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
-            //    var state = selectionResult.Tree.TrySelectChildNode(args, ref candidateNode);
-            //    _selectedResults[i] = selectionResult = new SelectionResult(selectionResult.Tree, candidateNode, state);
-            //}
+            reprocess = false;
+            var onGround = false;
 
-            var treeState = selectionResult.TreeState;
-            if (selectionResult.SelectedNode != null)
+            if (_selectedResults.Count == 0)
             {
-                treeState = selectionResult.Tree.Climb(args, selectionResult.SelectedNode);
+                onGround = true;
+                _selectedResults = SelectTrees(args);
+            }
+            else
+            {
+                logger.LogInformation($"NoTreeSelection, trees:{string.Join(',',_selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.SelectedNode.KeyPath}}}"))} ");
             }
 
-            logger.LogInformation($"\tTree:{selectionResult.Tree.Name},State:{treeState},NodePath:{selectionResult.Tree.CurrentNode.KeyPath}");
-            //if (treeState == TreeClimbingState.Continue)
-            //{
-            //    // continue on this tree
-            //}
-            //else if (treeState == TreeClimbingState.Done)
-            //{
-            //    _selectedResults.Remove(selectionResult);
-            //}
-            //else
-            if (treeState == TreeClimbingState.LandingAndClimbing)
-            {
-                TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
-                var state = selectionResult.Tree.TrySelectChildNode(args, ref candidateNode);
-                if (candidateNode == null)
-                    continue;
-                treeState = selectionResult.Tree.Climb(args, candidateNode);
-            }
-            if (treeState == TreeClimbingState.NoFurtherProcess)
-            {
-                _selectedResults.Remove(selectionResult);
-                goto @return;
-            }
-            //else if (treeState == TreeClimbingState.LandingAndClimbing || treeState == TreeClimbingState.Landing)
-            //{
-            //    _selectedResults.Remove(selectionResult);
-            //    //reprocess = true;
-            //}
-            //else
-            //{
-            //    throw new ArgumentOutOfRangeException();
-            //}
-        }
-        //} while (_selectedResults.Count == 0 && /*no TreeClimbingState.Continue*/
-        //         reprocess /*Landing or LandingAndClimbing*/);
+            var hasSelectedNodes = _selectedResults.Count > 0;
+            if (!hasSelectedNodes) goto @return;
 
-        @return:
+            var selectionsToRemove = new List<int>();
+
+            for (int i = 0; i < _selectedResults.Count; i++)
+            {
+                var selectionResult = _selectedResults[i];
+                if (!onGround)
+                {
+                    TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
+                    var state = selectionResult.Tree.TrySelectChildNode(args, ref candidateNode);
+                    _selectedResults[i] = selectionResult = new SelectionResult(selectionResult.Tree, candidateNode, state);
+                }
+
+                var treeState = selectionResult.TreeState;
+                if (selectionResult.SelectedNode != null)
+                {
+                    treeState = selectionResult.Tree.Climb(args, selectionResult.SelectedNode);
+                }
+
+                logger.LogInformation($"\tTree:{selectionResult.Tree.Name},State:{treeState},NodePath:{selectionResult.Tree.CurrentNode.KeyPath}");
+                if (treeState == TreeClimbingState.Continue)
+                {
+                    // continue on this tree
+                }
+                else if (treeState == TreeClimbingState.Done)
+                {
+                    selectionsToRemove.Add(i);
+                }
+                else if (treeState == TreeClimbingState.NoFurtherProcess)
+                {
+                    selectionsToRemove.Add(i);
+                    goto @return;
+                }
+                else if (treeState == TreeClimbingState.LandingAndClimbing || treeState == TreeClimbingState.Landing)
+                {
+                    selectionsToRemove.Add(i);
+                    reprocess = true;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                selectionsToRemove.ForEach(s => _selectedResults.RemoveAt(s));
+
+            }
+        } while (_selectedResults.Count == 0 && /*no TreeClimbingState.Continue*/
+                 reprocess /*Landing or LandingAndClimbing*/);
+
+    @return:
         foreach (var stateTree in _forest.ForestGround.Values)
             stateTree.MarkDoneIfLanding();
     }

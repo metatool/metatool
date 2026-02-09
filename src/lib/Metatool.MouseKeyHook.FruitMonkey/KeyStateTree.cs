@@ -257,7 +257,11 @@ public class KeyStateTree
         var eventType = args.KeyEventType;
         var handled = candidateNode.Key.TriggerKey.Handled;
         if ((eventType != KeyEventType.AllUp) && (eventType & handled) != 0)
+        {
             args.Handled = true; // even there is not action in list we still mark it as required,for all up
+            _logger.LogInformation($"\t{eventType} event marked as Handled, tree: {Name}, candidate: {candidateNode.KeyPath}");
+        }
+        //
 
         // matched
         /// execute actions of down/up/allUp
@@ -300,6 +304,7 @@ public class KeyStateTree
                 logger.LogInformation($"\tExecutedCommand:'{keyCommand.Description}',{(isAsync ? "Async," : "")} (tree:{treeName}, KeyPath:{candidateNode.KeyPath})"); // id:{keyCommand.Id}
                 try
                 {
+                    //if (args.KeyEventType == KeyEventType.Up) Debugger.Break();
                     execute?.Invoke(args);
                     if (args.NoFurtherProcess)
                     {
@@ -337,7 +342,7 @@ public class KeyStateTree
 
             case KeyEventType.Up:
                 // only navigate on up/AllUp event
-                _trie.CurrentNode = candidateNode;
+                 _trie.CurrentNode = candidateNode;
 
                 if (candidateNode.Children.Count == 0)
                 {
