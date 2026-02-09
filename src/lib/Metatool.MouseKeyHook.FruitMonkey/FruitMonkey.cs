@@ -28,7 +28,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
         {
             Debug.Assert(stateTree.IsOnRoot);
 
-            if (stateTree.ClimbingState == TreeClimbingState.LandingAndReclimbingOthers)
+            if (stateTree.ClimbingState == TreeClimbingState.LandingAndClimbOthers)
                 continue;
 
             TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
@@ -110,7 +110,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                     selectionsToRemove.Add(selectionResult);
                     goto @return;
                 }
-                else if (treeState == TreeClimbingState.LandingAndReclimbingAll || treeState == TreeClimbingState.LandingAndReclimbingOthers)
+                else if (treeState == TreeClimbingState.LandingAndClimbAll || treeState == TreeClimbingState.LandingAndClimbOthers)
                 {
                     _selectedResults.Remove(selectionResult);
                     reprocess = true;
