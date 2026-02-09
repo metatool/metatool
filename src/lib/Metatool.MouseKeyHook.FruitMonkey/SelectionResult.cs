@@ -7,6 +7,6 @@ namespace Metatool.Input;
 /// <summary>
 /// when selected node is null tree state is not null, and vice versa
 /// </summary>
-internal record SelectionResult(KeyStateTree Tree, TrieNode<ICombination, KeyEventCommand>? SelectedNode, TreeClimbingState? TreeState)
+internal record SelectionResult(KeyStateTree Tree, TrieNode<ICombination, KeyEventCommand>? CandidateNode)
 {
 }

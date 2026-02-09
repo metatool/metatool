@@ -31,25 +31,24 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
             if (stateTree.ClimbingState == TreeClimbingState.LandingAndClimbOthers)
                 continue;
 
-            TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
-            var state = stateTree.TrySelectChildNode(args, ref candidateNode);
+            var candidateNode = stateTree.TryFindChildNode(args);
             if (candidateNode == null)
                 continue;
 
-            selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
             if (selectionResults.Count == 0)
             {
+                selectionResults.Add(new SelectionResult(stateTree, candidateNode));
             }
-            else if (candidateNode.Key.ChordCount > selectionResults[0].SelectedNode!.Key.ChordCount)// both A+B+C and A+C matched, prefer A+B+C
+            else if (candidateNode.Key.ChordCount > selectionResults[0].CandidateNode!.Key.ChordCount)// both A+B+C and A+C matched, prefer A+B+C
             {
                 selectionResults.Clear();
-                selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
+                selectionResults.Add(new SelectionResult(stateTree, candidateNode));
             }
             // note: may select several trees(hotkey with no chords). i.e. Caps to select ChoreMap and Map
         }
 
         if (selectionResults.Count > 0)
-            logger.LogInformation($"TreeSelected:\n{string.Join(",\n", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{{{t.SelectedNode}}}}}"))}");
+            logger.LogInformation($"TreeSelected:\n{string.Join(",\n", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{{{t.CandidateNode}}}}}"))}");
 
         return selectionResults;
     }
@@ -72,7 +71,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
             }
             else
             {
-                logger.LogInformation($"NoTreeSelection, trees:\n{string.Join('\n',_selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.SelectedNode}}}"))} ");
+                logger.LogInformation($"NoTreeSelection, AlreadySelectedTrees:\n{string.Join('\n', _selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.CandidateNode}}}"))} ");
             }
 
             var hasSelectedNodes = _selectedResults.Count > 0;
@@ -85,18 +84,17 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 var selectionResult = _selectedResults[i];
                 if (!onGround)
                 {
-                    TrieNode<ICombination, KeyEventCommand>? candidateNode = null;
-                    var state = selectionResult.Tree.TrySelectChildNode(args, ref candidateNode);
-                    _selectedResults[i] = selectionResult = new SelectionResult(selectionResult.Tree, candidateNode, state);
+                    var candidateNode = selectionResult.Tree.TryFindChildNode(args);
+                    _selectedResults[i] = selectionResult = new SelectionResult(selectionResult.Tree, candidateNode);
                 }
 
-                var treeState = selectionResult.TreeState;
-                if (selectionResult.SelectedNode != null)
+                if (selectionResult.CandidateNode != null)
                 {
-                    treeState = selectionResult.Tree.Climb(args, selectionResult.SelectedNode);
+                    selectionResult.Tree.Climb(args, selectionResult.CandidateNode);
                 }
 
-                logger.LogInformation($"\tTree:{selectionResult.Tree.Name},State:{treeState},NodePath:{selectionResult.Tree.CurrentNode.KeyPath}");
+                var treeState = selectionResult.Tree.ClimbingState;
+                logger.LogInformation($"\tClimbedTree:{selectionResult.Tree}");
                 if (treeState == TreeClimbingState.Continue)
                 {
                     // continue on this tree

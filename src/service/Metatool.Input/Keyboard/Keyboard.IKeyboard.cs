@@ -291,7 +291,7 @@ public partial class Keyboard : IKeyboard
         {
             if (keyDownEvent != null && e.KeyCode != keyDownEvent.KeyCode)
             {
-                _logger.LogInformation($"MapOnHitOrAllUp: tree: {tree} key:'{e.KeyCode}' canceled because other key:{keyDownEvent.KeyCode} is down!");
+                _logger.LogInformation($"\tMapOnHitOrAllUp: tree: {tree} key:'{e.KeyCode}' canceled because other key:{keyDownEvent.KeyCode} is down!");
                 Reset();
             }
         };

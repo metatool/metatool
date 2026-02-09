@@ -9,8 +9,8 @@ public enum TreeClimbingState
 
     /// <summary>
     /// wait and continue handling next event on the current state of the tree: event consumed, current node not changed
-    /// another case: to waiting for up and All UP
     /// i.e. A+B+C, B is down, C is not typed; or A,B: A is typed, waiting B
+    /// i.e. another case: to waiting for up and All UP
     /// </summary>
     Continue,
 
