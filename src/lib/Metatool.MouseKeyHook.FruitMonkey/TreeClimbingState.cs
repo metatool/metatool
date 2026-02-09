@@ -12,8 +12,14 @@ public enum TreeClimbingState
     /// i.e. A+B+C, B is down, C is not typed; or A,B: A is typed, waiting B
     /// i.e. another case: to waiting for up and All UP
     /// </summary>
-    Continue,
-
+    Continue_ChordDown_WaitForTrigger,
+    Continue_TriggerDown_WaitForUp,
+    Continue_TriggerUp_WaitForChordUpForAllUp,
+    Continue_TriggerUp_WaitForChildKeys,
+    Continue_ChordUp_WaitForTriggerOrOtherChordUp,
+    Continue_ChordUp_TriggerAlreadyUp_WaitForChildKeys,
+    Continue_AllUp_WaitForChildKeys,
+    Continue_AfterGoToPath,
     /// <summary>
     /// current tree is done, reprocess this event on the root of trees, and the tree is at root: event reschedule(include the current event), state reset from path node to root
     /// vs Landing, current tree will process this even again too.

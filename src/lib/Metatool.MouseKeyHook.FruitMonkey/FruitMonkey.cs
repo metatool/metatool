@@ -48,7 +48,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
         }
 
         if (selectionResults.Count > 0)
-            logger.LogInformation($"TreeSelected:\n{string.Join(",\n", selectionResults.Select(t => $"{{tree:{t.Tree.Name},node:{{{t.CandidateNode}}}}}"))}");
+            logger.LogInformation($"\tTreeSelected:\n\t{string.Join(",\n\t", selectionResults.Select(t => $"{t.Tree}"))}");
 
         return selectionResults;
     }
@@ -71,7 +71,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
             }
             else
             {
-                logger.LogInformation($"NoTreeSelection, AlreadySelectedTrees:\n{string.Join('\n', _selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.CandidateNode}}}"))} ");
+                logger.LogInformation($"\tNoTreeSelection, AlreadySelectedTrees:\n\t{string.Join("\n\t", _selectedResults.Select(t => $"{t.Tree}"))} ");
             }
 
             var hasSelectedNodes = _selectedResults.Count > 0;
@@ -94,28 +94,32 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 }
 
                 var treeState = selectionResult.Tree.ClimbingState;
-                logger.LogInformation($"\tClimbedTree:{selectionResult.Tree}");
-                if (treeState == TreeClimbingState.Continue)
+                logger.LogInformation($"\tAfterClimbingTree:{selectionResult.Tree}");
+                switch (treeState)
                 {
-                    // continue on this tree
-                }
-                else if (treeState == TreeClimbingState.Done)
-                {
-                    selectionsToRemove.Add(selectionResult);
-                }
-                else if (treeState == TreeClimbingState.NoFurtherProcess)
-                {
-                    selectionsToRemove.Add(selectionResult);
-                    goto @return;
-                }
-                else if (treeState == TreeClimbingState.LandingAndClimbAll || treeState == TreeClimbingState.LandingAndClimbOthers)
-                {
-                    _selectedResults.Remove(selectionResult);
-                    reprocess = true;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException();
+                    case TreeClimbingState.Continue_ChordUp_WaitForTriggerOrOtherChordUp:
+                    case TreeClimbingState.Continue_ChordDown_WaitForTrigger:
+                    case TreeClimbingState.Continue_TriggerDown_WaitForUp:
+                    case TreeClimbingState.Continue_TriggerUp_WaitForChordUpForAllUp:
+                    case TreeClimbingState.Continue_TriggerUp_WaitForChildKeys:
+                    case TreeClimbingState.Continue_AllUp_WaitForChildKeys:
+                    case TreeClimbingState.Continue_AfterGoToPath:
+                    case TreeClimbingState.Continue_ChordUp_TriggerAlreadyUp_WaitForChildKeys:
+                        // continue on this tree
+                        break;
+                    case TreeClimbingState.Done:
+                        selectionsToRemove.Add(selectionResult);
+                        break;
+                    case TreeClimbingState.NoFurtherProcess:
+                        selectionsToRemove.Add(selectionResult);
+                        goto @return;
+                    case TreeClimbingState.LandingAndClimbAll:
+                    case TreeClimbingState.LandingAndClimbOthers:
+                        _selectedResults.Remove(selectionResult);
+                        reprocess = true;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
             selectionsToRemove.ForEach(s => _selectedResults.Remove(s));

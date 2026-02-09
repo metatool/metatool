@@ -33,7 +33,7 @@ public partial class Keyboard
 
 		keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
 		resetTrigger.Description = "Reset keyboard state, clean up stuck keys";
-        //resetTrigger.Event = KeyEventType.Up;
+        resetTrigger.Event = KeyEventType.Up;
 		resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
 	}
 

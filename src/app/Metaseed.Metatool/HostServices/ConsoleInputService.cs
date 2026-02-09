@@ -41,7 +41,7 @@ c: clear console;
 		{
 			case 'h': Reply(HelpInfo); break;
 			case 'c': Console.Clear(); break;
-			default: _logger.LogInformation("you typed:" + key.KeyChar); break;
+			default: _logger.LogInformation($"you typed option:{ key.KeyChar}" ); break;
 		}
 	}
 
