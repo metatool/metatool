@@ -264,17 +264,17 @@ public partial class Keyboard : IKeyboard
             if (e.IsVirtual)
             {
                 _logger.LogInformation($"\t/NOT execute MapOnHitOrAllUp, KeyUp({e.Key}): is virtual key");
-                Reset();
+                //Reset();
                 return false;
             }
 
             if (!holding)
             {
                 _logger.LogInformation($"\t/!MapOnHitOrAllUp-Predicate, KeyUp({e.Key}: holding==false");
-                Reset();
+                //Reset();
                 return false;
             }
-
+            holding = false;
             if (keyDownEvent != e.LastKeyDownEvent)
             {
                 _logger.LogInformation(allUp
@@ -291,7 +291,7 @@ public partial class Keyboard : IKeyboard
         {
             if (keyDownEvent != null && e.KeyCode != keyDownEvent.KeyCode)
             {
-                _logger.LogInformation($"MapOnHitOrAllUp: key:'{e.KeyCode}' canceled because other key:{keyDownEvent.KeyCode} is down!");
+                _logger.LogInformation($"MapOnHitOrAllUp: tree: {tree} key:'{e.KeyCode}' canceled because other key:{keyDownEvent.KeyCode} is down!");
                 Reset();
             }
         };

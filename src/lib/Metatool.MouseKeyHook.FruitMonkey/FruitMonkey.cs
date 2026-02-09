@@ -37,14 +37,14 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 continue;
 
             selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
-            // if (selectionResults.Count == 0)
-            // {
-            // }
-            // else if (candidateNode.Key.ChordCount > selectionResults[0].SelectedNode!.Key.ChordCount)// both A+B+C and A+C matched, prefer A+B+C
-            // {
-            //     selectionResults.Clear();
-            //     selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
-            // }
+            if (selectionResults.Count == 0)
+            {
+            }
+            else if (candidateNode.Key.ChordCount > selectionResults[0].SelectedNode!.Key.ChordCount)// both A+B+C and A+C matched, prefer A+B+C
+            {
+                selectionResults.Clear();
+                selectionResults.Add(new SelectionResult(stateTree, candidateNode, state));
+            }
         }
 
         if (selectionResults.Count > 0)
@@ -71,7 +71,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
             }
             else
             {
-                logger.LogInformation($"NoTreeSelection, trees:{string.Join(',',_selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.SelectedNode.KeyPath}}}"))} ");
+                logger.LogInformation($"NoTreeSelection, trees:\n`{string.Join('\n',_selectedResults.Select(t => $"{{{t.Tree.Name},nodePath:{t.SelectedNode}}}"))} ");
             }
 
             var hasSelectedNodes = _selectedResults.Count > 0;
@@ -111,7 +111,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                 }
                 else if (treeState == TreeClimbingState.LandingAndClimbing || treeState == TreeClimbingState.Landing)
                 {
-                    selectionsToRemove.Add(i);
+                    _selectedResults.Remove(selectionResult);
                     reprocess = true;
                 }
                 else

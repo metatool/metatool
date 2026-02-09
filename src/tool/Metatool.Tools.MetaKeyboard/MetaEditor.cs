@@ -23,8 +23,8 @@ namespace Metatool.Tools.MetaKeyboard
                 keyboard.Type(Down, Home, BS, Space, Left);
             });
 
-            // open line below 
-            // bug: in vscode, ctrl+alt+enter to replace all have problem to trigger, 
+            // open line below
+            // bug: in vscode, ctrl+alt+enter to replace all have problem to trigger,
             (Ctrl + Enter).Handled(KeyEventType.All).OnHit(e =>
             {
                 new List<Key> {LCtrl, RCtrl}.ForEach(k =>

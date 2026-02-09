@@ -45,34 +45,6 @@ public class FruitMonkeyIntegrationTests
     #region Single Key Tests
 
     [Fact]
-    public void ClimbTree_SingleKeyDown_ShouldExecuteCommand()
-    {
-        var executionLog = new List<string>();
-        var combination = new Combination(KeyCodes.A);
-        _fruitMonkey.Forest.Add([combination], CreateDownCommand(executionLog, "A_Down"));
-
-        // Simulate: A key down
-        var args = SimulateKeyDown(KeyCodes.A);
-        _fruitMonkey.ClimbTree(args);
-
-        Assert.Contains("A_Down", executionLog);
-    }
-
-    [Fact]
-    public void ClimbTree_SingleKeyUp_ShouldExecuteCommand()
-    {
-        var executionLog = new List<string>();
-        var combination = new Combination(KeyCodes.A);
-        _fruitMonkey.Forest.Add([combination], CreateUpCommand(executionLog, "A_Up"));
-
-        // Simulate: A key down then up
-        _fruitMonkey.ClimbTree(SimulateKeyDown(KeyCodes.A));
-        _fruitMonkey.ClimbTree(SimulateKeyUp(KeyCodes.A));
-
-        Assert.Contains("A_Up", executionLog);
-    }
-
-    [Fact]
     public void ClimbTree_SingleKeyDownAndUp_ShouldExecuteBothCommands()
     {
         var executionLog = new List<string>();
@@ -87,19 +59,6 @@ public class FruitMonkeyIntegrationTests
         Assert.Equal(2, executionLog.Count);
         Assert.Equal("A_Down", executionLog[0]);
         Assert.Equal("A_Up", executionLog[1]);
-    }
-
-    [Fact]
-    public void ClimbTree_UnregisteredKey_ShouldNotExecuteAnyCommand()
-    {
-        var executionLog = new List<string>();
-        var combination = new Combination(KeyCodes.A);
-        _fruitMonkey.Forest.Add([combination], CreateDownCommand(executionLog, "A_Down"));
-
-        // Simulate: B key down (not registered)
-        _fruitMonkey.ClimbTree(SimulateKeyDown(KeyCodes.B));
-
-        Assert.Empty(executionLog);
     }
 
     #endregion

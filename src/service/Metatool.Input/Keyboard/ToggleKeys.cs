@@ -70,7 +70,7 @@ public class ToggleKey : IToggleKey
 
 				if (handleViaSystem)
 				{
-					handleViaSystem = false;
+					handleViaSystem = fa`lse;
 					// e.handled is not set to true, so will trigger system logic
 					return;
 				}

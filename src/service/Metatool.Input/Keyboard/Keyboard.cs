@@ -21,7 +21,7 @@ public partial class Keyboard
 		var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
 		AddAliases(aliases);
 		Hook();
-		// workaround to use the Keyboard Service itself via DI in initService
+		// workaround to use t0``he Keyboard Service itself via DI in initService
 		Task.Run(() => InitService(config));
 	}
 
@@ -34,7 +34,7 @@ public partial class Keyboard
 		keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
 		resetTrigger.Description = "Reset keyboard state, clean up stuck keys";
         //resetTrigger.Event = KeyEventType.Up;
-		resetTrigger?.OnEvent(_ => ReleaseDownKeys());
+		resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
 	}
 
 	public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
