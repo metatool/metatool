@@ -1,9 +1,17 @@
 {
   "permissions": {
+    "_note": "Use 'Bash(*)' to allow all bash commands",
     "allow": [
+      "Bash(pwsh:*)",
+      "Bash(powershell:*)",
       "Bash(dotnet build:*)",
       "Bash(dotnet test:*)",
-      "Bash(dir /b \"m:\\\\Workspace\\\\metatool\\\\src\\\\lib\\\\Metatool.MouseKeyHook.FruitMonkey.Tests\\\\*.cs\")"
+      "Bash(dir:*)",
+      "Bash(npm:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

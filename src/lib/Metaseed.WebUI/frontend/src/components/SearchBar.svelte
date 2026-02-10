@@ -6,6 +6,8 @@
 
   export let hotkeys = [];
   export let filteredHotkeys = [];
+
+  // $: console.log('SearchBar received filteredHotkeys:', filteredHotkeys, 'length:', filteredHotkeys?.length);
   export let onSearch = (query) => {};
   export let onSelection = (item, index) => {};
   export let onClose = () => {};
@@ -72,7 +74,7 @@
 
   {#if filteredHotkeys.length > 0}
     <div class="border border-gray-200 rounded-md max-h-96 overflow-y-auto">
-      {#each filteredHotkeys as item, index (item.hotkey)}
+      {#each filteredHotkeys as item, index}
         <div
           class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
           class:bg-indigo-100={selectedIndex === index}

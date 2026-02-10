@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\service\IService\Metatool.Service.Core\Metatool.Service.Core.csproj" />
     <ProjectReference Include="..\..\service\IService\Metatool.Service.UI\Metatool.Service.UI.csproj" />
     <ProjectReference Include="..\..\service\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\Metaseed.WebUI\backend\Metatool.WebViewHost.csproj" />
     <ProjectReference Include="..\Metatool.MouseKeyHook.FruitMonkey\Metatool.MouseKey.FruitMonkey.csproj" />
   </ItemGroup>
 

@@ -6,8 +6,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Threading;
+using System.Windows;
 using System.Windows.Interop;
 
 namespace Metatool.Input.MouseKeyHook;
@@ -54,12 +57,23 @@ public class KeyboardHook
         set => _eventSource.DisablePressEvent = value;
     }
 
+    private WebViewHost.WebViewHost _webUI;
+
     public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
     {
         _logger = logger;
         _eventSource = Hook.GlobalEvents();
-        _monkey = new FruitMonkey(logger, new KeyTipNotifier((key, tips) => notify.ShowKeysTip(key, tips), key => notify.CloseKeysTip(key)));
-        //_monkey = new FruitMonkey(logger, new KeyTipNotifier((key, tips) => {}, key => {}));
+        Application.Current.Dispatcher.BeginInvoke(() => _webUI = new WebViewHost.WebViewHost());
+        var notifier = new KeyTipNotifier((key, tips) =>
+        {
+            var json = JsonSerializer.Serialize(tips.SelectMany(
+                t => t.descriptions.Select(
+                    d => new { hotkey = t.key, description = d })
+                    ));
+            _webUI?.ShowSearch(json);
+        }, key => { });
+        // var  notifier = new KeyTipNotifier((key, tips) => notify.ShowKeysTip(key, tips), key => notify.CloseKeysTip(key));
+        _monkey = new FruitMonkey(logger, notifier);
 
         DebugState.Add("Forest", _monkey.Forest);
     }

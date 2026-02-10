@@ -1,0 +1,39 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to WebView2 (port 9222)",
+      "type": "msedge",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/lib/Metaseed.WebUI/frontend/src",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/*": "${workspaceFolder}/lib/Metaseed.WebUI/frontend/*"
+      },
+      "preLaunchTask": "npm: dev"
+    },
+    {
+      "name": "Debug Svelte (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/lib/Metaseed.WebUI/frontend/src",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/*": "${workspaceFolder}/lib/Metaseed.WebUI/frontend/*"
+      }
+    },
+    {
+      "name": "Debug Svelte (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/lib/Metaseed.WebUI/frontend/src",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "/*": "${workspaceFolder}/lib/Metaseed.WebUI/frontend/*"
+      }
+    }
+  ]
+}

@@ -2,7 +2,10 @@
   "profiles": {
     "Metaseed.Metatool": {
       "commandName": "Project",
-      "commandLineArgs": "--admin"
+      "commandLineArgs": "--admin",
+      "environmentVariables": {
+        "DEV_WEBUI": "1"
+      }
     }
   }
 }

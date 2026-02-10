@@ -9,8 +9,8 @@ public partial class Keyboard
 {
 	private readonly ILogger<Keyboard> _logger;
 	private readonly IConfig<MetatoolConfig> _config;
-    private readonly IUiDispatcher _dispatcher;
-    private static Keyboard _default;
+	private readonly IUiDispatcher _dispatcher;
+	private static Keyboard _default;
 
 	public static Keyboard Default =>
 		_default ??= Services.Get<IKeyboard, Keyboard>();
@@ -19,8 +19,8 @@ public partial class Keyboard
 	{
 		_logger = logger;
 		_config = config;
-        _dispatcher = dispatcher;
-        var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
+		_dispatcher = dispatcher;
+		var aliases = config.CurrentValue.Services.Input.Keyboard.KeyAliases;
 		AddAliases(aliases);
 		Hook();
 		// workaround to use t0``he Keyboard Service itself via DI in initService
@@ -35,14 +35,16 @@ public partial class Keyboard
 
 		keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
 		resetTrigger.Description = "Reset keyboard state, clean up stuck keys";
-        resetTrigger.Event = KeyEventType.Up;
-        //resetTrigger?.OnEvent(_ => _dispatcher.Dispatch(ReleaseDownKeys));
-        resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
+		resetTrigger.Event = KeyEventType.Up;
+		//resetTrigger?.OnEvent(_ => _dispatcher.Dispatch(ReleaseDownKeys));
+		resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
 
-    }
+	}
 
-    public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
+	public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
 	{
+		if (hotStrings == null)
+			return;
 		foreach (var (key, strings) in hotStrings)
 		{
 			foreach (var str in strings)
@@ -52,7 +54,7 @@ public partial class Keyboard
 		}
 	}
 
-    public IKeyPath Root = null;
+	public IKeyPath Root = null;
 
 	readonly KeyboardHook _hook = new(Services.Get<ILogger<KeyboardHook>>(), Services.Get<INotify>());
 
@@ -71,8 +73,8 @@ public partial class Keyboard
 						if (!_hook.Contains(key, KeyStateTrees.ChordMap))
 						{
 							// add a mapping to make this common key work as a chord key: only trigger this key when 'hit'
-                            var comb = key.ToCombination();
-                            MapOnHit(comb, comb, e => !e.IsVirtual, $"MapOnHit({key}->{key}) on ChordMapTree", KeyStateTrees.ChordMap);
+							var comb = key.ToCombination();
+							MapOnHit(comb, comb, e => !e.IsVirtual, $"MapOnHit({key}->{key}) on ChordMapTree", KeyStateTrees.ChordMap);
 						}
 					}
 				}

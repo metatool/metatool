@@ -8,32 +8,46 @@ namespace Metatool.WebViewHost
 {
     public partial class WebViewHost : Window
     {
+        private readonly string dev;
+
         public WebViewHost()
         {
             InitializeComponent();
-            Loaded += WebViewHost_Loaded;
-        }
-
-        private async void WebViewHost_Loaded(object sender, RoutedEventArgs e)
-        {
             // defined in launchSettings.json
-            var dev = Environment.GetEnvironmentVariable("DEV_WEBUI");
+            dev = Environment.GetEnvironmentVariable("DEV_WEBUI");
 
             if (!string.IsNullOrEmpty(dev))
             {
                 // support vscode debugging
                 // Set environment variable for remote debugging BEFORE creating WebView2
                 Environment.SetEnvironmentVariable("WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS", "--remote-debugging-port=9222");
+            }
 
-                await webView.EnsureCoreWebView2Async();
+            // Show off-screen to initialize WebView2, then hide
+            //ShowInTaskbar = false;
+            WindowStartupLocation = WindowStartupLocation.Manual;
+            //Left = -10000;
+            //Top = -10000;
+            Loaded += async (s, e) =>
+            {
+                await InitWebView();
+                Debug.WriteLine("WebView2 initialized, remote debugging available on port 9222");
+                //Hide();
+            };
+            Show(); // Triggers Loaded event
+        }
 
+        private async Task InitWebView()
+        {
+            await webView.EnsureCoreWebView2Async();
+            if (!string.IsNullOrEmpty(dev))
+            {
                 Debug.WriteLine("Remote debugging enabled on port 9222. Open edge://inspect to debug.");
 
                 webView.Source = new Uri("http://localhost:5173");
             }
             else
             {
-                await webView.EnsureCoreWebView2Async();
                 var exeDir = AppDomain.CurrentDomain.BaseDirectory;
                 var index = Path.Combine(exeDir, "frontend", "dist", "index.html");
                 if (File.Exists(index))
@@ -77,10 +91,13 @@ namespace Metatool.WebViewHost
             Dispatcher.Invoke(async () => {
                 if (!IsVisible)
                 {
-                    Debug.WriteLine("Window not visible, calling Show()");
-                    // Set initial size
-                    this.Width = 700;
-                    this.Height = 300;
+                    Debug.WriteLine("Window not visible, making visible");
+                    // Set initial size and center on screen
+                    Width = 700;
+                    Height = 300;
+                    Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+                    Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
+                    ShowInTaskbar = true;
                     Show();
                 }
                 Debug.WriteLine("Calling Activate()");
