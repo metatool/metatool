@@ -41,7 +41,7 @@ public class FunctionalKeys
 	{
 		var keyboard = Services.Get<IKeyboard>();
 		//Keyboard.Default.ShowTip();
-		// keyboard.ShowTip();
+		keyboard.ShowTip();
 		e.Handled = true;
 	}, null, "Show Tips");
 }

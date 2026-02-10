@@ -83,9 +83,17 @@ internal class Forest(IKeyTipNotifier notify, ILogger logger) : IForest
 
     public void ShowTip(bool ifRootThenEmpty = false)
     {
-        var tips =ForestGround.Values.SelectMany(m => m.Tips(ifRootThenEmpty)).ToArray();
+        var tips = ForestGround.Values.SelectMany(m =>
+        {
+            var ts = m.Tips(ifRootThenEmpty);
+            // if (ts.Count() > 0)
+            // {
+            //     ts = [(m.Name, [""]), .. ts];
+            // }
+            return ts;
+        }).ToArray();
         if (tips.Length > 0)
-            notify.ShowKeysTip("Forest",tips);
+            notify.ShowKeysTip("Forest", tips);
         else
         {
             notify.CloseKeysTip("Forest");
