@@ -13,7 +13,7 @@ partial class Keyboard: IKeyboardInternal
 
 	public void ReleaseDownKeys()
 	{
-		var downKeys = KeyboardState.Current().AllDownKeys;
+		var downKeys = KeyboardState.CurrentAsync().AllDownKeys;
 		foreach (var downKey in downKeys)
 		{
 			_logger.LogInformation($"Rest down key: {downKey}");

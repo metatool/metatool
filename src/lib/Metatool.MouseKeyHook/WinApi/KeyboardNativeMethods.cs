@@ -312,6 +312,7 @@ internal static class KeyboardNativeMethods
 	[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
 	public static extern short GetKeyState(int vKey);
 
+    // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate
 	[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
 	public static extern short GetAsyncKeyState(int vKey);
 	/// <summary>

@@ -67,6 +67,55 @@ public partial class KeyboardState : IKeyboardState
         return new KeyboardState(keyboardStateNative);
     }
 
+    /// <summary>
+    ///     Makes a snapshot of a keyboard state using GetAsyncKeyState which queries
+    ///     the actual hardware state rather than the message-based state.
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///     Use this method when you need accurate key state outside the normal message pump timing,
+    ///     such as when querying keyboard state from a posted action in a low-level keyboard hook.
+    ///     </para>
+    ///     <para>
+    ///     <b>Why this exists:</b> The standard <see cref="Current"/> method uses GetKeyboardState/GetKeyState,
+    ///     which return the keyboard state based on processed messages. In a low-level keyboard hook
+    ///     (WH_KEYBOARD_LL), the hook callback fires BEFORE the WM_KEYUP/WM_KEYDOWN message is posted
+    ///     to the message queue. If you post an action from the hook and query GetKeyState in that action,
+    ///     the key may still appear "down" even after a KeyUp event because the message hasn't been
+    ///     processed yet. GetAsyncKeyState queries the actual physical hardware state, bypassing this issue.
+    ///     </para>
+    ///     <para>
+    ///     <b>Toggle keys:</b> For CapsLock, NumLock, ScrollLock, and Insert, we still use GetKeyState
+    ///     to get the toggle state (ON/OFF). GetAsyncKeyState only reports whether the key is physically
+    ///     pressed - it has no concept of toggle state. The low bit in GetAsyncKeyState means
+    ///     "pressed since last call" (unreliable), NOT "toggled ON" like in GetKeyState.
+    /// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getasynckeystate
+    ///     </para>
+    /// </remarks>
+    /// <returns>An instance of <see cref="KeyboardState" /> class representing the actual hardware keyboard state.</returns>
+    public static KeyboardState CurrentAsync()
+    {
+        var bytes = new byte[256];
+        Accessor.ReadArray<byte>(0, bytes, 0, 256);
+        HandledDownKeys = new KeyboardState(bytes);
+        var keyboardStateNative = new byte[256];
+        for (int i = 0; i < 256; i++)
+        {
+            var state = KeyboardNativeMethods.GetAsyncKeyState(i);
+            // High-order bit set means key is currently down
+            if ((state & 0x8000) != 0)
+                keyboardStateNative[i] |= 0x80;
+            // For toggle keys, we still need GetKeyState to get the toggle state
+            if (i is (int)KeyCodes.CapsLock or (int)KeyCodes.NumLock or (int)KeyCodes.Scroll or (int)KeyCodes.Insert)
+            {
+                var toggleState = KeyboardNativeMethods.GetKeyState(i);
+                if ((toggleState & 0x01) != 0)
+                    keyboardStateNative[i] |= 0x01;
+            }
+        }
+        return new KeyboardState(keyboardStateNative);
+    }
+
 
     internal byte[] GetNativeState()
     {
