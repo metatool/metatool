@@ -38,6 +38,8 @@
         hotkeys = data.hotkeys
         filteredHotkeys = hotkeys
       }
+      // Focus the search input when the window is shown
+      setTimeout(() => document.dispatchEvent(new CustomEvent('focus-search')), 50)
     })
 
     return cleanup

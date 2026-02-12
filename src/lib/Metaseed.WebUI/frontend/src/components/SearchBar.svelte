@@ -1,7 +1,9 @@
 <script>
   import { onMount } from "svelte";
+  import { afterUpdate } from "svelte";
   let query = "";
   let inputEl;
+  let listEl;
   let selectedIndex = 0;
 
   export let hotkeys = [];
@@ -42,9 +44,36 @@
       selectedIndex = Math.min(selectedIndex + 1, filteredHotkeys.length - 1);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      selectedIndex = Math.max(selectedIndex - 1, -1);
+      selectedIndex = Math.max(selectedIndex - 1, 0);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      selectedIndex = 0;
+    } else if (e.key === "End") {
+      e.preventDefault();
+      selectedIndex = filteredHotkeys.length - 1;
+    } else if (e.key === "PageDown") {
+      e.preventDefault();
+      const pageSize = getPageSize();
+      selectedIndex = Math.min(selectedIndex + pageSize, filteredHotkeys.length - 1);
+    } else if (e.key === "PageUp") {
+      e.preventDefault();
+      const pageSize = getPageSize();
+      selectedIndex = Math.max(selectedIndex - pageSize, 0);
     }
   }
+
+  function getPageSize() {
+    if (!listEl || !listEl.children.length) return 5;
+    const itemHeight = listEl.children[0].offsetHeight;
+    return Math.max(1, Math.floor(listEl.clientHeight / itemHeight));
+  }
+
+  afterUpdate(() => {
+    if (listEl && selectedIndex >= 0) {
+      const item = listEl.children[selectedIndex];
+      if (item) item.scrollIntoView({ block: "nearest" });
+    }
+  });
 
   function focusHandler() {
     if (inputEl) inputEl.focus();
@@ -73,7 +102,7 @@
   </div>
 
   {#if filteredHotkeys.length > 0}
-    <div class="border border-gray-200 rounded-md max-h-96 overflow-y-auto">
+    <div bind:this={listEl} class="border border-gray-200 rounded-md max-h-96 overflow-y-auto">
       {#each filteredHotkeys as item, index}
         <div
           class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"

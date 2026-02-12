@@ -24,10 +24,10 @@ namespace Metatool.WebViewHost
             }
 
             // Show off-screen to initialize WebView2, then hide
-            //ShowInTaskbar = false;
+            ShowInTaskbar = false;
             WindowStartupLocation = WindowStartupLocation.Manual;
-            //Left = -10000;
-            //Top = -10000;
+            Left = -10000;
+            Top = -10000;
             Loaded += async (s, e) =>
             {
                 await InitWebView();
@@ -108,6 +108,7 @@ namespace Metatool.WebViewHost
                 }
                 Debug.WriteLine("Calling Activate()");
                 Activate();
+                webView.Focus();
                 await webView.EnsureCoreWebView2Async();
                 Debug.WriteLine("Executing postMessage script via WebView2 postMessage");
 
