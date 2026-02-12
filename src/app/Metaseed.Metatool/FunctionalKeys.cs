@@ -1,4 +1,5 @@
-﻿using Metatool.Service;
+﻿using System.Windows.Input;
+using Metatool.Service;
 using Metatool.Service.MouseKey;
 using static Metatool.Service.MouseKey.Key;
 
@@ -6,6 +7,8 @@ namespace Metaseed.Metatool;
 
 public class FunctionalKeys
 {
+	private readonly IKeyboard keyboard = Services.Get<IKeyboard>();
+
 	public FunctionalKeys(IConfig<MetatoolConfig> config)
 	{
 		var hotKeys = config.CurrentValue.Hotkeys;
@@ -35,13 +38,17 @@ public class FunctionalKeys
 		hotKeys.TryGetValue("RestartAsAdmin", out var restartAsAdminTrigger);
 		restartAsAdminTrigger ??= new HotkeyTrigger(Caps + A);
 		restartAsAdminTrigger.OnEvent(e => Restart(e, true));
+
+		hotKeys.TryGetValue("ShowCommands", out var showCommands);
+		showCommands ??= new HotkeyTrigger(Caps + Question);
+		showCommands.Description = "Show Commands";
+		showCommands.OnEvent(e =>
+		{
+			// var keyboard = Services.Get<IKeyboard>();
+			//Keyboard.Default.ShowTip();
+			keyboard.ShowTip();
+			e.Handled = true;
+		});
 	}
 
-	public IKeyCommand ShowTips = (Caps + Question).OnDown(e =>
-	{
-		var keyboard = Services.Get<IKeyboard>();
-		//Keyboard.Default.ShowTip();
-		keyboard.ShowTip();
-		e.Handled = true;
-	}, null, "Show Tips");
 }

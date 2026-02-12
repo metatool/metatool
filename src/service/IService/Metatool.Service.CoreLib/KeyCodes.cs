@@ -93,10 +93,12 @@ public enum KeyCodes
     /// <summary>The PAGE UP key.</summary>
     PageUp = Space | LButton, // 0x00000021
     /// <summary>The PAGE UP key.</summary>
+    [Key("PageUp")]
     Prior = PageUp, // 0x00000021
     /// <summary>The PAGE DOWN key.</summary>
     PageDown = Space | RButton, // 0x00000022
     /// <summary>The PAGE DOWN key.</summary>
+    [Key("PageDown")]
     Next = PageDown, // 0x00000022
     /// <summary>The END key.</summary>
     End = PageDown | LButton, // 0x00000023
@@ -548,9 +550,10 @@ public static class KeyCodesEnumExtensions
 {
     public static string KeyName(this KeyCodes value)
     {
-        var field = value.GetType().GetField(value.ToString());
+        var name = Enum.GetName(value);
+        var field = value.GetType().GetField(name);
         var attribute = field?.GetCustomAttribute<KeyAttribute>();
-        return attribute?.KeyLetter ?? value.ToString();
+        return attribute?.KeyLetter ?? name;
     }
     public static bool IsLetterKey(this KeyCodes value)
     {

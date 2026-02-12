@@ -32,7 +32,7 @@ namespace Metatool.WebViewHost
             {
                 await InitWebView();
                 Debug.WriteLine("WebView2 initialized, remote debugging available on port 9222");
-                //Hide();
+                Hide();
             };
             Show(); // Triggers Loaded event
         }
@@ -60,7 +60,7 @@ namespace Metatool.WebViewHost
         private void WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             var json = e.WebMessageAsJson;
-			Debug.WriteLine("Message from web: " + json);
+            Debug.WriteLine("Message from web: " + json);
             try
             {
                 using var doc = JsonDocument.Parse(json);
@@ -70,7 +70,7 @@ namespace Metatool.WebViewHost
                     var type = t.GetString();
                     if (type == "close")
                     {
-                        Dispatcher.Invoke(Close);
+                        Dispatcher.Invoke(Hide);
                     }
                     else if (type == "searchPerformed")
                     {
@@ -81,15 +81,21 @@ namespace Metatool.WebViewHost
             }
             catch (Exception ex)
             {
-				Debug.WriteLine("Failed to parse web message: " + ex.Message);
+                Debug.WriteLine("Failed to parse web message: " + ex.Message);
             }
         }
 
         public async void ShowSearch(string hotkeyJson)
         {
             Debug.WriteLine("ShowSearch() called");
-            Dispatcher.Invoke(async () => {
-                if (!IsVisible)
+            _ = Dispatcher.BeginInvoke(async () =>
+            {
+                if (IsVisible)
+                {
+                    Debug.WriteLine("Window already visible, hiding");
+                    Hide();
+                }
+                else
                 {
                     Debug.WriteLine("Window not visible, making visible");
                     // Set initial size and center on screen
@@ -116,39 +122,46 @@ namespace Metatool.WebViewHost
             });
         }
 
-        private void ResizeToContent()
+        private async void ResizeToContent()
         {
-            // Use ExecuteScriptAsync to get the document body scrollHeight
-            _ = webView.CoreWebView2.ExecuteScriptAsync(
-                "document.documentElement.scrollHeight.toString()"
-            ).ContinueWith(async task =>
+            try
             {
-                try
+                // Use ExecuteScriptAsync to get the document body scrollHeight
+                var height = await webView.CoreWebView2.ExecuteScriptAsync("document.documentElement.scrollHeight.toString()");
+                ResizeWindow(height);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+                //throw;
+            }
+        }
+        void ResizeWindow(string height)
+        {
+            try
+            {
+                if (int.TryParse(height.Trim('"'), out int contentHeight))
                 {
-                    var result = task.Result;
-                    if (int.TryParse(result.Trim('"'), out int contentHeight))
+                    Debug.WriteLine($"Content height: {contentHeight}");
+                    Dispatcher.Invoke(() =>
                     {
-                        Debug.WriteLine($"Content height: {contentHeight}");
-                        Dispatcher.Invoke(() =>
-                        {
-                            // Add padding for border and margins
-                            var newHeight = Math.Min(contentHeight + 40, this.MaxHeight);
+                        // Add padding for border and margins
+                        var newHeight = Math.Min(contentHeight, this.MaxHeight);
 
-                            // Set WebView2 control height explicitly
-                            webView.Height = newHeight;
+                        // Set WebView2 control height explicitly
+                        webView.Height = newHeight;
 
-                            // Set Window height
-                            this.Height = newHeight;
+                        // Set Window height
+                        this.Height = newHeight;
 
-                            Debug.WriteLine($"Window and WebView2 height adjusted to: {newHeight}");
-                        });
-                    }
+                        Debug.WriteLine($"Window and WebView2 height adjusted to: {newHeight}");
+                    });
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error measuring content: {ex.Message}");
-                }
-            });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error measuring content: {ex.Message}");
+            }
         }
 
     }

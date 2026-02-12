@@ -108,10 +108,13 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
         }
     }
 
+    string _name;
     public string KeyName
     {
         get
         {
+            if(_name != null) return _name;
+
             var codesClone = new SortedSet<KeyCodes>(Codes);
             if (codesClone.Contains(KeyCodes.LShiftKey) && codesClone.Contains(KeyCodes.RShiftKey))
             {
@@ -129,7 +132,8 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
                 codesClone.Add(KeyCodes.Menu);
             }
 
-            return $"{string.Join("|", codesClone.Select(c => c.KeyName()))}";
+            _name = $"{string.Join("|", codesClone.Select(c => c.KeyName()))}";
+            return _name;
         }
     }
 
