@@ -66,11 +66,11 @@ public class KeyboardHook
         Application.Current.Dispatcher.BeginInvoke(() => _webUI = new WebViewHost.WebViewHost());
         var notifier = new KeyTipNotifier((key, tips) =>
         {
-            var json = JsonSerializer.Serialize(tips.SelectMany(
-                t => t.descriptions.Select(
-                    d => new { hotkey = t.key, description = d })
-                    ));
-            _webUI?.ShowSearch(json);
+            _webUI?.ShowSearch(tips, item =>
+            {
+                _logger.LogInformation($"selected key: {item.hotkey}, description: {item.description}");
+                
+            });
         }, key => { });
         // var  notifier = new KeyTipNotifier((key, tips) => notify.ShowKeysTip(key, tips), key => notify.CloseKeysTip(key));
         _monkey = new FruitMonkey(logger, notifier);

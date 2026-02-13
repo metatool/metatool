@@ -4,7 +4,6 @@
   import { onMount } from 'svelte'
   import { initMessageListeners, sendClose, sendHotkeySelected } from './lib/messaging.js'
 
-  let show = false
   let hotkeys = []
   let filteredHotkeys = []
 
@@ -33,7 +32,6 @@
 
   onMount(() => {
     const cleanup = initMessageListeners((data) => {
-      show = true
       if (Array.isArray(data.hotkeys)) {
         hotkeys = data.hotkeys
         filteredHotkeys = hotkeys
@@ -54,7 +52,7 @@
         {filteredHotkeys}
         onSearch={handleSearch}
         onSelection={handleSelection}
-        onClose={() => show = false}
+        onClose={handleClose}
       />
     </div>
 </div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Metatool.Service.MouseKey;
 
@@ -551,6 +552,12 @@ public static class KeyCodesEnumExtensions
     public static string KeyName(this KeyCodes value)
     {
         var name = Enum.GetName(value);
+        if(name == null)
+        {
+            Services.CommonLogger.LogError($"keycode:{value}, Enum.GetName(value) is null");
+            return "";
+        }
+
         var field = value.GetType().GetField(name);
         var attribute = field?.GetCustomAttribute<KeyAttribute>();
         return attribute?.KeyLetter ?? name;

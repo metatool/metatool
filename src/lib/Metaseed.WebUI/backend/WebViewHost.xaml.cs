@@ -6,6 +6,7 @@ using System.IO;
 
 namespace Metatool.WebViewHost
 {
+    public record TipItem(string hotkey, string description);
     public partial class WebViewHost : Window
     {
         private readonly string dev;
@@ -72,10 +73,13 @@ namespace Metatool.WebViewHost
                     {
                         Dispatcher.Invoke(Hide);
                     }
-                    else if (type == "searchPerformed")
+                    else if (type == "hotkeySelected")
                     {
-                        var query = msg.GetProperty("query").GetString();
-
+                        var index = msg.GetProperty("index").GetInt32();
+                        var hotkey = msg.GetProperty("hotkey");
+                        var description = msg.GetProperty("description").GetString();
+                        var key = hotkeys[index];
+                        _selectionAction?.Invoke(key);
                     }
                 }
             }
@@ -85,8 +89,17 @@ namespace Metatool.WebViewHost
             }
         }
 
-        public async void ShowSearch(string hotkeyJson)
+
+        private TipItem[] hotkeys;
+        private Action<TipItem> _selectionAction;
+        public async void ShowSearch(IEnumerable<(string key, IEnumerable<string> descriptions)> tips, Action<TipItem> selectionAction = null)
         {
+            hotkeys = tips.SelectMany(
+                t => t.descriptions.Select(
+                    d => new TipItem( t.key,d ))
+            ).ToArray();
+            _selectionAction = selectionAction;
+            var hotkeyJson = JsonSerializer.Serialize(hotkeys);
             Debug.WriteLine("ShowSearch() called");
             _ = Dispatcher.BeginInvoke(async () =>
             {
