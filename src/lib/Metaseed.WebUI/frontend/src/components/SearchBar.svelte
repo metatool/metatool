@@ -105,9 +105,9 @@
     <div bind:this={listEl} class="border border-gray-200 rounded-md max-h-96 overflow-y-auto">
       {#each filteredHotkeys as item, index}
         <div
-          class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+          class="px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors bg-gray-50"
           class:bg-indigo-100={selectedIndex === index}
-          class:hover:bg-gray-50={selectedIndex !== index}
+          class:hover:bg-indigo-50={selectedIndex !== index}
           on:click={() => {
             selectedIndex = index;
             submitSelection();
