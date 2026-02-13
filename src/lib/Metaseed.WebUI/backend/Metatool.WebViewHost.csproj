@@ -1,21 +1,34 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
-  </ItemGroup>
-  <Target Name="CopyFrontendDist" AfterTargets="Build">
+﻿<!--<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">-->
+<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-      <FrontendDir>$(MSBuildThisFileDirectory)..\frontend\dist\</FrontendDir>
+        <!--<OutputType>WinExe</OutputType>-->
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
-    <Message Importance="high" Text="Copying frontend dist from $(FrontendDir) to $(OutputPath)frontend\dist\" />
+
     <ItemGroup>
-      <_FrontendFiles Include="$(FrontendDir)**\*" />
+        <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
     </ItemGroup>
-    <Copy SourceFiles="@(_FrontendFiles)" DestinationFiles="@(_FrontendFiles->'$(OutputPath)frontend\dist\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
-  </Target>
+
+    <Target Name="BuildFrontend" BeforeTargets="Build">
+        <PropertyGroup>
+            <FrontendDir>$(MSBuildThisFileDirectory)..\frontend\</FrontendDir>
+        </PropertyGroup>
+        <Message Importance="high" Text="Building frontend from $(FrontendDir)" />
+        <Exec Command="npm install" WorkingDirectory="$(FrontendDir)" />
+        <Exec Command="npm run build" WorkingDirectory="$(FrontendDir)" ContinueOnError="WarnAndContinue" />
+    </Target>
+
+    <!-- <Target Name="CopyFrontendDist" AfterTargets="Build">
+        <PropertyGroup>
+            <FrontendDir>$(MSBuildThisFileDirectory)..\frontend\dist\</FrontendDir>
+        </PropertyGroup>
+        <Message Importance="high" Text="Copying frontend dist from $(FrontendDir) to $(OutputPath)frontend\dist\" />
+        <ItemGroup>
+            <_FrontendFiles Include="$(FrontendDir)**\*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(_FrontendFiles)" DestinationFiles="@(_FrontendFiles->'$(OutputPath)frontend\dist\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    </Target> -->
 </Project>

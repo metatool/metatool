@@ -1,3 +1,4 @@
+# create symbolic link in debug folder for the \exe\publish\tools\Metatool.Tools.Software\softwareConfig and exe\publish\tools\Metatool.Tools.Software\software
 $isDebug = $FALSE
 $folder = $isDebug ? 'debug': 'release'
 $SolutionDir = $PSScriptRoot.Replace("tool\Metatool.Tools.Software","")
@@ -10,7 +11,6 @@ if(Test-Path $UiPath) {
 }
 
 ## Metatool.Tools.Software
-# create symbolic link in debug folder for the \exe\publish\tools\Metatool.Tools.Software\softwareConfig and exe\publish\tools\Metatool.Tools.Software\software
 $TargetDir = "$SolutionDir..\exe\$folder\tools\Metatool.Tools.Software"
 $sourceSoftwarePath = "M:\App\software"#"$SolutionDir..\exe\publish\tools\Metatool.Tools.Software\software"
 $targetSoftwarePath = "$TargetDir\software"

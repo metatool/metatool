@@ -10,6 +10,7 @@ namespace Metatool.WebViewHost
     public partial class WebViewHost : Window
     {
         private readonly string dev;
+        private CoreWebView2Environment _webViewEnv;
 
         public WebViewHost()
         {
@@ -40,7 +41,11 @@ namespace Metatool.WebViewHost
 
         private async Task InitWebView()
         {
-            await webView.EnsureCoreWebView2Async();
+            var userDataFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Metatool", "WebView2");
+            _webViewEnv = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
+            await webView.EnsureCoreWebView2Async(_webViewEnv);
             if (!string.IsNullOrEmpty(dev))
             {
                 Debug.WriteLine("Remote debugging enabled on port 9222. Open edge://inspect to debug.");
@@ -50,9 +55,13 @@ namespace Metatool.WebViewHost
             else
             {
                 var exeDir = AppDomain.CurrentDomain.BaseDirectory;
-                var index = Path.Combine(exeDir, "frontend", "dist", "index.html");
-                if (File.Exists(index))
-                    webView.Source = new Uri(index);
+                var uiFolder = Path.Combine(exeDir, "_ui");
+                if (Directory.Exists(uiFolder))
+                {
+                    webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                        "metatool.local", uiFolder, CoreWebView2HostResourceAccessKind.Allow);
+                    webView.Source = new Uri("https://metatool.local/index.html");
+                }
             }
 
             webView.CoreWebView2.WebMessageReceived += WebMessageReceived;
@@ -122,7 +131,7 @@ namespace Metatool.WebViewHost
                 Debug.WriteLine("Calling Activate()");
                 Activate();
                 webView.Focus();
-                await webView.EnsureCoreWebView2Async();
+                await webView.EnsureCoreWebView2Async(_webViewEnv);
                 Debug.WriteLine("Executing postMessage script via WebView2 postMessage");
 
                 // Create the message object with type and hotkeys data

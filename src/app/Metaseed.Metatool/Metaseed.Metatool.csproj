@@ -81,14 +81,21 @@
 		<Exec Command="pwsh -ExecutionPolicy Bypass -NoProfile -NonInteractive postBuild.ps1 $(ConfigurationName) $(solutiondir)&#xD;&#xA;" />
 		<!--<Exec Command="if $(ConfigurationName) == Release (&#xD;&#xA;mklink $(SolutionDir)..\exe\publish\tools $(SolutionDir)..\exe\release\tools /J&#xD;&#xA;exit 0&#xD;&#xA;) &#xD;&#xA;" />-->
 	</Target>
+	<!-- CopyToOutputDirectory="Never" — skips these files during normal debug builds
+CopyToPublishDirectory="PreserveNewest" — includes them only during publish
+LinkBase="_ui" — places them under the _ui\ subfolder in the output -->
+    <ItemGroup>
+        <Content Include="..\..\lib\Metaseed.WebUI\frontend\dist\**" LinkBase="_ui" CopyToOutputDirectory="Never" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
 
-	<!--<ItemGroup>
+
+    <!--<ItemGroup>
     <FluentValidationExcludedCultures Include="be;cs;cs-CZ;da;de;es;fa;fi;fr;ja;it;ko;mk;nl;pl;pt;pt-BR;ru;sv;tr;uk;zh-CN;zh-CHS;zh-CHT;zh-Hant;zh-Hans">
       <InProject>false</InProject>
-    </FluentValidationExcludedCultures> 
+    </FluentValidationExcludedCultures>
   </ItemGroup>
 
   <Target Name="RemoveTranslationsAfterBuild" AfterTargets="AfterBuild">
-    <RemoveDir Directories="@(FluentValidationExcludedCultures->'$(OutputPath)%(Filename)')" />    
+    <RemoveDir Directories="@(FluentValidationExcludedCultures->'$(OutputPath)%(Filename)')" />
   </Target>-->
 </Project>

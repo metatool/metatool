@@ -415,6 +415,7 @@ public enum KeyCodes
     [Key(";")]
     OemSemicolon = MediaStop | Back, // 0x000000BA
     /// <summary>The OEM 1 key.</summary>
+    [Key(";")]
     Oem1 = OemSemicolon, // 0x000000BA
     /// <summary>The OEM plus key on any country/region keyboard.</summary>
     [Key("=")]
@@ -470,12 +471,12 @@ public enum KeyCodes
     Oem6 = OemCloseBrackets, // 0x000000DD
     /// <summary>The OEM 7 key.
     /// </summary>
+    [Key("'")]
     Oem7 = Oem5 | RButton, // 0x000000DE
     /// <summary>The OEM singled/double quote key on a US standard keyboard. Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the 'single-quote/double-quote' key</summary>
     [Key("'")]
     OemQuotes = Oem7, // 0x000000DE
     /// <summary>The OEM 8 key.Used for miscellaneous characters; it can vary by keyboard.</summary>
-    [Key("'")]
     Oem8 = OemQuotes | LButton, // 0x000000DF
 
     //
