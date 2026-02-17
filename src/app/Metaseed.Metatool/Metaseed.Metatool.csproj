@@ -5,7 +5,7 @@
 		<OutputType>Exe</OutputType>
 		<ApplicationIcon>Metatool.ico</ApplicationIcon>
 		<UseRidGraph>true</UseRidGraph>
-		<TargetFramework>net9.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

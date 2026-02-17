@@ -32,7 +32,7 @@ public class DataEnginePipelineAsyncEnumerableTests : AsyncEnumerableTest
 		{
 			return stream
 				.Select(i => (float)i * _counter.Count++)
-				.SelectAwait(async i => await new ValueTask<float>(i))
+				//.SelectAwait(async i => await new ValueTask<float>(i))
 				.Do(f => _logger.LogInformation(f.ToString(CultureInfo.InvariantCulture)));
 		}
 
