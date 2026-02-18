@@ -38,7 +38,9 @@ namespace KeyMouse
 
             try
             {
-                _engine = new Engine(modelPath);
+                var config = new Config();
+                var overlayWindow = new MainWindow();
+                _engine = new Engine(modelPath, config, overlayWindow);
             }
             catch (Exception ex)
             {

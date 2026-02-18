@@ -1,8 +1,7 @@
 <Application x:Class="KeyMouse.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:KeyMouse"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:KeyMouse">
     <Application.Resources>
 
     </Application.Resources>
