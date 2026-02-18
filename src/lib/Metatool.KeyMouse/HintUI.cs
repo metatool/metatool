@@ -14,11 +14,11 @@ namespace KeyMouse
     /// </summary>
     public class HintUI
     {
-        private readonly MainWindow _window;
+        private readonly KeyMouseMainWindow _window;
         private Dictionary<string, (Rect rect, TextBlock hint)> _hints;
         private List<TextBlock> _markedHints;
 
-        public HintUI(MainWindow window)
+        public HintUI(KeyMouseMainWindow window)
         {
             _window = window;
             _hints = new Dictionary<string, (Rect rect, TextBlock hint)>();

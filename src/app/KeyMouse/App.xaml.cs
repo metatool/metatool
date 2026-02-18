@@ -14,7 +14,7 @@ namespace KeyMouse
     public partial class App : Application
     {
         private IKeyboardMouseEvents _globalHook;
-        private Engine _engine;
+        private KeyMouseEngine _keyMouseEngine;
         private ILogger<App> _logger;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -39,8 +39,8 @@ namespace KeyMouse
             try
             {
                 var config = new Config();
-                var overlayWindow = new MainWindow();
-                _engine = new Engine(modelPath, config, overlayWindow);
+                var overlayWindow = new KeyMouseMainWindow();
+                _keyMouseEngine = new KeyMouseEngine(modelPath, config, overlayWindow);
             }
             catch (Exception ex)
             {
@@ -53,17 +53,17 @@ namespace KeyMouse
 
             _globalHook.OnCombination(new Dictionary<ICombination, Action>
             {
-                { Combination.Parse("Ctrl+Alt+A"), _engine.Activate },
-                { Combination.Parse("Ctrl+Alt+S"), _engine.Reshow }
+                { Combination.Parse("Ctrl+Alt+A"), _keyMouseEngine.Activate },
+                { Combination.Parse("Ctrl+Alt+S"), _keyMouseEngine.Reshow }
             });
             _globalHook.HandleVirtualKey = true;
-            _globalHook.KeyDown += _engine.HandleKeyDown;
+            _globalHook.KeyDown += _keyMouseEngine.HandleKeyDown;
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             _globalHook?.Dispose();
-            _engine?.Dispose();
+            _keyMouseEngine?.Dispose();
             base.OnExit(e);
         }
     }

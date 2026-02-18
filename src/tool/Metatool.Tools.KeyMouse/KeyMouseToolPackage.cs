@@ -8,8 +8,8 @@ namespace Metatool.Tools.KeyMouse
 {
     public class KeyMouseToolPackage : CommandPackage
     {
-        private readonly Engine _engine;
-        private readonly MainWindow _overlayWindow;
+        private readonly KeyMouseEngine _engine;
+        private readonly KeyMouseMainWindow _overlayWindow;
 
         public IKeyCommand ActivateCommand;
         public IKeyCommand ReshowCommand;
@@ -23,8 +23,8 @@ namespace Metatool.Tools.KeyMouse
                 Path.GetDirectoryName(GetType().Assembly.Location)!,
                 "icon_detect.onnx");
 
-            _overlayWindow = new MainWindow();
-            _engine = new Engine(modelPath, engineConfig, _overlayWindow);
+            _overlayWindow = new KeyMouseMainWindow();
+            _engine = new KeyMouseEngine(modelPath, engineConfig, _overlayWindow);
 
             var hotkeys = cfg.Hotkeys;
 

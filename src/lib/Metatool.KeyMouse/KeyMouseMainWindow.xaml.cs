@@ -3,9 +3,9 @@ using System.Windows.Controls;
 
 namespace KeyMouse
 {
-    public partial class MainWindow : Window
+    public partial class KeyMouseMainWindow : Window
     {
-        public MainWindow()
+        public KeyMouseMainWindow()
         {
             InitializeComponent();
         }

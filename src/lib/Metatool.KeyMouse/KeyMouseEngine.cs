@@ -16,13 +16,12 @@ namespace KeyMouse
         ActiveWindow,
     }
 
-    public class Engine : IDisposable
+    public class KeyMouseEngine(string modelPath, Config config, KeyMouseMainWindow overlayWindow) : IDisposable
     {
-        private readonly UIElementsDetector _detector;
-        private readonly HintAction _hintAction;
-        private readonly HintUI _hintUI;
-        private readonly Config _config;
-        private readonly Visual _dpiReference;
+        private readonly UIElementsDetector _detector = new(modelPath);
+        private readonly HintAction _hintAction = new(new Metatool.WindowsInput.InputSimulator());
+        private readonly HintUI _hintUI = new(overlayWindow);
+        private readonly Visual _dpiReference = overlayWindow;
 
         private Dictionary<string, Rect> _currentHints;
         private string _typedKeySequence = "";
@@ -30,15 +29,6 @@ namespace KeyMouse
         private Rect _overlayRect;
 
         public DetectMode Mode { get; set; } = DetectMode.ActiveMonitor;
-
-        public Engine(string modelPath, Config config, MainWindow overlayWindow)
-        {
-            _config = config;
-            _dpiReference = overlayWindow;
-            _hintUI = new HintUI(overlayWindow);
-            _detector = new UIElementsDetector(modelPath);
-            _hintAction = new HintAction(new Metatool.WindowsInput.InputSimulator());
-        }
 
         public void Activate()
         {
@@ -124,7 +114,7 @@ namespace KeyMouse
 
                 if (rects.Count == 0) return;
 
-                _currentHints = KeyGenerator.GetKeyPointPairs(rects, _config.Keys);
+                _currentHints = KeyGenerator.GetKeyPointPairs(rects, config.Keys);
 
                 var hintData = new Dictionary<string, Rect>();
                 foreach (var kvp in _currentHints) hintData.Add(kvp.Key, kvp.Value);
@@ -176,7 +166,7 @@ namespace KeyMouse
                 return;
             }
 
-            if (!_config.Keys.Contains(keyChar))
+            if (!config.Keys.Contains(keyChar))
             {
                 return;
             }
