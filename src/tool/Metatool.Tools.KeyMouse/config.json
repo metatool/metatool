@@ -1,3 +1,17 @@
 {
-  "Keys": "ASDFQWERZXCVTGBHJKLYUIOPNM"
+  "Tools": {
+    "Metatool.Tools.KeyMouse": {
+      "Keys": "ASDFQWERZXCVTGBHJKLYUIOPNM",
+      "Hotkeys": {
+        "Activate": {
+          "Hotkey": "Ctrl + Alt + A",
+          "Description": "KeyMouse: Activate hint mode"
+        },
+        "Reshow": {
+          "Hotkey": "Ctrl + Alt + S",
+          "Description": "KeyMouse: Reshow last hints"
+        }
+      }
+    }
+  }
 }

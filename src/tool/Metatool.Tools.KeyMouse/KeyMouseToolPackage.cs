@@ -1,20 +1,20 @@
 using System.IO;
 using KeyMouse;
+using Metatool.Input;
 using Metatool.Service;
 using Metatool.Service.MouseKey;
-using static Metatool.Service.MouseKey.Key;
 
 namespace Metatool.Tools.KeyMouse
 {
-    public class KeyMouseTool : ToolBase
+    public class KeyMouseToolPackage : CommandPackage
     {
-        private Engine _engine;
-        private MainWindow _overlayWindow;
+        private readonly Engine _engine;
+        private readonly MainWindow _overlayWindow;
 
         public IKeyCommand ActivateCommand;
         public IKeyCommand ReshowCommand;
 
-        public KeyMouseTool(IKeyboard keyboard, IConfig<PluginConfig> config)
+        public KeyMouseToolPackage(IKeyboard keyboard, IConfig<PluginConfig> config)
         {
             var cfg = config.CurrentValue;
             var engineConfig = new Config { Keys = cfg.Keys };
@@ -26,23 +26,22 @@ namespace Metatool.Tools.KeyMouse
             _overlayWindow = new MainWindow();
             _engine = new Engine(modelPath, engineConfig, _overlayWindow);
 
-            // Register Ctrl+Alt+A to activate hint mode
-            ActivateCommand = (Ctrl + Alt + A).OnDown(e =>
+            var hotkeys = cfg.Hotkeys;
+
+            ActivateCommand = hotkeys.Activate.OnEvent(e =>
             {
                 e.Handled = true;
                 _engine.Activate();
-            }, description: "KeyMouse: Activate hint mode");
+            });
 
-            // Register Ctrl+Alt+S to reshow last hints
-            ReshowCommand = (Ctrl + Alt + S).OnDown(e =>
+            ReshowCommand = hotkeys.Reshow.OnEvent(e =>
             {
                 e.Handled = true;
                 _engine.Reshow();
-            }, description: "KeyMouse: Reshow last hints");
+            });
 
             // Hook raw KeyDown for hint mode key handling
-            var kb = keyboard as global::Metatool.Input.Keyboard;
-            if (kb != null)
+            if (keyboard is Keyboard kb)
             {
                 kb.KeyDown += _engine.HandleKeyDown;
             }
@@ -50,13 +49,12 @@ namespace Metatool.Tools.KeyMouse
             RegisterCommands();
         }
 
-        public override void OnUnloading()
+        public void OnUnloading()
         {
             ActivateCommand?.Remove();
             ReshowCommand?.Remove();
             _engine?.Dispose();
             _overlayWindow?.Close();
-            base.OnUnloading();
         }
     }
 }
