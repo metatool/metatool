@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -190,6 +191,7 @@ public class KeyboardHook
         _eventSource.KeyDown += (sender, args) =>
         {
             _monkey.ClimbTree(args);
+            // Debug.WriteLine($"key down: {args}");
             // a copy, so newly added would be handled in next event.
             List<KeyEventHandler> handlers = [.. _keyDownHandlers];
             handlers.ForEach(h => h?.Invoke(sender, args));

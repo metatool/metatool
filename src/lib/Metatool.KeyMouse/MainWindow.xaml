@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="KeyMouse - Press Ctrl+Alt+A to activate" Height="450" Width="800"
+        Title="KeyMouse Tool" Height="450" Width="800"
         AllowsTransparency="True"
         WindowStyle="None"
         Background="Transparent"

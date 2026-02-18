@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Metatool.Input.MouseKeyHook.WinApi;
 using Metatool.Service;
@@ -24,6 +25,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 			_logger?.LogDebug("this KeyUp event disabled");
 			return;
 		}
+		// Debug.WriteLine($"InvokeKeyDown: {e}");
 		if (handler == null || !e.IsKeyDown || e.Handled)
 			return;
 

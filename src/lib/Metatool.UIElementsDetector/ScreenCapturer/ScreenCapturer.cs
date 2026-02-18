@@ -11,8 +11,8 @@ namespace Metatool.ScreenCapturer
     {
         private readonly IScreenCaptureService _screenCaptureService;
         private readonly List<Display> _displays;
-        private IScreenCapture _screenCapture;
-        private ICaptureZone _captureZone;
+        private IScreenCapture? _screenCapture;
+        private ICaptureZone? _captureZone;
 
         public ScreenCapturer(IntPtr windowHandle = default)
         {
@@ -35,22 +35,28 @@ namespace Metatool.ScreenCapturer
 
         public void UpdateCaptureZone(IntPtr windowHandle)
         {
-            if (_captureZone != null)
-            {
-                if (_captureZone is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                }
-                _captureZone = null;
-            }
-
             // Find the display that contains the window
             var display = FindDisplayForWindow(windowHandle);
 
             if (_screenCapture == null || _screenCapture.Display != display)
             {
-                (_screenCapture as IDisposable)?.Dispose();
+                if (_captureZone is IDisposable disposableZone)
+                {
+                    disposableZone.Dispose();
+                }
+                _captureZone = null;
+
+                // Don't dispose _screenCapture — the service caches instances per display
+                // and owns their lifecycle. Disposing here poisons the cache.
                 _screenCapture = _screenCaptureService.GetScreenCapture(display);
+            }
+            else if (_captureZone != null)
+            {
+                if (_captureZone is IDisposable disposableZone)
+                {
+                    disposableZone.Dispose();
+                }
+                _captureZone = null;
             }
 
             // Capture the full display; the window handle is only used to pick the correct monitor
@@ -67,13 +73,13 @@ namespace Metatool.ScreenCapturer
 
         public IDisposable LockZone()
         {
-            return _captureZone.Lock();
+            return _captureZone!.Lock();
         }
 
-        public ReadOnlySpan<byte> RawBuffer => _captureZone.RawBuffer;
-        public int Width => _captureZone.Width;
-        public int Height => _captureZone.Height;
-        public int Stride => _captureZone.Stride;
+        public ReadOnlySpan<byte> RawBuffer => _captureZone!.RawBuffer;
+        public int Width => _captureZone!.Width;
+        public int Height => _captureZone!.Height;
+        public int Stride => _captureZone!.Stride;
 
         public bool IsReady => _screenCapture != null && _captureZone != null;
 
@@ -82,9 +88,9 @@ namespace Metatool.ScreenCapturer
             if (!IsReady)
                 return null;
 
-            _screenCapture.CaptureScreen();
+            _screenCapture!.CaptureScreen();
 
-            using (_captureZone.Lock())
+            using (_captureZone!.Lock())
             {
                 var buffer = _captureZone.RawBuffer;
                 var width = _captureZone.Width;
@@ -123,7 +129,12 @@ namespace Metatool.ScreenCapturer
             {
                 disposableZone.Dispose();
             }
-            (_screenCapture as IDisposable)?.Dispose();
+            _captureZone = null;
+            _screenCapture = null;
+
+            // The service owns the IScreenCapture instances (cached per display).
+            // Disposing the service disposes all cached captures and the DX factory.
+            (_screenCaptureService as IDisposable)?.Dispose();
         }
     }
 }

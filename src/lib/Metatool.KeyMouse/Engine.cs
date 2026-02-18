@@ -149,6 +149,7 @@ namespace KeyMouse
 
         public void HandleKeyDown(object sender, IKeyEventArgs e)
         {
+            //  Debug.WriteLine($"key: {e.Key}");
             if (!_isHintMode) return;
             if (e.KeyCode == KeyCodes.Escape)
             {
