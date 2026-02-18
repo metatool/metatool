@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Metatool.Input.MouseKeyHook.Implementation;
 using Metatool.Service.MouseKey;
@@ -35,7 +36,12 @@ public static class CombinationExtensions
 			.ToDictionary(g => g.Key, g => g.ToArray());
 		source.KeyDown += (sender, e) =>
 		{
-            var found = watchlist.TryGetValue(e.KeyData, out var element);
+			var triggerKey = new Key(e.KeyCode);
+			var found = watchlist.TryGetValue(triggerKey, out var element);
+#if DEBUG
+			Debug.WriteLine($"[OnCombination] KeyCode={e.KeyCode}, KeyData={e.KeyData}, TriggerKey={triggerKey}, Found={found}");
+			// add debug log to output key info in to debug output
+#endif
 			if (!found)
 			{
 				reset?.Invoke();
@@ -103,5 +109,5 @@ public static class CombinationExtensions
 		OnCombination(source, wrapMap, buffer.Clear);
 	}
 
- 
+
 }

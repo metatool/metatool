@@ -11,5 +11,10 @@
     <ProjectReference Include="..\..\service\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
     <ProjectReference Include="..\..\lib\Metatool.MouseKeyHook\Metatool.MouseKeyHook.csproj" />
     <ProjectReference Include="..\..\lib\Metatool.WindowsInput\Metatool.WindowsInput.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.CoreLib\Metatool.Service.CoreLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
   </ItemGroup>
 </Project>

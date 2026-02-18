@@ -1,6 +1,7 @@
 using System.Linq;
 using NUnit.Framework;
 using Metatool.UIElementsDetector;
+using Metatool.ScreenCapturer;
 using System.IO;
 using System;
 using OpenCvSharp;

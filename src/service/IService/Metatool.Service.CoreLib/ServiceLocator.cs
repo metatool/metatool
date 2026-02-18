@@ -45,7 +45,7 @@ public static class Services
 	// keep a chain of parent/child providers
 	static IServiceProvider _provider;
 
-	internal static void SetDefaultProvider(IServiceProvider provider) => _provider = provider;
+	public static void SetDefaultProvider(IServiceProvider provider) => _provider = provider;
 
 	internal static IDisposableServiceProvider AddServices(IServiceCollection services)
 	{
@@ -54,15 +54,22 @@ public static class Services
 		return p;
 	}
 
-	public static object Get(Type serviceType)
+	public static object? Get(Type serviceType)
 	{
-		return _provider.GetService(serviceType);
+		return _provider?.GetService(serviceType);
 	}
 
 	public static T Get<T>()
 	{
 		return (T)Get(typeof(T));
 	}
+
+    public static T? GetOrNull<T>() where T : class
+    {
+		var a = Get(typeof(T));
+        if (a == null) return null;
+		return (T)a;
+    }
 
 	/// <summary>
 	/// Retrieve an instance of the given type from the service provider. If one is not found then instantiate it directly.

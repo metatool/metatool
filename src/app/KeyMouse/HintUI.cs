@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace KeyMouse
 {
@@ -97,6 +99,17 @@ namespace KeyMouse
             {
                 canvas.Children[j].Visibility = Visibility.Hidden;
             }
+
+#if DEBUG
+            Debug.WriteLine($"[CreateHint] requested={points.rects.Count}, created={i}, canvasChildren={canvas.Children.Count}, hintsDict={_hints.Count}");
+            canvas.UpdateLayout();
+            int visibleCount = 0;
+            foreach (UIElement child in canvas.Children)
+            {
+                if (child.Visibility == Visibility.Visible) visibleCount++;
+            }
+            Debug.WriteLine($"[CreateHint] visibleChildren={visibleCount}");
+#endif
         }
 
         /// <summary>
@@ -107,6 +120,7 @@ namespace KeyMouse
             _window.HintCanvas.Visibility = Visibility.Visible;
             _window.Show();
             _window.Activate();
+
         }
 
         /// <summary>

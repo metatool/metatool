@@ -1,17 +1,21 @@
 {
   "permissions": {
-    "_note": "Use 'Bash(*)' to allow all bash commands",
     "allow": [
       "Bash(pwsh:*)",
+      "Bash(cmd:*)",
+      "Bash(find:*)",
       "Bash(powershell:*)",
-      "Bash(dotnet build:*)",
-      "Bash(dotnet test:*)",
+      "Bash(dotnet:*)",
       "Bash(dir:*)",
       "Bash(npm:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(tasklist:*)",
-      "Bash(taskkill:*)"
-    ]
+      "Bash(taskkill:*)",
+      "Bash(nuget:*)",
+      "WebFetch(domain:www.nuget.org)",
+      "WebFetch(domain:github.com)"
+    ],
+    "_note": "Use 'Bash(*)' to allow all bash commands"
   }
 }

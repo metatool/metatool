@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using ScreenCapture.NET;
+using Compunet.YoloSharp;
 using OpenCvSharp;
-using YoloSharp.Models;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -14,110 +12,58 @@ namespace Metatool.UIElementsDetector
 {
     public class UIElementsDetector : IDisposable
     {
-        private YoloModel _model;
-        private string _modelPath;
-        private IScreenCaptureService _screenCaptureService;
-        private IScreenCapture _screenCapture;
-        private ICaptureZone _captureZone;
+        private readonly YoloPredictor _model;
+        private readonly ScreenCapturer.ScreenCapturer _screenCapturer;
 
         public UIElementsDetector(string modelPath, IntPtr windowHandle = default)
         {
-            _modelPath = modelPath;
-            if (!File.Exists(_modelPath))
+            if (!File.Exists(modelPath))
             {
-                throw new FileNotFoundException($"Model file not found at {_modelPath}");
+                throw new FileNotFoundException($"Model file not found at {modelPath}");
             }
 
             // Initialize YoloSharp
-            _model = new YoloModel(_modelPath);
+            _model = new YoloPredictor(modelPath);
+            // Minimum confidence score for a detection to be kept (default: 0.25).
+            // Lower values return more detections but may include false positives.
+            _model.Configuration.Confidence = 0.05f;
+            // IoU (Intersection over Union) threshold for NMS (default: 0.45).
+            // Lower values suppress more overlapping boxes; higher values keep more nearby detections.
+            _model.Configuration.IoU = 0.4f;
 
-            // Initialize ScreenCapture
-            _screenCaptureService = new DX11ScreenCaptureService();
-            var graphicsCards = _screenCaptureService.GetGraphicsCards();
-            if (!graphicsCards.Any())
-            {
-                throw new InvalidOperationException("No graphics cards found for screen capture.");
-            }
-
-            var displays = _screenCaptureService.GetDisplays(graphicsCards.First());
-
-            if (!displays.Any())
-            {
-                throw new InvalidOperationException("No displays found on the primary graphics card for screen capture.");
-            }
-
-            _screenCapture = _screenCaptureService.GetScreenCapture(displays.First());
-
-            if (_screenCapture == null)
-            {
-                throw new InvalidOperationException("Failed to get screen capture service. It returned null.");
-            }
-
-            UpdateCaptureZone(windowHandle);
+            // Initialize ScreenCapturer
+            _screenCapturer = new ScreenCapturer.ScreenCapturer(windowHandle);
         }
 
         public void UpdateCaptureZone(IntPtr windowHandle)
         {
-            if (_captureZone != null)
-            {
-                if (_captureZone is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                }
-                _captureZone = null;
-            }
-
-            if (windowHandle != IntPtr.Zero)
-            {
-                if (User32.GetWindowRect(windowHandle, out User32.RECT rect))
-                {
-                    int width = rect.Right - rect.Left;
-                    int height = rect.Bottom - rect.Top;
-
-                    if (width <= 0 || height <= 0 || rect.Left < 0 || rect.Top < 0)
-                    {
-                         _captureZone = _screenCapture.RegisterCaptureZone(0, 0, _screenCapture.Display.Width, _screenCapture.Display.Height);
-                    }
-                    else
-                    {
-                        _captureZone = _screenCapture.RegisterCaptureZone(rect.Left, rect.Top, width, height);
-                    }
-                }
-                else
-                {
-                     _captureZone = _screenCapture.RegisterCaptureZone(0, 0, _screenCapture.Display.Width, _screenCapture.Display.Height);
-                }
-            }
-            else
-            {
-                 _captureZone = _screenCapture.RegisterCaptureZone(0, 0, _screenCapture.Display.Width, _screenCapture.Display.Height);
-            }
+            _screenCapturer.UpdateCaptureZone(windowHandle);
         }
 
         public unsafe List<UIElement> Detect()
         {
-            if (_screenCapture == null || _captureZone == null)
+            if (!_screenCapturer.IsReady)
             {
                 return new List<UIElement>();
             }
 
-            _screenCapture.CaptureScreen();
+            _screenCapturer.CaptureScreen();
 
-            using (_captureZone.Lock())
+            using (_screenCapturer.LockZone())
             {
-                var buffer = _captureZone.RawBuffer;
-                int width = _captureZone.Width;
-                int height = _captureZone.Height;
-                int stride = _captureZone.Stride; // Stride is in bytes
+                var buffer = _screenCapturer.RawBuffer;
+                var width = _screenCapturer.Width;
+                var height = _screenCapturer.Height;
+                var stride = _screenCapturer.Stride;
 
                 // Create ImageSharp Image from raw buffer (BGRA)
                 using (var image = new Image<Bgra32>(width, height))
                 {
                     fixed (byte* pBuffer = buffer)
                     {
-                        byte* ptr = pBuffer;
+                        var ptr = pBuffer;
                         image.ProcessPixelRows(accessor => {
-                            for (int y = 0; y < height; y++)
+                            for (var y = 0; y < height; y++)
                             {
                                 var pixelRow = accessor.GetRowSpan(y);
                                 var sourceRow = new Span<byte>(ptr + y * stride, width * 4);
@@ -127,23 +73,32 @@ namespace Metatool.UIElementsDetector
                     }
 
                     // Resize to width 640 while maintaining aspect ratio, per requirements.
-                    int targetWidth = 640;
-                    int targetHeight = (int)((double)height / width * targetWidth);
+                    var targetWidth = 640;
+                    var targetHeight = (int)((double)height / width * targetWidth);
 
                     image.Mutate(x => x.Resize(targetWidth, targetHeight));
+#if DEBUG
+                    var tempDir = @"c:\temp\1";
+                    if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
+                    image.SaveAsPng(Path.Combine(tempDir, $"capture_{DateTime.Now:yyyyMMdd_HHmmss}.png"));
+#endif
 
-                    var result = _model.RunInference(image);
-
+                    var result = _model.Detect(image);
+#if DEBUG
+                    Debug.WriteLine($"[Detect] {result.Count} detections (image: {targetWidth}x{targetHeight}, speed: {result.Speed})");
+                    foreach (var p in result)
+                        Debug.WriteLine($"  [{p.Name.Name}] conf={p.Confidence:F3} bounds=({p.Bounds.X},{p.Bounds.Y},{p.Bounds.Width},{p.Bounds.Height})");
+#endif
                     var elements = new List<UIElement>();
 
                     // Iterate through YoloSharp predictions
-                    foreach (var prediction in result.Predictions)
+                    foreach (var prediction in result)
                     {
-                        var bbox = prediction.Rectangle;
+                        var bbox = prediction.Bounds;
 
                         // Map back to original coordinates
-                        double scaleX = (double)width / targetWidth;
-                        double scaleY = (double)height / targetHeight;
+                        var scaleX = (double)width / targetWidth;
+                        var scaleY = (double)height / targetHeight;
 
                         elements.Add(new UIElement
                         {
@@ -151,8 +106,8 @@ namespace Metatool.UIElementsDetector
                             Y = (int)(bbox.Y * scaleY),
                             Width = (int)(bbox.Width * scaleX),
                             Height = (int)(bbox.Height * scaleY),
-                            Confidence = prediction.Score,
-                            Label = prediction.Class.Name
+                            Confidence = prediction.Confidence,
+                            Label = prediction.Name.Name
                         });
                     }
 
@@ -161,37 +116,15 @@ namespace Metatool.UIElementsDetector
             }
         }
 
-        public unsafe Mat CaptureActiveWindowImage()
+        public Mat CaptureActiveWindowImage()
         {
-            if (_screenCapture == null || _captureZone == null)
-            {
-                return null;
-            }
-
-            _screenCapture.CaptureScreen();
-
-            using (_captureZone.Lock())
-            {
-                var buffer = _captureZone.RawBuffer;
-                int width = _captureZone.Width;
-                int height = _captureZone.Height;
-                int stride = _captureZone.Stride;
-
-                fixed (byte* p = buffer)
-                {
-                    return Mat.FromPixelData(height, width, MatType.CV_8UC4, (IntPtr)p, stride).Clone();
-                }
-            }
+            return _screenCapturer.CaptureAsMatrix();
         }
 
         public void Dispose()
         {
-             (_model as IDisposable)?.Dispose();
-
-             if (_captureZone is IDisposable disposableZone)
-             {
-                 disposableZone.Dispose();
-             }
+            (_model as IDisposable)?.Dispose();
+            _screenCapturer?.Dispose();
         }
     }
 

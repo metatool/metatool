@@ -20,7 +20,7 @@
     <PackageReference Include="OpenCvSharp4" Version="4.11.0.20250507" />
     <PackageReference Include="ScreenCapture.NET" Version="3.0.0" />
     <PackageReference Include="ScreenCapture.NET.DX11" Version="3.0.0" />
-    <PackageReference Include="YoloSharp" Version="*" />
+    <PackageReference Include="YoloSharp" Version="6.1.0" />
   </ItemGroup>
 
 </Project>

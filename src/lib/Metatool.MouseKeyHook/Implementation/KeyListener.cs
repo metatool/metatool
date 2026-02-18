@@ -10,7 +10,7 @@ namespace Metatool.Input.MouseKeyHook.Implementation;
 
 internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscribe), IKeyboardEvents
 {
-	private readonly ILogger _logger = Services.Get<ILogger<KeyListener>>();
+	private readonly ILogger _logger = Services.GetOrNull<ILogger<KeyListener>>();
 
 	public event KeyEventHandler KeyDown;
 	public event KeyPressEventHandler KeyPress;
@@ -21,7 +21,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		var handler = KeyDown;
 		if (DisableDownEvent)
 		{
-			_logger.LogDebug("this KeyUp event disabled");
+			_logger?.LogDebug("this KeyUp event disabled");
 			return;
 		}
 		if (handler == null || !e.IsKeyDown || e.Handled)
@@ -35,7 +35,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		var handler = KeyPress;
 		if (DisablePressEvent)
 		{
-			_logger.LogDebug("this KeyPress event disabled");
+			_logger?.LogDebug("this KeyPress event disabled");
 			return;
 		}
 
@@ -43,7 +43,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 			return;
 
 		handler(this, e);
-		_logger.LogDebug(new string('\t', _indentCounter) + e);
+		_logger?.LogDebug(new string('\t', _indentCounter) + e);
 	}
 
 	public void InvokeKeyUp(IKeyEventArgs e)
@@ -60,7 +60,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 
 		if (DisableUpEvent)
 		{
-			_logger.LogDebug("this KeyUp event disabled");
+			_logger?.LogDebug("this KeyUp event disabled");
 			return;
 		}
 
@@ -81,7 +81,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 
 		set
 		{
-			_logger.LogDebug($"{nameof(DisableDownEvent)} = {value}");
+			_logger?.LogDebug($"{nameof(DisableDownEvent)} = {value}");
 			_disableDownEvent = value;
 		}
 	}
@@ -92,7 +92,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 
 		set
 		{
-			_logger.LogDebug($"{nameof(DisableUpEvent)} = {value}");
+			_logger?.LogDebug($"{nameof(DisableUpEvent)} = {value}");
 			_disableUpEvent = value;
 		}
 	}
@@ -102,7 +102,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		get => _disablePressEvent;
 		set
 		{
-			_logger.LogDebug($"{nameof(DisablePressEvent)} = {value}");
+			_logger?.LogDebug($"{nameof(DisablePressEvent)} = {value}");
 			_disablePressEvent = value;
 		}
 	}
@@ -113,7 +113,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		var args = GetDownUpEventArgs(data);
 		if (Disable)
 		{
-			_logger.LogDebug('\t' + "KeyListener is disable, NotHandled: " + args);
+			_logger?.LogDebug('\t' + "KeyListener is disable, NotHandled: " + args);
 			return true;
 		}
 
@@ -121,11 +121,11 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		argExt.listener = this;
 		if (args.IsVirtual && !HandleVirtualKey)
 		{
-			_logger.LogDebug('\t' + "KeyListener configured to Not HandleVirtualKey, Not Handled " + args);
+			_logger?.LogDebug('\t' + "KeyListener configured to Not HandleVirtualKey, Not Handled " + args);
 			return true;
 		}
 
-		_logger.LogDebug(new string('\t', _indentCounter++) + "→" + args);
+		_logger?.LogDebug(new string('\t', _indentCounter++) + "→" + args);
 		// down
 		InvokeKeyDown(args);
 		// press
@@ -136,12 +136,12 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		// up
 		InvokeKeyUp(args);
 
-		_logger.LogDebug(new string('\t', --_indentCounter) + "←" + args);
+		_logger?.LogDebug(new string('\t', --_indentCounter) + "←" + args);
 
 		if (argExt.HandleVirtualKeyBackup.HasValue)
 		{
 			HandleVirtualKey = argExt.HandleVirtualKeyBackup.Value;
-			_logger.LogDebug($"HandleVirtualKey={HandleVirtualKey}");
+			_logger?.LogDebug($"HandleVirtualKey={HandleVirtualKey}");
 		}
 
 		return !args.Handled && !pressEventArgs.Any(e => e.Handled);
