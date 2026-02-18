@@ -51,7 +51,8 @@ namespace KeyMouse
 
             _globalHook.OnCombination(new Dictionary<ICombination, Action>
             {
-                { Combination.Parse("Ctrl+Alt+A"), _engine.Activate }
+                { Combination.Parse("Ctrl+Alt+A"), _engine.Activate },
+                { Combination.Parse("Ctrl+Alt+S"), _engine.Reshow }
             });
             _globalHook.HandleVirtualKey = true;
             _globalHook.KeyDown += _engine.HandleKeyDown;

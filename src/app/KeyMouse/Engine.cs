@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Media;
 using Metatool.UIElementsDetector;
 using Metatool.ScreenCapturer;
-using Metatool.WindowsInput;
 using Metatool.Input.MouseKeyHook;
 using Metatool.Service.MouseKey;
 
@@ -20,7 +19,7 @@ namespace KeyMouse
     public class Engine : IDisposable
     {
         private readonly UIElementsDetector _detector;
-        private readonly InputSimulator _inputSimulator;
+        private readonly HintAction _hintAction;
 
         private Dictionary<string, Rect> _currentHints;
         private string _typedKeySequence = "";
@@ -32,7 +31,7 @@ namespace KeyMouse
         public Engine(string modelPath)
         {
             _detector = new UIElementsDetector(modelPath);
-            _inputSimulator = new InputSimulator();
+            _hintAction = new HintAction(new Metatool.WindowsInput.InputSimulator());
         }
 
         public void Activate()
@@ -206,25 +205,21 @@ namespace KeyMouse
             if (matches.Count == 1 && matches[0] == _typedKeySequence)
             {
                 var target = _currentHints[matches[0]];
-                TriggerClick(target);
                 ExitHintMode();
+                _hintAction.Execute(_overlayRect, target);
             }
         }
 
-        private void TriggerClick(Rect relativeRect)
+        public void Reshow()
         {
-            // Calculate absolute screen coordinates
-            // Rect is relative to _overlayRect (window or monitor depending on mode)
-            double x = _overlayRect.Left + relativeRect.X + relativeRect.Width / 2;
-            double y = _overlayRect.Top + relativeRect.Y + relativeRect.Height / 2;
+            if (_isHintMode || _currentHints == null || _currentHints.Count == 0) return;
 
-            // Move mouse to the calculated position and click
-            System.Windows.Forms.Cursor.Position = new System.Drawing.Point((int)x, (int)y);
+            var hintData = new Dictionary<string, Rect>(_currentHints);
+            HintUI.Inst.CreateHint((_overlayRect, hintData));
+            HintUI.Inst.Show();
 
-            // Small delay to ensure mouse position is set before clicking
-            System.Threading.Thread.Sleep(50);
-
-            _inputSimulator.Mouse.LeftClick();
+            _isHintMode = true;
+            _typedKeySequence = "";
         }
 
         private void ExitHintMode()
