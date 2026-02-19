@@ -12,6 +12,11 @@ public class HintUI
 {
 	public static HintUI Inst = new();
 
+	// Hint colors
+	static readonly Brush HintForeground    = Brushes.White;
+	static readonly Brush HintBackground    = new SolidColorBrush(Color.FromArgb(0xcc, 0x1a, 0x1a, 0x2e));
+	static readonly Brush HintMatchedColor  = Brushes.LimeGreen;
+
 	private HintUI()
 	{
 	}
@@ -62,7 +67,7 @@ public class HintUI
 		foreach (Run run in ui.hint.Inlines)
 		{
 			if (i == len) break;
-			run.Foreground = Brushes.Blue;
+			run.Foreground = HintMatchedColor;
 			i++;
 		}
 	}
@@ -121,14 +126,13 @@ public class HintUI
 			}
 			else
 			{
-				var y = Colors.Yellow;
-				y.A = 0xaa;
 				r = new TextBlock()
 				{
 					IsHitTestVisible = false,
-					Foreground = Brushes.Red,
-					Background = new SolidColorBrush(y),
+					Foreground = HintForeground,
+					Background = HintBackground,
 					FontWeight = FontWeights.Bold,
+					Padding = new Thickness(2, 1, 2, 1),
 				};
 				Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
 				Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);

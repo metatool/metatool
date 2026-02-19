@@ -245,9 +245,9 @@ public class Shell : IShell
 			return new ShortcutLink(lnk.TargetPath, lnk.Arguments, lnk.Description, lnk.FullName, lnk.IconLocation,
 				lnk.Hotkey, lnk.WindowStyle, lnk.WorkingDirectory);
 		}
-		catch
+		catch (Exception ex)
 		{
-			_logger.LogWarning($"Can not read shortcut info: {shortcutPath}, make sure it exist.");
+			_logger.LogWarning(ex, "Can not read shortcut info: {ShortcutPath}, make sure it exist.", shortcutPath);
 			return null;
 		}
 	}
