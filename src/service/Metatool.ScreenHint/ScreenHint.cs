@@ -27,7 +27,7 @@ public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher, IHi
 		if (buildHints)
 		{
 			var winHandle = windowManager.CurrentWindow.Handle;
-			var (winRect, elementRects) = detector.Detect(winHandle);
+			var (winRect, elementRects) = detector.Detect(winHandle);//run in UI thread to avoid COMException in UIAutomation
 			_positions = (winRect, hintsBuilder.BuildHintPositions(elementRects));
 			hintUI.CreateHint(_positions);
 			hintUI.Show();
