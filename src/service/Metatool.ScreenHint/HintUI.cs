@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Metatool.ScreenHint;
 
-public class HintUI
+public class HintUI : IHintUI
 {
 	public static HintUI Inst = new();
 
@@ -59,12 +59,12 @@ public class HintUI
 
 	List<TextBlock> markedHints = new();
 
-	public void MarkHit(string key, int len)
+	public void MarkHitKey(string key, int len)
 	{
 		_points.TryGetValue(key, out var ui);
 		markedHints.Add(ui.hint);
 		var i = 0;
-		foreach (Run run in ui.hint.Inlines)
+		foreach (var run in ui.hint.Inlines)
 		{
 			if (i == len) break;
 			run.Foreground = HintMatchedColor;

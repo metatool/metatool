@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Media;
 using Metatool.UIElementsDetector;
 using Metatool.ScreenCapturer;
-using Metatool.Input.MouseKeyHook;
 using Metatool.Service.MouseKey;
 
 namespace KeyMouse
