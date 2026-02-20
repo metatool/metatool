@@ -16,9 +16,9 @@ namespace KeyMouse
         ActiveWindow,
     }
 
-    public class KeyMouseEngine(string modelPath, Config config, KeyMouseMainWindow overlayWindow) : IDisposable
+    public class KeyMouseEngine(Config config, KeyMouseMainWindow overlayWindow) : IDisposable
     {
-        private readonly UIElementsDetector _detector = new(modelPath);
+        private readonly UIElementsDetector _detector = new();
         private readonly HintAction _hintAction = new(new Metatool.WindowsInput.InputSimulator());
         private readonly HintUI _hintUI = new(overlayWindow);
         private readonly Visual _dpiReference = overlayWindow;

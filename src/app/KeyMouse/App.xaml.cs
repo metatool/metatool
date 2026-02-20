@@ -28,19 +28,11 @@ namespace KeyMouse
 
             _logger = serviceProvider.GetRequiredService<ILogger<App>>();
 
-            string modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "icon_detect.onnx");
-            if (!File.Exists(modelPath))
-            {
-                MessageBox.Show($"Model not found: {modelPath}");
-                Shutdown();
-                return;
-            }
-
             try
             {
                 var config = new Config();
                 var overlayWindow = new KeyMouseMainWindow();
-                _keyMouseEngine = new KeyMouseEngine(modelPath, config, overlayWindow);
+                _keyMouseEngine = new KeyMouseEngine(config, overlayWindow);
             }
             catch (Exception ex)
             {

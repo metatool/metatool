@@ -19,12 +19,8 @@ namespace Metatool.Tools.KeyMouse
             var cfg = config.CurrentValue;
             var engineConfig = new Config { Keys = cfg.Keys };
 
-            string modelPath = Path.Combine(
-                Path.GetDirectoryName(GetType().Assembly.Location)!,
-                "icon_detect.onnx");
-
             _overlayWindow = new KeyMouseMainWindow();
-            _engine = new KeyMouseEngine(modelPath, engineConfig, _overlayWindow);
+            _engine = new KeyMouseEngine(engineConfig, _overlayWindow);
 
             var hotkeys = cfg.Hotkeys;
 

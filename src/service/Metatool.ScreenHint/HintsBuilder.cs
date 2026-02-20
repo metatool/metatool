@@ -18,6 +18,7 @@ public class HintsBuilder
 
 	private static IWindowManager _windowManager;
 	private static IWindowManager WindowManager=>_windowManager??= Services.Get<IWindowManager>();
+
 	private (Rect winRect, List<Rect> rects) GetPoints(IntPtr winHandle)
 	{
 		var cacheRequest = new CacheRequest();

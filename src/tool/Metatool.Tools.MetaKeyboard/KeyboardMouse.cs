@@ -19,7 +19,7 @@ namespace Metatool.MetaKeyboard
 
             var hotkeys = conf.KeyboardMousePackage.Hotkeys;
 
-            hotkeys.MouseToFocus.OnEvent(e => MoveCursorToActiveControl());
+            hotkeys.MouseToFocus.OnEvent(_ => MoveCursorToActiveControl());
 
             hotkeys.MouseScrollUp.OnEvent(e =>
             {

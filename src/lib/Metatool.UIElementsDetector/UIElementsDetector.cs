@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Compunet.YoloSharp;
@@ -15,11 +13,15 @@ namespace Metatool.UIElementsDetector
         private readonly YoloPredictor _model;
         private readonly ScreenCapturer.ScreenCapturer _screenCapturer;
 
-        public UIElementsDetector(string modelPath, IntPtr windowHandle = default)
+        public UIElementsDetector(IntPtr windowHandle = default)
         {
+            var modelPath = Path.Combine(
+                Path.GetDirectoryName(GetType().Assembly.Location)!,
+                "icon_detect.onnx");
+
             if (!File.Exists(modelPath))
             {
-                throw new FileNotFoundException($"Model file not found at {modelPath}");
+                throw new FileNotFoundException($"UI elements detection model file not found at {modelPath}");
             }
 
             // Initialize YoloSharp

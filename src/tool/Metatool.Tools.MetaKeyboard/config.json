@@ -164,7 +164,7 @@
 				"Hotkeys": {
 					"MouseToFocus": {
 						"Hotkey": "GK + F*", // * behind the trigger key to mark down/up Event handled
-						"Description": "Focus Mouse To Active Control"
+						"Description": "Move Mouse To Active Control"
 					},
 					"MouseScrollUp": {
 						"Hotkey": "GK + W*",
