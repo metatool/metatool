@@ -13,9 +13,9 @@ public class HintUI
 	public static HintUI Inst = new();
 
 	// Hint colors
-	static readonly Brush HintForeground    = Brushes.White;
-	static readonly Brush HintBackground    = new SolidColorBrush(Color.FromArgb(0xcc, 0x1a, 0x1a, 0x2e));
-	static readonly Brush HintMatchedColor  = Brushes.LimeGreen;
+	static readonly Brush HintForeground    = new SolidColorBrush(Color.FromRgb(0xFF, 0xD7, 0x00));
+	static readonly Brush HintBackground    = new SolidColorBrush(Color.FromArgb(0xE6, 0xCC, 0x33, 0x33));
+	static readonly Brush HintMatchedColor  = new SolidColorBrush(Color.FromRgb(0x90, 0x90, 0xA0));
 
 	private HintUI()
 	{

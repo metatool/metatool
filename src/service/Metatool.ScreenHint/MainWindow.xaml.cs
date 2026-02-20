@@ -10,12 +10,12 @@ namespace Metatool.ScreenHint;
 public partial class MainWindow : Window
 {
 	internal static MainWindow Inst = new();
+
 	private MainWindow()
 	{
 		InitializeComponent();
 		Hide();
 		Inst = this;
-      
 	}
 
 	public void HighLight(Rect rect)
