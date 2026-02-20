@@ -47,7 +47,17 @@ public class FileExplorer : CommandPackage
 
         }, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
 
-		hotKeys.NewFile.OnEvent(async e =>
+		hotKeys.PasteAsFile.OnEvent(async e =>
+		{
+			e.Handled = true;
+            var path = await clipboard.PasteAsFile();
+            if (path == null) return;
+
+            await fileExplorer.Select([path]);
+            notify.ShowMessage($"file saved: {path}");
+        }, _ => windowManager.CurrentWindow.IsExplorer);
+
+        hotKeys.NewFile.OnEvent(async e =>
 		{
 			const string newFileName = "NewFile";
 			var handle = windowManager.CurrentWindow.Handle;
@@ -61,7 +71,7 @@ public class FileExplorer : CommandPackage
 
 			var file = File.Create(fullPath + "\\" + fileName);
 			file.Close();
-			fileExplorer.Select(handle, [fileName]);
+			await fileExplorer.Select([fileName], handle);
             keyboard.Type(Key.F2); // have to be triggered when no other keys are down.
         }, _ => windowManager.CurrentWindow.IsExplorer);
 

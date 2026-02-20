@@ -4,7 +4,7 @@
       "commandName": "Project",
       "commandLineArgs": "--admin",
       "environmentVariables": {
-        "DEV_WEBUI": "1"
+        "DEV_WEBUI": "0" // set it to 1, for web ui debug, 0 to disable debug
       }
     }
   }

@@ -210,6 +210,10 @@
 					"ShowDesktopFolder": {
 						"Hotkey": "LWin + D",
 						"Description": "Show &Desktop Folder"
+					},
+					"PasteAsFile": {
+						"Hotkey": "Ctrl + Alt + V",
+						"Description": "Paste As File"
 					}
 				}
 			},

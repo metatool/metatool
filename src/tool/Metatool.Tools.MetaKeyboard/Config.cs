@@ -102,6 +102,7 @@ namespace Metatool.MetaKeyboard
         public HotkeyTrigger CopySelectedPath { get; set; }
         public HotkeyTrigger NewFile { get; set; }
         public HotkeyTrigger ShowDesktopFolder { get; set; }
+        public HotkeyTrigger PasteAsFile { get; set; }
     }
 
     public class SoftwareHotKeys

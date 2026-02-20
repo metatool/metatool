@@ -17,7 +17,7 @@ namespace Metatool.WebViewHost
             InitializeComponent();
             // defined in launchSettings.json
             dev = Environment.GetEnvironmentVariable("DEV_WEBUI");
-
+            if(dev == "0") dev = null;
             if (!string.IsNullOrEmpty(dev))
             {
                 // support vscode debugging
