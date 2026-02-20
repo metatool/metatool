@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
-using System.Windows.Automation;
-using Metatool.Service;
 
 namespace Metatool.ScreenPoint;
 
@@ -13,44 +11,8 @@ public static class Config
 	public static string Keys = @"ASDFQWERZXCVTGBHJKLYUIOPNM";
 }
 
-public class HintsBuilder
+public class HintsBuilder : IHintsBuilder
 {
-
-	private static IWindowManager _windowManager;
-	private static IWindowManager WindowManager=>_windowManager??= Services.Get<IWindowManager>();
-
-	private (Rect winRect, List<Rect> rects) GetPoints(IntPtr winHandle)
-	{
-		var cacheRequest = new CacheRequest();
-		// cacheRequest.Add(AutomationElement.NameProperty);
-		// cacheRequest.Add(AutomationElement.ClassNameProperty);
-		// cacheRequest.Add(AutomationElement.);
-		cacheRequest.Add(AutomationElement.BoundingRectangleProperty);
-		using (cacheRequest.Activate())
-		{
-			var winElement = AutomationElement.FromHandle(winHandle);
-			var condition = new AndCondition(
-				new PropertyCondition(AutomationElement.IsEnabledProperty, true),
-				new PropertyCondition(AutomationElement.IsOffscreenProperty, false)
-			);
-			var all     = winElement.FindAll(TreeScope.Descendants, condition);
-			var rects   = new List<Rect>();
-			var winRect = winElement.Cached.BoundingRectangle;
-
-			foreach (AutomationElement element in all)
-			{
-				var rect = element.Cached.BoundingRectangle;
-				if (rect.Width < 3 || rect.Height < 3) continue;
-
-				rect.X = rect.X - winRect.X;
-				rect.Y = rect.Y - winRect.Y;
-				rects.Add(rect);
-			}
-
-			return (winRect, rects);
-		}
-	}
-
 	private Dictionary<string, Rect> GetKeyPointPairs(List<Rect> rects, string keys)
 	{
 		var keyPointPairs = new Dictionary<string, Rect>();
@@ -99,18 +61,12 @@ public class HintsBuilder
 	}
 
 
-	public (Rect windowRect, Dictionary<string, Rect> rects) BuildHintPositions()
+	public Dictionary<string, Rect> BuildHintPositions(List<Rect> elementRects)
 	{
 		var w = new Stopwatch();
 		w.Start();
-		var h      = WindowManager.CurrentWindow.Handle;
-		var points = GetPoints(h);
-		Console.WriteLine("GetPoints:" + w.ElapsedMilliseconds);
-		w.Restart();
-		var eles = GetKeyPointPairs(points.rects, Config.Keys);
+		var eles = GetKeyPointPairs(elementRects, Config.Keys);
 		Console.WriteLine("GetKeyPointPairs:" + w.ElapsedMilliseconds);
-		w.Restart();
-		var rr = points.winRect;
-		return (rr, eles);
+		return eles;
 	}
 }

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Metatool.ScreenHint;
+namespace Metatool.ScreenHint.HintUI;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml

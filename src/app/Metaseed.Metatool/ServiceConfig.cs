@@ -63,7 +63,7 @@ public class ServiceConfig
 					.AddSingleton<IMouse, Mouse>()
 					.AddSingleton<ICommandManager, CommandManager>()
 					.AddSingleton<INotify,Notify>()
-					.AddSingleton<IScreenHint, ScreenHint>()
+					.ConfigScreenHint()
 					.AddMetatoolUtils()
 					.AddPipelineBuilder()
 					.AddHostedService<SingleInstanceService>()

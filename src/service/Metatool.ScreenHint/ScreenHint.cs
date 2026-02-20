@@ -8,10 +8,11 @@ using System.Windows;
 using Metatool.Service;
 using Metatool.ScreenPoint;
 using Metatool.Service.MouseKey;
+using Metatool.ScreenHint.HintUI;
 
 namespace Metatool.ScreenHint;
 
-public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher) : IScreenHint
+public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher, IHintsBuilder hintsBuilder, IUIElementsDetector detector, IWindowManager windowManager, IHintUI hintUI) : IScreenHint
 {
     static (Rect windowRect, Dictionary<string, Rect> rects) _positions;
 
@@ -25,14 +26,15 @@ public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher) : I
 		buildHints = buildHints || _positions.Equals(default);
 		if (buildHints)
 		{
-			var builder = new HintsBuilder();
-			_positions = builder.BuildHintPositions();
-			HintUI.Inst.CreateHint(_positions);
-			HintUI.Inst.Show();
+			var winHandle = windowManager.CurrentWindow.Handle;
+			var (winRect, elementRects) = detector.Detect(winHandle);
+			_positions = (winRect, hintsBuilder.BuildHintPositions(elementRects));
+			hintUI.CreateHint(_positions);
+			hintUI.Show();
 		}
 		else
 		{
-			HintUI.Inst.Show(true);
+			hintUI.Show(true);
 		}
 
 
@@ -43,16 +45,16 @@ public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher) : I
 
 			if (downArg.KeyCode == KeyCodes.LShiftKey)
 			{
-				HintUI.Inst.HideHints();
+				hintUI.HideHints();
 				var upArg = await keyboard.KeyUpAsync();
-				HintUI.Inst.ShowHints();
+				hintUI.ShowHints();
 				continue;
 			}
 
 			var downKey = downArg.KeyCode.ToString();
 			if (downKey.Length > 1 || !Config.Keys.Contains(downKey))
 			{
-				HintUI.Inst.Hide();
+				hintUI.Hide();
 				return;
 			}
 
@@ -62,18 +64,18 @@ public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher) : I
 			{
 				if (k.StartsWith(hits.ToString()))
 				{
-					HintUI.Inst.MarkHit(k, hits.Length);
+					hintUI.MarkHitKey(k, hits.Length);
 					ks.Add(k);
 				}
 				else
 				{
-					HintUI.Inst.HideHint(k);
+					hintUI.HideHint(k);
 				}
 			}
 
 			if (ks.Count == 0)
 			{
-				HintUI.Inst.Hide();
+				hintUI.Hide();
 				return;
 			}
 
@@ -81,8 +83,8 @@ public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher) : I
 			if (!string.IsNullOrEmpty(key))
 			{
 				var v = _positions.rects[key];
-				HintUI.Inst.HideHints();
-				HintUI.Inst.HighLight(v);
+				hintUI.HideHints();
+				hintUI.HighLight(v);
 
 				await Task.Run(()=>
 				{

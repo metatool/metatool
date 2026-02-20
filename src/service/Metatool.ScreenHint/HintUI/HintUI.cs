@@ -6,22 +6,17 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace Metatool.ScreenHint;
+namespace Metatool.ScreenHint.HintUI;
 
 public class HintUI : IHintUI
 {
-	public static HintUI Inst = new();
-
 	// Hint colors
 	static readonly Brush HintForeground    = new SolidColorBrush(Color.FromRgb(0xFF, 0xD7, 0x00));
 	static readonly Brush HintBackground    = new SolidColorBrush(Color.FromArgb(0xE6, 0xCC, 0x33, 0x33));
 	static readonly Brush HintMatchedColor  = new SolidColorBrush(Color.FromRgb(0x90, 0x90, 0xA0));
 
-	private HintUI()
-	{
-	}
-
-	readonly MainWindow _window = MainWindow.Inst;
+	MainWindow _window;
+	MainWindow Window => _window ??= MainWindow.Inst;
 
 	public void Show(bool isReshow = false)
 	{
@@ -40,22 +35,22 @@ public class HintUI : IHintUI
 			}
 		}
 
-		_window._Canvas.Visibility = System.Windows.Visibility.Visible;
+		Window._Canvas.Visibility = System.Windows.Visibility.Visible;
 
-		_window.Show();
+		Window.Show();
 	}
 
 	public void Hide()
 	{
-		_window.Hide();
+		Window.Hide();
 	}
 
 	public void HideHints()
 	{
-		_window._Canvas.Visibility = System.Windows.Visibility.Hidden;
+		Window._Canvas.Visibility = System.Windows.Visibility.Hidden;
 	}
 
-	public bool IsHintsVisible => _window._Canvas.Visibility == System.Windows.Visibility.Visible;
+	public bool IsHintsVisible => Window._Canvas.Visibility == System.Windows.Visibility.Visible;
 
 	List<TextBlock> markedHints = new();
 
@@ -80,12 +75,12 @@ public class HintUI : IHintUI
 
 	public void ShowHints()
 	{
-		_window._Canvas.Visibility = System.Windows.Visibility.Visible;
+		Window._Canvas.Visibility = System.Windows.Visibility.Visible;
 	}
 
 	public void HighLight(Rect rect)
 	{
-		_window.HighLight(rect);
+		Window.HighLight(rect);
 	}
 	Dictionary<string, (Rect rect, TextBlock hint)> _points;
 	public void CreateHint((Rect windowRect, Dictionary<string, Rect> rects) points)
@@ -94,11 +89,11 @@ public class HintUI : IHintUI
 		var w = new Stopwatch();
 		w.Start();
 		var rr = points.windowRect;
-		_window.Top    = rr.Top;
-		_window.Left   = rr.Left;
-		_window.Width  = rr.Width;
-		_window.Height = rr.Height;
-		var childrenCount = _window._Canvas.Children.Count;
+		Window.Top    = rr.Top;
+		Window.Left   = rr.Left;
+		Window.Width  = rr.Width;
+		Window.Height = rr.Height;
+		var childrenCount = Window._Canvas.Children.Count;
 		var i             = 0;
 
 		static void SetText(TextBlock ui, string key)
@@ -120,7 +115,7 @@ public class HintUI : IHintUI
 			TextBlock r;
 			if (i < childrenCount)
 			{
-				r      = _window._Canvas.Children[i] as TextBlock;
+				r      = Window._Canvas.Children[i] as TextBlock;
 				Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
 				Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
 			}
@@ -136,7 +131,7 @@ public class HintUI : IHintUI
 				};
 				Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
 				Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
-				_window._Canvas.Children.Add(r);
+				Window._Canvas.Children.Add(r);
 
 			}
 			SetText(r, e.Key);
@@ -148,7 +143,7 @@ public class HintUI : IHintUI
 
 		for (var j = points.rects.Count; j < childrenCount; j++)
 		{
-			_window._Canvas.Children[j].Visibility = Visibility.Hidden;
+			Window._Canvas.Children[j].Visibility = Visibility.Hidden;
 		}
 
 		Console.WriteLine("CreateHint:" + w.ElapsedMilliseconds);

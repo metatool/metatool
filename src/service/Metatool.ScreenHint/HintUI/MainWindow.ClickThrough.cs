@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace Metatool.ScreenHint;
+namespace Metatool.ScreenHint.HintUI;
 
 public partial class MainWindow
 {
