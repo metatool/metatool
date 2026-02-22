@@ -38,8 +38,7 @@ namespace KeyMouse
                 var handle = User32.GetForegroundWindow();
                 if (handle == IntPtr.Zero) return;
 
-                _detector.UpdateCaptureZone(handle);
-                var elements = _detector.Detect();
+                var elements = _detector.Detect(handle);
 
                 if (elements.Count == 0) return;
 

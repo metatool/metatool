@@ -14,15 +14,15 @@ namespace Metatool.ScreenHint;
 
 public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher, IHintsBuilder hintsBuilder, IUIElementsDetector detector, IWindowManager windowManager, IHintUI hintUI) : IScreenHint
 {
-    static (Rect windowRect, Dictionary<string, Rect> rects) _positions;
+	(Rect windowRect, Dictionary<string, Rect> rects) _positions;
 
-	public  async Task Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true)
+	public async Task Show(Action<(Rect winRect, Rect clientRect)> action, bool buildHints = true)
 	{
-        if (!dispatcher.CheckAccess())
-        {
-            await dispatcher.DispatchAsync(() => Show(action, buildHints));
-            return;
-        }
+		if (!dispatcher.CheckAccess())
+		{
+			await dispatcher.DispatchAsync(() => Show(action, buildHints));
+			return;
+		}
 		buildHints = buildHints || _positions.Equals(default);
 		if (buildHints)
 		{
@@ -86,7 +86,7 @@ public sealed class ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher, IHi
 				hintUI.HideHints();
 				hintUI.HighLight(v);
 
-				await Task.Run(()=>
+				await Task.Run(() =>
 				{
 					Thread.Sleep(100);
 					action((_positions.windowRect, v));

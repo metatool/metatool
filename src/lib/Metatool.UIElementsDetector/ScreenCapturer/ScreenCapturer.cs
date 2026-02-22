@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using ScreenCapture.NET;
-using OpenCvSharp;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Metatool.ScreenCapturer
 {
@@ -11,7 +12,7 @@ namespace Metatool.ScreenCapturer
         private IScreenCapture? _screenCapture;
         private ICaptureZone? _captureZone;
 
-        public ScreenCapturer(IntPtr windowHandle = default)
+        public ScreenCapturer()
         {
             _screenCaptureService = new DX11ScreenCaptureService();
             var graphicsCards = _screenCaptureService.GetGraphicsCards();
@@ -26,78 +27,55 @@ namespace Metatool.ScreenCapturer
             {
                 throw new InvalidOperationException("No displays found for screen capture.");
             }
-
-            UpdateCaptureZone(windowHandle);
         }
 
-        public void UpdateCaptureZone(IntPtr windowHandle)
+        public Image<Bgra32>? CaptureScreen(IntPtr windowHandle)
         {
             // Find the display that contains the window
             var display = FindDisplayForWindow(windowHandle);
 
             if (_screenCapture == null || _screenCapture.Display != display)
             {
-                if (_captureZone is IDisposable disposableZone)
-                {
-                    disposableZone.Dispose();
-                }
-                _captureZone = null;
-
                 // Don't dispose _screenCapture — the service caches instances per display
                 // and owns their lifecycle. Disposing here poisons the cache.
                 _screenCapture = _screenCaptureService.GetScreenCapture(display);
             }
-            else if (_captureZone != null)
-            {
-                if (_captureZone is IDisposable disposableZone)
-                {
-                    disposableZone.Dispose();
-                }
-                _captureZone = null;
-            }
+
+            (_captureZone as IDisposable)?.Dispose();
 
             // Capture the full display; the window handle is only used to pick the correct monitor
             _captureZone = _screenCapture.RegisterCaptureZone(0, 0, _screenCapture.Display.Width, _screenCapture.Display.Height);
-        }
 
-        public bool CaptureScreen()
-        {
-            if (_screenCapture == null || _captureZone == null)
-                return false;
-
-            return _screenCapture.CaptureScreen();
-        }
-
-        public IDisposable LockZone()
-        {
-            return _captureZone!.Lock();
-        }
-
-        public ReadOnlySpan<byte> RawBuffer => _captureZone!.RawBuffer;
-        public int Width => _captureZone!.Width;
-        public int Height => _captureZone!.Height;
-        public int Stride => _captureZone!.Stride;
-
-        public bool IsReady => _screenCapture != null && _captureZone != null;
-
-        public unsafe Mat CaptureAsMatrix()
-        {
-            if (!IsReady)
+            if (!_screenCapture.CaptureScreen())
                 return null;
 
-            _screenCapture!.CaptureScreen();
+            return CreateImageFromZone(_captureZone);
+        }
 
-            using (_captureZone!.Lock())
+        private static unsafe Image<Bgra32> CreateImageFromZone(ICaptureZone zone)
+        {
+            using (zone.Lock())
             {
-                var buffer = _captureZone.RawBuffer;
-                var width = _captureZone.Width;
-                var height = _captureZone.Height;
-                var stride = _captureZone.Stride;
+                var buffer = zone.RawBuffer;
+                var width = zone.Width;
+                var height = zone.Height;
+                var stride = zone.Stride;
 
-                fixed (byte* p = buffer)
+                var image = new Image<Bgra32>(width, height);
+                fixed (byte* pBuffer = buffer)
                 {
-                    return Mat.FromPixelData(height, width, MatType.CV_8UC4, (IntPtr)p, stride).Clone();
+                    var ptr = pBuffer;
+                    image.ProcessPixelRows(accessor =>
+                    {
+                        for (var y = 0; y < height; y++)
+                        {
+                            var pixelRow = accessor.GetRowSpan(y);
+                            var sourceRow = new Span<byte>(ptr + y * stride, width * 4);
+                            MemoryMarshal.Cast<byte, Bgra32>(sourceRow).CopyTo(pixelRow);
+                        }
+                    });
                 }
+                return image;
             }
         }
 
@@ -122,10 +100,7 @@ namespace Metatool.ScreenCapturer
 
         public void Dispose()
         {
-            if (_captureZone is IDisposable disposableZone)
-            {
-                disposableZone.Dispose();
-            }
+            (_captureZone as IDisposable)?.Dispose();
             _captureZone = null;
             _screenCapture = null;
 

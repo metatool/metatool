@@ -1,9 +1,6 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Compunet.YoloSharp;
-using OpenCvSharp;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 namespace Metatool.UIElementsDetector
@@ -13,7 +10,7 @@ namespace Metatool.UIElementsDetector
         private readonly YoloPredictor _model;
         private readonly ScreenCapturer.ScreenCapturer _screenCapturer;
 
-        public UIElementsDetector(IntPtr windowHandle = default)
+        public UIElementsDetector()
         {
             var modelPath = Path.Combine(
                 Path.GetDirectoryName(GetType().Assembly.Location)!,
@@ -34,93 +31,56 @@ namespace Metatool.UIElementsDetector
             _model.Configuration.IoU = 0.4f;
 
             // Initialize ScreenCapturer
-            _screenCapturer = new ScreenCapturer.ScreenCapturer(windowHandle);
+            _screenCapturer = new ScreenCapturer.ScreenCapturer();
         }
 
-        public void UpdateCaptureZone(IntPtr windowHandle)
+        public List<UIElement> Detect(IntPtr windowHandle)
         {
-            _screenCapturer.UpdateCaptureZone(windowHandle);
-        }
-
-        public unsafe List<UIElement> Detect()
-        {
-            if (!_screenCapturer.IsReady)
-            {
+            using var image = _screenCapturer.CaptureScreen(windowHandle);
+            if (image == null)
                 return new List<UIElement>();
-            }
 
-            _screenCapturer.CaptureScreen();
+            var width = image.Width;
+            var height = image.Height;
 
-            using (_screenCapturer.LockZone())
+            // Resize to width 640 while maintaining aspect ratio, per requirements.
+            var targetWidth = 640;
+            var targetHeight = (int)((double)height / width * targetWidth);
+
+            image.Mutate(x => x.Resize(targetWidth, targetHeight));
+#if DEBUG
+            var tempDir = @"c:\temp\1";
+            if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
+            image.SaveAsPng(Path.Combine(tempDir, $"capture_{DateTime.Now:yyyyMMdd_HHmmss}.png"));
+#endif
+
+            var result = _model.Detect(image);
+#if DEBUG
+            Debug.WriteLine($"[Detect] {result.Count} detections (image: {targetWidth}x{targetHeight}, speed: {result.Speed})");
+            foreach (var p in result)
+                Debug.WriteLine($"  [{p.Name.Name}] conf={p.Confidence:F3} bounds=({p.Bounds.X},{p.Bounds.Y},{p.Bounds.Width},{p.Bounds.Height})");
+#endif
+            var elements = new List<UIElement>();
+
+            foreach (var prediction in result)
             {
-                var buffer = _screenCapturer.RawBuffer;
-                var width = _screenCapturer.Width;
-                var height = _screenCapturer.Height;
-                var stride = _screenCapturer.Stride;
+                var bbox = prediction.Bounds;
 
-                // Create ImageSharp Image from raw buffer (BGRA)
-                using (var image = new Image<Bgra32>(width, height))
+                var scaleX = (double)width / targetWidth;
+                var scaleY = (double)height / targetHeight;
+
+                elements.Add(new UIElement
                 {
-                    fixed (byte* pBuffer = buffer)
-                    {
-                        var ptr = pBuffer;
-                        image.ProcessPixelRows(accessor => {
-                            for (var y = 0; y < height; y++)
-                            {
-                                var pixelRow = accessor.GetRowSpan(y);
-                                var sourceRow = new Span<byte>(ptr + y * stride, width * 4);
-                                MemoryMarshal.Cast<byte, Bgra32>(sourceRow).CopyTo(pixelRow);
-                            }
-                        });
-                    }
-
-                    // Resize to width 640 while maintaining aspect ratio, per requirements.
-                    var targetWidth = 640;
-                    var targetHeight = (int)((double)height / width * targetWidth);
-
-                    image.Mutate(x => x.Resize(targetWidth, targetHeight));
-#if DEBUG
-                    var tempDir = @"c:\temp\1";
-                    if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
-                    image.SaveAsPng(Path.Combine(tempDir, $"capture_{DateTime.Now:yyyyMMdd_HHmmss}.png"));
-#endif
-
-                    var result = _model.Detect(image);
-#if DEBUG
-                    Debug.WriteLine($"[Detect] {result.Count} detections (image: {targetWidth}x{targetHeight}, speed: {result.Speed})");
-                    foreach (var p in result)
-                        Debug.WriteLine($"  [{p.Name.Name}] conf={p.Confidence:F3} bounds=({p.Bounds.X},{p.Bounds.Y},{p.Bounds.Width},{p.Bounds.Height})");
-#endif
-                    var elements = new List<UIElement>();
-
-                    // Iterate through YoloSharp predictions
-                    foreach (var prediction in result)
-                    {
-                        var bbox = prediction.Bounds;
-
-                        // Map back to original coordinates
-                        var scaleX = (double)width / targetWidth;
-                        var scaleY = (double)height / targetHeight;
-
-                        elements.Add(new UIElement
-                        {
-                            X = (int)(bbox.X * scaleX),
-                            Y = (int)(bbox.Y * scaleY),
-                            Width = (int)(bbox.Width * scaleX),
-                            Height = (int)(bbox.Height * scaleY),
-                            Confidence = prediction.Confidence,
-                            Label = prediction.Name.Name
-                        });
-                    }
-
-                    return elements;
-                }
+                    X = (int)(bbox.X * scaleX),
+                    Y = (int)(bbox.Y * scaleY),
+                    Width = (int)(bbox.Width * scaleX),
+                    Height = (int)(bbox.Height * scaleY),
+                    Confidence = prediction.Confidence,
+                    Label = prediction.Name.Name
+                });
             }
-        }
 
-        public Mat CaptureActiveWindowImage()
-        {
-            return _screenCapturer.CaptureAsMatrix();
+            return elements;
         }
 
         public void Dispose()

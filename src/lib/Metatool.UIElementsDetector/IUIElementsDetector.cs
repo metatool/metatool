@@ -2,7 +2,6 @@ namespace Metatool.UIElementsDetector
 {
     public interface IUIElementsDetector
     {
-        List<UIElement> Detect();
-        void UpdateCaptureZone(System.IntPtr windowHandle);
+        List<UIElement> Detect(System.IntPtr windowHandle);
     }
 }
