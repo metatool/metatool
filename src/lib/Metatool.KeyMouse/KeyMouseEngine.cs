@@ -27,7 +27,7 @@ namespace KeyMouse
         private bool _isHintMode = false;
         private Rect _overlayRect;
 
-        public DetectMode Mode { get; set; } = DetectMode.ActiveMonitor;
+        public DetectMode Mode { get; set; } = DetectMode.ActiveWindow;
 
         public void Activate()
         {
