@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Compunet.YoloSharp;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 
 namespace Metatool.UIElementsDetector
 {
@@ -40,14 +39,6 @@ namespace Metatool.UIElementsDetector
             if (image == null)
                 return new List<UIElement>();
 
-            var width = image.Width;
-            var height = image.Height;
-
-            // Resize to width 640 while maintaining aspect ratio, per requirements.
-            var targetWidth = 640;
-            var targetHeight = (int)((double)height / width * targetWidth);
-
-            image.Mutate(x => x.Resize(targetWidth, targetHeight));
 #if DEBUG
             var tempDir = @"c:\temp\1";
             if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
@@ -56,7 +47,7 @@ namespace Metatool.UIElementsDetector
 
             var result = _model.Detect(image);
 #if DEBUG
-            Debug.WriteLine($"[Detect] {result.Count} detections (image: {targetWidth}x{targetHeight}, speed: {result.Speed})");
+            Debug.WriteLine($"[Detect] {result.Count} detections (image: {image.Width}x{image.Height}, speed: {result.Speed})");
             foreach (var p in result)
                 Debug.WriteLine($"  [{p.Name.Name}] conf={p.Confidence:F3} bounds=({p.Bounds.X},{p.Bounds.Y},{p.Bounds.Width},{p.Bounds.Height})");
 #endif
@@ -65,16 +56,12 @@ namespace Metatool.UIElementsDetector
             foreach (var prediction in result)
             {
                 var bbox = prediction.Bounds;
-
-                var scaleX = (double)width / targetWidth;
-                var scaleY = (double)height / targetHeight;
-
                 elements.Add(new UIElement
                 {
-                    X = (int)(bbox.X * scaleX),
-                    Y = (int)(bbox.Y * scaleY),
-                    Width = (int)(bbox.Width * scaleX),
-                    Height = (int)(bbox.Height * scaleY),
+                    X = bbox.X,
+                    Y = bbox.Y,
+                    Width = bbox.Width,
+                    Height = bbox.Height,
                     Confidence = prediction.Confidence,
                     Label = prediction.Name.Name
                 });
