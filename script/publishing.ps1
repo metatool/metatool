@@ -10,7 +10,7 @@ param (
     $rebuild,
     [switch]
     [Alias("l")]
-    $localRelease
+    $localRelease =$true
 )
 
 $metatoolDir = Resolve-Path $PSScriptRoot\..
@@ -37,10 +37,12 @@ try {
         ri "$metatoolDir\exe\publish\appsettings.json" -ErrorAction SilentlyContinue
         Copy-Item "$metatoolDir\exe\publishing\Metatool.exe" "$metatoolDir\exe\publish" -Force
     }
+
     . $PSScriptRoot/lib/Build-Tool.ps1
 
     "Metatool.Tools.MetaKeyboard",
-    "Metatool.Tools.Software" | ForEach-Object {
+    "Metatool.Tools.Software",
+    "Metatool.Tools.KeyMouse" | ForEach-Object {
         Build-Tool $_ -release: $true -rebuild: $rebuild
         if ($localRelease) {
             ri "$metatoolDir\exe\publish\tools\$_" -Force -Recurse

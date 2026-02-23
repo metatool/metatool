@@ -9,7 +9,10 @@ function Build-Tool {
         $release,
         [switch]
         [Alias("re")]
-        $rebuild
+        $rebuild,
+        [switch]
+        [Alias("cl")]
+        $copyLocal = $false
     )
     $target = $rebuild ? "rebuild": "build"
     $config = $release ? "Release" : "Debug"
@@ -20,7 +23,8 @@ function Build-Tool {
 # . $PSScriptRoot\msbuild.ps1
     # Set-Location $metatool
 
-    msbuild "$metatool\src\tool\$tool\$tool.csproj" -t:$target /p:SolutionDir=$metatool\src\ /p:Configuration=$config
+    $copyLocalParam = $copyLocal ? "/p:CopyLocalLockFileAssemblies=true" : ""
+    msbuild "$metatool\src\tool\$tool\$tool.csproj" -t:$target /p:SolutionDir=$metatool\src\ $copyLocalParam /p:Configuration=$config
     if ( $LASTEXITCODE -ne 0 ) {
         throw "build fail!"
     }
