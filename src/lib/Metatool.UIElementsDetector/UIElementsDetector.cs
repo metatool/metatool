@@ -32,7 +32,7 @@ namespace Metatool.UIElementsDetector
             _model.Configuration.Confidence = 0.05f;
             // IoU (Intersection over Union) threshold for NMS (default: 0.45).
             // Lower values suppress more overlapping boxes; higher values keep more nearby detections.
-            _model.Configuration.IoU = 0.5f;
+            _model.Configuration.IoU = 0.45f;
         }
 
         /// <summary>

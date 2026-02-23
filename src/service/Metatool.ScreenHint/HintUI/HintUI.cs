@@ -162,13 +162,9 @@ public class HintUI : IHintUI
 		{
 			TextBlock textBlock;
 			var rect = kvp.Value;
-			var x = (rect.X + rect.Width / 2 - 10) / dpiScaleX;
-			var y = (rect.Y + rect.Height / 2 - 10) / dpiScaleY;
 			if (i < childrenCount)
 			{
 				textBlock = canvas.Children[i] as TextBlock;
-				Canvas.SetLeft(textBlock, x);
-				Canvas.SetTop(textBlock, y);
 			}
 			else
 			{
@@ -180,14 +176,18 @@ public class HintUI : IHintUI
 					FontWeight = FontWeights.Bold,
 					Padding = new Thickness(2, 1, 2, 1),
 				};
-				Canvas.SetLeft(textBlock, x);
-				Canvas.SetTop(textBlock, y);
 				canvas.Children.Add(textBlock);
-
 			}
 			textBlock.FontSize = fontSize;
 			// Set text with individual Run elements for partial highlighting
 			SetKeyTextWithRuns(textBlock, kvp.Key);
+
+			// Measure actual rendered size to center the hint on the element
+			textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+			var centerX = (rect.X + rect.Width / 2.0) / dpiScaleX;
+			var centerY = (rect.Y + rect.Height / 2.0) / dpiScaleY;
+			Canvas.SetLeft(textBlock, centerX - textBlock.DesiredSize.Width / 2);
+			Canvas.SetTop(textBlock, centerY - textBlock.DesiredSize.Height / 2);
 
 			textBlock.Visibility = Visibility.Visible;
 			// r.IsHitTestVisible = false;
