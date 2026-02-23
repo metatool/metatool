@@ -59,8 +59,6 @@ namespace Metatool.MetaKeyboard
                 windowManager.ActiveWindowChanged += ActiveWindowChanged;
             }
 
-
-
             void DoMouseLeftClick((IUIElement winRect, IUIElement clientRect) position)
             {
                 var rect = position.clientRect;

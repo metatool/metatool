@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
-    <ProjectReference Include="..\..\service\Metatool.Input\Metatool.Input.csproj" />
   </ItemGroup>
 
   <ItemGroup>

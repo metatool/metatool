@@ -8,4 +8,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.3" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.Input\Metatool.Service.Input.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.ScreenHint\Metatool.Service.ScreenHint.csproj" />
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />
+    <ProjectReference Include="..\..\service\Metatool.Input\Metatool.Input.csproj" />
+    <ProjectReference Include="..\..\service\Metatool.ScreenHint\Metatool.ScreenHint.csproj" />
+    <ProjectReference Include="..\..\service\Metatool.Utils\Metatool.Utils.csproj" />
+    <ProjectReference Include="..\..\tool\Metatool.Tools.KeyMouse\Metatool.Tools.KeyMouse.csproj" />
+  </ItemGroup>
 </Project>

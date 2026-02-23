@@ -1,20 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Windows;
 using Metatool.Input.MouseKeyHook;
-using Application = System.Windows.Application;
-using System.IO;
+using Metatool.ScreenHint;
 using Metatool.Service;
-using Metatool.Service.MouseKey;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Windows;
+using Metatool.Tools.KeyMouse;
+using Application = System.Windows.Application;
 
 namespace KeyMouse
 {
     public partial class App : Application
     {
         private IKeyboardMouseEvents _globalHook;
-        private KeyMouseEngine _keyMouseEngine;
         private ILogger<App> _logger;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -23,40 +20,22 @@ namespace KeyMouse
 
             var services = new ServiceCollection();
             services.AddLogging(builder => builder.AddConsole());
+            services.ConfigScreenHint();
+
             var serviceProvider = services.BuildServiceProvider();
             Services.SetDefaultProvider(serviceProvider);
 
             _logger = serviceProvider.GetRequiredService<ILogger<App>>();
 
-            try
-            {
-                var config = new Config();
-                var overlayWindow = new KeyMouseMainWindow();
-                _keyMouseEngine = new KeyMouseEngine(config, overlayWindow);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to init engine: {ex.Message}");
-                Shutdown();
-                return;
-            }
+            var tool = ActivatorUtilities.CreateInstance<KeyMouseTool>(serviceProvider);
 
-            _globalHook = Hook.GlobalEvents();
-
-            _globalHook.OnCombination(new Dictionary<ICombination, Action>
-            {
-                { Combination.Parse("Ctrl+Alt+A"), _keyMouseEngine.Activate },
-                { Combination.Parse("Ctrl+Alt+S"), _keyMouseEngine.Reshow }
-            });
-            _globalHook.HandleVirtualKey = true;
-            _globalHook.KeyDown += _keyMouseEngine.HandleKeyDown;
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             _globalHook?.Dispose();
-            _keyMouseEngine?.Dispose();
             base.OnExit(e);
         }
     }
+
 }

@@ -3,7 +3,7 @@ using Metatool.Service;
 
 namespace Metatool.Tools.KeyMouse
 {
-    public class KeyboardTool : ToolBase
+    public class KeyMouseTool : ToolBase
     {
         private KeyboardMouseToolPackage _keyMouseTool;
 
@@ -13,7 +13,7 @@ namespace Metatool.Tools.KeyMouse
             return base.OnLoaded();
         }
 
-        public KeyboardTool(ICommandManager commandManager, IConfig<PluginConfig> config)
+        public KeyMouseTool(ICommandManager commandManager, IConfig<PluginConfig> config)
         {
             //var a = config.CurrentValue.Test.Values;
             RegisterCommands();
