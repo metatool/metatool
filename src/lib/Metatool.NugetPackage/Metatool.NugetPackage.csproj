@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NuGet.Commands" Version="6.13.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.3" />
     <PackageReference Include="NuGet.PackageManagement" Version="6.13.1" />
     <PackageReference Include="NuGet.Resolver" Version="6.13.1" />
 

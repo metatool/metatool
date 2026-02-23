@@ -23,4 +23,8 @@
     <PackageReference Include="YoloSharp" Version="6.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\service\IService\Metatool.Service.ScreenHint\Metatool.Service.ScreenHint.csproj" />
+  </ItemGroup>
+
 </Project>

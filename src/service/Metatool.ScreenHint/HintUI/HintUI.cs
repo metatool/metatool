@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Metatool.Service;
 
 namespace Metatool.ScreenHint.HintUI;
 
@@ -78,19 +79,19 @@ public class HintUI : IHintUI
 		Window._Canvas.Visibility = System.Windows.Visibility.Visible;
 	}
 
-	public void HighLight(Rect rect)
+	public void HighLight(IUIElement rect)
 	{
 		Window.HighLight(rect);
 	}
-	Dictionary<string, (Rect rect, TextBlock hint)> _points;
-	public void CreateHint((Rect windowRect, Dictionary<string, Rect> rects) points)
+	Dictionary<string, (IUIElement rect, TextBlock hint)> _points;
+	public void CreateHint((IUIElement windowRect, Dictionary<string, IUIElement> rects) points)
 	{
-		_points = new Dictionary<string, (Rect rect, TextBlock hint)>();
+		_points = new Dictionary<string, (IUIElement rect, TextBlock hint)>();
 		var w = new Stopwatch();
 		w.Start();
 		var rr = points.windowRect;
-		Window.Top    = rr.Top;
-		Window.Left   = rr.Left;
+		Window.Top    = rr.Y;
+		Window.Left   = rr.X;
 		Window.Width  = rr.Width;
 		Window.Height = rr.Height;
 		var childrenCount = Window._Canvas.Children.Count;
@@ -116,8 +117,8 @@ public class HintUI : IHintUI
 			if (i < childrenCount)
 			{
 				r      = Window._Canvas.Children[i] as TextBlock;
-				Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
-				Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
+				Canvas.SetLeft(r, e.Value.X + e.Value.Width  / 2 - 10);
+				Canvas.SetTop(r, e.Value.Y   + e.Value.Height / 2 - 10);
 			}
 			else
 			{
@@ -129,8 +130,8 @@ public class HintUI : IHintUI
 					FontWeight = FontWeights.Bold,
 					Padding = new Thickness(2, 1, 2, 1),
 				};
-				Canvas.SetLeft(r, e.Value.Left + e.Value.Width  / 2 - 10);
-				Canvas.SetTop(r, e.Value.Top   + e.Value.Height / 2 - 10);
+				Canvas.SetLeft(r, e.Value.X + e.Value.Width  / 2 - 10);
+				Canvas.SetTop(r, e.Value.Y   + e.Value.Height / 2 - 10);
 				Window._Canvas.Children.Add(r);
 
 			}

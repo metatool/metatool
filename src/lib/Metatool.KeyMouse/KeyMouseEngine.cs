@@ -38,7 +38,7 @@ namespace KeyMouse
                 var handle = User32.GetForegroundWindow();
                 if (handle == IntPtr.Zero) return;
 
-                var elements = _detector.Detect(handle);
+                var (winRect,elements) = _detector.Detect(handle);
 
                 if (elements.Count == 0) return;
 

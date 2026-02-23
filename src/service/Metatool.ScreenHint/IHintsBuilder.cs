@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Windows;
+using Metatool.Service;
+using Metatool.UIElementsDetector;
 
 namespace Metatool.ScreenPoint;
 
@@ -14,5 +16,5 @@ public interface IHintsBuilder
 	/// A tuple containing the window's bounding rectangle and a dictionary mapping
 	/// key sequences to the relative bounding rectangles of each UI element.
 	/// </returns>
-	Dictionary<string, Rect> BuildHintPositions(List<Rect> elementRects);
+	Dictionary<string, IUIElement> BuildHintPositions(List<IUIElement> elementRects);
 }

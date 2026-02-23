@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using Metatool.Service;
 
 namespace Metatool.ScreenHint.HintUI;
 
@@ -18,10 +19,10 @@ public partial class MainWindow : Window
 		Inst = this;
 	}
 
-	public void HighLight(Rect rect)
+	public void HighLight(IUIElement rect)
 	{
-		System.Windows.Controls.Canvas.SetLeft(highLight, rect.Left);
-		System.Windows.Controls.Canvas.SetTop(highLight, rect.Top);
+		System.Windows.Controls.Canvas.SetLeft(highLight, rect.X);
+		System.Windows.Controls.Canvas.SetTop(highLight, rect.Y);
 		highLight.Width = rect.Width;
 		highLight.Height = rect.Height;
 		highLight.Visibility = Visibility.Visible;

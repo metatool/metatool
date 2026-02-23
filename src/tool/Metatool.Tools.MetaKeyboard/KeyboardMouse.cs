@@ -60,9 +60,15 @@ namespace Metatool.MetaKeyboard
 
 
 
-            void DoMouseLeftClick((Rect winRect, Rect clientRect) position)
+            void DoMouseLeftClick((IUIElement winRect, IUIElement clientRect) position)
             {
-                var rect = position.clientRect;
+                var rect = new Rect()
+                {
+                    X = position.clientRect.X,
+                    Y = position.clientRect.Y,
+                    Width = position.clientRect.Width,
+                    Height = position.clientRect.Height
+                };
                 var winRect = position.winRect;
                 rect.X = winRect.X + rect.X;
                 rect.Y = winRect.Y + rect.Y;

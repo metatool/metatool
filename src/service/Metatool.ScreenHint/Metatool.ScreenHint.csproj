@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -8,6 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Metatool.UIElementsDetector\Metatool.UIElementsDetector.csproj" />
     <ProjectReference Include="..\IService\Metatool.Service.Input\Metatool.Service.Input.csproj" />
     <ProjectReference Include="..\IService\Metatool.Service.ScreenHint\Metatool.Service.ScreenHint.csproj" />
     <ProjectReference Include="..\IService\Metatool.Service.Utils\Metatool.Service.Utils.csproj" />

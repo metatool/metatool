@@ -1,6 +1,7 @@
 using Metatool.ScreenHint.HintUI;
 using Metatool.ScreenPoint;
 using Metatool.Service;
+using Metatool.UIElementsDetector;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -15,7 +16,6 @@ public static class ServiceCollectionExtensions
 
 		_registered = true;
 		return services
-			.AddSingleton<IUIElementsDetector, UIElementsDetector>()
 			.AddSingleton<IHintsBuilder, HintsBuilder>()
 			.AddSingleton<IHintUI, HintUI.HintUI>()
 			.AddSingleton<IScreenHint, ScreenHint>();

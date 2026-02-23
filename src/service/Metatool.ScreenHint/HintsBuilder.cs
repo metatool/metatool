@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
+using Metatool.Service;
+using Metatool.UIElementsDetector;
 
 namespace Metatool.ScreenPoint;
 
@@ -13,9 +15,9 @@ public static class Config
 
 public class HintsBuilder : IHintsBuilder
 {
-	private Dictionary<string, Rect> GetKeyPointPairs(List<Rect> rects, string keys)
+	private Dictionary<string, IUIElement> GetKeyPointPairs(List<IUIElement> rects, string keys)
 	{
-		var keyPointPairs = new Dictionary<string, Rect>();
+		var keyPointPairs = new Dictionary<string, IUIElement>();
 
 		var count      = rects.Count;
 		var keyLen     = keys.Length;
@@ -61,7 +63,7 @@ public class HintsBuilder : IHintsBuilder
 	}
 
 
-	public Dictionary<string, Rect> BuildHintPositions(List<Rect> elementRects)
+	public Dictionary<string, IUIElement> BuildHintPositions(List<IUIElement> elementRects)
 	{
 		var w = new Stopwatch();
 		w.Start();

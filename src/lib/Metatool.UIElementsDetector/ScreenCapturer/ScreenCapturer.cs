@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Metatool.ScreenCapturer
 {
-    public class ScreenCapturer : IDisposable
+    public class ScreenCapturer : IScreenCapturer
     {
         private readonly IScreenCaptureService _screenCaptureService;
         private readonly List<Display> _displays;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Windows;
+using Metatool.Service;
 
 namespace Metatool.ScreenHint.HintUI;
 
@@ -12,6 +13,6 @@ public interface IHintUI
 	void HideHints();
 	bool IsHintsVisible { get; }
 	void MarkHitKey(string key, int len);
-	void HighLight(Rect rect);
-	void CreateHint((Rect windowRect, Dictionary<string, Rect> rects) points);
+	void HighLight(IUIElement rect);
+	void CreateHint((IUIElement windowRect, Dictionary<string, IUIElement> rects) points);
 }
