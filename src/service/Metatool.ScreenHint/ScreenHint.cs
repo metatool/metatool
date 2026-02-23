@@ -70,6 +70,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 				outerRect = screen;
 				elementRects = elementPositions;
 			}
+
 			if (elementRects.Count == 0) {
 				_logger.LogWarning("No UI elements detected in window {0} after filtering by activeWindowOnly={1}", winHandle, activeWindowOnly);
 				return;

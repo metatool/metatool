@@ -111,19 +111,35 @@ public class HintUI : IHintUI
 	public void CreateHint((IUIElement windowRect, Dictionary<string, IUIElement> rects) points)
 	{
 		_hints = new Dictionary<string, (IUIElement rect, TextBlock hint)>();
-		var dpiScale = VisualTreeHelper.GetDpi(Window);
-		double dpiScaleX = dpiScale.DpiScaleX;
-		double dpiScaleY = dpiScale.DpiScaleY;
 #if DEBUG
 		var w = new Stopwatch();
 		w.Start();
 #endif
 		var rr = points.windowRect;
-		Window.Top = rr.Y/dpiScaleY;
-		Window.Left = rr.X/dpiScaleX;
-		Window.Width = rr.Width/dpiScaleX;
-		Window.Height = rr.Height/dpiScaleY;
+
+		// Position window on target monitor first, then query DPI.
+		// On multi-DPI setups, GetDpi must be called after the window is on
+		// the correct monitor to return the right per-monitor DPI values.
+		var initDpi = VisualTreeHelper.GetDpi(Window);
+		Window.Top = rr.Y / initDpi.DpiScaleY;
+		Window.Left = rr.X / initDpi.DpiScaleX;
+		Window.Width = rr.Width / initDpi.DpiScaleX;
+		Window.Height = rr.Height / initDpi.DpiScaleY;
+
+		var dpiScale = VisualTreeHelper.GetDpi(Window);
+		double dpiScaleX = dpiScale.DpiScaleX;
+		double dpiScaleY = dpiScale.DpiScaleY;
+
+		if (dpiScaleX != initDpi.DpiScaleX || dpiScaleY != initDpi.DpiScaleY)
+		{
+			Window.Top = rr.Y / dpiScaleY;
+			Window.Left = rr.X / dpiScaleX;
+			Window.Width = rr.Width / dpiScaleX;
+			Window.Height = rr.Height / dpiScaleY;
+		}
 		var canvas = Window._Canvas;
+		// Scale font size with DPI so hints stay readable on high-DPI monitors
+		var fontSize = 14.0 * dpiScaleX;
 
 		var childrenCount = canvas.Children.Count;
 		var i = 0;
@@ -169,6 +185,7 @@ public class HintUI : IHintUI
 				canvas.Children.Add(textBlock);
 
 			}
+			textBlock.FontSize = fontSize;
 			// Set text with individual Run elements for partial highlighting
 			SetKeyTextWithRuns(textBlock, kvp.Key);
 

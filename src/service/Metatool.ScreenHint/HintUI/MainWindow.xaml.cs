@@ -21,10 +21,11 @@ public partial class MainWindow : Window
 
 	public void HighLight(IUIElement rect)
 	{
-		System.Windows.Controls.Canvas.SetLeft(highLight, rect.X);
-		System.Windows.Controls.Canvas.SetTop(highLight, rect.Y);
-		highLight.Width = rect.Width;
-		highLight.Height = rect.Height;
+		var dpiScale = System.Windows.Media.VisualTreeHelper.GetDpi(this);
+		System.Windows.Controls.Canvas.SetLeft(highLight, rect.X / dpiScale.DpiScaleX);
+		System.Windows.Controls.Canvas.SetTop(highLight, rect.Y / dpiScale.DpiScaleY);
+		highLight.Width = rect.Width / dpiScale.DpiScaleX;
+		highLight.Height = rect.Height / dpiScale.DpiScaleY;
 		highLight.Visibility = Visibility.Visible;
 
 		DispatcherTimer timer = null;

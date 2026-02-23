@@ -32,7 +32,7 @@ namespace Metatool.UIElementsDetector
             _model.Configuration.Confidence = 0.05f;
             // IoU (Intersection over Union) threshold for NMS (default: 0.45).
             // Lower values suppress more overlapping boxes; higher values keep more nearby detections.
-            _model.Configuration.IoU = 0.4f;
+            _model.Configuration.IoU = 0.5f;
         }
 
         /// <summary>
@@ -107,8 +107,8 @@ namespace Metatool.UIElementsDetector
             // var eXToWin = eXAbs - WinXAbs;(so screen.X is not needed)
             foreach (var el in elements)
             {
-                var x = el.X + winRect.X;
-                var y = el.Y + winRect.Y;
+                var x = el.X - winRect.X;
+                var y = el.Y - winRect.Y;
                 if (filterOutWinElements && (x < 0 || y < 0 || x > winRect.Width || y > winRect.Height))
                 {
                     // Skip elements that are outside the window bounds (likely belong to other windows)

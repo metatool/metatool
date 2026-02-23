@@ -8,10 +8,10 @@
         mc:Ignorable="d" d:DesignWidth="478.076" d:DesignHeight="246.156"
 >
     <Grid>
-        <Border BorderThickness="2" BorderBrush="Red">
-            <Canvas x:Name="_Canvas" Background="Transparent" IsVisibleChanged="_Canvas_OnIsVisibleChanged">
-            </Canvas>
-        </Border>
+        <!-- Semi-transparent border rectangle; sits behind canvases, no layout impact Fill="#18FF0000"-->
+        <Rectangle IsHitTestVisible="False" Stroke="Red" StrokeThickness="2" />
+        <Canvas x:Name="_Canvas" Background="Transparent" IsVisibleChanged="_Canvas_OnIsVisibleChanged">
+        </Canvas>
         <Canvas Background="Transparent">
             <Rectangle IsHitTestVisible="False" x:Name="highLight"  Stroke="Yellow" Visibility="Hidden" StrokeThickness="2"></Rectangle>
         </Canvas>
