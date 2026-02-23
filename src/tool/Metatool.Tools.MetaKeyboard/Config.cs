@@ -27,24 +27,6 @@ namespace Metatool.MetaKeyboard
         public HotkeyTrigger ToggleCaps { get; set; }
     }
 
-    public class KeyboardMousePackage
-    {
-        public bool MouseFollowActiveWindow { get; set; }
-
-        public IDictionary<string, KeyMapDef> KeyMaps { get; set; }
-
-        public MouseKeyboardHotKeys Hotkeys { get; set; }
-    }
-
-    public class MouseKeyboardHotKeys
-    {
-        public HotkeyTrigger MouseToFocus { get; set; }
-        public HotkeyTrigger MouseScrollUp { get; set; }
-        public HotkeyTrigger MouseScrollDown { get; set; }
-        public HotkeyTrigger MouseLeftClick { get; set; }
-        public HotkeyTrigger MouseLeftClickLast { get; set; }
-    }
-
     public class SoftwarePaths
     {
         public string Everything { get; set; }
@@ -129,7 +111,6 @@ namespace Metatool.MetaKeyboard
         public KeyboardPackage KeyboardPackage { get; set; }
 
         public FileExplorerPackage FileExplorerPackage { get; set; }
-        public KeyboardMousePackage KeyboardMousePackage { get; set; }
 
         public SoftwarePackage SoftwarePackage { get; set; }
 

@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\service\IService\Metatool.Service\Metatool.Service.csproj" />
     <ProjectReference Include="..\..\service\Metatool.Input\Metatool.Input.csproj" />
-    <ProjectReference Include="..\..\lib\Metatool.KeyMouse\Metatool.KeyMouse.csproj" />
   </ItemGroup>
 
   <ItemGroup>

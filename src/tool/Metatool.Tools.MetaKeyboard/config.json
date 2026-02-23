@@ -153,37 +153,6 @@
 				"ACK+,": "«",
 				"ACK+.": "»"
 			},
-			"KeyboardMousePackage": {
-				// not work well, if click to change active window
-				// need to just handle alt+tab switch
-				"MouseFollowActiveWindow": false,
-				"KeyMaps": {
-					"GK + [": "LButton",
-					"GK + ]": "RButton"
-				},
-				"Hotkeys": {
-					"MouseToFocus": {
-						"Hotkey": "GK + F*", // * behind the trigger key to mark down/up Event handled
-						"Description": "Move Mouse To Active Control"
-					},
-					"MouseScrollUp": {
-						"Hotkey": "GK + W*",
-						"Description": "Scroll Up with Mouse"
-					},
-					"MouseScrollDown": {
-						"Hotkey": "GK + S*",
-						"Description": "Scroll Down with Mouse"
-					},
-					"MouseLeftClick": {
-						"Hotkey": "GK + C*",
-						"Description": "Mouse Left Click via Hint"
-					},
-					"MouseLeftClickLast": {
-						"Hotkey": "GK + X*",
-						"Description": "Mouse Left Click via Last Hint"
-					}
-				}
-			},
 			"FileExplorerPackage": {
 				"Hotkeys": {
 					//  "FocusItemsView": null to disable it
