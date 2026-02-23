@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using Metatool.UIElementsDetector;
 using Metatool.ScreenCapturer;
+using Metatool.Service;
 using Metatool.Service.MouseKey;
+using UIElement = Metatool.ScreenPoint.UIElement;
 
 namespace KeyMouse
 {
@@ -38,79 +41,26 @@ namespace KeyMouse
                 var handle = User32.GetForegroundWindow();
                 if (handle == IntPtr.Zero) return;
 
-                var (winRect,elements) = _detector.Detect(handle);
+                var (screen, winRect, elementPositions) = _detector.Detect(handle);
 
-                if (elements.Count == 0) return;
+                if (elementPositions.Count == 0) return;
 
-                // Convert physical pixels to WPF DIPs for correct overlay positioning.
-                var dpiScale = VisualTreeHelper.GetDpi(_dpiReference);
-                double dpiScaleX = dpiScale.DpiScaleX;
-                double dpiScaleY = dpiScale.DpiScaleY;
-
-                // Get the monitor info for coordinate conversion
-                var hMonitor = User32.MonitorFromWindow(handle, User32.MONITOR_DEFAULTTONEAREST);
-                var monitorInfo = new User32.MONITORINFOEX { cbSize = System.Runtime.InteropServices.Marshal.SizeOf<User32.MONITORINFOEX>() };
-                User32.GetMonitorInfo(hMonitor, ref monitorInfo);
-                int monitorLeft = monitorInfo.rcMonitor.Left;
-                int monitorTop = monitorInfo.rcMonitor.Top;
-                int monitorW = monitorInfo.rcMonitor.Right - monitorInfo.rcMonitor.Left;
-                int monitorH = monitorInfo.rcMonitor.Bottom - monitorInfo.rcMonitor.Top;
-
-                User32.GetWindowRect(handle, out var rect);
-
-                var rects = new List<Rect>();
-
-                if (Mode == DetectMode.ActiveMonitor)
+                IUIElement outerRect; // abs pos to main screen left,top
+                List<IUIElement> elementRects; // relative to rect
+                if (Mode == DetectMode.ActiveWindow)
                 {
-                    // Overlay covers the full monitor; element coords are monitor-relative
-                    _overlayRect = new Rect(
-                        monitorLeft / dpiScaleX,
-                        monitorTop / dpiScaleY,
-                        monitorW / dpiScaleX,
-                        monitorH / dpiScaleY);
-
-                    foreach (var el in elements)
-                    {
-                        rects.Add(new Rect(
-                            el.X / dpiScaleX,
-                            el.Y / dpiScaleY,
-                            el.Width / dpiScaleX,
-                            el.Height / dpiScaleY));
-                    }
+                    outerRect = new UIElement() { X = winRect.X + screen.X, Y = winRect.Y + screen.Y, Width = winRect.Width, Height = winRect.Height };
+                    // position relative to WindowRect
+                    elementRects = UIElementsDetector.ToWindowRelative(winRect, elementPositions);
                 }
                 else
                 {
-                    // Overlay covers the active window; element coords are window-relative
-                    _overlayRect = new Rect(
-                        rect.Left / dpiScaleX,
-                        rect.Top / dpiScaleY,
-                        (rect.Right - rect.Left) / dpiScaleX,
-                        (rect.Bottom - rect.Top) / dpiScaleY);
-
-                    int winX = rect.Left - monitorLeft;
-                    int winY = rect.Top - monitorTop;
-                    int winW = rect.Right - rect.Left;
-                    int winH = rect.Bottom - rect.Top;
-
-                    foreach (var el in elements)
-                    {
-                        // Convert from display-relative to window-relative
-                        var relX = el.X - winX;
-                        var relY = el.Y - winY;
-
-                        // Skip elements outside the active window
-                        if (relX + el.Width < 0 || relY + el.Height < 0 || relX >= winW || relY >= winH)
-                            continue;
-
-                        rects.Add(new Rect(
-                            relX / dpiScaleX,
-                            relY / dpiScaleY,
-                            el.Width / dpiScaleX,
-                            el.Height / dpiScaleY));
-                    }
+                    outerRect = screen;
+                    elementRects = elementPositions;
                 }
 
-                if (rects.Count == 0) return;
+                if (elementRects.Count == 0) return;
+                var rects = elementRects.Select(r => new Rect(r.X, r.Y, r.Width, r.Height)).ToList();
 
                 _currentHints = KeyGenerator.GetKeyPointPairs(rects, config.Keys);
 
@@ -119,7 +69,7 @@ namespace KeyMouse
 
                 _hintUI.CreateHint((_overlayRect, hintData));
 #if DEBUG
-                Debug.WriteLine($"[Hints] mode={Mode}, {hintData.Count} hints, overlay=({_overlayRect.X:F0},{_overlayRect.Y:F0},{_overlayRect.Width:F0},{_overlayRect.Height:F0}), dpi={dpiScaleX:F2}x{dpiScaleY:F2}");
+                Debug.WriteLine($"[Hints] mode={Mode}, {hintData.Count} hints, overlay=({_overlayRect.X:F0},{_overlayRect.Y:F0},{_overlayRect.Width:F0},{_overlayRect.Height:F0})");
                 foreach (var kvp in hintData)
                     Debug.WriteLine($"  key={kvp.Key} region=({kvp.Value.X:F0},{kvp.Value.Y:F0},{kvp.Value.Width:F0},{kvp.Value.Height:F0})");
 #endif

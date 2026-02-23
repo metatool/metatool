@@ -16,5 +16,5 @@ public interface IHintsBuilder
 	/// A tuple containing the window's bounding rectangle and a dictionary mapping
 	/// key sequences to the relative bounding rectangles of each UI element.
 	/// </returns>
-	Dictionary<string, IUIElement> BuildHintPositions(List<IUIElement> elementRects);
+	Dictionary<string, IUIElement> GenerateKeys(List<IUIElement> elementRects);
 }

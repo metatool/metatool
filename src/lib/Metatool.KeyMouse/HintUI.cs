@@ -116,7 +116,7 @@ namespace KeyMouse
         {
             _window.HintCanvas.Visibility = Visibility.Visible;
             _window.Show();
-            _window.Activate();
+            // _window.Activate();
 
         }
 

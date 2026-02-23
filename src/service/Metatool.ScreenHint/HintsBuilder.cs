@@ -15,23 +15,23 @@ public static class Config
 
 public class HintsBuilder : IHintsBuilder
 {
-	private Dictionary<string, IUIElement> GetKeyPointPairs(List<IUIElement> rects, string keys)
+	private Dictionary<string, IUIElement> GetKeyPointPairs(List<IUIElement> rects, string keyChars)
 	{
 		var keyPointPairs = new Dictionary<string, IUIElement>();
 
-		var count      = rects.Count;
-		var keyLen     = keys.Length;
-		var dimensions = (int) Math.Ceiling(Math.Log(count, keyLen));
+		var count = rects.Count;
+		var keyLen = keyChars.Length;
+		var dimensions = (int)Math.Ceiling(Math.Log(count, keyLen));
 
-		var lowDimCount     = (int) Math.Pow(keyLen, dimensions - 1);
-		var usedInLowDim    =  (int) Math.Ceiling(((double) (count - lowDimCount)) / (dimensions - 1));//(int) Math.Ceiling(((double) count) / lowDimCount);
+		var lowDimCount = (int)Math.Pow(keyLen, dimensions - 1);
+		var usedInLowDim = (int)Math.Ceiling(((double)(count - lowDimCount)) / (dimensions - 1));//(int) Math.Ceiling(((double) count) / lowDimCount);
 		var notUsedInLowDim = lowDimCount - usedInLowDim;
 
 		static string getKeyOfDimension(int index, int dimension, string keys)
 		{
-			var ii  = index;
+			var ii = index;
 			var len = keys.Length;
-			var sb  = new StringBuilder();
+			var sb = new StringBuilder();
 			do
 			{
 				var i = ii % len;
@@ -47,10 +47,10 @@ public class HintsBuilder : IHintsBuilder
 		{
 			if (index < notUsedInLowDim)
 			{
-				return getKeyOfDimension(index + usedInLowDim, dimensions - 1, keys);
+				return getKeyOfDimension(index + usedInLowDim, dimensions - 1, keyChars);
 			}
 
-			return getKeyOfDimension(index - notUsedInLowDim, dimensions, keys);
+			return getKeyOfDimension(index - notUsedInLowDim, dimensions, keyChars);
 		}
 
 		for (var i = 0; i < count; i++)
@@ -63,12 +63,16 @@ public class HintsBuilder : IHintsBuilder
 	}
 
 
-	public Dictionary<string, IUIElement> BuildHintPositions(List<IUIElement> elementRects)
+	public Dictionary<string, IUIElement> GenerateKeys(List<IUIElement> elementRects)
 	{
+#if DEBUG
 		var w = new Stopwatch();
 		w.Start();
+#endif
 		var eles = GetKeyPointPairs(elementRects, Config.Keys);
-		Console.WriteLine("GetKeyPointPairs:" + w.ElapsedMilliseconds);
+#if DEBUG
+		Debug.WriteLine("GetKeyPointPairs:" + w.ElapsedMilliseconds);
+#endif
 		return eles;
 	}
 }

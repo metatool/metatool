@@ -10,7 +10,7 @@ public interface IHintUI
 	void Show(bool isReshow = false);
 	void Hide();
 	void HideHint(string key);
-	void HideHints();
+	void HideAllHints();
 	bool IsHintsVisible { get; }
 	void MarkHitKey(string key, int len);
 	void HighLight(IUIElement rect);

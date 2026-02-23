@@ -10,45 +10,72 @@ using Metatool.ScreenPoint;
 using Metatool.Service.MouseKey;
 using Metatool.ScreenHint.HintUI;
 using Metatool.UIElementsDetector;
+using Microsoft.Extensions.Logging;
+using UIElement = Metatool.ScreenPoint.UIElement;
 
 namespace Metatool.ScreenHint;
 
-public sealed class ScreenHint : IScreenHint
+public sealed class ScreenHint : IScreenHint, IDisposable
 {
-    private IUIElementsDetector detector = new UIElementsDetector.UIElementsDetector();
+	private IUIElementsDetector detector = new UIElementsDetector.UIElementsDetector();
 	/// <summary>
 	/// used for show without rebuild hints, e.g. when user hold shift to see hints, then release shift to hide hints, then press another key to show hints again, in this case we don't need to rebuild hints, just show it again.
 	/// </summary>
 	(IUIElement windowRect, Dictionary<string, IUIElement> rects) _positions;
 
-    private readonly IKeyboard _keyboard;
-    private readonly IUiDispatcher _dispatcher;
-    private readonly IHintsBuilder _hintsBuilder;
-    private readonly IWindowManager _windowManager;
-    private readonly IHintUI _hintUi;
+	private readonly IKeyboard _keyboard;
+	private readonly IUiDispatcher _dispatcher;
+	private readonly IHintsBuilder _hintsBuilder;
+	private readonly IWindowManager _windowManager;
+	private readonly IHintUI _hintUi;
+	private readonly ILogger _logger;
 
-    public ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher, IHintsBuilder hintsBuilder, IWindowManager windowManager, IHintUI hintUi)
-    {
-        _keyboard = keyboard;
-        _dispatcher = dispatcher;
-        _hintsBuilder = hintsBuilder;
-        _windowManager = windowManager;
-        _hintUi = hintUi;
-    }
+	public ScreenHint(IKeyboard keyboard, IUiDispatcher dispatcher, IHintsBuilder hintsBuilder, IWindowManager windowManager, IHintUI hintUi, ILogger<ScreenHint> logger)
+	{
+		_keyboard = keyboard;
+		_dispatcher = dispatcher;
+		_hintsBuilder = hintsBuilder;
+		_windowManager = windowManager;
+		_hintUi = hintUi;
+		_logger = logger;
+	}
 
-    public async Task Show(Action<(IUIElement winRect, IUIElement clientRect)> action, bool buildHints = true)
+	public async Task Show(Action<(IUIElement winRect, IUIElement clientRect)> action, bool buildHints = true, bool activeWindowOnly = false)
 	{
 		if (!_dispatcher.CheckAccess())
 		{
-			await _dispatcher.DispatchAsync(() => Show(action, buildHints));
+			await _dispatcher.DispatchAsync(() => Show(action, buildHints, activeWindowOnly));
 			return;
 		}
 		buildHints = buildHints || _positions.Equals(default);
 		if (buildHints)
 		{
 			var winHandle = _windowManager.CurrentWindow.Handle;
-			var (winRect, elementRects) = detector.Detect(winHandle);//run in UI thread to avoid COMException in UIAutomation
-			_positions = (winRect, _hintsBuilder.BuildHintPositions(elementRects));
+			var (screen, winRect, elementPositions) = detector.Detect(winHandle);//run in UI thread to avoid COMException in UIAutomation
+			if (elementPositions.Count == 0)
+			{
+				_logger.LogWarning("No UI elements detected in window {0}", winHandle);
+				return;
+			}
+			IUIElement outerRect; // abs pos to main screen left,top
+			List<IUIElement> elementRects; // relative to rect
+			if (activeWindowOnly)
+			{
+				outerRect = new UIElement() { X = winRect.X + screen.X, Y = winRect.Y + screen.Y, Width = winRect.Width, Height = winRect.Height };
+				// position relative to WindowRect
+				elementRects = UIElementsDetector.UIElementsDetector.ToWindowRelative(winRect, elementPositions);
+			}
+			else
+			{
+				outerRect = screen;
+				elementRects = elementPositions;
+			}
+			if (elementRects.Count == 0) {
+				_logger.LogWarning("No UI elements detected in window {0} after filtering by activeWindowOnly={1}", winHandle, activeWindowOnly);
+				return;
+			}
+
+			_positions = (outerRect, _hintsBuilder.GenerateKeys(elementRects));
 			_hintUi.CreateHint(_positions);
 			_hintUi.Show();
 		}
@@ -65,7 +92,7 @@ public sealed class ScreenHint : IScreenHint
 
 			if (downArg.KeyCode == KeyCodes.LShiftKey)
 			{
-				_hintUi.HideHints();
+				_hintUi.HideAllHints();
 				var upArg = await _keyboard.KeyUpAsync();
 				_hintUi.ShowHints();
 				continue;
@@ -103,7 +130,7 @@ public sealed class ScreenHint : IScreenHint
 			if (!string.IsNullOrEmpty(key))
 			{
 				var v = _positions.rects[key];
-				_hintUi.HideHints();
+				_hintUi.HideAllHints();
 				_hintUi.HighLight(v);
 
 				await Task.Run(() =>
@@ -114,6 +141,11 @@ public sealed class ScreenHint : IScreenHint
 				return;
 			}
 		}
+
+	}
+	public void Dispose()
+	{
+		(detector as IDisposable)?.Dispose();
 	}
 
 }

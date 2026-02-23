@@ -35,13 +35,37 @@ namespace Metatool.UIElementsDetector
             _model.Configuration.IoU = 0.4f;
         }
 
-        public (IUIElement winRect, List<IUIElement> elements) Detect(IntPtr windowHandle)
+        /// <summary>
+        /// Gets the absolute bounding rectangle of the specified window, position relative to the screen's top-left corner.
+        /// the screen position is relative to the main screen's top-left corner
+        /// </summary>
+        /// <param name="windowHandle"></param>
+        public static (IUIElement screen, IUIElement window) GetWindowRect(IntPtr windowHandle)
         {
+            // Get the monitor info for coordinate conversion
+            var hMonitor = ScreenCapturer.User32.MonitorFromWindow(windowHandle, ScreenCapturer.User32.MONITOR_DEFAULTTONEAREST);
+            var monitorInfo = new ScreenCapturer.User32.MONITORINFOEX { cbSize = System.Runtime.InteropServices.Marshal.SizeOf<ScreenCapturer.User32.MONITORINFOEX>() };
+            ScreenCapturer.User32.GetMonitorInfo(hMonitor, ref monitorInfo);
+            int monitorLeft = monitorInfo.rcMonitor.Left;
+            int monitorTop = monitorInfo.rcMonitor.Top;
+            int monitorW = monitorInfo.rcMonitor.Right - monitorInfo.rcMonitor.Left;
+            int monitorH = monitorInfo.rcMonitor.Bottom - monitorInfo.rcMonitor.Top;
+
             ScreenCapturer.User32.GetWindowRect(windowHandle, out var rect);
-            var winRect = new UIElement { X = rect.Left, Y = rect.Top, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top};
+            var winRect = new UIElement { X = rect.Left - monitorLeft, Y = rect.Top - monitorTop, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top };
+            return (new UIElement { X = monitorLeft, Y = monitorTop, Width = monitorW, Height = monitorH }, winRect);
+        }
+        /// <summary>
+        /// Detects all visible, enabled UI automation elements within the screen that has the specified window
+        /// and returns their bounding rectangles relative to the screen's top-left corner.
+        ///
+        /// </summary>
+        public (IUIElement screen, IUIElement winRect, List<IUIElement> elements) Detect(IntPtr windowHandle)
+        {
+            var winRect = GetWindowRect(windowHandle);
             using var image = _screenCapturer.CaptureScreen(windowHandle);
             if (image == null)
-                return (winRect, new List<IUIElement>());
+                return (winRect.screen, winRect.window, new List<IUIElement>());
 
 #if DEBUG
             var tempDir = @"c:\temp\1";
@@ -71,9 +95,39 @@ namespace Metatool.UIElementsDetector
                 });
             }
 
-            return (winRect, elements);
+            return (winRect.screen, winRect.window, elements);
         }
 
+        public static List<IUIElement> ToWindowRelative(IUIElement winRect, List<IUIElement> elements, bool filterOutWinElements = true)
+        {
+            var result = new List<IUIElement>();
+
+            // var WinXAbs = winRect.X + screen.X;
+            // var eXAbs = el.X + screen.X;
+            // var eXToWin = eXAbs - WinXAbs;(so screen.X is not needed)
+            foreach (var el in elements)
+            {
+                var x = el.X + winRect.X;
+                var y = el.Y + winRect.Y;
+                if (filterOutWinElements && (x < 0 || y < 0 || x > winRect.Width || y > winRect.Height))
+                {
+                    // Skip elements that are outside the window bounds (likely belong to other windows)
+                    continue;
+                }
+
+                result.Add(new UIElement
+                {
+                    X = x,
+                    Y = y,
+                    Width = el.Width,
+                    Height = el.Height,
+                    Confidence = (el as UIElement)?.Confidence ?? 0f,
+                    Label = (el as UIElement)?.Label ?? ""
+                });
+            }
+
+            return result;
+        }
         public void Dispose()
         {
             (_model as IDisposable)?.Dispose();
