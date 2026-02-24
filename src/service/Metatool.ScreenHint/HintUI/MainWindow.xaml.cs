@@ -16,7 +16,34 @@ public partial class MainWindow : Window
 	{
 		InitializeComponent();
 		Hide();
+		PreviewMouseMove += (s, e) => _suppressMouseEnter = false;
 		Inst = this;
+	}
+
+	bool _suppressMouseEnter;
+
+	private void _Canvas_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+	{
+		if (e.NewValue is true)
+			_suppressMouseEnter = true;
+	}
+
+	internal void HintTextBlock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+	{
+		if (_suppressMouseEnter) return;
+		if (sender is System.Windows.Controls.TextBlock tb && tb.Tag is IUIElement rect)
+		{
+			ShowHighLight(rect);
+			// Make hints transparent so the highlight rectangle is clearly visible
+			// note: show not set to 0, otherwise it the same a hidden and mouse leave event will be triggered directly.
+			_Canvas.Opacity = 0.01;
+		}
+	}
+
+	internal void HintTextBlock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+	{
+		_Canvas.Opacity = 1.0;
+		HideHighLight();
 	}
 
 	public void HighLight(IUIElement rect)
@@ -49,8 +76,27 @@ public partial class MainWindow : Window
 		highLight.Visibility = Visibility.Hidden;
 	}
 
-	private void _Canvas_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+	public void ShowLoading(IntPtr windowHandle)
 	{
+		ScreenCapturer.User32.GetWindowRect(windowHandle, out var rect);
+		var screen = new Rect(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
 
+		var dpiScale = System.Windows.Media.VisualTreeHelper.GetDpi(this);
+		Top = screen.Y / dpiScale.DpiScaleY;
+		Left = screen.X / dpiScale.DpiScaleX;
+		Width = screen.Width / dpiScale.DpiScaleX;
+		Height = screen.Height / dpiScale.DpiScaleY;
+
+		_Canvas.Visibility = Visibility.Hidden;
+		_loadingText.Visibility = Visibility.Visible;
+		Show();
+
+		// Force WPF to render the loading indicator before detection blocks the UI thread
+		//Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => { }));
+	}
+
+	public void HideLoading()
+	{
+		_loadingText.Visibility = Visibility.Hidden;
 	}
 }

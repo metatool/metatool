@@ -5,7 +5,7 @@
         // not work well, if click to change active window
         // need to just handle alt+tab switch
         "MouseFollowActiveWindow": false,
-        "Keys": "ASDFQWERZXCVTGBHJKLYUIOPNM",
+        "HintKeys": "ASDFQWERZXCVTGBHJKLYUIOPNM",
         "KeyMaps": {
           "GK + [": "LButton",
           "GK + ]": "RButton"
@@ -26,6 +26,10 @@
           "MouseLeftClick": {
             "Hotkey": "GK + C*",
             "Description": "Mouse Left Click via Hint"
+          },
+          "MouseLeftClickAlt": {
+            "Hotkey": "GK + Shift + C*",
+            "Description": "Mouse Left Click via Hint with WPF Detector"
           },
           "MouseLeftClickLast": {
             "Hotkey": "GK + X*",

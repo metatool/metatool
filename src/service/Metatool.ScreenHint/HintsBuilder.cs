@@ -8,13 +8,10 @@ using Metatool.UIElementsDetector;
 
 namespace Metatool.ScreenPoint;
 
-public static class Config
-{
-	public static string Keys = @"ASDFQWERZXCVTGBHJKLYUIOPNM";
-}
-
 public class HintsBuilder : IHintsBuilder
 {
+	public string HintKeys { get; set;} = "ASDFQWERZXCVTGBHJKLYUIOPNM";
+
 	private Dictionary<string, IUIElement> GetKeyPointPairs(List<IUIElement> rects, string keyChars)
 	{
 		var keyPointPairs = new Dictionary<string, IUIElement>();
@@ -23,9 +20,16 @@ public class HintsBuilder : IHintsBuilder
 		var keyLen = keyChars.Length;
 		var dimensions = (int)Math.Ceiling(Math.Log(count, keyLen));
 
-		var lowDimCount = (int)Math.Pow(keyLen, dimensions - 1);
-		var usedInLowDim = (int)Math.Ceiling(((double)(count - lowDimCount)) / (dimensions - 1));//(int) Math.Ceiling(((double) count) / lowDimCount);
-		var notUsedInLowDim = lowDimCount - usedInLowDim;
+        var lowDimCount = 0;
+        var usedInLowDim = 0;
+        var notUsedInLowDim = 0;
+        if (dimensions > 1)
+        {
+            lowDimCount = (int)Math.Pow(keyLen, dimensions - 1);
+            usedInLowDim = (int)Math.Ceiling(((double)(count - lowDimCount)) / (dimensions - 1));//(int) Math.Ceiling(((double) count) / lowDimCount);
+            notUsedInLowDim = lowDimCount - usedInLowDim;
+        }
+
 
 		static string getKeyOfDimension(int index, int dimension, string keys)
 		{
@@ -69,7 +73,7 @@ public class HintsBuilder : IHintsBuilder
 		var w = new Stopwatch();
 		w.Start();
 #endif
-		var eles = GetKeyPointPairs(elementRects, Config.Keys);
+		var eles = GetKeyPointPairs(elementRects, HintKeys);
 #if DEBUG
 		Debug.WriteLine("GetKeyPointPairs:" + w.ElapsedMilliseconds);
 #endif

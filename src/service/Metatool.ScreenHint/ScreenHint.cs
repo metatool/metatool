@@ -18,6 +18,9 @@ namespace Metatool.ScreenHint;
 public sealed class ScreenHint : IScreenHint, IDisposable
 {
 	private IUIElementsDetector detector = new UIElementsDetector.UIElementsDetector();
+    private IUIElementsDetector detectorWpf;
+    private IUIElementsDetector DetectorWpf => detectorWpf??= new WpfUIElementsDetector();
+
 	/// <summary>
 	/// used for show without rebuild hints, e.g. when user hold shift to see hints, then release shift to hide hints, then press another key to show hints again, in this case we don't need to rebuild hints, just show it again.
 	/// </summary>
@@ -39,21 +42,25 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		_hintUi = hintUi;
 		_logger = logger;
 	}
-
-	public async Task Show(Action<(IUIElement winRect, IUIElement clientRect)> action, bool buildHints = true, bool activeWindowOnly = false)
+	public string HintKeys { get; set;}
+	public async Task Show(Action<(IUIElement winRect, IUIElement clientRect)> action, bool buildHints = true, bool activeWindowOnly = false,  bool useWpfDetector = false)
 	{
 		if (!_dispatcher.CheckAccess())
 		{
-			await _dispatcher.DispatchAsync(() => Show(action, buildHints, activeWindowOnly));
+			await _dispatcher.DispatchAsync(() => Show(action, buildHints, activeWindowOnly, useWpfDetector));
 			return;
 		}
 		buildHints = buildHints || _positions.Equals(default);
 		if (buildHints)
 		{
 			var winHandle = _windowManager.CurrentWindow.Handle;
+			_hintUi.ShowCreatingHint(winHandle);
+
+			var detector = useWpfDetector ? DetectorWpf : this.detector;
 			var (screen, winRect, elementPositions) = detector.Detect(winHandle);//run in UI thread to avoid COMException in UIAutomation
 			if (elementPositions.Count == 0)
 			{
+				_hintUi.Hide();
 				_logger.LogWarning("No UI elements detected in window {0}", winHandle);
 				return;
 			}
@@ -100,7 +107,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 			}
 
 			var downKey = downArg.KeyCode.ToString();
-			if (downKey.Length > 1 || !Config.Keys.Contains(downKey))
+			if (downKey.Length > 1 || !HintKeys.Contains(downKey))
 			{
 				_hintUi.Hide();
 				return;

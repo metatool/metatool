@@ -68,14 +68,14 @@ namespace Metatool.UIElementsDetector
             if (image == null)
                 return (winRect.screen, winRect.window, new List<IUIElement>());
 
-#if DEBUG
+#if DEBUG_DETECT
             var tempDir = @"c:\temp\1";
             if (!Directory.Exists(tempDir)) Directory.CreateDirectory(tempDir);
             image.SaveAsPng(Path.Combine(tempDir, $"capture_{DateTime.Now:yyyyMMdd_HHmmss}.png"));
 #endif
 
             var result = _model.Detect(image);
-#if DEBUG
+#if DEBUG_DETECT
             Debug.WriteLine($"[Detect] {result.Count} detections (image: {image.Width}x{image.Height}, speed: {result.Speed})");
             foreach (var p in result)
                 Debug.WriteLine($"  [{p.Name.Name}] conf={p.Confidence:F3} bounds=({p.Bounds.X},{p.Bounds.Y},{p.Bounds.Width},{p.Bounds.Height})");

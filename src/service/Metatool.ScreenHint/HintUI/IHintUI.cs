@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using Metatool.Service;
@@ -6,6 +7,7 @@ namespace Metatool.ScreenHint.HintUI;
 
 public interface IHintUI
 {
+	void ShowCreatingHint(IntPtr windowHandle);
 	void ShowHints();
 	void Show(bool isReshow = false);
 	void Hide();

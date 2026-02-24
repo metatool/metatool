@@ -15,6 +15,8 @@ namespace Metatool.MetaKeyboard
         {
             RegisterCommands();
             var conf = config.CurrentValue;
+            screenHint.HintKeys = conf.KeyboardMousePackage.HintKeys;
+
             var maps = conf.KeyboardMousePackage.KeyMaps;
             keyboard.RegisterKeyMaps(maps);
 
@@ -37,6 +39,12 @@ namespace Metatool.MetaKeyboard
             {
                 e.Handled = true;
                 screenHint.Show(DoMouseLeftClick);
+            });
+
+            hotkeys.MouseLeftClickAlt.OnEvent(e =>
+            {
+                e.Handled = true;
+                screenHint.Show(DoMouseLeftClick,useWpfDetector: true);
             });
 
             hotkeys.MouseLeftClickLast.OnEvent(e =>
@@ -64,7 +72,7 @@ namespace Metatool.MetaKeyboard
                 var rect = position.clientRect;
                 var winRect = position.winRect;
                 var X = winRect.X + rect.X;
-                 var Y = winRect.Y + rect.Y;
+                var Y = winRect.Y + rect.Y;
                 var p = new Point(X + rect.Width / 2, Y + rect.Height / 2);
                 mouse.Position = p;
                 mouse.LeftClick();

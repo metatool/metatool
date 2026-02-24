@@ -10,10 +10,14 @@
     <Grid>
         <!-- Semi-transparent border rectangle; sits behind canvases, no layout impact Fill="#18FF0000"-->
         <Rectangle IsHitTestVisible="False" Stroke="Red" StrokeThickness="2" />
+        <TextBlock x:Name="_loadingText" IsHitTestVisible="False" Visibility="Hidden"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   FontSize="18" FontWeight="Bold" Foreground="#FFD700" Background="#CC333333"
+                   Padding="16,8" Text="Detecting..." />
         <Canvas x:Name="_Canvas" Background="Transparent" IsVisibleChanged="_Canvas_OnIsVisibleChanged">
         </Canvas>
         <Canvas Background="Transparent" IsHitTestVisible="False">
-            <Rectangle x:Name="highLight"  Stroke="Yellow" Visibility="Hidden" StrokeThickness="2"></Rectangle>
+            <Rectangle x:Name="highLight"  Stroke="Red" Visibility="Hidden" StrokeThickness="2"></Rectangle>
         </Canvas>
     </Grid>
 </Window>

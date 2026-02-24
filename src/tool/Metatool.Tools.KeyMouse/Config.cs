@@ -9,12 +9,13 @@ namespace Metatool.Tools.KeyMouse
         public HotkeyTrigger MouseScrollUp { get; set; }
         public HotkeyTrigger MouseScrollDown { get; set; }
         public HotkeyTrigger MouseLeftClick { get; set; }
+        public HotkeyTrigger MouseLeftClickAlt { get; set; }
         public HotkeyTrigger MouseLeftClickLast { get; set; }
     }
     public class KeyboardMousePackage
     {
         public bool MouseFollowActiveWindow { get; set; }
-        public string Keys { get; set; } = "ASDFQWERZXCVTGBHJKLYUIOPNM";
+        public string HintKeys { get; set; } = "ASDFQWERZXCVTGBHJKLYUIOPNM";
 
         public IDictionary<string, KeyMapDef> KeyMaps { get; set; }
 

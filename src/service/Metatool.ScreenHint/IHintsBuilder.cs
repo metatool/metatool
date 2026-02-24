@@ -17,4 +17,6 @@ public interface IHintsBuilder
 	/// key sequences to the relative bounding rectangles of each UI element.
 	/// </returns>
 	Dictionary<string, IUIElement> GenerateKeys(List<IUIElement> elementRects);
+	public string HintKeys { get; set;}
+
 }
