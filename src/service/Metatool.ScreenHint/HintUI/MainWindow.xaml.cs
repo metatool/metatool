@@ -101,10 +101,10 @@ public partial class MainWindow : Window
 
 	public void HideAllHints()
 	{
-		foreach (TextBlock hint in _Canvas.Children)
-		{
-			hint.Visibility = Visibility.Hidden;
-		}
+		Left = -9999;Width = 0; Height = 0;Top = -9999;
+		_Canvas.Visibility = Visibility.Hidden;
+		Show();
+		ForceRefresh();
 	}
 
 	public void HideHighLight()
@@ -116,7 +116,6 @@ public partial class MainWindow : Window
 	{
 		// Clear old hints so the stale bitmap has nothing to flash
 		HideAllHints();
-		_Canvas.Visibility = Visibility.Hidden;
 		_loadingText.Visibility = Visibility.Visible;
 		var screen = UIElementsDetector.UIElementsDetector.GetScreenRect(windowHandle);
 
