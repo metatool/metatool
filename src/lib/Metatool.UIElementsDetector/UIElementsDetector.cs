@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Compunet.YoloSharp;
+using Compunet.YoloSharp.Plotting;
 using Metatool.Service;
 using SixLabors.ImageSharp;
 
@@ -78,6 +79,9 @@ namespace Metatool.UIElementsDetector
             Debug.WriteLine($"[Detect] {result.Count} detections (image: {image.Width}x{image.Height}, speed: {result.Speed})");
             foreach (var p in result)
                 Debug.WriteLine($"  [{p.Name.Name}] conf={p.Confidence:F3} bounds=({p.Bounds.X},{p.Bounds.Y},{p.Bounds.Width},{p.Bounds.Height})");
+
+            using var annotatedImage = result.PlotImage(image);
+            annotatedImage.SaveAsPng(Path.Combine(tempDir, $"detected_{DateTime.Now:yyyyMMdd_HHmmss}.png"));
 #endif
             var elements = new List<IUIElement>();
 

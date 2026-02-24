@@ -139,7 +139,8 @@ public class HintUI : IHintUI
 		}
 		var canvas = Window._Canvas;
 		// Scale font size with DPI so hints stay readable on high-DPI monitors
-		var fontSize = 14.0 * dpiScaleX;
+		var fontFactor = rr.Width > 1920 ? 1.2 : 1.0;
+		var fontSize = 14.0 * dpiScaleX * fontFactor;
 
 		var childrenCount = canvas.Children.Count;
 		var i = 0;
