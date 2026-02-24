@@ -18,7 +18,7 @@ public class HintUI : IHintUI
 
 	MainWindow _window;
 	MainWindow Window => _window ??= MainWindow.Inst;
-	public void ShowCreatingHint(IntPtr windowHandle)
+	public void ShowCreatingHintMessage(IntPtr windowHandle)
 	{
 		Window.ShowLoading(windowHandle);
 	}
@@ -217,8 +217,9 @@ public class HintUI : IHintUI
 		Window.HideLoading();
 		canvas.Visibility = Visibility.Visible;
 
+
 #if DEBUG
-		Debug.WriteLine("CreateHint:" + w.ElapsedMilliseconds);
+        Debug.WriteLine("CreateHint:" + w.ElapsedMilliseconds);
 		Debug.WriteLine($"[CreateHint] requested={points.rects.Count}, created={i}, canvasChildren={canvas.Children.Count}, hintsDict={_hints.Count}");
 		canvas.UpdateLayout();
 		int visibleCount = 0;

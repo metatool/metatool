@@ -36,12 +36,7 @@ namespace Metatool.UIElementsDetector
             _model.Configuration.IoU = 0.45f;
         }
 
-        /// <summary>
-        /// Gets the absolute bounding rectangle of the specified window, position relative to the screen's top-left corner.
-        /// the screen position is relative to the main screen's top-left corner
-        /// </summary>
-        /// <param name="windowHandle"></param>
-        public static (IUIElement screen, IUIElement window) GetWindowRect(IntPtr windowHandle)
+        public static IUIElement GetScreenRect(IntPtr windowHandle)
         {
             // Get the monitor info for coordinate conversion
             var hMonitor = ScreenCapturer.User32.MonitorFromWindow(windowHandle, ScreenCapturer.User32.MONITOR_DEFAULTTONEAREST);
@@ -51,10 +46,20 @@ namespace Metatool.UIElementsDetector
             int monitorTop = monitorInfo.rcMonitor.Top;
             int monitorW = monitorInfo.rcMonitor.Right - monitorInfo.rcMonitor.Left;
             int monitorH = monitorInfo.rcMonitor.Bottom - monitorInfo.rcMonitor.Top;
+            return new UIElement { X = monitorLeft, Y = monitorTop, Width = monitorW, Height = monitorH };
+        }
 
+        /// <summary>
+        /// Gets the absolute bounding rectangle of the specified window, position relative to the screen's top-left corner.
+        /// the screen position is relative to the main screen's top-left corner
+        /// </summary>
+        /// <param name="windowHandle"></param>
+        public static (IUIElement screen, IUIElement window) GetWindowRect(IntPtr windowHandle)
+        {
+            var screen = GetScreenRect(windowHandle);
             ScreenCapturer.User32.GetWindowRect(windowHandle, out var rect);
-            var winRect = new UIElement { X = rect.Left - monitorLeft, Y = rect.Top - monitorTop, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top };
-            return (new UIElement { X = monitorLeft, Y = monitorTop, Width = monitorW, Height = monitorH }, winRect);
+            var winRect = new UIElement { X = rect.Left - screen.X, Y = rect.Top - screen.Y, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top };
+            return (screen, winRect);
         }
         /// <summary>
         /// Detects all visible, enabled UI automation elements within the screen that has the specified window

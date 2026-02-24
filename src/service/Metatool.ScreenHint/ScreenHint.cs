@@ -54,7 +54,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		if (buildHints)
 		{
 			var winHandle = _windowManager.CurrentWindow.Handle;
-			_hintUi.ShowCreatingHint(winHandle);
+			_hintUi.ShowCreatingHintMessage(winHandle);
 
 			var detector = useWpfDetector ? DetectorWpf : this.detector;
 			var (screen, winRect, elementPositions) = detector.Detect(winHandle);//run in UI thread to avoid COMException in UIAutomation
