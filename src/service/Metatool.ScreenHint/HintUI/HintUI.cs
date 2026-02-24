@@ -119,31 +119,12 @@ public class HintUI : IHintUI
 		var w = new Stopwatch();
 		w.Start();
 #endif
-		var rr = points.windowRect;
+		var winRect = points.windowRect;
 
-		// Position window on target monitor first, then query DPI.
-		// On multi-DPI setups, GetDpi must be called after the window is on
-		// the correct monitor to return the right per-monitor DPI values.
-		var initDpi = VisualTreeHelper.GetDpi(Window);
-		Window.Top = rr.Y / initDpi.DpiScaleY;
-		Window.Left = rr.X / initDpi.DpiScaleX;
-		Window.Width = rr.Width / initDpi.DpiScaleX;
-		Window.Height = rr.Height / initDpi.DpiScaleY;
-
-		var dpiScale = VisualTreeHelper.GetDpi(Window);
-		double dpiScaleX = dpiScale.DpiScaleX;
-		double dpiScaleY = dpiScale.DpiScaleY;
-
-		if (dpiScaleX != initDpi.DpiScaleX || dpiScaleY != initDpi.DpiScaleY)
-		{
-			Window.Top = rr.Y / dpiScaleY;
-			Window.Left = rr.X / dpiScaleX;
-			Window.Width = rr.Width / dpiScaleX;
-			Window.Height = rr.Height / dpiScaleY;
-		}
+		var (dpiScaleX, dpiScaleY) = Window.MoveTo(winRect);
 		var canvas = Window._Canvas;
 		// Scale font size with DPI so hints stay readable on high-DPI monitors
-		var fontFactor = rr.Width > 1920 ? 1.2 : 1.0;
+		var fontFactor = winRect.Width > 1920 ? 1.2 : 1.0;
 		var fontSize = 14.0 * dpiScaleX * fontFactor;
 
 		var childrenCount = canvas.Children.Count;
@@ -191,6 +172,7 @@ public class HintUI : IHintUI
 
 			// Measure actual rendered size to center the hint on the element
 			textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+
 			var centerX = (rect.X + rect.Width / 2.0) / dpiScaleX;
 			var centerY = (rect.Y + rect.Height / 2.0) / dpiScaleY;
 			Canvas.SetLeft(textBlock, centerX - textBlock.DesiredSize.Width / 2);
@@ -201,7 +183,7 @@ public class HintUI : IHintUI
 
 			// for show tooltips
 			textBlock.IsHitTestVisible = true;
-			var uiEl = rect as global::Metatool.UIElementsDetector.UIElement;
+			var uiEl = rect as UIElementsDetector.UIElement;
 			textBlock.ToolTip = $"Key: {kvp.Key}\nLabel: {uiEl?.Label}\nConfidence: {uiEl?.Confidence:F3}\nLocation: ({rect.X}, {rect.Y}, {rect.Width}×{rect.Height})";
 
 			textBlock.Visibility = Visibility.Visible;
@@ -216,10 +198,10 @@ public class HintUI : IHintUI
 		}
 		Window.HideLoading();
 		canvas.Visibility = Visibility.Visible;
-
+		Window.ForceRefresh();
 
 #if DEBUG
-        Debug.WriteLine("CreateHint:" + w.ElapsedMilliseconds);
+		Debug.WriteLine("CreateHint:" + w.ElapsedMilliseconds);
 		Debug.WriteLine($"[CreateHint] requested={points.rects.Count}, created={i}, canvasChildren={canvas.Children.Count}, hintsDict={_hints.Count}");
 		canvas.UpdateLayout();
 		int visibleCount = 0;
