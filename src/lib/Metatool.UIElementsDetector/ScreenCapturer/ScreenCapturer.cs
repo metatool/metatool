@@ -46,10 +46,17 @@ namespace Metatool.ScreenCapturer
             // Capture the full display; the window handle is only used to pick the correct monitor
             _captureZone = _screenCapture.RegisterCaptureZone(0, 0, _screenCapture.Display.Width, _screenCapture.Display.Height);
 
-            if (!_screenCapture.CaptureScreen())
-                return null;
+            // DXGI Desktop Duplication only captures frames presented after the
+            // duplication is created. The first call after switching displays often
+            // fails because no new frame is available yet — retry with a short delay.
+            for (var attempt = 0; attempt < 3; attempt++)
+            {
+                if (_screenCapture.CaptureScreen())
+                    return CreateImageFromZone(_captureZone);
+                Thread.Sleep(100);
+            }
 
-            return CreateImageFromZone(_captureZone);
+            return null;
         }
 
         private static unsafe Image<Bgra32> CreateImageFromZone(ICaptureZone zone)
