@@ -12,8 +12,8 @@
         <Rectangle IsHitTestVisible="False" Stroke="Red" StrokeThickness="2" />
         <Canvas x:Name="_Canvas" Background="Transparent" IsVisibleChanged="_Canvas_OnIsVisibleChanged">
         </Canvas>
-        <Canvas Background="Transparent">
-            <Rectangle IsHitTestVisible="False" x:Name="highLight"  Stroke="Yellow" Visibility="Hidden" StrokeThickness="2"></Rectangle>
+        <Canvas Background="Transparent" IsHitTestVisible="False">
+            <Rectangle x:Name="highLight"  Stroke="Yellow" Visibility="Hidden" StrokeThickness="2"></Rectangle>
         </Canvas>
     </Grid>
 </Window>

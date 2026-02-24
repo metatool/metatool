@@ -19,8 +19,12 @@ public partial class MainWindow
 	protected override void OnSourceInitialized(EventArgs e)
 	{
 		base.OnSourceInitialized(e);
-		var hwnd = new WindowInteropHelper(this).Handle;
-		var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-		SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
+		// we want to be able to show tooltips for the hints when hover,
+		// if want to make the mouse event transparent(i.e. hover the ui below the textblock) to the hint textblock, uncomment this line.
+		// remember to do textBlock.IsHitTestVisible = false too, in HintUI.cs!
+		// var hwnd = new WindowInteropHelper(this).Handle;
+		// var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+		// SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
+
 	}
 }

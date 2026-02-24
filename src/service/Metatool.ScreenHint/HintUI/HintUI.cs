@@ -107,6 +107,23 @@ public class HintUI : IHintUI
 	{
 		Window.HighLight(rect);
 	}
+	private void HintTextBlock_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+	{
+		if (sender is TextBlock tb && tb.Tag is IUIElement rect)
+		{
+			Window.ShowHighLight(rect);
+			// Make hints transparent so the highlight rectangle is clearly visible
+			// note: show not set to 0, otherwise it the same a hidden and mouse leave event will be triggered directly.
+			Window._Canvas.Opacity = 0.01;
+		}
+	}
+
+	private void HintTextBlock_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+	{
+		Window._Canvas.Opacity = 1.0;
+		Window.HideHighLight();
+	}
+
 	Dictionary<string, (IUIElement rect, TextBlock hint)> _hints;
 	public void CreateHint((IUIElement windowRect, Dictionary<string, IUIElement> rects) points)
 	{
@@ -177,6 +194,8 @@ public class HintUI : IHintUI
 					FontWeight = FontWeights.Bold,
 					Padding = new Thickness(2, 1, 2, 1),
 				};
+				textBlock.MouseEnter += HintTextBlock_MouseEnter;
+				textBlock.MouseLeave += HintTextBlock_MouseLeave;
 				canvas.Children.Add(textBlock);
 			}
 			textBlock.FontSize = fontSize;
@@ -190,8 +209,15 @@ public class HintUI : IHintUI
 			Canvas.SetLeft(textBlock, centerX - textBlock.DesiredSize.Width / 2);
 			Canvas.SetTop(textBlock, centerY - textBlock.DesiredSize.Height / 2);
 
+			// Store rect for hover highlight; update tooltip with detection info
+			textBlock.Tag = rect;
+
+			// for show tooltips
+			textBlock.IsHitTestVisible = true;
+			var uiEl = rect as global::Metatool.UIElementsDetector.UIElement;
+			textBlock.ToolTip = $"Label: {uiEl?.Label}\nConfidence: {uiEl?.Confidence:F3}\nLocation: ({rect.X}, {rect.Y}, {rect.Width}×{rect.Height})";
+
 			textBlock.Visibility = Visibility.Visible;
-			// r.IsHitTestVisible = false;
 			_hints.Add(kvp.Key, (rect, textBlock));
 			i++;
 		}

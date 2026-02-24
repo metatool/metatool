@@ -21,10 +21,10 @@ public partial class App : Application
         base.OnStartup(e);
 
         // Build configuration
-        //var config = new ConfigurationBuilder()
-        //    .SetBasePath(AppContext.BaseDirectory)
-        //    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        //    .Build();
+        var config = new ConfigurationBuilder()
+            //.SetBasePath(AppContext.BaseDirectory)
+            //.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
 
         var services = new ServiceCollection();
         services.AddLogging(builder => builder.AddConsole());
