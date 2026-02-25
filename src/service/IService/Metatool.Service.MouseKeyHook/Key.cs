@@ -22,7 +22,17 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
         get => _codes;
         private set
         {
-            _codes = value;
+            var v = new SortedSet<KeyCodes>();
+            foreach (var code in value)
+            {
+                var strs = code.ToString().Split(", ");// Tab, Alt
+                foreach (var str in strs)
+                {
+                    var kv = Enum.Parse<KeyCodes>(str);
+                    v.Add(kv);
+                }
+            }
+            _codes = v;
             _val = value.Aggregate<KeyCodes, int>(0, (o, c1) => o + (int)c1);
         }
     }

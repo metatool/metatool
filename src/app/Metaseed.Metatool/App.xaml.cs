@@ -28,7 +28,6 @@ public partial class App(IConfig<MetatoolConfig> config, IHostEnvironment hostEn
 		notify.ShowMessage("Metatool started!");
 	}
 
-
 	protected override void OnStartup(StartupEventArgs e)
 	{
 		base.OnStartup(e);
@@ -46,20 +45,20 @@ public partial class App(IConfig<MetatoolConfig> config, IHostEnvironment hostEn
 		logger.LogInformation("Metatool started!");
 	}
 
-	internal static void RunApp(Action action = null)
+	internal static void RunApp(Action beforeUIThreadLoopAction = null)
 	{
-		var newWindowThread = new Thread(()=>Start(action)){Name = "UI Thread"};
+		var newWindowThread = new Thread(()=>UIThreadLoop(beforeUIThreadLoopAction)){Name = "Metatool UI Thread"};
 		newWindowThread.SetApartmentState(ApartmentState.STA);
 		newWindowThread.IsBackground = true;
 		newWindowThread.Start();
 	}
 
-	private static void Start(Action action = null)
+	private static void UIThreadLoop(Action beforeLoopAction = null)
 	{
 		var application = Services.Create<App>();
 		Context.Dispatcher = application.Dispatcher;
-        action?.Invoke();
-         
+        beforeLoopAction?.Invoke();
+
 		application.InitializeComponent();
 		application.Run();
 	}

@@ -555,7 +555,7 @@ public static class KeyCodesEnumExtensions
         var name = Enum.GetName(value);
         if(name == null)
         {
-            Services.CommonLogger.LogError($"keycode:{value}, Enum.GetName(value) is null");
+            Services.CommonLogger.LogError($"keycode value:{value}, Enum.GetName(value) is null");
             return "";
         }
 

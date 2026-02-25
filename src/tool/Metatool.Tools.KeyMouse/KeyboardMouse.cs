@@ -38,13 +38,13 @@ namespace Metatool.MetaKeyboard
             hotkeys.MouseLeftClick.OnEvent(e =>
             {
                 e.Handled = true;
-                screenHint.Show(DoMouseLeftClick);
+                screenHint.Show(DoMouseLeftClick, useWpfDetector: true);
             });
 
             hotkeys.MouseLeftClickAlt.OnEvent(e =>
             {
                 e.Handled = true;
-                screenHint.Show(DoMouseLeftClick,useWpfDetector: true);
+                screenHint.Show(DoMouseLeftClick,useWpfDetector: false);
             });
 
             hotkeys.MouseLeftClickLast.OnEvent(e =>
