@@ -8,36 +8,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Metaseed.Metatool;
 
-public partial class App : Application
+public partial class App(IConfig<MetatoolConfig> config, IHostEnvironment hostEnv, ILogger<App> logger, INotify notify)
+    : Application
 {
-	private readonly IConfig<MetatoolConfig> _config;
-	private readonly ILogger<App>            _logger;
-	private readonly IHostEnvironment        _hostEnv;
-	private          INotify                 _notify;
-
-	public App(IConfig<MetatoolConfig> config, IHostEnvironment hostEnv, ILogger<App> logger, INotify notify)
+    private void ConfigNotify(Scaffold scaffolder)
 	{
-		_config  = config;
-		_logger  = logger;
-		_hostEnv = hostEnv;
-		_notify  = notify;
-	}
-
-	private void ConfigNotify(Scaffold scaffolder)
-	{
-		_notify.AddContextMenuItem("Show Log", e =>
+		notify.AddContextMenuItem("Show Log", e =>
 		{
 			if (e.IsChecked)
 				ConsoleExt.ShowConsole();
 			else
 				ConsoleExt.HideConsole();
-		}, null, true, _hostEnv.IsDevelopment());
+		}, null, true, hostEnv.IsDevelopment());
 
-		_notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
+		notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,
 			AutoStartManager.IsAutoStart);
-		_notify.AddContextMenuItem("Register", e => { scaffolder.Register(); });
+		notify.AddContextMenuItem("Register", e => { scaffolder.Register(); });
 
-		_notify.ShowMessage("Metatool started!");
+		notify.ShowMessage("Metatool started!");
 	}
 
 
@@ -45,17 +33,17 @@ public partial class App : Application
 	{
 		base.OnStartup(e);
 		Current.MainWindow = new MainWindow();
-		_notify.ShowMessage("Metatool starting...");
+		notify.ShowMessage("Metatool starting...");
 
-		var scaffold = new Scaffold(_logger);
-		scaffold.CommonSetup(_config);
+		var scaffold = new Scaffold(logger);
+		scaffold.CommonSetup(config);
 
 		ConfigNotify(scaffold);
 		if(Environment.GetEnvironmentVariable("MetatoolDir") == null) {
 			scaffold.Register();
 		}
-		_logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
-		_logger.LogInformation("Metatool started!");
+		logger.LogInformation($"Registered MetatoolDir: {Environment.GetEnvironmentVariable("MetatoolDir")}");
+		logger.LogInformation("Metatool started!");
 	}
 
 	internal static void RunApp(Action action = null)
