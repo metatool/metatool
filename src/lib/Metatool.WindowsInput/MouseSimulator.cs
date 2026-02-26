@@ -85,13 +85,13 @@ public class MouseSimulator : IMouseSimulator
 	/// </summary>
 	private static void NormalizeCoordinates(ref double x, ref double y)
 	{
-		var vScreenWidth  = NativeMethods.GetSystemMetrics(SystemMetric.SM_CXVIRTUALSCREEN);
+		var vScreenWidth = NativeMethods.GetSystemMetrics(SystemMetric.SM_CXVIRTUALSCREEN);
 		var vScreenHeight = NativeMethods.GetSystemMetrics(SystemMetric.SM_CYVIRTUALSCREEN);
-		var vScreenLeft   = NativeMethods.GetSystemMetrics(SystemMetric.SM_XVIRTUALSCREEN);
-		var vScreenTop    = NativeMethods.GetSystemMetrics(SystemMetric.SM_YVIRTUALSCREEN);
+		var vScreenLeft = NativeMethods.GetSystemMetrics(SystemMetric.SM_XVIRTUALSCREEN);
+		var vScreenTop = NativeMethods.GetSystemMetrics(SystemMetric.SM_YVIRTUALSCREEN);
 
-		x = (x - vScreenLeft) * 65536 / vScreenWidth  + 65536d / (vScreenWidth  * 2);
-		y = (y - vScreenTop)  * 65536 / vScreenHeight + 65536d / (vScreenHeight * 2);
+		x = (x - vScreenLeft) * 65536 / vScreenWidth + 65536d / (vScreenWidth * 2);
+		y = (y - vScreenTop) * 65536 / vScreenHeight + 65536d / (vScreenHeight * 2);
 	}
 	/// <summary>
 	/// Simulates mouse movement to the specified location on the primary display device.
@@ -150,8 +150,16 @@ public class MouseSimulator : IMouseSimulator
 	/// <param name="newY">The new position on the y-axis</param>
 	public IMouseSimulator MoveToLikeUser(int newX, int newY)
 	{
-		// Get starting position
-		var startPos = Position;
+		// config
+		var optimalPixelsPerMillisecond = 80;
+		var minDuration = 20;
+		var maxDuration = 100;
+        var optimalPixelsPerStep = 80;
+        var minSteps = 8;
+        var maxSteps = 20;
+
+        // Get starting position
+        var startPos = Position;
 		var startX = startPos.X;
 		var startY = startPos.Y;
 
@@ -159,15 +167,9 @@ public class MouseSimulator : IMouseSimulator
 		var totalDistance = startPos.Distance(newX, newY);
 
 		// Calculate the duration for the speed
-		var optimalPixelsPerMillisecond = 1;
-		var minDuration = 200;
-		var maxDuration = 500;
 		var duration = Convert.ToInt64(totalDistance / optimalPixelsPerMillisecond).Clamp(minDuration, maxDuration);
 
 		// Calculate the steps for the smoothness
-		var optimalPixelsPerStep = 10;
-		var minSteps = 10;
-		var maxSteps = 50;
 		var steps = Convert.ToInt64(totalDistance / optimalPixelsPerStep).Clamp(minSteps, maxSteps);
 
 		// Calculate the interval and the step size
@@ -325,7 +327,7 @@ public class MouseSimulator : IMouseSimulator
 	/// Sends a mouse down command for the specified mouse button
 	/// </summary>
 	/// <param name="mouseButton">The mouse button to press</param>
-	public  IMouseSimulator Down(MouseButton mouseButton)
+	public IMouseSimulator Down(MouseButton mouseButton)
 	{
 		var inputList = new InputBuilder().AddMouseButtonDown(mouseButton).ToArray();
 		SendSimulatedInput(inputList);
@@ -409,7 +411,7 @@ public class MouseSimulator : IMouseSimulator
 	/// <param name="mouseButton">The mouse button to use for dragging</param>
 	/// <param name="startingPoint">Starting point of the drag</param>
 	/// <param name="distance">The distance to drag, + for down, - for up</param>
-	public IMouseSimulator  DragVertically(MouseButton mouseButton, Point startingPoint, int distance)
+	public IMouseSimulator DragVertically(MouseButton mouseButton, Point startingPoint, int distance)
 	{
 		return Drag(mouseButton, startingPoint, 0, distance);
 	}
@@ -421,7 +423,7 @@ public class MouseSimulator : IMouseSimulator
 	/// <param name="startingPoint">Starting point of the drag.</param>
 	/// <param name="distanceX">The x distance to drag, + for down, - for up.</param>
 	/// <param name="distanceY">The y distance to drag, + for right, - for left.</param>
-	public IMouseSimulator  Drag(MouseButton mouseButton, Point startingPoint, int distanceX, int distanceY)
+	public IMouseSimulator Drag(MouseButton mouseButton, Point startingPoint, int distanceX, int distanceY)
 	{
 		var endingPoint = new Point(startingPoint.X + distanceX, startingPoint.Y + distanceY);
 		return Drag(mouseButton, startingPoint, endingPoint);
@@ -433,7 +435,7 @@ public class MouseSimulator : IMouseSimulator
 	/// <param name="mouseButton">The mouse button to use for dragging.</param>
 	/// <param name="startingPoint">Starting point of the drag.</param>
 	/// <param name="endingPoint">Ending point of the drag.</param>
-	public IMouseSimulator  Drag(MouseButton mouseButton, Point startingPoint, Point endingPoint)
+	public IMouseSimulator Drag(MouseButton mouseButton, Point startingPoint, Point endingPoint)
 	{
 		Position = startingPoint;
 		Wait.UntilInputIsProcessed();

@@ -22,7 +22,7 @@ namespace Metatool.MetaKeyboard
 
             var hotkeys = conf.KeyboardMousePackage.Hotkeys;
 
-            hotkeys.MouseToFocus.OnEvent(_ => MoveCursorToActiveControl());
+            hotkeys.MouseToFocus.OnEvent(_ => MoveCursorToActiveWindow());
 
             hotkeys.MouseScrollUp.OnEvent(e =>
             {
@@ -78,15 +78,27 @@ namespace Metatool.MetaKeyboard
                 mouse.LeftClick();
             }
 
+            void MoveCursorToActiveWindow()
+            {
+                var r = windowManager.CurrentWindow.Rect;
+                var x = (int)(r.X + r.Width / 2);
+                var y = (int)(r.Y + r.Height / 2);
+                if (x != 0 && y != 0)
+                    Task.Run(() => mouse.MoveToLikeUser(x, y));
+                // mouse.Position = new Point(x, y);
+            }
+
+            // moving to active control works, but I want to move to the scrollable control in the window not use it for now
             void MoveCursorToActiveControl()
             {
                 var active = AutomationElement.FocusedElement;
                 var bounding = (Rect)active.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
-
                 var x = (int)Math.Floor(bounding.X + bounding.Width / 2);
                 var y = (int)Math.Floor(bounding.Y + bounding.Height / 2);
-                if (double.IsFinite(bounding.X) || double.IsInfinity(bounding.Y) || x == 0 && y == 0)
+                var isElementInValid = !double.IsFinite(bounding.X) || !double.IsFinite(bounding.Y) || x == 0 && y == 0;
+                if (!isElementInValid)
                 {
+
                     var r = windowManager.CurrentWindow.Rect;
                     x = (int)(r.X + r.Width / 2);
                     y = (int)(r.Y + r.Height / 2);
