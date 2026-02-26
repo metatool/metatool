@@ -103,6 +103,7 @@ public partial class MainWindow : Window
 	{
 		Left = -9999;Width = 0; Height = 0;Top = -9999;
 		_Canvas.Visibility = Visibility.Hidden;
+		borderRectangle.Visibility = Visibility.Hidden;
 		Show();
 		ForceRefresh();
 	}
@@ -112,18 +113,19 @@ public partial class MainWindow : Window
 		highLight.Visibility = Visibility.Hidden;
 	}
 
-	public void ShowLoading(IntPtr windowHandle)
+	public void ShowLoading(IntPtr windowHandle, bool isWindow)
 	{
 		// Clear old hints so the stale bitmap has nothing to flash
 		HideAllHints();
 		_loadingText.Visibility = Visibility.Visible;
-		var screen = UIElementsDetector.UIElementsDetector.GetScreenRect(windowHandle);
-
-		var dpiScale = VisualTreeHelper.GetDpi(this);
-		Top = screen.Y / dpiScale.DpiScaleY;
-		Left = screen.X / dpiScale.DpiScaleX;
-		Width = screen.Width / dpiScale.DpiScaleX;
-		Height = screen.Height / dpiScale.DpiScaleY;
+		var (screen,winRect) = UIElementsDetector.UIElementsDetector.GetScreenWindowRect(windowHandle);
+		var outerRect = isWindow ? winRect : screen;
+        var dpiScale = VisualTreeHelper.GetDpi(this);
+		Top = outerRect.Y / dpiScale.DpiScaleY;
+		Left = outerRect.X / dpiScale.DpiScaleX;
+		Width = outerRect.Width / dpiScale.DpiScaleX;
+		Height = outerRect.Height / dpiScale.DpiScaleY;
+		borderRectangle.Visibility = Visibility.Visible;
 
 		Show();
 		ForceRefresh();

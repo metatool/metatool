@@ -54,7 +54,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		if (buildHints)
 		{
 			var winHandle = _windowManager.CurrentWindow.Handle;
-			_hintUi.ShowCreatingHintMessage(winHandle);
+			_hintUi.ShowCreatingHintMessage(winHandle, activeWindowOnly);
 
 			var detector = useWpfDetector ? DetectorWpf : this.detector;
 			var (screen, winRect, elementPositions) = detector.Detect(winHandle);//run in UI thread to avoid COMException in UIAutomation
@@ -68,9 +68,9 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 			List<IUIElement> elementRects; // relative to rect
 			if (activeWindowOnly)
 			{
-				outerRect = new UIElement() { X = winRect.X + screen.X, Y = winRect.Y + screen.Y, Width = winRect.Width, Height = winRect.Height };
+				outerRect = winRect;
 				// position relative to WindowRect
-				elementRects = UIElementsDetector.UIElementsDetector.ToWindowRelative(winRect, elementPositions);
+				elementRects = UIElementsDetector.UIElementsDetector.ToWindowRelative(screen, winRect, elementPositions);
 			}
 			else
 			{

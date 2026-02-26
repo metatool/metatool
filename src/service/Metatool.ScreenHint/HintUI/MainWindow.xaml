@@ -9,7 +9,7 @@
 >
     <Grid>
         <!-- Semi-transparent border rectangle; sits behind canvases, no layout impact Fill="#18FF0000"-->
-        <Rectangle IsHitTestVisible="False" Stroke="Red" StrokeThickness="2" />
+        <Rectangle IsHitTestVisible="False" Stroke="Red" StrokeThickness="2" x:Name="borderRectangle" />
         <TextBlock x:Name="_loadingText" IsHitTestVisible="False" Visibility="Hidden"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    FontSize="18" FontWeight="Bold" Foreground="#FFD700" Background="#CC333333"

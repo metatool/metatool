@@ -7,7 +7,7 @@ namespace Metatool.ScreenHint.HintUI;
 
 public interface IHintUI
 {
-	void ShowCreatingHintMessage(IntPtr windowHandle);
+	void ShowCreatingHintMessage(IntPtr windowHandle, bool isWindow);
 	void ShowHints();
 	void Show(bool isReshow = false);
 	void Hide();

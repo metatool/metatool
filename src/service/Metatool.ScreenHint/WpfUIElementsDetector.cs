@@ -19,18 +19,19 @@ public class WpfUIElementsDetector : IUIElementsDetector
 {
     /// <summary>
     /// Detects all visible and enabled UI automation elements within the screen that has the specified window
-    /// and returns their bounding rectangles of the active window and the elements inside the window.
-    /// Note: all coordinates are relative to the MAIN screen's top-left corner, not the window's top-left corner.
+    /// and returns their bounding rectangles of the active window and the elements on screen.
+    /// Note: all elements coordinates are relative to the screen's top-left corner, not the window's top-left corner.
+    /// screen and winRect are absolute position(relative MAIN screen top-left corner
     /// Uses TreeWalker instead of FindAll to gracefully skip elements with broken MSAA/IAccessible providers.
     /// </summary>
     /// <param name="winHandle">The native window handle to inspect.</param>
     public (IUIElement screen, IUIElement winRect, List<IUIElement> elements) Detect(IntPtr winHandle)
     {
-        var (screen, winRect) = UIElementsDetector.UIElementsDetector.GetWindowRect(winHandle);
+        var (screen, winRect) = UIElementsDetector.UIElementsDetector.GetScreenWindowRect(winHandle);
 
         var winElement = AutomationElement.FromHandle(winHandle);
-        var winRec = winElement.Current.BoundingRectangle;
-        var winRectE = new UIElement { X = (int)winRec.X, Y = (int)winRec.Y, Width = (int)winRec.Width, Height = (int)winRec.Height };
+        //var winRec = winElement.Current.BoundingRectangle;
+        //var winRectE = new UIElement { X = (int)winRec.X, Y = (int)winRec.Y, Width = (int)winRec.Width, Height = (int)winRec.Height };
 
         var condition = new AndCondition(
             new PropertyCondition(AutomationElement.IsEnabledProperty, true),
@@ -48,7 +49,7 @@ public class WpfUIElementsDetector : IUIElementsDetector
                 rects.Add(new UIElement { X = (int)rec.X - screen.X, Y = (int)rec.Y - screen.Y, Width = (int)rec.Width, Height = (int)rec.Height });
         }
 
-        return (screen, winRectE, rects);
+        return (screen, winRect, rects);
 
         // Local replacement for AutomationElement.FindAll that uses TreeWalker
         // to gracefully skip elements with broken MSAA/IAccessible providers.

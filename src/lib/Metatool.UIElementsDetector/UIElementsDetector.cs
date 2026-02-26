@@ -50,28 +50,29 @@ namespace Metatool.UIElementsDetector
         }
 
         /// <summary>
-        /// Gets the absolute bounding rectangle of the specified window, position relative to the screen's top-left corner.
+        /// Gets the absolute bounding rectangle of the specified window,
+        /// is relative to the main screen's top-left corner
         /// the screen position is relative to the main screen's top-left corner
         /// </summary>
         /// <param name="windowHandle"></param>
-        public static (IUIElement screen, IUIElement window) GetWindowRect(IntPtr windowHandle)
+        public static (IUIElement screen, IUIElement window) GetScreenWindowRect(IntPtr windowHandle)
         {
             var screen = GetScreenRect(windowHandle);
             ScreenCapturer.User32.GetWindowRect(windowHandle, out var rect);
-            var winRect = new UIElement { X = rect.Left - screen.X, Y = rect.Top - screen.Y, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top };
+            var winRect = new UIElement { X = rect.Left , Y = rect.Top, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top };
             return (screen, winRect);
         }
         /// <summary>
         /// Detects all visible, enabled UI automation elements within the screen that has the specified window
         /// and returns their bounding rectangles relative to the screen's top-left corner.
-        ///
+        /// Note: winRect is like screen, relative to main screen top-left
         /// </summary>
         public (IUIElement screen, IUIElement winRect, List<IUIElement> elements) Detect(IntPtr windowHandle)
         {
-            var winRect = GetWindowRect(windowHandle);
+            var (screen, winRect) = GetScreenWindowRect(windowHandle);
             using var image = _screenCapturer.CaptureScreen(windowHandle);
             if (image == null)
-                return (winRect.screen, winRect.window, new List<IUIElement>());
+                return (screen, winRect, new List<IUIElement>());
 
 #if DEBUG_
             var tempDir = @"c:\temp\1";
@@ -104,20 +105,17 @@ namespace Metatool.UIElementsDetector
                 });
             }
 
-            return (winRect.screen, winRect.window, elements);
+            return (screen, winRect, elements);
         }
 
-        public static List<IUIElement> ToWindowRelative(IUIElement winRect, List<IUIElement> elements, bool filterOutWinElements = true)
+        public static List<IUIElement> ToWindowRelative(IUIElement screen, IUIElement winRect, List<IUIElement> elements, bool filterOutWinElements = true)
         {
             var result = new List<IUIElement>();
 
-            // var WinXAbs = winRect.X + screen.X;
-            // var eXAbs = el.X + screen.X;
-            // var eXToWin = eXAbs - WinXAbs;(so screen.X is not needed)
             foreach (var el in elements)
             {
-                var x = el.X - winRect.X;
-                var y = el.Y - winRect.Y;
+                var x = el.X + screen.X - winRect.X;
+                var y = el.Y + screen.Y - winRect.Y;
                 if (filterOutWinElements && (x < 0 || y < 0 || x > winRect.Width || y > winRect.Height))
                 {
                     // Skip elements that are outside the window bounds (likely belong to other windows)

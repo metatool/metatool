@@ -18,9 +18,9 @@ public class HintUI : IHintUI
 
 	MainWindow _window;
 	MainWindow Window => _window ??= MainWindow.Inst;
-	public void ShowCreatingHintMessage(IntPtr windowHandle)
+	public void ShowCreatingHintMessage(IntPtr windowHandle, bool isWindow)
 	{
-		Window.ShowLoading(windowHandle);
+		Window.ShowLoading(windowHandle, isWindow);
 	}
 
 	public void Show(bool isReshow = false)
