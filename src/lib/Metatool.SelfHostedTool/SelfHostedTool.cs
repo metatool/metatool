@@ -1,4 +1,16 @@
-namespace Metatool.Plugin;
+using System;
+using Metaseed.Metatool.Service;
+using Metatool.Command;
+using Metatool.Input;
+using Metatool.ScreenHint;
+using Metatool.Service;
+using Metatool.UI.Notify;
+using Metatool.Utils;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace Metatool.Tool;
 public class SelfHostedTool
 {
 	public static T BuildTool<T, TConfig>(string configSection, Action<IServiceCollection> configureServices = null) where TConfig : class, new()

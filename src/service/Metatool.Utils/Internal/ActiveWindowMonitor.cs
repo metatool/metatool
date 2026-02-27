@@ -26,13 +26,13 @@ internal class ActiveWindowMonitor
 		IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc,
 		uint idProcess, uint idThread, uint dwFlags);
 
-	IntPtr m_hhook;
+	IntPtr _hook;
 	private WinEventDelegate _winEventProc;
 
 	public ActiveWindowMonitor()
 	{
 		_winEventProc = new WinEventDelegate(WinEventProc);
-		m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND,
+		_hook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND,
 			EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _winEventProc,
 			0, 0, WINEVENT_OUTOFCONTEXT);
 	}
@@ -49,6 +49,6 @@ internal class ActiveWindowMonitor
 
 	~ActiveWindowMonitor()
 	{
-		UnhookWinEvent(m_hhook);
+		UnhookWinEvent(_hook);
 	}
 }

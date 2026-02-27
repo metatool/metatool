@@ -145,6 +145,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Tools.KeyMouse", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.Tools.WinShell", "tool\Metatool.Tools.WinShell\Metatool.Tools.WinShell.csproj", "{D03A38D9-F8EB-4F0E-80A4-0EA20AFA94F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metatool.SelfHostedTool", "lib\Metatool.SelfHostedTool\Metatool.SelfHostedTool.csproj", "{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -861,6 +863,22 @@ Global
 		{D03A38D9-F8EB-4F0E-80A4-0EA20AFA94F7}.Release|x64.Build.0 = Release|Any CPU
 		{D03A38D9-F8EB-4F0E-80A4-0EA20AFA94F7}.Release|x86.ActiveCfg = Release|Any CPU
 		{D03A38D9-F8EB-4F0E-80A4-0EA20AFA94F7}.Release|x86.Build.0 = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|x64.Build.0 = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Debug|x86.Build.0 = Debug|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|ARM64.Build.0 = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|x64.ActiveCfg = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|x64.Build.0 = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|x86.ActiveCfg = Release|Any CPU
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -914,6 +932,7 @@ Global
 		{E76A191D-3E8B-3033-53C8-97272F2B2E6B} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 		{907765FA-000B-4C4D-BBFA-FD8D6F70D88C} = {A7DF5514-76E4-4F73-B40C-F1175E5B8B67}
 		{D03A38D9-F8EB-4F0E-80A4-0EA20AFA94F7} = {A7DF5514-76E4-4F73-B40C-F1175E5B8B67}
+		{8B57AB19-6D15-4D3E-864F-BD4ED64C1F12} = {4743D69C-2D08-44CE-93DE-D00692C18D82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93F9E2DF-0E8C-4BBD-8F98-7A5B2703D4D2}
