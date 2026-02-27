@@ -44,11 +44,6 @@ namespace Metatool.MetaKeyboard
         public string Inspect { get; set; }
     }
 
-    public class FileExplorerPackage
-    {
-        public FileExplorerHotKeys Hotkeys { get; set; }
-    }
-
     public class SoftwarePackage
     {
         public OrderedDictionary<string, string> KeyAliases { get; set; }
@@ -77,16 +72,6 @@ namespace Metatool.MetaKeyboard
         }
     }
 
-    public class FileExplorerHotKeys
-    {
-        public HotkeyTrigger FocusItemsView { get; set; }
-        public HotkeyTrigger FocusNavigationTreeView { get; set; }
-        public HotkeyTrigger CopySelectedPath { get; set; }
-        public HotkeyTrigger NewFile { get; set; }
-        public HotkeyTrigger ShowDesktopFolder { get; set; }
-        public HotkeyTrigger PasteAsFile { get; set; }
-    }
-
     public class SoftwareHotKeys
     {
         public HotkeyTrigger DoublePinyinSwitch { get; set; }
@@ -109,8 +94,6 @@ namespace Metatool.MetaKeyboard
         public OrderedDictionary<string, string> KeyAliases { get; set; }
         public ContextHotkey<string> SpecialFrenchChars { get; set; }
         public KeyboardPackage KeyboardPackage { get; set; }
-
-        public FileExplorerPackage FileExplorerPackage { get; set; }
 
         public SoftwarePackage SoftwarePackage { get; set; }
 

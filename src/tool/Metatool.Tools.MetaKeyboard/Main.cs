@@ -10,7 +10,7 @@ namespace Metatool.Tools.MetaKeyboard
             var keyboard61   = Services.GetOrCreate<Keyboard61>();
             var specialChars = Services.GetOrCreate<SpecialCharsPackage>();
             // var metaEditor= Services.GetOrCreate<MetaEditor>(); // may cause problem in vscode
-            var fileExplorer = Services.GetOrCreate<FileExplorer>();
+
             var software     = Services.GetOrCreate<Software>();
             return base.OnLoaded();
         }

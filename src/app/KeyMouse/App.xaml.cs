@@ -12,52 +12,20 @@ using Metatool.UI.Notify;
 using Application = System.Windows.Application;
 using CommandManager = Metatool.Command.CommandManager;
 using Mouse = Metatool.Input.Mouse;
+using System;
+using Metatool.Plugin;
 namespace KeyMouse;
 
 public partial class App : Application
 {
-    private ILogger<App> _logger;
     private KeyMouseTool _tool;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-
-        // Build configuration
-        var config = new ConfigurationBuilder()
-            //.SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile("config.json", optional: false, reloadOnChange: true)
-            .Build();
-
-        var services = new ServiceCollection();
-        services.AddLogging(builder =>
-            builder
-                //.AddConfiguration(configuration.GetSection("Logging"))
-                .AddConsole()
-                .AddDebug()
-        );
-        services
-            .ConfigScreenHint()
-            .ConfigMetatoolUtils()
-            .AddSingleton<INotify, Notify>()
-            .Configure<MetatoolConfig>(config)
-            .AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>))
-            .Configure<PluginConfig>(config.GetSection("Tools").GetSection("Metatool.Tools.KeyMouse"))
-            .AddSingleton<IKeyboard, Keyboard>()
-            .AddSingleton<IMouse, Mouse>()
-            .AddSingleton<ICommandManager, CommandManager>();
-
-        var serviceProvider = services.BuildServiceProvider();
-        Services.SetDefaultProvider(serviceProvider);
-
-        _logger = serviceProvider.GetRequiredService<ILogger<App>>();
-        _tool = ActivatorUtilities.CreateInstance<KeyMouseTool>(serviceProvider);
-
+        _tool = SelfHostedTool.BuildTool<KeyMouseTool, PluginConfig>("Metatool.Tools.KeyMouse");
+        var logger = Services.Get<ILogger<App>>();
+        logger.LogInformation("KeyMouse Tool started");
     }
 
-    protected override void OnExit(ExitEventArgs e)
-    {
-        base.OnExit(e);
-    }
 }
