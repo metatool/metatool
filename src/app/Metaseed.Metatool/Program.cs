@@ -21,18 +21,8 @@ public static class Program
 	{
 		try
 		{
-			Console.WriteLine($"Is Elevated: {Context.IsElevated}");
-			var shiftDown = KeyboardState.Current().IsDown(Key.Shift);
-			if (!Context.IsElevated && (shiftDown || args.Contains(AdminFlagLong)))
-			{
-				// so you could pin metatool to the first windows task bar shortcut,
-				// and use Win+Shift+1 then Alt+Y to launch as admin,
-				// note: could not use Win+Alt+1, it's used to do right-click on the first task bar item
-				args = args.Where(i => i != AdminFlagLong).ToArray();
-				return Context.Restart(0, true, args);
-			}
-			args = args.Where(i => i != AdminFlagLong).ToArray(); 
-			
+			args = RestartAsAdminIfRequested(args);
+
 			ServiceConfig.BuildHost(args).Run();
 			return 0;
 		}
@@ -52,7 +42,7 @@ public static class Program
 
 			// Be verbose (stack trace) in debug mode otherwise brief
 			var error = args.Any(arg => arg == DebugFlagShort
-			                            || arg == DebugFlagLong)
+										|| arg == DebugFlagLong)
 				? e.ToString()
 				: e.GetBaseException().Message;
 			Services.CommonLogger.LogError($"Error: {error}");
@@ -60,4 +50,24 @@ public static class Program
 		}
 	}
 
+	private static string[] RestartAsAdminIfRequested(string[] args)
+	{
+		var isElevated = Context.IsElevated;
+		Console.WriteLine($"Is Elevated: {isElevated}");
+
+		var shiftDown = KeyboardState.Current().IsDown(Key.Shift);
+		// when starting with `Shift` key pressed, or with `--admin` flag, but not already elevated, restart with admin rights
+		var hasAdminFlag = args.Contains(AdminFlagLong);
+		// filter out --admin flag
+		if (hasAdminFlag) args = args.Where(i => i != AdminFlagLong).ToArray();
+		if (!isElevated && (shiftDown || hasAdminFlag))
+		{
+			// so you could pin metatool to the first windows task bar shortcut,
+			// and use Win+Shift+1(launch metatool) then Alt+Y(accept UAC warning) to launch as admin,
+			// note: could not use Win+Alt+1, it's used to do right-click on the first task bar item
+			Context.Restart(exitCode: 0, admin: true, args);
+		}
+
+		return args;
+	}
 }

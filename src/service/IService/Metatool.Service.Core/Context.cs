@@ -26,7 +26,7 @@ public class Context
 	/// </summary>
 	public static string BaseDirectory => AppContext.BaseDirectory;
 
-	static string _appDirectory;
+	static string _appDirectoryBuf;
 
 	/// <summary>
 	/// self-contained exe file path
@@ -37,11 +37,11 @@ public class Context
 		{
 			if (Debugger.IsAttached) return BaseDirectory;
 
-			if (_appDirectory != null) return _appDirectory;
+			if (_appDirectoryBuf != null) return _appDirectoryBuf;
 
 			var mainModule = Process.GetCurrentProcess().MainModule;
-			_appDirectory = Path.GetDirectoryName(mainModule?.FileName);
-			return _appDirectory;
+			_appDirectoryBuf = Path.GetDirectoryName(mainModule?.FileName);
+			return _appDirectoryBuf;
 		}
 	}
 
@@ -80,13 +80,13 @@ public class Context
 	}
 
 	/// <summary>
-	/// 
+	///
 	/// </summary>
-	/// <param name="code">shutdown code of the running app</param>
+	/// <param name="exitCode">shutdown code of the running app</param>
 	/// <param name="admin"></param>
 	/// <param name="args"></param>
 	/// <returns></returns>
-	public static int Restart(int code, bool admin, string[] args = null)
+	public static void Restart(int exitCode, bool admin, string[] args = null)
 	{
 		void restart()
 		{
@@ -107,7 +107,7 @@ public class Context
 
 				if (admin) process.StartInfo.Verb = "runas";
 				process.Start();
-				Application.Current.Shutdown(code);
+				Application.Current.Shutdown(exitCode);
 
 			}
 			catch (Exception e)
@@ -117,7 +117,5 @@ public class Context
 		}
 		if (Dispatcher == null) restart();
 		else Dispatcher.BeginInvoke(restart);
-		return code;
-
 	}
 }

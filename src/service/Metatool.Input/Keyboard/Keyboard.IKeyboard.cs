@@ -499,6 +499,8 @@ public partial class Keyboard : IKeyboard
 
     public bool AddAliases(IDictionary<string, string> aliases)
     {
+        if (aliases == null) 
+            return false;
         var re = true;
         foreach (var alias in aliases)
         {

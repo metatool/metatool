@@ -5,7 +5,7 @@ namespace Metatool.Utils;
 
 public static class Main
 {
-	public static IServiceCollection AddMetatoolUtils(this IServiceCollection services) =>
+	public static IServiceCollection ConfigMetatoolUtils(this IServiceCollection services) =>
 		services.AddSingleton<IShell, Shell>()
 			.AddSingleton<IWindowManager, WindowManager>()
 			.AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>()

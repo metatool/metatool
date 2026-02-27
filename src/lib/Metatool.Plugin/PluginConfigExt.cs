@@ -11,9 +11,9 @@ public static class PluginConfigExt
 	{
 		var toolsDirs = PluginManager.GetToolDirectories();
 
-		toolsDirs.ToList().ForEach(d =>
+		toolsDirs.ToList().ForEach(toolDir =>
 		{
-			builder.AddJsonFile(Path.Combine(d, "config.json"), optional: true,
+			builder.AddJsonFile(Path.Combine(toolDir, "config.json"), optional: true,
 				reloadOnChange: true);
 
 		}) ;

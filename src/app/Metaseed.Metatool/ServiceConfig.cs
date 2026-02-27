@@ -21,10 +21,10 @@ namespace Metaseed.Metatool;
 
 public class ServiceConfig
 {
-	private static IHostBuilder ConfigHostBuilder(IHostBuilder builder) =>
+	private static IHostBuilder ConfigHostBuilder(IHostBuilder builder, string[] args) =>
 		builder
 			// needed for locating appsettings.json when currentDir is not the metatool.exe dir, i.e. invoke from commandline
-			.UseContentRoot(Context.AppDirectory)
+			.UseContentRoot(Context.AppDirectory)// appDir is where the self-contained exe located.
 			.ConfigureHostConfiguration(configHost =>
 			{
 				// configHost.SetBasePath(Context.AppDirectory);
@@ -44,13 +44,14 @@ public class ServiceConfig
 					//     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
 					//     new TextWriterTraceListener(writer: Console.Out)));
 					.AddProvider(new SimpleConsoleLoggerProvider())
-					// disable file log for now: not needed and better performance
-					//.AddFile(o => o.RootPath = Context.AppDirectory);
+                    //.AddDebug()
+				// disable file log for now: not needed and better performance
+				//.AddFile(o => o.RootPath = Context.AppDirectory);
 				;
 			})
 			.ConfigureServices((hostContext, services) =>
 			{
-				services
+				services.AddKeyedSingleton("args", args)
 					.Configure<MetatoolConfig>(hostContext.Configuration)
 					.AddSingleton<IContextVariable, ContextVariable>()
 					.AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>))
@@ -64,7 +65,7 @@ public class ServiceConfig
 					.AddSingleton<ICommandManager, CommandManager>()
 					.AddSingleton<INotify,Notify>()
 					.ConfigScreenHint()
-					.AddMetatoolUtils()
+					.ConfigMetatoolUtils()
 					.AddPipelineBuilder()
 					.AddHostedService<SingleInstanceService>()
 					.AddHostedService<StartupService>()
@@ -86,7 +87,7 @@ public class ServiceConfig
 		CopySetting("appsettings.json");
 		CopySetting("appsettings.Production.json");
 		var builder = Host.CreateDefaultBuilder(args);
-		return ConfigHostBuilder(builder);
+		return ConfigHostBuilder(builder, args);
 	}
 
 	public static IHost BuildHost(string[] args)

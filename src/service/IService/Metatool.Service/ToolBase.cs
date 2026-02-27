@@ -4,6 +4,10 @@ namespace Metatool.Service;
 
 public abstract class ToolBase : CommandPackage, IPlugin
 {
+    protected ToolBase()
+    {
+        OnLoaded();
+    }
 	private string _id;
 	public  string Id => _id??= this.GetType().Assembly.GetName().Name;
 

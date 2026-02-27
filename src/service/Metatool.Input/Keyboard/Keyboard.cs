@@ -32,14 +32,18 @@ public partial class Keyboard
 		var keyboard = config.CurrentValue.Services.Input.Keyboard;
 		var hotStrings = keyboard.HotStrings;
 		AddHotStrings(hotStrings);
+        
+		HotkeyTrigger resetTrigger = null;
+        var res = keyboard?.Hotkeys?.TryGetValue("Reset", out resetTrigger);
+        if (res == true)
+        {
+            resetTrigger?.Description = "Reset keyboard state, clean up stuck keys";
+            resetTrigger?.Event = KeyEventType.Up;
+            //resetTrigger?.OnEvent(_ => _dispatcher.Dispatch(ReleaseDownKeys));
+            resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
+        }
 
-		keyboard.Hotkeys.TryGetValue("Reset", out var resetTrigger);
-		resetTrigger.Description = "Reset keyboard state, clean up stuck keys";
-		resetTrigger.Event = KeyEventType.Up;
-		//resetTrigger?.OnEvent(_ => _dispatcher.Dispatch(ReleaseDownKeys));
-		resetTrigger?.OnEvent(_ => Post(ReleaseDownKeys));
-
-	}
+    }
 
 	public void AddHotStrings(IDictionary<string, HotStringDef> hotStrings)
 	{

@@ -336,7 +336,6 @@ public class PluginManager
 		types.ForEach(t =>
 		{
 			var tool = provider == null ? Services.Create<IPlugin>(t) : provider.Create<IPlugin>(t);
-			tool?.OnLoaded();
 			token.Tools.Add(tool);
 		});
 		provider?.Dispose();
