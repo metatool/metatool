@@ -33,6 +33,18 @@
 						"Description": "Paste As File"
 					}
 				}
+			},
+			"TaskViewPackage": {
+				"Hotkeys": {
+					"TaskViewNextScreen": {
+						"Hotkey": "End",
+						"Description": "Switch Task View To Next Screen"
+					},
+					"TaskViewPreviousScreen": {
+						"Hotkey": "Home",
+						"Description": "Switch Task View To Previous Screen"
+					}
+				}
 			}
 		}
 	}

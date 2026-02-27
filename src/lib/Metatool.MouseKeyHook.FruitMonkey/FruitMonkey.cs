@@ -55,6 +55,10 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
 
     public void ClimbTree(IKeyEventArgs args)
     {
+        //if (args.KeyCode == KeyCodes.Home && args.KeyEventType == KeyEventType.Down ) Debugger.Break();
+        foreach (var stateTree in _forest.ForestGround.Values)
+            stateTree.MarkDoneIfLanding();
+
         // * if tree1 has A+B and tree2 has A,B, and we press A+B, A+B on tree1 would be processed, but A on tree2 would not be process as the next event is not A_up but B_down.
         // * if tree1 has A and tree2 has A, both should be processed.
         // * the ground is the root of every tree, runs like all are in the same tree, but provide state jump for every tree
@@ -75,7 +79,7 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
             }
 
             var hasSelectedNodes = _selectedResults.Count > 0;
-            if (!hasSelectedNodes) goto @return;
+            if (!hasSelectedNodes) return;
 
             var selectionsToRemove = new List<SelectionResult>();
 
@@ -112,10 +116,10 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
                         break;
                     case TreeClimbingState.NoFurtherProcess:
                         selectionsToRemove.Add(selectionResult);
-                        goto @return;
+                        return;
                     case TreeClimbingState.LandingAndClimbAll:
                     case TreeClimbingState.LandingAndClimbOthers:
-                        _selectedResults.Remove(selectionResult);
+                        selectionsToRemove.Add(selectionResult);
                         reprocess = true;
                         break;
                     default:
@@ -127,9 +131,6 @@ public class FruitMonkey(ILogger logger, IKeyTipNotifier notify) : IFruitMonkey
         } while (_selectedResults.Count == 0 && /*no TreeClimbingState.Continue*/
                  reprocess /*Landing or LandingAndClimbing*/);
 
-    @return:
-        foreach (var stateTree in _forest.ForestGround.Values)
-            stateTree.MarkDoneIfLanding();
     }
 
 }

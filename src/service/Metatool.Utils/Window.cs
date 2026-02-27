@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
+using Metatool.Service.MouseKey;
 using Metatool.Utils.Implementation;
 using Metatool.Utils.Internal;
 using Condition = System.Windows.Automation.Condition;
@@ -65,6 +67,7 @@ public class Window : IWindow
 	public bool IsExplorer => "CabinetWClass" == Class;
 
 	public bool IsOpenSaveDialog => "#32770" == Class;
+	public bool IsTaskView => "XamlExplorerHostIslandWindow" == Class || "MultitaskingViewFrame" == Class;
 
 	public AutomationElement UiAuto => AutomationElement.FromHandle(Handle);
 
@@ -78,4 +81,28 @@ public class Window : IWindow
 	public AutomationElement FirstChild(Func<ConditionFactory, Condition> condition) => UiAuto.First(TreeScope.Children, condition);
 
 	public AutomationElement FirstDescendant(Func<ConditionFactory, Condition> condition) => UiAuto.First(TreeScope.Descendants, condition);
+
+	/// <summary>
+	/// Sends key combination to this window via PostMessage.
+	/// Keys are pressed in order, then released in reverse order.
+	/// e.g. SendKey(KeyCodes.LWin, KeyCodes.Right) sends Win+Right to this window.
+	/// </summary>
+	public void SendKey(params KeyCodes[] keys)
+	{
+		const uint MAPVK_VK_TO_VSC = 0;
+
+		foreach (var key in keys)
+		{
+			var scanCode = PInvokes.MapVirtualKey((uint)key, MAPVK_VK_TO_VSC);
+			var lParam = (IntPtr)(0x00000001 | (scanCode << 16));
+			PInvokes.PostMessage(Handle, (uint)WM.KEYDOWN, (IntPtr)key, lParam);
+		}
+
+		foreach (var key in keys.Reverse())
+		{
+			var scanCode = PInvokes.MapVirtualKey((uint)key, MAPVK_VK_TO_VSC);
+			var lParam = (IntPtr)(0x00000001 | (scanCode << 16) | (0xC0 << 24));
+			PInvokes.PostMessage(Handle, (uint)WM.KEYUP, (IntPtr)key, lParam);
+		}
+	}
 }

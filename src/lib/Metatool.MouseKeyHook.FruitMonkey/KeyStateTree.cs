@@ -182,9 +182,10 @@ public class KeyStateTree
         if (args.KeyEventType == KeyEventType.Down)
         {
             //  KeyInChord_down:(C+D, A+B) when A_down
-            if (downInChord){
-                 ClimbingState = TreeClimbingState.Continue_ChordDown_WaitForTrigger; // waiting for trigger key
-                 return null;
+            if (downInChord)
+            {
+                ClimbingState = TreeClimbingState.Continue_ChordDown_WaitForTrigger; // waiting for trigger key
+                return null;
             }
 
             // down of trigger key
@@ -260,7 +261,8 @@ public class KeyStateTree
         // Name == "ChordMap" && eventType == KeyEventType.Up && args.KeyCode == KeyCodes.Enter
         // Debug.Assert(args != null, nameof(args) + " != null");
 
-        if (args.NoFurtherProcess){
+        if (args.NoFurtherProcess)
+        {
             ClimbingState = TreeClimbingState.NoFurtherProcess;
             return;
         }
@@ -280,12 +282,7 @@ public class KeyStateTree
 
         // matched
         /// execute actions of down/up/allUp
-        var oneExecuted = ExecuteActions(args, candidateNode, _logger, Name);
-
-        if (oneExecuted == false)
-        {
-            _logger.LogInformation($"All event of type:{eventType} not executable!(tree:{Name}, node:{candidateNode})");
-        }
+        ExecuteActions(args, candidateNode, _logger, Name);
 
         //
         // goto candidateNode
@@ -305,36 +302,38 @@ public class KeyStateTree
         //if (eventType == KeyEventType.AllUp) eventTypes = [KeyEventType.Up, KeyEventType.AllUp];
         //foreach (var eventTyp in eventTypes)
         var eventTyp = args.KeyEventType;
+
+        foreach (var keyCommand in actionList[eventTyp])
         {
-            foreach (var keyCommand in actionList[eventTyp])
+            if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
             {
-                if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))
-                {
-                    logger.LogInformation($"\tevent:{eventTyp},\tcommand({keyCommand.Id}, {keyCommand.Description}) can not execute.(tree:{treeName}, node:{candidateNode})");
-                    oneExecuted ??= false;
-                    continue;
-                }
+                logger.LogWarning($"\tevent:{eventTyp},command({keyCommand.Description}) can not execute.(tree:{treeName}, node:{candidateNode})");
+                oneExecuted ??= false;
+                continue;
+            }
 
-                oneExecuted = true;
-                var execute = keyCommand.Execute;
+            oneExecuted = true;
+            var execute = keyCommand.Execute;
 
-                var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
-                logger.LogInformation($"\tExecutedCommand:'{keyCommand.Description}',{(isAsync ? "Async," : "")} (tree:{treeName}, KeyPath:{candidateNode.KeyPath})"); // id:{keyCommand.Id}
-                try
+            var isAsync = execute?.Method.GetCustomAttribute(typeof(AsyncStateMachineAttribute)) != null;
+            logger.LogInformation($"\tExecutedCommand:'{keyCommand.Description}',{(isAsync ? "Async," : "")} (tree:{treeName}, KeyPath:{candidateNode.KeyPath})"); // id:{keyCommand.Id}
+            try
+            {
+                //if (args.KeyEventType == KeyEventType.Up) Debugger.Break();
+                execute?.Invoke(args);
+                if (args.NoFurtherProcess)
                 {
-                    //if (args.KeyEventType == KeyEventType.Up) Debugger.Break();
-                    execute?.Invoke(args);
-                    if (args.NoFurtherProcess)
-                    {
-                        break;
-                    }
-                }
-                catch (Exception e) when (!Debugger.IsAttached)
-                {
-                    logger.LogError(e, $"Error executing command:{keyCommand.Id} in tree:{treeName}");
+                    break;
                 }
             }
+            catch (Exception e) when (!Debugger.IsAttached)
+            {
+                logger.LogError(e, $"Error executing command:{keyCommand.Id} in tree:{treeName}");
+            }
         }
+
+        if (oneExecuted == null)
+            logger.LogWarning($"\tAll event of type:{eventTyp} not executable!(tree:{treeName}, node:{candidateNode})");
 
         return oneExecuted;
     }
@@ -356,8 +355,8 @@ public class KeyStateTree
         switch (eventType)
         {
             case KeyEventType.Down:
-                 ClimbingState = TreeClimbingState.Continue_TriggerDown_WaitForUp;
-                 return;
+                ClimbingState = TreeClimbingState.Continue_TriggerDown_WaitForUp;
+                return;
 
             case KeyEventType.Up:
                 // only navigate on up or AllUp event

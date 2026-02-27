@@ -407,4 +407,11 @@ public class PInvokes
 
 	[DllImport("user32.dll")]
 	public static extern bool ShowWindowAsync(IntPtr hWnd, SW nCmdShow);
+
+	[DllImport("user32.dll", CharSet = CharSet.Auto)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+	[DllImport("user32.dll")]
+	public static extern uint MapVirtualKey(uint uCode, uint uMapType);
 }

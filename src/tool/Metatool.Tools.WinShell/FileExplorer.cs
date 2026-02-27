@@ -8,10 +8,35 @@ using static Metatool.Service.MouseKey.Key;
 
 namespace Metatool.Tools.WinShell;
 
+public class TaskView : CommandPackage
+{
+	public TaskView(IWindowManager windowManager, IUiDispatcher dispatcher, IConfig<Config> config, IKeyboard keyboard)
+	{
+		RegisterCommands();
+		var hotKeys = config.CurrentValue.TaskViewPackage.Hotkeys;
+		hotKeys.TaskViewNextScreen.OnEvent(e =>
+		{
+			// windowManager.CurrentWindow?.SendKey(VirtualKeyShort.LWIN, VirtualKeyShort.RIGHT);
+			keyboard.Type(Tab);
+			keyboard.Type(Tab);
+			keyboard.Type(Tab);
+
+			e.Handled = true;
+		}, _ => windowManager.CurrentWindow.IsTaskView);
+
+		hotKeys.TaskViewPreviousScreen.OnEvent(e =>
+		{
+			// windowManager.CurrentWindow?.SendKey(VirtualKeyShort.LWIN, VirtualKeyShort.LEFT);
+			keyboard.Type(Shift + Tab);
+			keyboard.Type(Shift + Tab);
+			keyboard.Type(Shift + Tab);
+			e.Handled = true;
+		}, _ => windowManager.CurrentWindow.IsTaskView);
+	}
+}
 public class FileExplorer : CommandPackage
 {
-
-	public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IClipboard clipboard,IUiDispatcher dispatcher, IConfig<Config> config, INotify notify, IKeyboard keyboard)
+	public FileExplorer(IWindowManager windowManager, IFileExplorer fileExplorer, IClipboard clipboard, IUiDispatcher dispatcher, IConfig<Config> config, INotify notify, IKeyboard keyboard)
 	{
 		RegisterCommands();
 		var hotKeys = config.CurrentValue.FileExplorerPackage.Hotkeys;
@@ -43,21 +68,21 @@ public class FileExplorer : CommandPackage
 			var paths = await fileExplorer.GetSelectedPaths(handle);
 			var r = string.Join(';', paths);
 			notify.ShowMessage($"Path Copied: {r}");
-            clipboard.SetText(r);
+			clipboard.SetText(r);
 
-        }, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
+		}, _ => windowManager.CurrentWindow.IsExplorerOrOpenSaveDialog);
 
 		hotKeys.PasteAsFile.OnEvent(async e =>
 		{
 			e.Handled = true;
-            var path = await clipboard.PasteAsFile();
-            if (path == null) return;
+			var path = await clipboard.PasteAsFile();
+			if (path == null) return;
 
-            await fileExplorer.Select([path]);
-            notify.ShowMessage($"file saved: {path}");
-        }, _ => windowManager.CurrentWindow.IsExplorer);
+			await fileExplorer.Select([path]);
+			notify.ShowMessage($"file saved: {path}");
+		}, _ => windowManager.CurrentWindow.IsExplorer);
 
-        hotKeys.NewFile.OnEvent(async e =>
+		hotKeys.NewFile.OnEvent(async e =>
 		{
 			const string newFileName = "NewFile";
 			var handle = windowManager.CurrentWindow.Handle;
@@ -72,8 +97,8 @@ public class FileExplorer : CommandPackage
 			var file = File.Create(fullPath + "\\" + fileName);
 			file.Close();
 			await fileExplorer.Select([fileName], handle);
-            keyboard.Type(Key.F2); // have to be triggered when no other keys are down.
-        }, _ => windowManager.CurrentWindow.IsExplorer);
+			keyboard.Type(Key.F2); // have to be triggered when no other keys are down.
+		}, _ => windowManager.CurrentWindow.IsExplorer);
 
 		hotKeys.ShowDesktopFolder.OnEvent(e =>
 		{

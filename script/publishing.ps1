@@ -41,6 +41,7 @@ try {
     . $PSScriptRoot/lib/Build-Tool.ps1
 
     "Metatool.Tools.MetaKeyboard",
+    "Metatool.Tools.WinShell",
     "Metatool.Tools.Software",
     "Metatool.Tools.KeyMouse" | ForEach-Object {
         Build-Tool $_ -release: $true -rebuild: $rebuild

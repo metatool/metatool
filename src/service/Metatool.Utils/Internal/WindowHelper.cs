@@ -48,7 +48,7 @@ public class WindowHelper
 			windowHandles.Add(windowHandle);
 			return true;
 		}
-		var windowHandles = new ArrayList(); 
+		var windowHandles = new ArrayList();
 		EnumWindowsProc_List callBackPtr = GetWindowHandle;
 		PInvokes.EnumWindows(callBackPtr, windowHandles);
 
@@ -93,7 +93,7 @@ public class WindowHelper
 				PInvokes.SendMessage(handle, (int) WM.GETTEXT, (IntPtr) sbText.Capacity, sbText);
 
 				if (!windowText.IsMatch(sbText.ToString()))
-					return true; 
+					return true;
 			}
 
 			if (process != null)
@@ -143,6 +143,7 @@ public class WindowHelper
 	{
 		var className = new StringBuilder(512);
 		var r =  PInvokes.GetClassName(hWnd, className, className.Capacity);
+		// Debug.WriteLine(className.ToString());
 		return r != 0 ? className.ToString() : "";
 	}
 }

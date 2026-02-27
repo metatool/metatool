@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Metatool.MetaKeyboard": {
+      "commandName": "Executable",
+      "executablePath": "$(SolutionDir)\\..\\exe\\debug\\Metatool.exe",
+      "commandLineArgs": "run $(TargetPath)"
+    }
+  }
+}
