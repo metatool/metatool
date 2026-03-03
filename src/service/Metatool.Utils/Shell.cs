@@ -158,7 +158,8 @@ public class Shell : IShell
 	{
 		var cmd =
 			$"Start-Process -FilePath '{filePath}' {(asAdmin ? "-Verb RunAs" : "")} {(string.IsNullOrEmpty(args) ? "" : $"-ArgumentList \"{args}\"")}";
-		var encodedCmd = Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(cmd));
+		_logger.LogInformation("Run command: {Cmd}, workingDir: {WorkingDir}", cmd, workingDir);
+        var encodedCmd = Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(cmd));
 		var proc = new Process
 		{
 			StartInfo = new System.Diagnostics.ProcessStartInfo()

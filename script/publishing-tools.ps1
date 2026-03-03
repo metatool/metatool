@@ -18,13 +18,16 @@ $metatoolDir = Resolve-Path $PSScriptRoot\..
 "Metatool.Tools.WinShell",
 "Metatool.Tools.Software",
 "Metatool.Tools.KeyMouse"
-| ForEach-Object -parellel {
-	ri "$metatoolDir\exe\publishing\tools\$_" -Force -Recurse -ErrorAction SilentlyContinue
+| ForEach-Object {
+	ri "$metatoolDir\exe\publishing\tools\$_" -Force -Recurse -ErrorAction Ignore
 
-	Build-Tool $_ -release: $true -rebuild: $rebuild
+	Build-Tool $_ -release:$true -rebuild:$rebuild
 	if ($localRelease) {
-		ri "$metatoolDir\exe\publish\tools\$_" -Force -Recurse -ErrorAction SilentlyContinue
-		Copy-Item "$metatoolDir\exe\publishing\tools\$_" "$metatoolDir\exe\publish\tools" -Force -Recurse -Verbose
+		ri "$metatoolDir\exe\publish\tools\$_" -Force -Recurse -ErrorAction Ignore
+		# /E: copy subdirectories, including empty ones.
+		# /SL: copy symbolic links as symbolic links.
+		# /S: copy subdirectories, but not empty ones.
+		robocopy "$metatoolDir\exe\publishing\tools\$_" "$metatoolDir\exe\publish\tools\$_" /SL /S
 	}
 }
 $error

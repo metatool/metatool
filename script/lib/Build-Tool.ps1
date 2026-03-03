@@ -30,6 +30,7 @@ function Build-Tool {
     }
     # /XJ Exclude junctions & symlinks
     # /XL Exclude symbolic links (alternative)
-    robocopy "$tools\$tool" "$publish\tools\$tool" /E /XD "ref" /XF "*.nupkg" "*.pdb" "Metatool.Service*.dll"
+    # /SL Copy symbolic links as symbolic links
+    robocopy "$tools\$tool" "$publish\tools\$tool" /E /SL /XD "ref" /XF "*.nupkg" "*.pdb" "Metatool.Service*.dll"
     # Copy-Item "$tools\$tool" -Destination "$publish\tools\$tool" -Recurse -Exclude *.nupkg, *.pdb, Metatool.Service*.dll, ref -Force
 }
