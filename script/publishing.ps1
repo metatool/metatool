@@ -38,18 +38,7 @@ try {
         Copy-Item "$metatoolDir\exe\publishing\Metatool.exe" "$metatoolDir\exe\publish" -Force
     }
 
-    . $PSScriptRoot/lib/Build-Tool.ps1
-
-    "Metatool.Tools.MetaKeyboard",
-    "Metatool.Tools.WinShell",
-    "Metatool.Tools.Software",
-    "Metatool.Tools.KeyMouse" | ForEach-Object {
-        Build-Tool $_ -release: $true -rebuild: $rebuild
-        if ($localRelease) {
-            ri "$metatoolDir\exe\publish\tools\$_" -Force -Recurse
-            Copy-Item "$metatoolDir\exe\publishing\tools\$_" "$metatoolDir\exe\publish\tools" -Force -Recurse -Verbose
-        }
-    }
+    & "$PSScriptRoot\publishing-tools.ps1" -rebuild:$rebuild -localRelease:$localRelease
 
 
     #$metaSoftwarePublish = "$metatoolDir\exe\publish\tools\Metatool.Tools.Software"
