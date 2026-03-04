@@ -5,129 +5,155 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using Point = System.Drawing.Point;
+using static Metatool.Core.F;
+namespace Metatool.MetaKeyboard;
 
-namespace Metatool.MetaKeyboard
+public class KeyboardMouseToolPackage : CommandPackage
 {
-    public class KeyboardMouseToolPackage : CommandPackage
+    private readonly IMouse mouse;
+    private readonly IWindowManager windowManager;
+    public KeyboardMouseToolPackage(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard,
+        IConfig<PluginConfig> config)
     {
-        private readonly IMouse mouse;
-        private readonly IWindowManager windowManager;
-        public KeyboardMouseToolPackage(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard,
-            IConfig<PluginConfig> config)
-        {   this.windowManager = windowManager;
-            this.mouse = mouse; 
-            RegisterCommands();
-            var conf = config.CurrentValue;
-            screenHint.HintKeys = conf.KeyboardMousePackage.HintKeys;
+        this.windowManager = windowManager;
+        this.mouse = mouse;
+        RegisterCommands();
+        var conf = config.CurrentValue;
+        screenHint.HintKeys = conf.KeyboardMousePackage.HintKeys;
 
-            var maps = conf.KeyboardMousePackage.KeyMaps;
-            keyboard.RegisterKeyMaps(maps);
+        var maps = conf.KeyboardMousePackage.KeyMaps;
+        keyboard.RegisterKeyMaps(maps);
 
-            var hotkeys = conf.KeyboardMousePackage.Hotkeys;
+        var hotkeys = conf.KeyboardMousePackage.Hotkeys;
 
-            hotkeys.MouseToFocus.OnEvent(_ => MoveCursorToActiveControl());
+        hotkeys.MouseToFocus.OnEvent(_ => MoveCursorToActiveControl());
 
-            hotkeys.MouseScrollUp.OnEvent(e =>
-            {
-                MoveCursorToActiveWindow();
-                mouse.VerticalScroll(1);
-            });
-
-            hotkeys.MouseScrollDown.OnEvent(e =>
-            {
-                MoveCursorToActiveWindow();
-                mouse.VerticalScroll(-1);
-            });
-
-            hotkeys.MouseLeftClick.OnEvent(e =>
-            {
-                e.Handled = true;
-                screenHint.Show(DoMouseLeftClick, activeWindowOnly: true, useWpfDetector: true);
-            });
-
-            hotkeys.MouseLeftClickAlt.OnEvent(e =>
-            {
-                e.Handled = true;
-                screenHint.Show(DoMouseLeftClick, useWpfDetector: false);
-            });
-
-            hotkeys.MouseLeftClickLast.OnEvent(e =>
-            {
-                e.Handled = true;
-                screenHint.Show(DoMouseLeftClick, false);
-            });
-
-            if (conf.KeyboardMousePackage.MouseFollowActiveWindow)
-            {
-                void ActiveWindowChanged(object o, IntPtr hwnd)
-                {
-                    var r = windowManager.CurrentWindow.Rect;
-                    var x = (int)(r.X + r.Width / 2);
-                    var y = (int)(r.Y + r.Height / 2);
-                    if (x != 0 && y != 0)
-                        mouse.Position = new Point(x, y);
-
-                }
-                windowManager.ActiveWindowChanged += ActiveWindowChanged;
-            }
-
-            void DoMouseLeftClick((IUIElement winRect, IUIElement clientRect) position)
-            {
-                var rect = position.clientRect;
-                var winRect = position.winRect;
-                var X = winRect.X + rect.X;
-                var Y = winRect.Y + rect.Y;
-                var p = new Point(X + rect.Width / 2, Y + rect.Height / 2);
-                mouse.Position = p;
-                mouse.LeftClick();
-            }
-        }
-
-        IntPtr _activeWindow;
-        DateTime _lastMoveTime = DateTime.MinValue;
-        void MoveCursorToActiveWindow()
+        var moveCursorToActiveWindow = Run<Action>(() =>
         {
-            var lastTime = _lastMoveTime;
-            _lastMoveTime = DateTime.Now;
-            if (_lastMoveTime - lastTime < TimeSpan.FromSeconds(1))
-            {
-                return;
-            }
-            var currentActiveWindow = windowManager.CurrentWindow.Handle;
-            if (currentActiveWindow == _activeWindow)
-                return;
-            _activeWindow = currentActiveWindow;
-            var r = windowManager.CurrentWindow.Rect;
-            var x = (int)(r.X + r.Width / 2);
-            var y = (int)(r.Y + r.Height / 2);
-            if (x != 0 && y != 0)
-                //Task.Run(() => mouse.MoveToLikeUser(x, y));
-                mouse.Position = new Point(x, y);
-        }
+            var activeWindow_ = IntPtr.Zero;
+            var lastMoveTime_ = DateTime.MinValue;
 
-        // moving to active control works, but I want to move to the scrollable control in the window not use it for now
-        void MoveCursorToActiveControl()
+            return () =>
+            {
+                var lastTime = lastMoveTime_;
+                lastMoveTime_ = DateTime.Now;
+                if (lastMoveTime_ - lastTime < TimeSpan.FromSeconds(1))
+                    return;
+
+                var currentActiveWindow = activeWindow_;
+                var activeWin = windowManager.CurrentWindow;
+                activeWindow_ = activeWin.Handle;
+                if (currentActiveWindow == activeWindow_)
+                    return;
+
+                var r = activeWin.Rect;
+                var x = (int)(r.X + r.Width / 2);
+                var y = (int)(r.Y + r.Height / 2);
+                if (x != 0 && y != 0)
+                    //Task.Run(() => mouse.MoveToLikeUser(x, y));
+                    mouse.Position = new Point(x, y);
+            };
+        });
+
+        hotkeys.MouseScrollUp.OnEvent(e =>
         {
-            var active = AutomationElement.FocusedElement;
-            var bounding = (Rect)active.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
-            var x = (int)Math.Floor(bounding.X + bounding.Width / 2);
-            var y = (int)Math.Floor(bounding.Y + bounding.Height / 2);
-            var isElementInValid = !double.IsFinite(bounding.X) || !double.IsFinite(bounding.Y) || x == 0 && y == 0;
-            if (!isElementInValid)
-            {
+            moveCursorToActiveWindow();
+            mouse.VerticalScroll(1);
+        });
 
+        hotkeys.MouseScrollDown.OnEvent(e =>
+        {
+            moveCursorToActiveWindow();
+            mouse.VerticalScroll(-1);
+        });
+
+        hotkeys.MouseLeft.OnEvent(e =>
+        {
+            mouse.Position = new Point(mouse.Position.X - conf.KeyboardMousePackage.MouseMoveDelta, mouse.Position.Y);
+        });
+
+
+        hotkeys.MouseRight.OnEvent(e =>
+        {
+            mouse.Position = new Point(mouse.Position.X + conf.KeyboardMousePackage.MouseMoveDelta, mouse.Position.Y);
+        });
+
+        hotkeys.MouseUp.OnEvent(e =>
+        {
+            mouse.Position = new Point(mouse.Position.X, mouse.Position.Y - conf.KeyboardMousePackage.MouseMoveDelta);
+        });
+
+        hotkeys.MouseDown.OnEvent(e =>
+        {
+            mouse.Position = new Point(mouse.Position.X, mouse.Position.Y + conf.KeyboardMousePackage.MouseMoveDelta);
+        });
+
+        hotkeys.MouseLeftClick.OnEvent(e =>
+        {
+            e.Handled = true;
+            screenHint.Show(DoMouseLeftClick, activeWindowOnly: true, useWpfDetector: true);
+        });
+
+        hotkeys.MouseLeftClickAlt.OnEvent(e =>
+        {
+            e.Handled = true;
+            screenHint.Show(DoMouseLeftClick, useWpfDetector: false);
+        });
+
+        hotkeys.MouseLeftClickLast.OnEvent(e =>
+        {
+            e.Handled = true;
+            screenHint.Show(DoMouseLeftClick, false);
+        });
+
+        if (conf.KeyboardMousePackage.MouseFollowActiveWindow)
+        {
+            void ActiveWindowChanged(object o, IntPtr hwnd)
+            {
                 var r = windowManager.CurrentWindow.Rect;
-                x = (int)(r.X + r.Width / 2);
-                y = (int)(r.Y + r.Height / 2);
+                var x = (int)(r.X + r.Width / 2);
+                var y = (int)(r.Y + r.Height / 2);
+                if (x != 0 && y != 0)
+                    mouse.Position = new Point(x, y);
+
             }
-            // we need to run in task to avoid blocking keyboard hook thread, otherwise the keyboard event(i.e. F_up) may be lost, then a 'F' is typed even we mark the 'F_down' as handled.
-            Task.Run(() => mouse.MoveToLikeUser(x, y));
+            windowManager.ActiveWindowChanged += ActiveWindowChanged;
         }
-        
 
-        public void OnUnloading()
+        void DoMouseLeftClick((IUIElement winRect, IUIElement clientRect) position)
         {
+            var rect = position.clientRect;
+            var winRect = position.winRect;
+            var X = winRect.X + rect.X;
+            var Y = winRect.Y + rect.Y;
+            var p = new Point(X + rect.Width / 2, Y + rect.Height / 2);
+            mouse.Position = p;
+            mouse.LeftClick();
         }
-
     }
+
+    // moving to active control works, but I want to move to the scrollable control in the window not use it for now
+    void MoveCursorToActiveControl()
+    {
+        var active = AutomationElement.FocusedElement;
+        var bounding = (Rect)active.GetCurrentPropertyValue(AutomationElement.BoundingRectangleProperty);
+        var x = (int)Math.Floor(bounding.X + bounding.Width / 2);
+        var y = (int)Math.Floor(bounding.Y + bounding.Height / 2);
+        var isElementInValid = !double.IsFinite(bounding.X) || !double.IsFinite(bounding.Y) || x == 0 && y == 0;
+        if (!isElementInValid)
+        {
+
+            var r = windowManager.CurrentWindow.Rect;
+            x = (int)(r.X + r.Width / 2);
+            y = (int)(r.Y + r.Height / 2);
+        }
+        // we need to run in task to avoid blocking keyboard hook thread, otherwise the keyboard event(i.e. F_up) may be lost, then a 'F' is typed even we mark the 'F_down' as handled.
+        Task.Run(() => mouse.MoveToLikeUser(x, y));
+    }
+
+
+    public void OnUnloading()
+    {
+    }
+
 }

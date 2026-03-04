@@ -4,6 +4,7 @@ namespace Metatool.Service;
 
 public interface IMouse
 {
+	// for movement
 	Point Position { get; set; }
 	IMouse LeftClick();
 	IMouse RightClick();

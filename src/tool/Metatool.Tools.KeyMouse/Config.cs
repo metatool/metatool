@@ -8,12 +8,18 @@ namespace Metatool.Tools.KeyMouse
         public HotkeyTrigger MouseToFocus { get; set; }
         public HotkeyTrigger MouseScrollUp { get; set; }
         public HotkeyTrigger MouseScrollDown { get; set; }
+        public HotkeyTrigger MouseLeft { get; set; }
+        public HotkeyTrigger MouseRight { get; set; }
+        public HotkeyTrigger MouseUp { get; set; }
+        public HotkeyTrigger MouseDown { get; set; }
         public HotkeyTrigger MouseLeftClick { get; set; }
         public HotkeyTrigger MouseLeftClickAlt { get; set; }
         public HotkeyTrigger MouseLeftClickLast { get; set; }
+
     }
     public class KeyboardMousePackage
     {
+        public int MouseMoveDelta { get; set; } = 10;
         public bool MouseFollowActiveWindow { get; set; }
         public string HintKeys { get; set; } = "ASDFQWERZXCVTGBHJKLYUIOPNM";
 

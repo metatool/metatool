@@ -84,8 +84,7 @@
 					//
 					"GK + Back": "Del",
 					"GK + P": "PrintScreen",
-					"GK + Pipe": "Insert",
-					"GK + '": "Apps" // context menu
+					"GK + Pipe": "Insert"
 				}
 			},
 			"SpecialFrenchChars": {

@@ -7,14 +7,18 @@
         "MouseFollowActiveWindow": false,
         "HintKeys": "ASDFQWERZXCVTGBHJKLYUIOPNM",
         "KeyMaps": {
-          "GK + [": "LButton",
-          "GK + ]": "RButton"
+          "GK + Q": "LButton",
+          "GK + R": "RButton",
+					"GK + T": "Apps" // context menu
+
         },
         "Hotkeys": {
           "MouseToFocus": {
-            "Hotkey": "GK + F*", // * behind the trigger key to mark down/up Event handled
+            "Hotkey": "GK + G*", // * behind the trigger key to mark down/up Event handled
             "Description": "Move Mouse To Active Control"
           },
+          // we can also use ctrl+up or ctrl+down to scroll a component, but the component must support this hotkey.
+          // most components in windows support this hotkey. but there is corner cases, i.e. the 'git changes viewer' vs vscode does not support it.
           "MouseScrollUp": {
             "Hotkey": "GK + W*",
             "Description": "Scroll Up with Mouse"
@@ -22,6 +26,22 @@
           "MouseScrollDown": {
             "Hotkey": "GK + S*",
             "Description": "Scroll Down with Mouse"
+          },
+          "MouseDown": {
+            "Hotkey": "GK + D*",
+            "Description": "Move Mouse Down"
+          },
+          "MouseUp": {
+            "Hotkey": "GK + E*",
+            "Description": "Move Mouse Up"
+          },
+          "MouseLeft": {
+            "Hotkey": "GK + A*",
+            "Description": "Move Mouse Left"
+          },
+          "MouseRight": {
+            "Hotkey": "GK + F*",
+            "Description": "Move Mouse Right"
           },
           "MouseLeftClick": {
             "Hotkey": "GK + C*",
