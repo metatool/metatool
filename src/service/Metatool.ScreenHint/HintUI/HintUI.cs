@@ -44,7 +44,12 @@ public class HintUI : IHintUI
 		Window._Canvas.Visibility = System.Windows.Visibility.Visible;
 
 		Window.Show();
-		Window.Activate();
+		// Set topmost on every Show rather than in XAML. WPF only calls
+		// SetWindowPos(HWND_TOPMOST) when the property *changes*; setting it
+		// here (from the default false) ensures the window is re-positioned
+		// above system overlays like the Win+N notification panel each time.
+		// Requires uiAccess="true" in the app manifest to reach above system UI.
+		Window.Topmost = true;
 	}
 
 	public void Hide()

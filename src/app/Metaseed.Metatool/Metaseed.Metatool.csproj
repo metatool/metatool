@@ -4,6 +4,7 @@
 		<UseWPF>true</UseWPF>
 		<OutputType>Exe</OutputType>
 		<ApplicationIcon>Metatool.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<UseRidGraph>true</UseRidGraph>
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
