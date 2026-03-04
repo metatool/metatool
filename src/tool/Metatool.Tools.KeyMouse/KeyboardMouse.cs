@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Automation;
 using Point = System.Drawing.Point;
 using static Metatool.Core.F;
+using System.Windows.Input;
 namespace Metatool.MetaKeyboard;
 
 public class KeyboardMouseToolPackage : CommandPackage
@@ -67,25 +68,53 @@ public class KeyboardMouseToolPackage : CommandPackage
             mouse.VerticalScroll(-1);
         });
 
+        var acceleratingChange = Run<Func<int,bool, int>>(() =>
+        {
+            var lastTime = DateTime.MinValue;
+            var timeThreshold = TimeSpan.FromMilliseconds(100);
+            var delta = conf.KeyboardMousePackage.MouseMoveDelta;
+            var halfDelta = delta / 2;
+            var maxDelta = delta * 5;
+            return (value, increase) =>
+            {
+                var now = DateTime.Now;
+                if (now - lastTime < timeThreshold)
+                {
+                    delta = Math.Min(delta + halfDelta, maxDelta);
+                } else
+                {
+                    delta = conf.KeyboardMousePackage.MouseMoveDelta;
+                }
+
+                if (increase)
+                    value += delta;
+                else
+                    value -= delta;
+
+                lastTime = now;
+                return value;
+            };
+        });
+
         hotkeys.MouseLeft.OnEvent(e =>
         {
-            mouse.Position = new Point(mouse.Position.X - conf.KeyboardMousePackage.MouseMoveDelta, mouse.Position.Y);
+            mouse.Position = new Point(acceleratingChange(mouse.Position.X, false), mouse.Position.Y);
         });
 
 
         hotkeys.MouseRight.OnEvent(e =>
         {
-            mouse.Position = new Point(mouse.Position.X + conf.KeyboardMousePackage.MouseMoveDelta, mouse.Position.Y);
+            mouse.Position = new Point(acceleratingChange(mouse.Position.X, true)  , mouse.Position.Y);
         });
 
         hotkeys.MouseUp.OnEvent(e =>
         {
-            mouse.Position = new Point(mouse.Position.X, mouse.Position.Y - conf.KeyboardMousePackage.MouseMoveDelta);
+            mouse.Position = new Point(mouse.Position.X, acceleratingChange(mouse.Position.Y, false));
         });
 
         hotkeys.MouseDown.OnEvent(e =>
         {
-            mouse.Position = new Point(mouse.Position.X, mouse.Position.Y + conf.KeyboardMousePackage.MouseMoveDelta);
+            mouse.Position = new Point(mouse.Position.X, acceleratingChange(mouse.Position.Y, true));
         });
 
         hotkeys.MouseLeftClick.OnEvent(e =>
