@@ -75,10 +75,12 @@ public class KeyboardMouseToolPackage : CommandPackage
             var delta = conf.KeyboardMousePackage.MouseMoveDelta;
             var halfDelta = delta / 2;
             var maxDelta = delta * 5;
+
             return (value, increase) =>
             {
-                var now = DateTime.Now;
-                if (now - lastTime < timeThreshold)
+                var lastLastTime = lastTime;
+                lastTime = DateTime.Now;
+                if (lastTime - lastLastTime < timeThreshold)
                 {
                     delta = Math.Min(delta + halfDelta, maxDelta);
                 } else
@@ -91,7 +93,6 @@ public class KeyboardMouseToolPackage : CommandPackage
                 else
                     value -= delta;
 
-                lastTime = now;
                 return value;
             };
         });
