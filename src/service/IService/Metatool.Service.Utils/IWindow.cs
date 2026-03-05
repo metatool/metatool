@@ -20,5 +20,6 @@ public interface IWindow
 	void FocusControl(string className, string text);
 	AutomationElement FirstChild(Func<ConditionFactory, Condition> condition);
 	AutomationElement FirstDescendant(Func<ConditionFactory, Condition> condition);
+	bool Contains(IntPtr hCtrl);
 	void SendKey(params KeyCodes[] keys);
 }

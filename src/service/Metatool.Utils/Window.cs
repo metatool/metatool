@@ -82,6 +82,8 @@ public class Window : IWindow
 
 	public AutomationElement FirstDescendant(Func<ConditionFactory, Condition> condition) => UiAuto.First(TreeScope.Descendants, condition);
 
+	public bool Contains(IntPtr hCtrl) => Handle == hCtrl || PInvokes.IsChild(Handle, hCtrl);
+
 	/// <summary>
 	/// Sends key combination to this window via PostMessage.
 	/// Keys are pressed in order, then released in reverse order.

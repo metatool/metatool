@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Controls;
 using Metatool.Utils.Internal;
 using Metatool.WindowsInput;
 
@@ -18,6 +20,28 @@ public class WindowManager : IWindowManager
 
 	public IWindow CurrentWindow => new Window(PInvokes.GetForegroundWindow());
 
+	public IWindow WindowWithMouse
+	{
+		get
+		{
+			var hwnd = ControlWithMouse;
+			if (hwnd == IntPtr.Zero)
+				return null;
+			hwnd = PInvokes.GetAncestor(hwnd, PInvokes.GA_ROOT);
+			return new Window(hwnd);
+		}
+	}
+
+
+	public IntPtr ControlWithMouse
+	{
+		get
+		{
+			PInvokes.GetCursorPos(out Point point);
+			return PInvokes.WindowFromPoint(point);
+		}
+	}
+
 	public IWindow Show(IntPtr hWnd)
 	{
 		PInvokes.ShowWindowAsync(hWnd, PInvokes.SW.Show);
@@ -34,4 +58,5 @@ public class WindowManager : IWindowManager
 		GetWindowText(hwnd, Buff, Buff.Capacity);
 		return Buff.ToString();
 	}
+
 }

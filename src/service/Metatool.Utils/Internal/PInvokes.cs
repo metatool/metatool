@@ -295,10 +295,10 @@ public class PInvokes
 	[StructLayout(LayoutKind.Sequential)]
 	public struct RECT
 	{
-		public int Left;   // x position of upper-left corner  
-		public int Top;    // y position of upper-left corner  
-		public int Right;  // x position of lower-right corner  
-		public int Bottom; // y position of lower-right corner  
+		public int Left;   // x position of upper-left corner
+		public int Top;    // y position of upper-left corner
+		public int Right;  // x position of lower-right corner
+		public int Bottom; // y position of lower-right corner
 	}
 
 	[DllImport("user32.dll")]
@@ -414,4 +414,19 @@ public class PInvokes
 
 	[DllImport("user32.dll")]
 	public static extern uint MapVirtualKey(uint uCode, uint uMapType);
+
+	[DllImport("user32.dll")]
+	public static extern bool GetCursorPos(out Point lpPoint);
+
+	[DllImport("user32.dll")]
+	public static extern IntPtr WindowFromPoint(Point point);
+
+	public const uint GA_ROOT = 2;
+
+	[DllImport("user32.dll")]
+	public static extern IntPtr GetAncestor(IntPtr hwnd, uint gaFlags);
+
+	[DllImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool IsChild(IntPtr hWndParent, IntPtr hWnd);
 }

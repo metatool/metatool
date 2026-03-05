@@ -44,8 +44,12 @@ public class KeyboardMouseToolPackage : CommandPackage
                 var currentActiveWindow = activeWindow_;
                 var activeWin = windowManager.CurrentWindow;
                 activeWindow_ = activeWin.Handle;
-                if (currentActiveWindow == activeWindow_)
-                    return;
+                if (currentActiveWindow == activeWindow_){
+                    // user  may move the mouse away manually, so check again
+                    var winWithCursor = windowManager.WindowWithMouse;
+                    if (winWithCursor.Handle == activeWin.Handle)
+                        return;
+                }
 
                 var r = activeWin.Rect;
                 var x = (int)(r.X + r.Width / 2);
