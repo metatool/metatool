@@ -83,7 +83,8 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 				return;
 			}
 
-			_positions = (outerRect, _hintsBuilder.GenerateKeys(elementRects));
+			var keys = _hintsBuilder.GenerateKeys(elementRects);
+			_positions = (outerRect, keys);
 			_hintUi.CreateHint(_positions);
 			_hintUi.Show();
 		}

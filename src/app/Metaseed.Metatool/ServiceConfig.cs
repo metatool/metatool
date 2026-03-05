@@ -44,7 +44,7 @@ public class ServiceConfig
 					//     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
 					//     new TextWriterTraceListener(writer: Console.Out)));
 					.AddProvider(new SimpleConsoleLoggerProvider())
-                    //.AddDebug()
+                    .AddDebug()// output to visual studio output panel
 				// disable file log for now: not needed and better performance
 				//.AddFile(o => o.RootPath = Context.AppDirectory);
 				;

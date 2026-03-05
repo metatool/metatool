@@ -5,10 +5,12 @@ using System.Text;
 using System.Windows;
 using Metatool.Service;
 using Metatool.UIElementsDetector;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.Logging;
 
 namespace Metatool.ScreenPoint;
 
-public class HintsBuilder : IHintsBuilder
+public class HintsBuilder(ILogger<HintsBuilder> logger) : IHintsBuilder
 {
 	public string HintKeys { get; set;} = "ASDFQWERZXCVTGBHJKLYUIOPNM";
 
@@ -69,14 +71,8 @@ public class HintsBuilder : IHintsBuilder
 
 	public Dictionary<string, IUIElement> GenerateKeys(List<IUIElement> elementRects)
 	{
-#if DEBUG
-		var w = new Stopwatch();
-		w.Start();
-#endif
+		using var _ = logger.Time("GetKeyPointPairs");
 		var eles = GetKeyPointPairs(elementRects, HintKeys);
-#if DEBUG
-		Debug.WriteLine("GetKeyPointPairs:" + w.ElapsedMilliseconds);
-#endif
 		return eles;
 	}
 }
