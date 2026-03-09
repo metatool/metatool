@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Metatool.Service;
 using Metatool.ScreenPoint;
 using Metatool.Service.MouseKey;
 using Metatool.ScreenHint.HintUI;
 using Metatool.UIElementsDetector;
 using Microsoft.Extensions.Logging;
-using UIElement = Metatool.ScreenPoint.UIElement;
+using Metatool.Service.ScreenHint;
 
 namespace Metatool.ScreenHint;
 
@@ -42,7 +41,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		_hintUi = hintUi;
 		_logger = logger;
 	}
-	public string HintKeys { get; set;}
+
 	public async Task Show(Action<(IUIElement winRect, IUIElement clientRect)> action, bool buildHints = true, bool activeWindowOnly = false,  bool useWpfDetector = false)
 	{
 		if (!_dispatcher.CheckAccess())
@@ -108,7 +107,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 			}
 
 			var downKey = downArg.KeyCode.ToString();
-			if (downKey.Length > 1 || !HintKeys.Contains(downKey))
+			if (downKey.Length > 1)
 			{
 				_hintUi.Hide();
 				return;

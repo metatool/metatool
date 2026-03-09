@@ -3,8 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Metatool.Service;
-using Metatool.UIElementsDetector;
+using Metatool.Service.ScreenHint;
 
 namespace Metatool.ScreenHint.HintUI;
 

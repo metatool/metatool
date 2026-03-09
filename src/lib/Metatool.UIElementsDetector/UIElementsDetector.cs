@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Compunet.YoloSharp;
 using Compunet.YoloSharp.Plotting;
 using Metatool.Service;
+using Metatool.Service.ScreenHint;
 using SixLabors.ImageSharp;
 
 namespace Metatool.UIElementsDetector

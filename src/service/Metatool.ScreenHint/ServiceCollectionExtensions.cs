@@ -1,9 +1,9 @@
 using Metatool.ScreenHint.HintUI;
 using Metatool.ScreenPoint;
 using Metatool.Service;
-using Metatool.UIElementsDetector;
+using Metatool.Service.ScreenHint;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Metatool.ScreenHint;
 
@@ -13,10 +13,16 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection ConfigScreenHint(this IServiceCollection services)
 	{
 		if (_registered) return services;
-
 		_registered = true;
+		var conf = Services.Get<IConfiguration>();
+		var screenHintConfig = conf.GetSection("Services:ScreenHintConfig");
+		var hintEncoder = screenHintConfig.GetSection("HintEncoder");
 		return services
-			.AddSingleton<IHintsBuilder, HintsBuilder>()
+		// to use IConfig<ScreenHintConfig>
+			.Configure<ScreenHintConfig>(screenHintConfig)
+			// to use IConfig<HintEncoderConfig>
+			.Configure<HintEncoderConfig>(hintEncoder)
+			.AddSingleton<IHintsBuilder, HintsBuilderNew>()
 			.AddSingleton<IHintUI, HintUI.HintUI>()
 			.AddSingleton<IScreenHint, ScreenHint>();
 	}

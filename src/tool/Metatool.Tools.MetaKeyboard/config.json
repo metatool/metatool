@@ -52,41 +52,22 @@
 					"GK + U": "PageUp",
 					"GK + N": "PageDown",
 					// LAlt + Move
-					"LMenu + I": "Up",
-					"LMenu + K": "Down",
-					"LMenu + J": "Left",
-					//"LCtrl+LMenu + J*": "Left",
-					"LMenu + L": "Right",
-					"LMenu + H": "Home",
-					"LMenu + ;": "End",
-					"LMenu + U": "PageUp",
-					"LMenu + N": "PageDown",
-					//"LMenu + Back":  "LMenu + Del", // for closing window when in alt+tab triggered WindowManager, not work, the Back is sent
-					//
-					// Move (Vim)
-					//"GK + K": "Up",
-					//"GK + J": "Down",
-					//"GK + H": "Left",
-					//"GK + L": "Right",
-					//"GK + I": "Home",
-					//"GK + O": "End",
-					//"GK + U": "PageUp",
-					//"GK + N": "PageDown",
-					//// LAlt + Move (Vim)
-					//"LMenu + K": "Up",
-					//"LMenu + J": "Down",
-					//"LMenu + H": "Left",
-					//"LMenu + L": "Right",
-					//"LMenu + I": "Home",
-					//"LMenu + O": "End",
-					//"LMenu + U": "PageUp",
-					//"LMenu + N": "PageDown",
-					//
+					"RMenu + I": "Up",
+					"RMenu + K": "Down",
+					"RMenu + J": "Left",
+					"RMenu + L": "Right",
+					"RMenu + H": "Home",
+					"RMenu + ;": "End",
+					"RMenu + U": "PageUp",
+					"RMenu + N": "PageDown",
+					//"RMenu + Back":  "LMenu + Del", // for closing window when in alt+tab triggered WindowManager, not work, the Back is sent
+
 					"GK + Back": "Del",
 					"GK + P": "PrintScreen",
 					"GK + Pipe": "Insert"
 				}
 			},
+			// ContextHotkey<> should be at root to the tool
 			"SpecialFrenchChars": {
 				"Description": "Special Characters of French",
 				"ACK+a": {

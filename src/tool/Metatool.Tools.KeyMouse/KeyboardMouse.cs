@@ -7,20 +7,22 @@ using System.Windows.Automation;
 using Point = System.Drawing.Point;
 using static Metatool.Core.F;
 using System.Windows.Input;
+using Metatool.Service.ScreenHint;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Metatool.MetaKeyboard;
 
 public class KeyboardMouseToolPackage : CommandPackage
 {
     private readonly IMouse mouse;
     private readonly IWindowManager windowManager;
-    public KeyboardMouseToolPackage(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard,
-        IConfig<PluginConfig> config)
+    public KeyboardMouseToolPackage(IServiceCollection services, IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard, IConfig<KeyMousePluginConfig> config)
     {
+        var conf = config.CurrentValue;
+        var screenHintConfig = conf.KeyboardMousePackage.ScreenHintConfig;
         this.windowManager = windowManager;
         this.mouse = mouse;
         RegisterCommands();
-        var conf = config.CurrentValue;
-        screenHint.HintKeys = conf.KeyboardMousePackage.HintKeys;
 
         var maps = conf.KeyboardMousePackage.KeyMaps;
         keyboard.RegisterKeyMaps(maps);
@@ -31,20 +33,22 @@ public class KeyboardMouseToolPackage : CommandPackage
 
         var moveCursorToActiveWindow = Run<Action>(() =>
         {
-            var activeWindow_ = IntPtr.Zero;
-            var lastMoveTime_ = DateTime.MinValue;
+            var lastMouseOverWin_ = IntPtr.Zero;
+            var lastCallTime_ = DateTime.MinValue;
 
             return () =>
             {
-                var lastTime = lastMoveTime_;
-                lastMoveTime_ = DateTime.Now;
-                if (lastMoveTime_ - lastTime < TimeSpan.FromSeconds(1))
+                var lastTime = lastCallTime_;
+                lastCallTime_ = DateTime.Now;
+                // filter out frequently call
+                if (lastCallTime_ - lastTime < TimeSpan.FromSeconds(1))
                     return;
 
-                var currentActiveWindow = activeWindow_;
+                var lastLastActiveWin = lastMouseOverWin_;
                 var activeWin = windowManager.CurrentWindow;
-                activeWindow_ = activeWin.Handle;
-                if (currentActiveWindow == activeWindow_){
+                lastMouseOverWin_ = activeWin.Handle;
+                if (lastLastActiveWin == lastMouseOverWin_)
+                {
                     // user  may move the mouse away manually, so check again
                     var winWithCursor = windowManager.WindowWithMouse;
                     if (winWithCursor.Handle == activeWin.Handle)
@@ -72,7 +76,7 @@ public class KeyboardMouseToolPackage : CommandPackage
             mouse.VerticalScroll(-1);
         });
 
-        var acceleratingChange = Run<Func<int,bool, int>>(() =>
+        var acceleratingChange = Run<Func<int, bool, int>>(() =>
         {
             var lastTime = DateTime.MinValue;
             var timeThreshold = TimeSpan.FromMilliseconds(100);
@@ -87,7 +91,8 @@ public class KeyboardMouseToolPackage : CommandPackage
                 if (lastTime - lastLastTime < timeThreshold)
                 {
                     delta = Math.Min(delta + halfDelta, maxDelta);
-                } else
+                }
+                else
                 {
                     delta = conf.KeyboardMousePackage.MouseMoveDelta;
                 }
@@ -109,7 +114,7 @@ public class KeyboardMouseToolPackage : CommandPackage
 
         hotkeys.MouseRight.OnEvent(e =>
         {
-            mouse.Position = new Point(acceleratingChange(mouse.Position.X, true)  , mouse.Position.Y);
+            mouse.Position = new Point(acceleratingChange(mouse.Position.X, true), mouse.Position.Y);
         });
 
         hotkeys.MouseUp.OnEvent(e =>

@@ -310,12 +310,13 @@ public class PluginManager
             {
                 config.Bind(toolConfig);
 
-                var conf = Services.Get<IConfiguration>();
+                // var conf = Services.Get<IConfiguration>();
+				// should be defined at the root of the config section of the tool.
                 var properties = toolConfig.GetPropertiesOfType(typeof(ContextHotkey<>));
                 foreach (var prop in properties)
                 {
                     var contextType = prop.Property.PropertyType.GetGenericArguments()[0];
-                    var value = new ContextHotkeyCommandConfig(conf).Generate(contextType, $"{config.Path}:{prop.Path}");
+                    var value = new ContextHotkeyCommandConfig(configRoot).Generate(contextType, $"{config.Path}:{prop.Path}");
                     prop.Property.SetValue(prop.Parent, value);
                 }
             }
@@ -327,7 +328,7 @@ public class PluginManager
 
 		(Assembly assembly, IEnumerable<Type> types) pluginTypes = (loader.MainAssembly, GetPluginTypes(allTypes));
 
-		pluginTypes.assembly.EntryPoint?.Invoke(null, new object[] { });
+		pluginTypes.assembly.EntryPoint?.Invoke(null, []);
 		// var plugins = ServiceLocator.Current.GetServices<IMetaPlugin>(); only get newly added plugins
 		var types = pluginTypes.types.ToList();
 		if (types.Count == 0) _logger.LogWarning($"{assemblyName}: no tools defined");
@@ -342,7 +343,6 @@ public class PluginManager
 		_logger.LogInformation($"Tool Loaded: {assemblyName} - Version: {token.Version}");
 	}
 
-    
 
     private void Unload(string dllPath)
 	{

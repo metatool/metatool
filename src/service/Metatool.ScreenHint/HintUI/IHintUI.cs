@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Windows;
-using Metatool.Service;
+using Metatool.Service.ScreenHint;
 
 namespace Metatool.ScreenHint.HintUI;
 

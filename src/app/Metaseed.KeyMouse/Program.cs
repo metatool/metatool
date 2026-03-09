@@ -23,7 +23,7 @@ public static class Program
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            _tool = SelfHostedTool.BuildTool<KeyMouseTool, PluginConfig>("Metatool.Tools.KeyMouse");
+            _tool = SelfHostedTool.BuildTool<KeyMouseTool, KeyMousePluginConfig>("Metatool.Tools.KeyMouse");
             var logger = Services.Get<ILogger<KeyMouseTool>>();
             var notify = Services.Get<INotify>();
             SetupContextMenu(notify);

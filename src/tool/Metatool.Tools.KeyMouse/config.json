@@ -1,16 +1,22 @@
 {
+  "Services": {
+    "ScreenHintConfig": {
+      "HintEncoder": {
+        "HintKeys": "kjdflsahgionurvcwexmbpqtyz", // char[]
+        "AdditionalSingleCodeKey": "JDFLAHGINREMBQTY1234567890" // char[]
+      }
+    }
+  }
   "Tools": {
     "Metatool.Tools.KeyMouse": {
       "KeyboardMousePackage": {
         // not work well, if click to change active window
         // need to just handle alt+tab switch
         "MouseFollowActiveWindow": false,
-        "HintKeys": "ASDFQWERZXCVTGBHJKLYUIOPNM",
         "KeyMaps": {
           "GK + Q": "LButton",
-          "GK + R": "RButton",
-					"GK + T": "Apps" // context menu
-
+          "GK + R": "RButton", // right click under mouse pointer
+          "GK + T": "Apps" // context menu, same as right click the text under keyboard cursor, or the control has keyboard focus
         },
         "Hotkeys": {
           "MouseToFocus": {

@@ -11,7 +11,7 @@ public class ConditionFactory
 	}
 
 	/// <summary>
-	/// Creates a condition to search by a <see cref="T:FlaUI.Core.Definitions.ControlType" />.
+	/// Creates a condition to search by a <see cref="T:ControlType" />.
 	/// </summary>
 	public PropertyCondition ByControlType(ControlType controlType)
 	{
@@ -31,7 +31,7 @@ public class ConditionFactory
 	}
 
 	/// <summary>
-	/// Creates a condition to search by a text (same as <see cref="M:FlaUI.Core.Conditions.ConditionFactory.ByName(System.String)" />).
+	/// Creates a condition to search by a text (same as <see cref="M:ConditionFactory.ByName(System.String)" />).
 	/// </summary>
 	public PropertyCondition ByText(string text)
 	{

@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
-using System.Windows;
-using Metatool.Service;
-using Metatool.UIElementsDetector;
+using Metatool.Service.ScreenHint;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic.Logging;
 
 namespace Metatool.ScreenPoint;
 

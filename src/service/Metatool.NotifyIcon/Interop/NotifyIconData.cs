@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace Metatool.NotifyIcon.Interop;
 
@@ -66,7 +67,7 @@ public struct NotifyIconData
 
 	/// <summary>
 	/// A value that specifies which bits of the state member are retrieved or modified.
-	/// For example, setting this member to <see cref="Interop.IconState.Hidden"/>
+	/// For example, setting this member to <see cref="NotifyIcon.Interop.IconState.Hidden"/>
 	/// causes only the item's hidden
 	/// state to be retrieved.
 	/// </summary>
@@ -108,7 +109,7 @@ public struct NotifyIconData
 	/// <summary>
 	/// Windows Vista (Shell32.dll version 6.0.6) and later. The handle of a customized
 	/// balloon icon provided by the application that should be used independently
-	/// of the tray icon. If this member is non-NULL and the <see cref="Interop.BalloonFlags.User"/>
+	/// of the tray icon. If this member is non-NULL and the <see cref="User"/>
 	/// flag is set, this icon is used as the balloon icon.<br/>
 	/// If this member is NULL, the legacy behavior is carried out.
 	/// </summary>

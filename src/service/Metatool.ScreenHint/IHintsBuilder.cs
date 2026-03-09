@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Windows;
-using Metatool.Service;
-using Metatool.UIElementsDetector;
+using Metatool.Service.ScreenHint;
 
 namespace Metatool.ScreenPoint;
 
@@ -17,6 +15,4 @@ public interface IHintsBuilder
 	/// key sequences to the relative bounding rectangles of each UI element.
 	/// </returns>
 	Dictionary<string, IUIElement> GenerateKeys(List<IUIElement> elementRects);
-	public string HintKeys { get; set;}
-
 }

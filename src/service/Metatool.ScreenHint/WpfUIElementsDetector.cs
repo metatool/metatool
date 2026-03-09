@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Automation;
-using Metatool.Service;
+using Metatool.Service.ScreenHint;
 using Metatool.UIElementsDetector;
 
 namespace Metatool.ScreenPoint;

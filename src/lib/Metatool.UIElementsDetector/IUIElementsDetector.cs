@@ -1,4 +1,5 @@
 using Metatool.Service;
+using Metatool.Service.ScreenHint;
 
 namespace Metatool.UIElementsDetector
 {

@@ -13,7 +13,7 @@ namespace Metatool.Tools.KeyMouse
             return base.OnLoaded();
         }
 
-        public KeyMouseTool(ICommandManager commandManager, IConfig<PluginConfig> config)
+        public KeyMouseTool(ICommandManager commandManager, IConfig<KeyMousePluginConfig> config)
         {
             //var a = config.CurrentValue.Test.Values;
             RegisterCommands();
