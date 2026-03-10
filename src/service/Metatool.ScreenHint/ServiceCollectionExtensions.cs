@@ -10,15 +10,16 @@ namespace Metatool.ScreenHint;
 public static class ServiceCollectionExtensions
 {
 	static bool _registered;
-	public static IServiceCollection ConfigScreenHint(this IServiceCollection services)
+	// public static IConfigurationBuilder ConfigScreenHintServiceConfig(this IConfigurationBuilder configBuilder)
+	public static IServiceCollection ConfigScreenHintService(this IServiceCollection services, IConfiguration conf = null)
 	{
 		if (_registered) return services;
 		_registered = true;
-		var conf = Services.Get<IConfiguration>();
+		conf ??= Services.Get<IConfiguration>();
 		var screenHintConfig = conf.GetSection("Services:ScreenHintConfig");
 		var hintEncoder = screenHintConfig.GetSection("HintEncoder");
 		return services
-		// to use IConfig<ScreenHintConfig>
+		    // to use IConfig<ScreenHintConfig>
 			.Configure<ScreenHintConfig>(screenHintConfig)
 			// to use IConfig<HintEncoderConfig>
 			.Configure<HintEncoderConfig>(hintEncoder)

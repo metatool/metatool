@@ -11,6 +11,7 @@ using Metatool.Metatool.Plugin;
 using Metatool.NugetPackage;
 using Metatool.Reactive;
 using Metatool.Script;
+using Metaseed.Metatool.Service;
 using Metatool.Service;
 using Metatool.Service.Keyboard;
 using Microsoft.CodeAnalysis;
@@ -297,6 +298,7 @@ public class PluginManager
 			var id = loader.MainAssembly.GetName().Name;
 			var configRoot = Services.Get<IConfiguration>();
 			var config = configRoot.GetSection("Tools").GetSection(id);
+			services.AddSingleton(typeof(IConfig<>), typeof(ToolConfig<>));
 			services.Configure<MetatoolConfig>(configRoot);
 
             //// this works for IConfig<Config>, we want custom parsing of the json for ContextHotkey<TContext>

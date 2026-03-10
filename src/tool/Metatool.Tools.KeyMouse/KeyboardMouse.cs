@@ -16,7 +16,7 @@ public class KeyboardMouseToolPackage : CommandPackage
 {
     private readonly IMouse mouse;
     private readonly IWindowManager windowManager;
-    public KeyboardMouseToolPackage(IServiceCollection services, IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard, IConfig<KeyMousePluginConfig> config)
+    public KeyboardMouseToolPackage(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard, IConfig<KeyMousePluginConfig> config)
     {
         var conf = config.CurrentValue;
         var screenHintConfig = conf.KeyboardMousePackage.ScreenHintConfig;

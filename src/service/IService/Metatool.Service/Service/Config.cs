@@ -8,9 +8,9 @@ public class ToolConfig<T>: IConfig<T>
 {
 	private readonly IOptionsMonitor<T> _optionsMonitor;
 
-	public ToolConfig()
+	public ToolConfig(IOptionsMonitor<T> optionsMonitor)
 	{
-		_optionsMonitor = Services.Get<IOptionsMonitor<T>>();
+		_optionsMonitor = optionsMonitor;
 	}
 
 	public T CurrentValue => _optionsMonitor.CurrentValue;

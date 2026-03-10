@@ -28,7 +28,7 @@ public class SelfHostedTool
 					.AddConsole()
 					.AddDebug()
 			)
-			.ConfigScreenHint()
+			.ConfigScreenHintService(config)
 			.ConfigMetatoolUtils()
 			.AddSingleton<INotify, Notify>()
 			.Configure<MetatoolConfig>(config)

@@ -5,6 +5,6 @@ public class ScreenHintConfig
 }
 public class HintEncoderConfig
 {
-	public char[] HintKeys { get; set; }
-	public char[] AdditionalSingleCodeKey { get; set; }
+	public string HintKeys { get; set; }
+	public string AdditionalSingleCodeKey { get; set; }
 }

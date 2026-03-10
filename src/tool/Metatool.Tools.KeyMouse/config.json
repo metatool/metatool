@@ -6,7 +6,7 @@
         "AdditionalSingleCodeKey": "JDFLAHGINREMBQTY1234567890" // char[]
       }
     }
-  }
+  },
   "Tools": {
     "Metatool.Tools.KeyMouse": {
       "KeyboardMousePackage": {
@@ -16,11 +16,13 @@
         "KeyMaps": {
           "GK + Q": "LButton",
           "GK + R": "RButton", // right click under mouse pointer
+          // the keybord Apps key
           "GK + T": "Apps" // context menu, same as right click the text under keyboard cursor, or the control has keyboard focus
         },
         "Hotkeys": {
           "MouseToFocus": {
-            "Hotkey": "GK + G*", // * behind the trigger key to mark down/up Event handled
+            // * behind the trigger key to mark down/up Event handled
+            "Hotkey": "GK + G*",
             "Description": "Move Mouse To Active Control"
           },
           // we can also use ctrl+up or ctrl+down to scroll a component, but the component must support this hotkey.

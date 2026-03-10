@@ -52,15 +52,15 @@
 					"GK + U": "PageUp",
 					"GK + N": "PageDown",
 					// LAlt + Move
-					"RMenu + I": "Up",
-					"RMenu + K": "Down",
-					"RMenu + J": "Left",
-					"RMenu + L": "Right",
-					"RMenu + H": "Home",
-					"RMenu + ;": "End",
-					"RMenu + U": "PageUp",
-					"RMenu + N": "PageDown",
-					//"RMenu + Back":  "LMenu + Del", // for closing window when in alt+tab triggered WindowManager, not work, the Back is sent
+					"LMenu + I": "Up",
+					"LMenu + K": "Down",
+					"LMenu + J": "Left",
+					"LMenu + L": "Right",
+					"LMenu + H": "Home",
+					"LMenu + ;": "End",
+					"LMenu + U": "PageUp",
+					"LMenu + N": "PageDown",
+					"LMenu + Back":  "Del", // for closing window when in alt+tab triggered WindowManager, not work, the Back is sent
 
 					"GK + Back": "Del",
 					"GK + P": "PrintScreen",
