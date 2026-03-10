@@ -60,7 +60,7 @@
 					"LMenu + ;": "End",
 					"LMenu + U": "PageUp",
 					"LMenu + N": "PageDown",
-					"LMenu + Back":  "Del", // for closing window when in alt+tab triggered WindowManager, not work, the Back is sent
+					"LMenu + Back":  "Del", // for closing window when in alt+tab triggered WindowManager
 
 					"GK + Back": "Del",
 					"GK + P": "PrintScreen",
