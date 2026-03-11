@@ -82,6 +82,8 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 				return;
 			}
 
+			elementRects = DeduplicateByCenter(elementRects);
+
 			var keys = _hintsBuilder.GenerateKeys(elementRects);
 			_positions = (outerRect, keys);
 			_hintUi.CreateHint(_positions);
@@ -171,6 +173,55 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		}
 
 	}
+	private static List<IUIElement> DeduplicateByCenter_NoEfficient(List<IUIElement> elements, int threshold = 15)
+	{
+		var result = new List<IUIElement>();
+		foreach (var elem in elements)
+		{
+			var cx = elem.X + elem.Width / 2;
+			var cy = elem.Y + elem.Height / 2;
+			var tooClose = false;
+			foreach (var existing in result)
+			{
+				var ex = existing.X + existing.Width / 2;
+				var ey = existing.Y + existing.Height / 2;
+				if (Math.Abs(cx - ex) < threshold && Math.Abs(cy - ey) < threshold)
+				{
+					tooClose = true;
+					break;
+				}
+			}
+			if (!tooClose)
+				result.Add(elem);
+		}
+		return result;
+	}
+	private static List<IUIElement> DeduplicateByCenter(List<IUIElement> elements, int threshold = 15)
+	{
+		var result = new List<IUIElement>();
+		var occupied = new HashSet<(int, int)>();
+
+		foreach (var elem in elements)
+		{
+			var cx = elem.X + elem.Width / 2;
+			var cy = elem.Y + elem.Height / 2;
+			var gx = cx / threshold;
+			var gy = cy / threshold;
+
+			var tooClose = false;
+			for (var dx = -1; dx <= 1 && !tooClose; dx++)
+			for (var dy = -1; dy <= 1 && !tooClose; dy++)
+				tooClose = occupied.Contains((gx + dx, gy + dy));
+
+			if (!tooClose)
+			{
+				occupied.Add((gx, gy));
+				result.Add(elem);
+			}
+		}
+		return result;
+	}
+
 	public void Dispose()
 	{
 		(detector as IDisposable)?.Dispose();
