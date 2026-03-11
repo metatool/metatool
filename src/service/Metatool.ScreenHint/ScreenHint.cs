@@ -104,6 +104,8 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 			{
 				_hintUi.HideAllHints();
 				var upArg = await _keyboard.KeyUpAsync();
+				// reverse the z order so hints hidden by others become visible
+				_hintUi.ReverseHintsZOrder();
 				_hintUi.ShowHints();
 				continue;
 			}
@@ -196,7 +198,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		}
 		return result;
 	}
-	private static List<IUIElement> DeduplicateByCenter(List<IUIElement> elements, int threshold = 15)
+	private static List<IUIElement> DeduplicateByCenter(List<IUIElement> elements, int threshold = 10)
 	{
 		var result = new List<IUIElement>();
 		var occupied = new HashSet<(int, int)>();

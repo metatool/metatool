@@ -31,7 +31,7 @@ public class HintUI : IHintUI
 	{
 		if (string.IsNullOrEmpty(hex))
 			return new SolidColorBrush(fallback);
-		try
+		try 
 		{
 			var color = (Color)ColorConverter.ConvertFromString(hex);
 			var brush = new SolidColorBrush(color);
@@ -138,6 +138,20 @@ public class HintUI : IHintUI
 	public void ShowHints()
 	{
 		Window._Canvas.Visibility = System.Windows.Visibility.Visible;
+	}
+
+	private bool _zReversed;
+	public void ReverseHintsZOrder()
+	{
+		_zReversed = !_zReversed;
+		var canvas = Window._Canvas;
+		var count = canvas.Children.Count;
+		for (var i = 0; i < count; i++)
+		{
+			var child = canvas.Children[i];
+			if (child.Visibility == Visibility.Visible)
+				Panel.SetZIndex(child, _zReversed ? count - i : 0);
+		}
 	}
 
 	public void HighLight(IUIElement rect)

@@ -8,6 +8,7 @@ public interface IHintUI
 {
 	void ShowCreatingHintMessage(IntPtr windowHandle, bool isWindow);
 	void ShowHints();
+	void ReverseHintsZOrder();
 	void Show(bool isReshow = false);
 	void Hide();
 	void HideHint(string key);
