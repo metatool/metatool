@@ -14,6 +14,7 @@ public class HintUI : IHintUI
 {
 	readonly Brush HintForeground;
 	readonly Brush HintBackground;
+	readonly Brush HintSingleCharBackground;
 	readonly Brush HintMatchedColor;
 
 	public HintUI(IOptions<ScreenHintConfig> options)
@@ -21,7 +22,9 @@ public class HintUI : IHintUI
 		var config = options.Value;
 		HintForeground = ParseBrush(config.HintForeground, Color.FromRgb(0xFF, 0xD7, 0x00));
 		HintBackground = ParseBrush(config.HintBackground, Color.FromArgb(0xA0, 0xCC, 0x33, 0x33));
+		HintSingleCharBackground = ParseBrush(config.HintSingleCharBackground, Color.FromArgb(0xA0, 0x00, 0x33, 0xCC));
 		HintMatchedColor = ParseBrush(config.HintMatchedColor, Color.FromRgb(0x90, 0x90, 0xA0));
+
 	}
 
 	static Brush ParseBrush(string hex, Color fallback)
@@ -197,6 +200,7 @@ public class HintUI : IHintUI
 				canvas.Children.Add(textBlock);
 			}
 			textBlock.FontSize = fontSize;
+			textBlock.Background = kvp.Key.Length == 1 ? HintSingleCharBackground : HintBackground;
 			// Set text with individual Run elements for partial highlighting
 			SetKeyTextWithRuns(textBlock, kvp.Key);
 
