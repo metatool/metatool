@@ -6,15 +6,40 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using Metatool.Service.ScreenHint;
+using Microsoft.Extensions.Options;
 
 namespace Metatool.ScreenHint.HintUI;
 
 public class HintUI : IHintUI
 {
-	// Hint colors
-	static readonly Brush HintForeground = new SolidColorBrush(Color.FromRgb(0xFF, 0xD7, 0x00));
-	static readonly Brush HintBackground = new SolidColorBrush(Color.FromArgb(0xE6, 0xCC, 0x33, 0x33));
-	static readonly Brush HintMatchedColor = new SolidColorBrush(Color.FromRgb(0x90, 0x90, 0xA0));
+	readonly Brush HintForeground;
+	readonly Brush HintBackground;
+	readonly Brush HintMatchedColor;
+
+	public HintUI(IOptions<ScreenHintConfig> options)
+	{
+		var config = options.Value;
+		HintForeground = ParseBrush(config.HintForeground, Color.FromRgb(0xFF, 0xD7, 0x00));
+		HintBackground = ParseBrush(config.HintBackground, Color.FromArgb(0xA0, 0xCC, 0x33, 0x33));
+		HintMatchedColor = ParseBrush(config.HintMatchedColor, Color.FromRgb(0x90, 0x90, 0xA0));
+	}
+
+	static Brush ParseBrush(string hex, Color fallback)
+	{
+		if (string.IsNullOrEmpty(hex))
+			return new SolidColorBrush(fallback);
+		try
+		{
+			var color = (Color)ColorConverter.ConvertFromString(hex);
+			var brush = new SolidColorBrush(color);
+			brush.Freeze();
+			return brush;
+		}
+		catch
+		{
+			return new SolidColorBrush(fallback);
+		}
+	}
 
 	MainWindow _window;
 	MainWindow Window => _window ??= MainWindow.Inst;
@@ -129,7 +154,7 @@ public class HintUI : IHintUI
 		var (dpiScaleX, dpiScaleY) = Window.MoveTo(winRect);
 		var canvas = Window._Canvas;
 		// Scale font size with DPI so hints stay readable on high-DPI monitors
-		var fontFactor = winRect.Width > 1920 ? 1.2 : 1.0;
+		var fontFactor = winRect.Width > 1920 ? 1.4 : 1.0;
 		var fontSize = 14.0 * dpiScaleX * fontFactor;
 
 		var childrenCount = canvas.Children.Count;

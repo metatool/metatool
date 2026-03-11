@@ -74,7 +74,7 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
         return new(keys) { Handled = handled };
     }
 
-    /// parse 'a' to 'z' and 'shift','alt','ctrl' witch only first letter is not uppercase
+    /// parse 'a' to 'z' and 'shift','alt','ctrl' with only first letter is not uppercase
     private static bool TryAdjustLowerCase(string s, out Key key)
     {
         if (s.Length == 1)
@@ -126,19 +126,20 @@ public partial class Key : IKey, IComparable, IComparable<Key>, ISequenceUnit, I
             if(_name != null) return _name;
 
             var codesClone = new SortedSet<KeyCodes>(Codes);
+            // replace LShift and RShift together to be Shift
             if (codesClone.Contains(KeyCodes.LShiftKey) && codesClone.Contains(KeyCodes.RShiftKey))
             {
-                codesClone = new(codesClone.Except([KeyCodes.LShiftKey, KeyCodes.RShiftKey]));
+                codesClone = [.. codesClone.Except([KeyCodes.LShiftKey, KeyCodes.RShiftKey])];
                 codesClone.Add(KeyCodes.ShiftKey);
             }
             if (codesClone.Contains(KeyCodes.LControlKey) && codesClone.Contains(KeyCodes.RControlKey))
             {
-                codesClone = new(codesClone.Except([KeyCodes.LControlKey, KeyCodes.RControlKey]));
+                codesClone = [.. codesClone.Except([KeyCodes.LControlKey, KeyCodes.RControlKey])];
                 codesClone.Add(KeyCodes.ControlKey);
             }
             if (codesClone.Contains(KeyCodes.LMenu) && codesClone.Contains(KeyCodes.RMenu))
             {
-                codesClone = new(codesClone.Except([KeyCodes.LMenu, KeyCodes.RMenu]));
+                codesClone = [.. codesClone.Except([KeyCodes.LMenu, KeyCodes.RMenu])];
                 codesClone.Add(KeyCodes.Menu);
             }
 

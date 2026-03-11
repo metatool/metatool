@@ -106,7 +106,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 				continue;
 			}
 
-			var downKey = downArg.KeyCode.ToString();
+			var downKey = downArg.Key.KeyName;
 			if (downKey.Length > 1)
 			{
 				_hintUi.Hide();

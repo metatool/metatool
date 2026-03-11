@@ -4,7 +4,10 @@
       "HintEncoder": {
         "HintKeys": "kjdflsahgionurvcwexmbpqtyz", // char[]
         "AdditionalSingleCodeKey": "JDFLAHGINREMBQTY1234567890" // char[]
-      }
+      },
+      "HintForeground": "#FFD700",
+      "HintBackground": "#A0CC3333",
+      "HintMatchedColor": "#9090A0"
     }
   },
   "Tools": {
