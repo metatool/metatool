@@ -105,6 +105,26 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 				_hintUi.ShowHints();
 				continue;
 			}
+			if (downArg.KeyCode == KeyCodes.Back)
+			{
+				if (hits.Length > 0)
+					hits.Remove(hits.Length - 1, 1);
+				// re-show all hints with original styling
+				_hintUi.Show(true);
+				// re-narrow based on remaining prefix
+				if (hits.Length > 0)
+				{
+					var hitsStr = hits.ToString();
+					foreach (var k in _positions.rects.Keys)
+					{
+						if (k.StartsWith(hitsStr))
+							_hintUi.MarkHitKey(k, hits.Length);
+						else
+							_hintUi.HideHint(k);
+					}
+				}
+				continue;
+			}
 
 			var downKey = downArg.Key.KeyName;
 			if (downKey.Length > 1)
