@@ -188,14 +188,32 @@ public static class HintEncoder
     /// <summary>
     /// Iterates over all combinations of indices for the given dimensions (odometer-style).
     /// Return false from the action to break early.
+    /// the same as for loop: i.e. 3 level:
+    /// for(var i=0; i < 5; i++){
+    ///     for(var j = 0; j < 6; j++){
+    ///         for(var k = 0; k < 3; k++){
+    ///             action(i,j,k)
+    ///         }
+    ///     }
+    /// }
     /// </summary>
     private static void ForEachCombination(int[] dimensions, Func<int[], bool> action, int skips = 0)
     {
         var indices = new int[dimensions.Length];
 
+        // Directly compute starting indices from skip count (mixed-radix decomposition)
+        if (skips > 0)
+        {
+            var remaining = skips;
+            for (var i = dimensions.Length - 1; i >= 0; i--)
+            {
+                indices[i] = remaining % dimensions[i];
+                remaining /= dimensions[i];
+            }
+        }
+
         while (true)
         {
-            if (skips > 0) { skips--; continue; }
             var continueLoop = action(indices);
             if (!continueLoop) break;
 
