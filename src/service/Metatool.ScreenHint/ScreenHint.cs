@@ -198,7 +198,7 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		}
 		return result;
 	}
-	private static List<IUIElement> DeduplicateByCenter(List<IUIElement> elements, int threshold = 10)
+	private static List<IUIElement> DeduplicateByCenter(List<IUIElement> elements, int threshold = 12)
 	{
 		var result = new List<IUIElement>();
 		var occupied = new HashSet<(int, int)>();

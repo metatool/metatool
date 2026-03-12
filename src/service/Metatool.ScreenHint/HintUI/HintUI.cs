@@ -12,6 +12,7 @@ namespace Metatool.ScreenHint.HintUI;
 
 public class HintUI : IHintUI
 {
+	static readonly FontFamily HintFontFamily = new FontFamily("Cascadia Code, Consolas");
 	readonly Brush HintForeground;
 	readonly Brush HintBackground;
 	readonly Brush HintSingleCharBackground;
@@ -31,7 +32,7 @@ public class HintUI : IHintUI
 	{
 		if (string.IsNullOrEmpty(hex))
 			return new SolidColorBrush(fallback);
-		try 
+		try
 		{
 			var color = (Color)ColorConverter.ConvertFromString(hex);
 			var brush = new SolidColorBrush(color);
@@ -206,13 +207,16 @@ public class HintUI : IHintUI
 					IsHitTestVisible = false,
 					Foreground = HintForeground,
 					Background = HintBackground,
+					FontFamily = HintFontFamily,
 					FontWeight = FontWeights.Bold,
-					Padding = new Thickness(2, 1, 2, 1),
+					Padding = new Thickness(1, 0, 1, 0),
 				};
+				Typography.SetCapitals(textBlock, FontCapitals.SmallCaps);
 				textBlock.MouseEnter += Window.HintTextBlock_MouseEnter;
 				textBlock.MouseLeave += Window.HintTextBlock_MouseLeave;
 				canvas.Children.Add(textBlock);
 			}
+			textBlock.FontFamily = HintFontFamily;
 			textBlock.FontSize = fontSize;
 			textBlock.Background = kvp.Key.Length == 1 ? HintSingleCharBackground : HintBackground;
 			// Set text with individual Run elements for partial highlighting
