@@ -81,6 +81,7 @@ public class PluginManager
 		_logger.LogInformation($"Loading plugin tools from: {pluginsDir} ...");
 		foreach (var dir in Directory.GetDirectories(pluginsDir))
 		{
+			// folder name is the same as main dll name
 			var assemblyName = Path.GetFileName(dir);
 			InitPluginTool(dir, assemblyName);
 		}
@@ -283,6 +284,7 @@ public class PluginManager
 
 	public void LoadDll(string dllPath, ObservableFileSystemWatcher lastWatcher = null)
 	{
+		using var _ = _logger.Time($"load plugin {dllPath}");
 		var assemblyName = Path.GetFileNameWithoutExtension(dllPath);
 		var loader = CreatePluginLoader(dllPath);
 		var token = new PluginToken() { Loader = loader, Watcher = lastWatcher };
