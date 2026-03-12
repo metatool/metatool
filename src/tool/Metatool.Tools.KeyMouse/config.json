@@ -6,8 +6,10 @@
         "AdditionalSingleCodeKey": "JDFLAHGINREMBQTY1234567890" // char[]
       },
       "HintForeground": "#FFD700",
-      "HintBackground": "#A0CC3333",
-      "HintSingleCharBackground": "#A00033CC",
+      //ARGB
+      "HintSingleCharBackground": "#B80033CC",
+      "HintTwoCharBackground": "#B8339933",
+      "HintBackground": "#B8CC3333",
       "HintMatchedColor": "#9090A0"
     }
   },

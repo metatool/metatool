@@ -23,9 +23,9 @@ public class HintUI : IHintUI
 	{
 		var config = options.Value;
 		HintForeground = ParseBrush(config.HintForeground, Color.FromRgb(0xFF, 0xD7, 0x00));
-		HintBackground = ParseBrush(config.HintBackground, Color.FromArgb(0xA0, 0xCC, 0x33, 0x33));
-		HintSingleCharBackground = ParseBrush(config.HintSingleCharBackground, Color.FromArgb(0xA0, 0x00, 0x33, 0xCC));
-		HintTwoCharBackground = ParseBrush(config.HintTwoCharBackground, Color.FromArgb(0xA0, 0x33, 0x99, 0x33));
+		HintBackground = ParseBrush(config.HintBackground, Color.FromArgb(0xB8, 0xCC, 0x33, 0x33));
+		HintSingleCharBackground = ParseBrush(config.HintSingleCharBackground, Color.FromArgb(0xB8, 0x00, 0x33, 0xCC));
+		HintTwoCharBackground = ParseBrush(config.HintTwoCharBackground, Color.FromArgb(0xB8, 0x33, 0x99, 0x33));
 		HintMatchedColor = ParseBrush(config.HintMatchedColor, Color.FromRgb(0x90, 0x90, 0xA0));
 
 	}

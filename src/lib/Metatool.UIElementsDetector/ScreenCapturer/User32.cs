@@ -42,6 +42,11 @@ namespace Metatool.ScreenCapturer
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
 
+        [DllImport("dwmapi.dll")]
+        public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
+
+        public const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct MONITORINFOEX
         {

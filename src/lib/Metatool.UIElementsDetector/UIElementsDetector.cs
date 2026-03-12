@@ -59,8 +59,17 @@ namespace Metatool.UIElementsDetector
         public static (IUIElement screen, IUIElement window) GetScreenWindowRect(IntPtr windowHandle)
         {
             var screen = GetScreenRect(windowHandle);
-            ScreenCapturer.User32.GetWindowRect(windowHandle, out var rect);
-            var winRect = new UIElement { X = rect.Left , Y = rect.Top, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top };
+            // Use DwmGetWindowAttribute to get the actual visible bounds (excludes the invisible drop-shadow border).
+            // Fall back to GetWindowRect if DWM call fails (e.g. on older OS or minimized windows).
+            ScreenCapturer.User32.RECT rect;
+            int hr = ScreenCapturer.User32.DwmGetWindowAttribute(
+                windowHandle,
+                ScreenCapturer.User32.DWMWA_EXTENDED_FRAME_BOUNDS,
+                out rect,
+                System.Runtime.InteropServices.Marshal.SizeOf<ScreenCapturer.User32.RECT>());
+            if (hr != 0)
+                ScreenCapturer.User32.GetWindowRect(windowHandle, out rect);
+            var winRect = new UIElement { X = rect.Left, Y = rect.Top, Width = rect.Right - rect.Left, Height = rect.Bottom - rect.Top };
             return (screen, winRect);
         }
         /// <summary>
