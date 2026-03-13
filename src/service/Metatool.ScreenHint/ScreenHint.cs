@@ -99,8 +99,15 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 		while (true)
 		{
 			var downArg = await _keyboard.KeyDownAsync(true);
+			var keyCode = downArg.KeyCode;
+			// skip modifier keys (Shift, Ctrl, Alt, Win) so they don't cancel hints
+			if (keyCode.IsShiftKey()
+				|| keyCode is KeyCodes.ControlKey or KeyCodes.LControlKey or KeyCodes.RControlKey
+				or KeyCodes.Menu or KeyCodes.LMenu or KeyCodes.RMenu
+				or KeyCodes.LWin or KeyCodes.RWin)
+				continue;
 
-			if (downArg.KeyCode == KeyCodes.LShiftKey)
+			if (keyCode == KeyCodes.Space)
 			{
 				_hintUi.HideAllHints();
 				var upArg = await _keyboard.KeyUpAsync();
@@ -130,14 +137,17 @@ public sealed class ScreenHint : IScreenHint, IDisposable
 				continue;
 			}
 
-			var downKey = downArg.Key.KeyName;
-			if (downKey.Length > 1)
+			var downKeyName = downArg.Key.KeyName;
+			if (downKeyName.Length > 1)
 			{
 				_hintUi.Hide();
 				return;
 			}
 
-			hits.Append(downKey);
+			if (downArg.Shift && downKeyName.Length == 1 && char.IsLetter(downKeyName[0]))
+				downKeyName = downKeyName.ToUpper();
+
+			hits.Append(downKeyName);
 			var ks = new List<string>();
 			foreach (var k in _positions.rects.Keys)
 			{

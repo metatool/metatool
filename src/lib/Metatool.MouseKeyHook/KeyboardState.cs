@@ -18,14 +18,31 @@ namespace Metatool.Input.MouseKeyHook.Implementation;
 /// </remarks>
 public partial class KeyboardState : IKeyboardState
 {
-    private static readonly MemoryMappedViewAccessor Accessor;
+    /// <summary>
+    /// Shared memory-mapped file accessor for HandledDownKeys state (256 bytes, one per virtual key code).
+    /// Enables cross-process sharing of handled key state, so SetKeyDown()/SetKeyUp() persist
+    /// immediately and Current() can read the latest state from any process.
+    /// </summary>
+    private static readonly MemoryMappedViewAccessor HandledDownKeysSharedMem;
 
     static KeyboardState()
     {
         var m = MemoryMappedFile.CreateOrOpen("Metatool.HandledDownKeys", 256);
-        Accessor = m.CreateViewAccessor(0, 256);
+        HandledDownKeysSharedMem = m.CreateViewAccessor(0, 256);
     }
 
+    /// <summary>
+    /// Tracks keys that were handled/consumed by the hook (not passed to the OS).
+    /// When a key event is handled, the OS never updates its internal key state (GetKeyState),
+    /// so this serves as an internal record of handled-but-physically-down keys.
+    /// IsDown() checks HandledDownKeys first, ensuring modifier state (Shift, Ctrl, Alt)
+    /// is correctly detected even when the hook swallowed those key events.
+    ///
+    /// Updated via: KeyEventArgsExt.Handled setter calls SetKeyDown() on key-down events.
+    /// Refreshed via: Current() reads from a shared memory-mapped file ("Metatool.HandledDownKeys"),
+    /// and SetKeyDown()/SetKeyUp() write back to it, enabling cross-process state sharing.
+    /// SetKeyUp() is called by KeyListener on key-up events when the key was previously in HandledDownKeys.
+    /// </summary>
     public static KeyboardState HandledDownKeys;
     private readonly byte[] _keyboardStateNative;
 
@@ -39,6 +56,7 @@ public partial class KeyboardState : IKeyboardState
         var sb = new StringBuilder();
         if (this != HandledDownKeys)
             sb.Append(HandledDownKeys.ToString() + "real: ");
+
         for (var i = 0; i < 256; i++)
         {
             var key = (KeyCodes)i;
@@ -56,12 +74,11 @@ public partial class KeyboardState : IKeyboardState
     ///     Makes a snapshot of a keyboard state to the moment of call and returns an
     ///     instance of <see cref="KeyboardState" /> class.
     /// </summary>
-    /// <returns>An instance of <see cref="KeyboardState" /> class representing a snapshot of keyboard state at certain moment.</returns>
     public static KeyboardState Current()
     {
-        var bytes = new byte[256];
-        Accessor.ReadArray<byte>(0, bytes, 0, 256);
-        HandledDownKeys = new KeyboardState(bytes);
+        var bytesHandledKeys = new byte[256];
+        HandledDownKeysSharedMem.ReadArray(0, bytesHandledKeys, 0, 256);
+        HandledDownKeys = new KeyboardState(bytesHandledKeys);
         var keyboardStateNative = new byte[256];
         KeyboardNativeMethods.GetKeyboardState(keyboardStateNative);
         return new KeyboardState(keyboardStateNative);
@@ -96,7 +113,7 @@ public partial class KeyboardState : IKeyboardState
     public static KeyboardState CurrentAsync()
     {
         var bytes = new byte[256];
-        Accessor.ReadArray<byte>(0, bytes, 0, 256);
+        HandledDownKeysSharedMem.ReadArray(0, bytes, 0, 256);// read into array
         HandledDownKeys = new KeyboardState(bytes);
         var keyboardStateNative = new byte[256];
         for (int i = 0; i < 256; i++)
@@ -123,10 +140,9 @@ public partial class KeyboardState : IKeyboardState
     }
 
     /// <summary>
-    ///     Indicates whether specified key was down at the moment when snapshot was created or not.
+    /// Indicates whether specified key was down at the moment when snapshot was created or not.
+    /// > note: it also handle the previous down key that is marked as Handled(KeyboardState will not have that key as down)
     /// </summary>
-    /// <param name="key">Key (corresponds to the virtual code of the key)</param>
-    /// <returns><b>true</b> if key was down, <b>false</b> - if key was up.</returns>
     public bool IsDown(KeyCodes key)
     {
         if (this != HandledDownKeys)
@@ -252,7 +268,7 @@ public partial class KeyboardState : IKeyboardState
 
         if (this == HandledDownKeys)
         {
-            Accessor.Write(virtualKeyCode, v);
+            HandledDownKeysSharedMem.Write(virtualKeyCode, v);
         }
     }
 
@@ -266,7 +282,7 @@ public partial class KeyboardState : IKeyboardState
 
         if (this == HandledDownKeys)
         {
-            Accessor.Write(virtualKeyCode, v);
+            HandledDownKeysSharedMem.Write(virtualKeyCode, v);
         }
     }
 
@@ -312,8 +328,6 @@ public partial class KeyboardState : IKeyboardState
     ///     Indicates weather every of specified keys were down at the moment when snapshot was created.
     ///     The method returns false if even one of them was up.
     /// </summary>
-    /// <param name="keys">Keys to verify whether they were down or not.</param>
-    /// <returns><b>true</b> - all were down. <b>false</b> - at least one was up.</returns>
     public bool AreAllDown(IEnumerable<KeyCodes> keys)
     {
         return keys.All(IsDown);
@@ -342,11 +356,17 @@ public partial class KeyboardState : IKeyboardState
         return _keyboardStateNative[virtualKeyCode];
     }
 
+    /// <summary>
+    /// bit 8 in byte is 1
+    /// </summary>
     private static bool GetHighBit(byte value)
     {
         return value >> 7 != 0;
     }
 
+    /// <summary>
+    /// bit 0 in byte is 1
+    /// </summary>
     private static bool GetLowBit(byte value)
     {
         return (value & 1) != 0;

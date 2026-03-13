@@ -12,6 +12,7 @@ param(
 
 $metatoolDir = Resolve-Path $PSScriptRoot\..
 
+. $PSScriptRoot/lib/kill-metatool.ps1
 . $PSScriptRoot/lib/Build-Tool.ps1
 
 "Metatool.Tools.MetaKeyboard",

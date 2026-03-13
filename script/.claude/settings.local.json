@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pwsh -File \"./**\")",
+      "Read(//m/Workspace/metatool/src/app/Metaseed.Metatool/**)"
+    ]
+  }
+}

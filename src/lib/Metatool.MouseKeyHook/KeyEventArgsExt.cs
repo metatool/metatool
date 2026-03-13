@@ -112,11 +112,19 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
     public IKeyEventArgs LastKeyEvent_NoneVirtual { get; private set; }
     internal KeyListener listener;
     internal bool? HandleVirtualKeyBackup;
-    public virtual bool Shift => (KeyData & KeyCodes.Shift) == KeyCodes.Shift;
+    /// <summary>
+    /// Uses KeyboardState.IsDown() when available (normal hook events) — this checks HandledDownKeys,
+    /// so modifier state is correct even when the hook consumed the modifier key event (e.g. Shift is marked
+    /// handled by other handler. ScreenHint is an example: _keyboard.KeyDownAsync(true);), which prevents GetKeyState/KeyData from seeing it.
+    /// Falls back to KeyData bitmask when KeyboardState is null (e.g. default constructor).
+    /// </summary>
+    public virtual bool Shift => KeyboardState?.IsDown(Key.Shift) ?? (KeyData & KeyCodes.Shift) == KeyCodes.Shift;
 
-    public virtual bool Alt => (KeyData & KeyCodes.Alt) == KeyCodes.Alt;
+    /// <inheritdoc cref="Shift"/>
+    public virtual bool Alt => KeyboardState?.IsDown(Key.Alt) ?? (KeyData & KeyCodes.Alt) == KeyCodes.Alt;
 
-    public bool Control => (KeyData & KeyCodes.Control) == KeyCodes.Control;
+    /// <inheritdoc cref="Shift"/>
+    public bool Control => KeyboardState?.IsDown(Key.Ctrl) ?? (KeyData & KeyCodes.Control) == KeyCodes.Control;
 
     public void DisableVirtualKeyHandlingInThisEvent()
     {

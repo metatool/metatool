@@ -19,8 +19,16 @@ Push-Location .
 try {
     . $PSScriptRoot/lib/msbuild.ps1
 
+    . $PSScriptRoot/lib/kill-metatool.ps1
+
     if (Test-Path $publishingDir) {
         Remove-Item $publishingDir -Force -Recurse
+    }
+
+    #restore runtime packs for win-x64
+    dotnet restore "$metatoolDir\src\app\Metaseed.Metatool\Metaseed.Metatool.csproj" -r win-x64 /p:SolutionDir="$metatoolDir\src\"
+    if (!$?) {
+        throw "dotnet restore failed!"
     }
 
     #publish
