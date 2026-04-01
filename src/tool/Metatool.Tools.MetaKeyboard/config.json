@@ -52,14 +52,14 @@
 					// "GK + U": "PageUp",
 					// "GK + N": "PageDown",
 					// // LAlt + Move
-					// "RMenu + I": "Up",
-					// "RMenu + K": "Down",
-					// "RMenu + J": "Left",
-					// "RMenu + L": "Right",
-					// "RMenu + H": "Home",
-					// "RMenu + ;": "End",
-					// "RMenu + U": "PageUp",
-					// "RMenu + N": "PageDown",
+					// "LMenu + I": "Up",
+					// "LMenu + K": "Down",
+					// "LMenu + J": "Left",
+					// "LMenu + L": "Right",
+					// "LMenu + H": "Home",
+					// "LMenu + ;": "End",
+					// "LMenu + U": "PageUp",
+					// "LMenu + N": "PageDown",
 
 					// Move (Vim)
 					"GK + K": "Up",
@@ -71,16 +71,16 @@
 					"GK + U": "PageUp",
 					"GK + N": "PageDown",
 					// LAlt + Move (Vim)
-					"RMenu + K": "Up",
-					"RMenu + J": "Down",
-					"RMenu + H": "Left",
-					"RMenu + L": "Right",
-					"RMenu + I": "Home",
-					"RMenu + O": "End",
-					"RMenu + U": "PageUp",
-					"RMenu + N": "PageDown",
+					"LMenu + K": "Up",
+					"LMenu + J": "Down",
+					"LMenu + H": "Left",
+					"LMenu + L": "Right",
+					"LMenu + I": "Home",
+					"LMenu + O": "End",
+					"LMenu + U": "PageUp",
+					"LMenu + N": "PageDown",
 
-					"RMenu + Back":  "Del", // for closing window when in alt+tab triggered WindowManager
+					"LMenu + Back":  "Del", // for closing window when in alt+tab triggered WindowManager
 
 					"GK + Back": "Del",
 					"GK + P": "PrintScreen",
