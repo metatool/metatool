@@ -11,5 +11,6 @@ public static class Main
 			.AddSingleton<IVirtualDesktopManager, VirtualDesktopManager>()
             .AddSingleton<IClipboard, Clipboard>()
             .AddSingleton<IUiDispatcher,UiDispatcher>()
-			.AddSingleton<IFileExplorer, FileExplorer>();
+			.AddSingleton<IFileExplorer, FileExplorer>()
+			.AddSingleton<IScreen, ScreenManager>();
 }

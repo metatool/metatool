@@ -429,4 +429,64 @@ public class PInvokes
 	[DllImport("user32.dll")]
 	[return: MarshalAs(UnmanagedType.Bool)]
 	public static extern bool IsChild(IntPtr hWndParent, IntPtr hWnd);
+
+	[DllImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool IsWindowVisible(IntPtr hWnd);
+
+	[DllImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool IsZoomed(IntPtr hWnd);
+
+	[DllImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool IsIconic(IntPtr hWnd);
+
+	[DllImport("user32.dll", SetLastError = true)]
+	public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+	public const int GWL_EXSTYLE = -20;
+	public const int WS_EX_TOOLWINDOW = 0x00000080;
+	public const int WS_EX_APPWINDOW = 0x00040000;
+	public const int WS_EX_NOACTIVATE = 0x08000000;
+
+	[DllImport("dwmapi.dll")]
+	public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+
+	public const int DWMWA_CLOAKED = 14;
+
+	[DllImport("user32.dll")]
+	public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+
+	[DllImport("user32.dll")]
+	public static extern IntPtr MonitorFromRect(ref RECT lprc, uint dwFlags);
+
+	public const uint MONITOR_DEFAULTTONULL = 0;
+	public const uint MONITOR_DEFAULTTOPRIMARY = 1;
+	public const uint MONITOR_DEFAULTTONEAREST = 2;
+
+	// DWM border color (Windows 11+)
+	public const int DWMWA_BORDER_COLOR = 34;
+	public const uint DWMWA_COLOR_DEFAULT = 0xFFFFFFFF;
+
+	[DllImport("dwmapi.dll")]
+	public static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref uint pvAttribute, int cbAttribute);
+
+	// FlashWindowEx (fallback for pre-Win11)
+	[StructLayout(LayoutKind.Sequential)]
+	public struct FLASHWINFO
+	{
+		public uint cbSize;
+		public IntPtr hwnd;
+		public uint dwFlags;
+		public uint uCount;
+		public uint dwTimeout;
+	}
+
+	public const uint FLASHW_ALL = 3;
+	public const uint FLASHW_TIMERNOFG = 12;
+
+	[DllImport("user32.dll")]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Media;
 using Metatool.Service.MouseKey;
 using Metatool.Utils.Implementation;
 using Metatool.Utils.Internal;
@@ -83,6 +85,94 @@ public class Window : IWindow
 	public AutomationElement FirstDescendant(Func<ConditionFactory, Condition> condition) => UiAuto.First(TreeScope.Descendants, condition);
 
 	public bool Contains(IntPtr hCtrl) => Handle == hCtrl || PInvokes.IsChild(Handle, hCtrl);
+
+	private static readonly bool IsWin11 = Environment.OSVersion.Version.Build >= 22000;
+
+	public void Highlight(int durationMs = 500)
+	{
+		var rect = Rect;
+		if (rect.Width <= 0 || rect.Height <= 0)
+			return;
+
+		if (PInvokes.IsZoomed(Handle))
+		{
+			// Maximized windows: GetWindowRect returns bounds extending beyond screen edges
+			// (hidden borders), so use the actual screen working area instead
+			var screen = System.Windows.Forms.Screen.FromHandle(Handle);
+			var sb = screen.WorkingArea;
+			var screenRect = new Rect(sb.X, sb.Y, sb.Width, sb.Height);
+
+			var dispatcher = Application.Current?.Dispatcher;
+			if (dispatcher != null)
+			{
+				dispatcher.BeginInvoke(() => ShowHighlightOverlay(screenRect, durationMs));
+				return;
+			}
+		}
+
+		if (IsWin11)
+			HighlightWithDwmBorder(durationMs);
+		else
+			HighlightWithFlash();
+	}
+
+	private void HighlightWithDwmBorder(int durationMs)
+	{
+		// COLORREF format: 0x00BBGGRR — bright orange
+		uint highlightColor = 0x0000A5FF;
+		PInvokes.DwmSetWindowAttribute(Handle, PInvokes.DWMWA_BORDER_COLOR, ref highlightColor, sizeof(uint));
+
+		Task.Delay(durationMs).ContinueWith(_ =>
+		{
+			uint defaultColor = PInvokes.DWMWA_COLOR_DEFAULT;
+			PInvokes.DwmSetWindowAttribute(Handle, PInvokes.DWMWA_BORDER_COLOR, ref defaultColor, sizeof(uint));
+		});
+	}
+
+	private static void ShowHighlightOverlay(Rect targetRect, int durationMs)
+	{
+		const double borderThickness = 4;
+		const double inset = 2;
+
+		var overlay = new System.Windows.Window
+		{
+			WindowStyle = WindowStyle.None,
+			AllowsTransparency = true,
+			Background = Brushes.Transparent,
+			Topmost = true,
+			ShowInTaskbar = false,
+			ShowActivated = false,
+			IsHitTestVisible = false,
+			Left = targetRect.X + inset,
+			Top = targetRect.Y + inset,
+			Width = targetRect.Width - inset * 2,
+			Height = targetRect.Height - inset * 2,
+			Content = new System.Windows.Controls.Border
+			{
+				BorderBrush = new SolidColorBrush(Color.FromArgb(200, 255, 165, 0)), // orange
+				BorderThickness = new Thickness(borderThickness),
+				CornerRadius = new CornerRadius(2)
+			}
+		};
+
+		overlay.Show();
+
+		Task.Delay(durationMs).ContinueWith(_ =>
+			overlay.Dispatcher.BeginInvoke(() => overlay.Close()));
+	}
+
+	private void HighlightWithFlash()
+	{
+		var flashInfo = new PInvokes.FLASHWINFO
+		{
+			cbSize = (uint)Marshal.SizeOf<PInvokes.FLASHWINFO>(),
+			hwnd = Handle,
+			dwFlags = PInvokes.FLASHW_ALL | PInvokes.FLASHW_TIMERNOFG,
+			uCount = 3,
+			dwTimeout = 0
+		};
+		PInvokes.FlashWindowEx(ref flashInfo);
+	}
 
 	/// <summary>
 	/// Sends key combination to this window via PostMessage.

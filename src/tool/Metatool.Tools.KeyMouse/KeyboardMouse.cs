@@ -16,12 +16,14 @@ public class KeyboardMouseToolPackage : CommandPackage
 {
     private readonly IMouse mouse;
     private readonly IWindowManager windowManager;
-    public KeyboardMouseToolPackage(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard, IConfig<KeyMousePluginConfig> config)
+    private readonly IScreen screen;
+    public KeyboardMouseToolPackage(IScreenHint screenHint, IMouse mouse, IWindowManager windowManager, IKeyboard keyboard, IConfig<KeyMousePluginConfig> config, IScreen screen)
     {
         var conf = config.CurrentValue;
         var screenHintConfig = conf.KeyboardMousePackage.ScreenHintConfig;
         this.windowManager = windowManager;
         this.mouse = mouse;
+        this.screen = screen;
         RegisterCommands();
 
         var maps = conf.KeyboardMousePackage.KeyMaps;
@@ -158,6 +160,21 @@ public class KeyboardMouseToolPackage : CommandPackage
             }
             windowManager.ActiveWindowChanged += ActiveWindowChanged;
         }
+
+        hotkeys.ActivateWindowOnScreen00.OnEvent(e =>
+        {
+            screen.ActivateTopWindowOnScreen(0, 0);
+        });
+
+        hotkeys.ActivateWindowOnScreen01.OnEvent(e =>
+        {
+            screen.ActivateTopWindowOnScreen(0, 1);
+        });
+
+        hotkeys.ActivateWindowOnScreen10.OnEvent(e =>
+        {
+            screen.ActivateTopWindowOnScreen(1, 0);
+        });
 
         void DoMouseLeftClick((IUIElement winRect, IUIElement clientRect) position)
         {

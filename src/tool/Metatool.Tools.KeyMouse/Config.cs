@@ -16,6 +16,9 @@ namespace Metatool.Tools.KeyMouse
         public HotkeyTrigger MouseLeftClick { get; set; }
         public HotkeyTrigger MouseLeftClickAlt { get; set; }
         public HotkeyTrigger MouseLeftClickLast { get; set; }
+        public HotkeyTrigger ActivateWindowOnScreen00 { get; set; }
+        public HotkeyTrigger ActivateWindowOnScreen01 { get; set; }
+        public HotkeyTrigger ActivateWindowOnScreen10 { get; set; }
 
     }
 
