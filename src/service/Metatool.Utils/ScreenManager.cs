@@ -2,51 +2,42 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Metatool.Utils.Internal;
 using Microsoft.Extensions.Logging;
-using Rectangle = System.Drawing.Rectangle;
+using Microsoft.Win32;
 
 namespace Metatool.Service;
 
 public class ScreenManager : IScreen
 {
 	private readonly ILogger _logger;
-	private readonly Rectangle[][] _cachedScreens;
+	private volatile Screen[][] _screens;
 
 	public ScreenManager(ILogger<ScreenManager> logger)
 	{
 		_logger = logger;
-		_cachedScreens = IdentifyScreens();
+		_screens = BuildScreenLayout();
+		SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
 	}
 
 	/// <summary>
-	/// Enumerates all screens and organizes them as a 2D array grouped by row.
+	/// All screens organized as a 2D array grouped by row.
 	/// [0][0] is the top-left screen, rows top to bottom, columns left to right.
+	/// Screens are considered in the same row if their height centers differ by less than half the max height in that row.
 	/// </summary>
-	public Rectangle[][] IdentifyScreens()
+	public Screen[][] Screens => _screens;
+
+	private void OnDisplaySettingsChanged(object sender, EventArgs e)
 	{
-		var screens = System.Windows.Forms.Screen.AllScreens;
-		if (screens.Length == 0)
-			return [];
-
-		// Group screens by row based on height center proximity
-		var screenList = screens.Select(s => s.Bounds).ToList();
-		var rows = GroupScreensByRow(screenList);
-
-		// Sort each row by X position (left to right)
-		foreach (var row in rows)
-		{
-			row.Sort((a, b) => a.X.CompareTo(b.X));
-		}
-
-		return [..rows.Select(r => r.ToArray())];
+		_logger.LogInformation("Display settings changed, refreshing screen layout");
+		_screens = BuildScreenLayout();
 	}
 
 	public void ActivateTopWindowOnScreen(int rowIndex, int columnIndex)
 	{
-		var screens = _cachedScreens;
+		var screens = _screens;
 
-		// Validate indices
 		if (rowIndex < 0 || rowIndex >= screens.Length)
 		{
 			_logger.LogWarning("ActivateTopWindowOnScreen: invalid rowIndex {Row}, screen rows: {Rows}", rowIndex, screens.Length);
@@ -61,139 +52,142 @@ public class ScreenManager : IScreen
 
 		var targetScreen = screens[rowIndex][columnIndex];
 
-		// Get the HMONITOR handle for the target screen via its bounds
-		var monitorRect = new PInvokes.RECT
-		{
-			Left = targetScreen.Left, Top = targetScreen.Top,
-			Right = targetScreen.Right, Bottom = targetScreen.Bottom
-		};
-		var targetMonitor = PInvokes.MonitorFromRect(ref monitorRect, PInvokes.MONITOR_DEFAULTTONEAREST);
-
-		// Find all windows in Z-order (EnumWindows returns top to bottom)
-		var windows = new List<IntPtr>();
-		PInvokes.EnumWindows((hwnd, _) =>
-		{
-			windows.Add(hwnd);
-			return true;
-		}, IntPtr.Zero);
+		if (_logger.IsEnabled(LogLevel.Debug))
+			_logger.LogDebug("ActivateTopWindowOnScreen[{Row},{Col}]: target={Screen}",
+				rowIndex, columnIndex, targetScreen.Bounds);
 
 		var shellWindow = PInvokes.GetDesktopWindow();
-		_logger.LogDebug("ActivateTopWindowOnScreen[{Row},{Col}]: target={Screen}, monitor=0x{Monitor:X}, windows={Count}",
-			rowIndex, columnIndex, targetScreen, targetMonitor.ToInt64(), windows.Count);
+		IntPtr found = IntPtr.Zero;
 
-		// Find the topmost Alt+Tab-style window on the target screen
-		foreach (var hwnd in windows)
+		// Find the topmost Alt+Tab-style window on the target screen.
+		// EnumWindows walks top-to-bottom in Z-order — stop at the first match.
+		PInvokes.EnumWindows((hwnd, _) =>
 		{
 			if (hwnd == shellWindow)
-				continue;
+				return true;
 
-			if (!PInvokes.IsWindowVisible(hwnd))
-				continue;
+			if (!IsAltTabWindow(hwnd))
+				return true;
 
-			// Skip cloaked windows (hidden UWP apps, virtual desktop windows, etc.)
-			PInvokes.DwmGetWindowAttribute(hwnd, PInvokes.DWMWA_CLOAKED, out var cloaked, sizeof(int));
-			if (cloaked != 0)
-				continue;
-
-			// Filter by window style: skip tool windows and noactivate windows,
-			// unless they explicitly have WS_EX_APPWINDOW
-			var exStyle = PInvokes.GetWindowLong(hwnd, PInvokes.GWL_EXSTYLE);
-			if ((exStyle & PInvokes.WS_EX_APPWINDOW) == 0)
-			{
-				if ((exStyle & PInvokes.WS_EX_TOOLWINDOW) != 0)
-					continue;
-				if ((exStyle & PInvokes.WS_EX_NOACTIVATE) != 0)
-					continue;
-				// Skip owned windows without WS_EX_APPWINDOW (they don't appear in Alt+Tab)
-				if (PInvokes.GetWindow(hwnd, PInvokes.GetWindowType.GW_OWNER) != IntPtr.Zero)
-					continue;
-			}
-
-			// Use MonitorFromWindow to determine which monitor this window belongs to.
+			// Use Screen.FromHandle to determine which monitor this window belongs to.
 			// Handles windows spanning monitors (uses largest area) and minimized windows correctly.
-			var windowMonitor = PInvokes.MonitorFromWindow(hwnd, PInvokes.MONITOR_DEFAULTTONULL);
-			if (windowMonitor == IntPtr.Zero || windowMonitor != targetMonitor)
-				continue;
+			if (!Screen.FromHandle(hwnd).Equals(targetScreen))
+				return true;
 
-			var title = GetWindowTitle(hwnd);
-			var className = GetWindowClassName(hwnd);
-			_logger.LogDebug("  candidate: hwnd=0x{Hwnd:X}, title=\"{Title}\", class=\"{Class}\", monitor=0x{Monitor:X}",
-				hwnd.ToInt64(), title, className, windowMonitor.ToInt64());
+			found = hwnd;
+			return false; // stop enumeration
+		}, IntPtr.Zero);
 
-			var minimized = PInvokes.IsIconic(hwnd);
-			PInvokes.SetForegroundWindow(hwnd);
-			if (minimized)
-				PInvokes.ShowWindowAsync(hwnd, PInvokes.SW.Restore);
-			new Window(hwnd).Highlight();
+		if (found == IntPtr.Zero)
+		{
+			_logger.LogWarning("ActivateTopWindowOnScreen[{Row},{Col}]: no matching window found on screen {Screen}", rowIndex, columnIndex, targetScreen.Bounds);
 			return;
 		}
 
-		_logger.LogWarning("ActivateTopWindowOnScreen[{Row},{Col}]: no matching window found on screen {Screen}", rowIndex, columnIndex, targetScreen);
+		if (_logger.IsEnabled(LogLevel.Debug))
+		{
+			_logger.LogDebug("  activating: hwnd=0x{Hwnd:X}, title=\"{Title}\", class=\"{Class}\"",
+				found.ToInt64(), GetWindowText(found), GetClassName(found));
+		}
+
+		var minimized = PInvokes.IsIconic(found);
+		PInvokes.SetForegroundWindow(found);
+		if (minimized)
+			PInvokes.ShowWindowAsync(found, PInvokes.SW.Restore);
+		new Window(found).Highlight();
 	}
 
-	private static string GetWindowTitle(IntPtr hwnd)
+	/// <summary>
+	/// Returns true if the window would appear in the Alt+Tab list.
+	/// </summary>
+	private static bool IsAltTabWindow(IntPtr hwnd)
+	{
+		if (!PInvokes.IsWindowVisible(hwnd))
+			return false;
+
+		// Skip cloaked windows (hidden UWP apps, virtual desktop windows, etc.)
+		PInvokes.DwmGetWindowAttribute(hwnd, PInvokes.DWMWA_CLOAKED, out var cloaked, sizeof(int));
+		if (cloaked != 0)
+			return false;
+
+		// Filter by window style: skip tool windows and noactivate windows,
+		// unless they explicitly have WS_EX_APPWINDOW
+		var exStyle = PInvokes.GetWindowLong(hwnd, PInvokes.GWL_EXSTYLE);
+		if ((exStyle & PInvokes.WS_EX_APPWINDOW) != 0)
+			return true;
+
+		if ((exStyle & PInvokes.WS_EX_TOOLWINDOW) != 0)
+			return false;
+		if ((exStyle & PInvokes.WS_EX_NOACTIVATE) != 0)
+			return false;
+
+		// Skip owned windows without WS_EX_APPWINDOW (they don't appear in Alt+Tab)
+		if (PInvokes.GetWindow(hwnd, PInvokes.GetWindowType.GW_OWNER) != IntPtr.Zero)
+			return false;
+
+		return true;
+	}
+
+	/// <summary>
+	/// Enumerates all screens and organizes them as a 2D array grouped by row.
+	/// </summary>
+	private static Screen[][] BuildScreenLayout()
+	{
+		var allScreens = Screen.AllScreens;
+		if (allScreens.Length == 0)
+			return [];
+
+		var rows = GroupScreensByRow(allScreens);
+		return [..rows.Select(row => row.ToArray())];
+	}
+
+	/// <summary>
+	/// Groups screens into rows by Y-center proximity, sorted left-to-right within each row.
+	/// Screens are considered in the same row if their height centers differ by less than half the max height in that row.
+	/// </summary>
+	private static List<List<Screen>> GroupScreensByRow(Screen[] screens)
+	{
+		var rows = new List<List<Screen>>();
+
+		// Sort screens by Y position first, then try to place each into an existing row
+		foreach (var screen in screens.OrderBy(s => s.Bounds.Y))
+		{
+			var centerY = screen.Bounds.Y + screen.Bounds.Height / 2;
+
+			// Try to find an existing row this screen belongs to:
+			// threshold is half the max height in the row, so screens with similar
+			// vertical centers (within that tolerance) are grouped together.
+			var matchedRow = rows.FirstOrDefault(row =>
+			{
+				var threshold = row.Max(s => s.Bounds.Height) / 2;
+				return row.Any(s => Math.Abs(centerY - (s.Bounds.Y + s.Bounds.Height / 2)) < threshold);
+			});
+
+			// If not found in any existing row, create a new row
+			if (matchedRow != null)
+				matchedRow.Add(screen);
+			else
+				rows.Add([screen]);
+		}
+
+		// Sort each row by X position (left to right)
+		foreach (var row in rows)
+			row.Sort((a, b) => a.Bounds.X.CompareTo(b.Bounds.X));
+
+		return rows;
+	}
+
+	private static string GetWindowText(IntPtr hwnd)
 	{
 		var sb = new StringBuilder(256);
 		PInvokes.GetWindowText(hwnd, sb, sb.Capacity);
 		return sb.ToString();
 	}
 
-	private static string GetWindowClassName(IntPtr hwnd)
+	private static string GetClassName(IntPtr hwnd)
 	{
 		var sb = new StringBuilder(256);
 		PInvokes.GetClassName(hwnd, sb, sb.Capacity);
 		return sb.ToString();
-	}
-
-	/// <summary>
-	/// Groups screens by row based on height center proximity.
-	/// Screens are considered in the same row if their height centers differ by less than half the max height.
-	/// </summary>
-	private static List<List<Rectangle>> GroupScreensByRow(List<Rectangle> screens)
-	{
-		var rows = new List<List<Rectangle>>();
-
-		if (screens.Count == 0)
-			return rows;
-
-		// Sort screens by Y position first
-		var sortedByY = screens.OrderBy(s => s.Y).ToList();
-
-		foreach (var screen in sortedByY)
-		{
-			var screenCenterY = screen.Y + screen.Height / 2;
-			var found = false;
-
-			// Try to find an existing row this screen belongs to
-			foreach (var row in rows)
-			{
-				// Calculate the threshold based on the maximum height in the row
-				var maxHeightInRow = row.Max(s => s.Height);
-				var threshold = maxHeightInRow / 2;
-
-				// Check if any screen in this row has a similar center Y
-				foreach (var existingScreen in row)
-				{
-					var existingCenterY = existingScreen.Y + existingScreen.Height / 2;
-					if (Math.Abs(screenCenterY - existingCenterY) < threshold)
-					{
-						row.Add(screen);
-						found = true;
-						break;
-					}
-				}
-
-				if (found)
-					break;
-			}
-
-			// If not found in any existing row, create a new row
-			if (!found)
-			{
-				rows.Add(new List<Rectangle> { screen });
-			}
-		}
-
-		return rows;
 	}
 }
