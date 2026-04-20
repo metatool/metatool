@@ -1,58 +1,62 @@
 <script>
-  import SearchBar from './components/SearchBar.svelte'
+  import HotkeySearch from './components/HotkeySearch.svelte'
+  import LogViewer from './components/LogViewer.svelte'
   import CloseButton from './components/CloseButton.svelte'
   import { onMount } from 'svelte'
-  import { initMessageListeners, sendClose, sendHotkeySelected } from './lib/messaging.js'
+  import { initMessageListeners, sendClose } from './lib/messaging.js'
 
+  const MAX_LOGS = 2000
+
+  let activeView = null // 'search' | 'logs' | null
   let hotkeys = []
-  let filteredHotkeys = []
+  let logs = []
 
   function handleClose() {
     sendClose()
+    activeView = null
   }
 
-  function handleSearch(query) {
-    console.log('Search query:', query)
-
-    // Filter hotkeys based on query
-    if (query.trim() === '') {
-      filteredHotkeys = hotkeys
-    } else {
-      filteredHotkeys = hotkeys.filter(item =>
-        item.hotkey.toLowerCase().includes(query.toLowerCase()) ||
-        item.description.toLowerCase().includes(query.toLowerCase())
-      )
-    }
-  }
-
-  function handleSelection(selectedItem, index) {
-    console.log('Selected item:', selectedItem)
-    sendHotkeySelected(selectedItem, index)
+  function addLog(log) {
+    logs = logs.length >= MAX_LOGS
+      ? [...logs.slice(logs.length - MAX_LOGS + 1), log]
+      : [...logs, log]
   }
 
   onMount(() => {
-    const cleanup = initMessageListeners((data) => {
-      if (Array.isArray(data.hotkeys)) {
-        hotkeys = data.hotkeys
-        filteredHotkeys = hotkeys
+    const cleanup = initMessageListeners({
+      onShowSearch(data) {
+        activeView = 'search'
+        if (Array.isArray(data.hotkeys)) {
+          hotkeys = data.hotkeys
+        }
+        setTimeout(() => document.dispatchEvent(new CustomEvent('focus-search')), 50)
+      },
+
+      onShowLogs(data) {
+        activeView = 'logs'
+        if (Array.isArray(data.logs)) {
+          logs = data.logs
+        }
+      },
+
+      onAddLog(data) {
+        if (data.log) {
+          addLog(data.log)
+        }
       }
-      // Focus the search input when the window is shown
-      setTimeout(() => document.dispatchEvent(new CustomEvent('focus-search')), 50)
     })
 
     return cleanup
   })
 </script>
 
-<div class="min-h-screen bg-gray-100 p-2 relative group">
-    <CloseButton onClick={handleClose} />
-    <div class="mt-4 p-0 bg-white rounded">
-      <SearchBar
-        {hotkeys}
-        {filteredHotkeys}
-        onSearch={handleSearch}
-        onSelection={handleSelection}
-        onClose={handleClose}
-      />
-    </div>
-</div>
+{#if activeView === 'search'}
+  <!-- <div class="fixed inset-0 bg-gray-100 p-2 relative group overflow-hidden flex flex-col"> -->
+    <!-- <CloseButton onClick={handleClose} /> -->
+    <HotkeySearch {hotkeys} onClose={handleClose} />
+  <!-- </div> -->
+{:else if activeView === 'logs'}
+  <div class="h-screen bg-gray-900">
+    <LogViewer bind:logs onClose={handleClose} />
+  </div>
+{/if}

@@ -39,6 +39,15 @@ public class FunctionalKeys
 		restartAsAdminTrigger ??= new HotkeyTrigger(Caps + A);
 		restartAsAdminTrigger.OnEvent(e => Restart(e, true));
 
+		hotKeys.TryGetValue("ShowLogs", out var showLogsTrigger);
+		showLogsTrigger ??= new HotkeyTrigger(Enter + L);
+		showLogsTrigger.Description = "Show/Hide Logs";
+		showLogsTrigger.OnEvent(e =>
+		{
+			Services.Get<IMetaToolUI>().ShowLogs();
+			e.Handled = true;
+		});
+
 		hotKeys.TryGetValue("ShowCommands", out var showCommands);
 		showCommands ??= new HotkeyTrigger(Caps + Question);
 		showCommands.Description = "Show Commands";

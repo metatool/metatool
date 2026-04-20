@@ -35,5 +35,7 @@
     <ProjectReference Include="..\IService\Metatool.Service.UI\Metatool.Service.UI.csproj" />
     <ProjectReference Include="..\Metatool.NotifyIcon\Metatool.NotifyIcon.csproj" />
     <ProjectReference Include="..\Metatool.Utils\Metatool.Utils.csproj" />
+    <ProjectReference Include="..\Metatool.Core\Metatool.Core.csproj" />
+    <ProjectReference Include="..\..\lib\Metaseed.WebUI\backend\Metatool.WebViewHost.csproj" />
   </ItemGroup>
 </Project>

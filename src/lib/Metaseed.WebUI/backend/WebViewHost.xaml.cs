@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Windows;
 using Microsoft.Web.WebView2.Core;
 using System.Text.Json;
@@ -7,10 +8,13 @@ using System.IO;
 namespace Metatool.WebViewHost
 {
     public record TipItem(string hotkey, string description);
+    public record LogEntryDto(string timestamp, string level, string category, string message);
+
     public partial class WebViewHost : Window
     {
         private readonly string dev;
         private CoreWebView2Environment _webViewEnv;
+        private bool _logViewVisible;
 
         public WebViewHost()
         {
@@ -37,6 +41,15 @@ namespace Metatool.WebViewHost
                 Hide();
             };
             Show(); // Triggers Loaded event
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            // Hide on user close; app shutdown still tears down the window.
+            e.Cancel = true;
+            _logViewVisible = false;
+            Hide();
+            base.OnClosing(e);
         }
 
         private async Task InitWebView()
@@ -80,6 +93,7 @@ namespace Metatool.WebViewHost
                     var type = t.GetString();
                     if (type == "close")
                     {
+                        _logViewVisible = false;
                         Dispatcher.Invoke(Hide);
                     }
                     else if (type == "hotkeySelected")
@@ -112,6 +126,7 @@ namespace Metatool.WebViewHost
             Debug.WriteLine("ShowSearch() called");
             _ = Dispatcher.BeginInvoke(async () =>
             {
+                _logViewVisible = false;
                 if (IsVisible)
                 {
                     Debug.WriteLine("Window already visible, hiding");
@@ -121,8 +136,8 @@ namespace Metatool.WebViewHost
                 {
                     Debug.WriteLine("Window not visible, making visible");
                     // Set initial size and center on screen
-                    Width = 700;
-                    Height = 300;
+                    //Width = 900;
+                    //Height = 300;
                     Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
                     Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
                     ShowInTaskbar = true;
@@ -140,8 +155,8 @@ namespace Metatool.WebViewHost
                 webView.CoreWebView2.PostWebMessageAsJson(messageJson);
 
                 // Schedule a resize after content is rendered
-                await Task.Delay(100);
-                ResizeToContent();
+                //await Task.Delay(100);
+                //ResizeToContent();
             });
         }
 
@@ -168,23 +183,67 @@ namespace Metatool.WebViewHost
                     Debug.WriteLine($"Content height: {contentHeight}");
                     Dispatcher.Invoke(() =>
                     {
-                        // Add padding for border and margins
-                        var newHeight = Math.Min(contentHeight, this.MaxHeight);
+                        //var newHeight = Math.Min(contentHeight, this.MaxHeight);
 
-                        // Set WebView2 control height explicitly
-                        webView.Height = newHeight;
+                        // Only set the Window height; let WebView2 stretch via layout so the
+                        // user can still resize the window with the mouse afterwards.
+                        //this.Height = newHeight;
 
-                        // Set Window height
-                        this.Height = newHeight;
-
-                        Debug.WriteLine($"Window and WebView2 height adjusted to: {newHeight}");
+                        //Debug.WriteLine($"Window height adjusted to: {newHeight}");
                     });
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error measuring content: {ex.Message}");
+
             }
+        }
+
+        public void ShowLogs(IEnumerable<LogEntryDto> bufferedLogs)
+        {
+            var logsJson = JsonSerializer.Serialize(bufferedLogs);
+            Debug.WriteLine("ShowLogs() called");
+            _ = Dispatcher.BeginInvoke(async () =>
+            {
+                _logViewVisible = !_logViewVisible;
+                if (!_logViewVisible)
+                {
+                    Debug.WriteLine("Log view toggled off, hiding");
+                    Hide();
+                    return;
+                }
+
+                Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+                Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
+                ShowInTaskbar = true;
+                Show();
+                Activate();
+                webView.Focus();
+                await webView.EnsureCoreWebView2Async(_webViewEnv);
+
+                var messageJson = $"{{\"type\":\"showLogs\",\"logs\":{logsJson}}}";
+                webView.CoreWebView2.PostWebMessageAsJson(messageJson);
+            });
+        }
+
+        public void SendLog(LogEntryDto entry)
+        {
+            if (!_logViewVisible) return;
+
+            var entryJson = JsonSerializer.Serialize(entry);
+            _ = Dispatcher.BeginInvoke(() =>
+            {
+                try
+                {
+                    var messageJson = $"{{\"type\":\"addLog\",\"log\":{entryJson}}}";
+                    webView.CoreWebView2.PostWebMessageAsJson(messageJson);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to send log to WebView: {ex.Message}");
+                }
+            });
         }
 
     }

@@ -1,13 +1,11 @@
 import { writable } from 'svelte/store';
 
-// Store for hotkeys data
 export const hotkeysStore = writable([]);
 export const filteredHotkeysStore = writable([]);
 export const showSearchStore = writable(false);
 
 /**
- * Send a message to the WebView2 backend
- * @param {Object} data - The message data to send
+ * @param {Object} data
  */
 export function sendMessage(data) {
   if (window.chrome && window.chrome.webview) {
@@ -19,23 +17,22 @@ export function sendMessage(data) {
 }
 
 /**
- * Initialize message listeners for WebView2 communication
- * @param {Function} onShowSearch - Callback when showSearch message is received
- * @returns {Function} Cleanup function to remove listeners
+ * @param {Object} handlers - { onShowSearch, onShowLogs, onAddLog }
+ * @returns {Function} Cleanup function
  */
-export function initMessageListeners(onShowSearch) {
-  // WebView2 specific listener
+export function initMessageListeners(handlers) {
   const webviewMsgHandler = (event) => {
     const data = event.data;
-    console.log('Message from backend:', data);
 
     if (data.type === 'showSearch') {
-      console.log('Show search triggered by backend');
-      onShowSearch(data);
+      handlers.onShowSearch?.(data);
+    } else if (data.type === 'showLogs') {
+      handlers.onShowLogs?.(data);
+    } else if (data.type === 'addLog') {
+      handlers.onAddLog?.(data);
     }
   };
 
-  // Attach listener
   if (window.chrome && window.chrome.webview) {
     window.chrome.webview.addEventListener('message', webviewMsgHandler);
     console.log('WebView2 message listener initialized');
@@ -43,7 +40,6 @@ export function initMessageListeners(onShowSearch) {
     console.warn('WebView2 API not available - running in non-WebView2 environment');
   }
 
-  // Return cleanup function
   return () => {
     if (window.chrome && window.chrome.webview) {
       window.chrome.webview.removeEventListener('message', webviewMsgHandler);
@@ -51,17 +47,13 @@ export function initMessageListeners(onShowSearch) {
   };
 }
 
-/**
- * Send close message to backend
- */
 export function sendClose() {
   sendMessage({ type: 'close' });
 }
 
 /**
- * Send hotkey selection to backend
- * @param {Object} selectedItem - The selected hotkey item
- * @param {number} index - The index of the selected item
+ * @param {Object} selectedItem
+ * @param {number} index
  */
 export function sendHotkeySelected(selectedItem, index) {
   sendMessage({

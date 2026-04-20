@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Metaseed.Metatool.HostService;
 using Metatool.Metatool;
+using Metatool.Core.Log;
+using Metatool.UI;
 using Context = Metatool.Service.Context;
 using Metatool.Pipeline;
 using Notify = Metatool.UI.Notify.Notify;
@@ -44,6 +46,7 @@ public class ServiceConfig
 					//     new SourceSwitch("sourceSwitch", "Logging Sample") {Level = SourceLevels.All},
 					//     new TextWriterTraceListener(writer: Console.Out)));
 					.AddProvider(new SimpleConsoleLoggerProvider())
+					.AddProvider(new WebUILoggerProvider())
                     .AddDebug()// output to visual studio output panel
 				// disable file log for now: not needed and better performance
 				//.AddFile(o => o.RootPath = Context.AppDirectory);
@@ -63,6 +66,7 @@ public class ServiceConfig
 					//.AddSingleton<IClipboard, Clipboard>()
 					.AddSingleton<IMouse, Mouse>()
 					.AddSingleton<ICommandManager, CommandManager>()
+					.AddSingleton<IMetaToolUI, MetaToolUI>()
 					.AddSingleton<INotify,Notify>()
 					.ConfigScreenHintService(hostContext.Configuration)
 					.ConfigMetatoolUtils()
