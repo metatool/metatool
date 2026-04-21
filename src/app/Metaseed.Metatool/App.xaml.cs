@@ -16,10 +16,10 @@ public partial class App(IConfig<MetatoolConfig> config, IHostEnvironment hostEn
 		notify.AddContextMenuItem("Show Log", e =>
 		{
 			if (e.IsChecked)
-				Services.Get<IMetaToolUI>().ShowLogs();
+				Services.Get<IMetaToolUI>().ToggleShowLogs();
 				// ConsoleExt.ShowConsole();
 			else
-				Services.Get<IMetaToolUI>().ShowLogs();
+				Services.Get<IMetaToolUI>().ToggleShowLogs();
 				// ConsoleExt.HideConsole();
 		}, null, true, hostEnv.IsDevelopment());
 

@@ -46,7 +46,7 @@ public class MetaToolUI : IMetaToolUI
         _webUI.SendLog(dto);
     }
 
-    public async Task ShowLogs()
+    public async Task ToggleShowLogs()
     {
 
         int counter = 0;
@@ -60,7 +60,7 @@ public class MetaToolUI : IMetaToolUI
                     break;
                 }
             }
-            Thread.Sleep(150);//additional wait to ensure the web UI is fully initialized before sending logs
+            Thread.Sleep(250);//additional wait to ensure the web UI is fully initialized before sending logs
         }
 
         var entries = WebUILogSink.GetBufferedLogs();

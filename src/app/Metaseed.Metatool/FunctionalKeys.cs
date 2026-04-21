@@ -44,7 +44,7 @@ public class FunctionalKeys
 		showLogsTrigger.Description = "Show/Hide Logs";
 		showLogsTrigger.OnEvent(async e =>
 		{
-			await Services.Get<IMetaToolUI>().ShowLogs();
+			await Services.Get<IMetaToolUI>().ToggleShowLogs();
 			e.Handled = true;
 		});
 
