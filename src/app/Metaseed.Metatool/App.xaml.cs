@@ -16,9 +16,11 @@ public partial class App(IConfig<MetatoolConfig> config, IHostEnvironment hostEn
 		notify.AddContextMenuItem("Show Log", e =>
 		{
 			if (e.IsChecked)
-				ConsoleExt.ShowConsole();
+				Services.Get<IMetaToolUI>().ShowLogs();
+				// ConsoleExt.ShowConsole();
 			else
-				ConsoleExt.HideConsole();
+				Services.Get<IMetaToolUI>().ShowLogs();
+				// ConsoleExt.HideConsole();
 		}, null, true, hostEnv.IsDevelopment());
 
 		notify.AddContextMenuItem("Auto Start", e => AutoStartManager.IsAutoStart = e.IsChecked, null, true,

@@ -18,8 +18,8 @@ public class ArgumentProcessor
 	{
 		_args = args;
 
-		if (args.Length == 0 || args[0] == "run")
-			ConsoleExt.InitialConsole(true, Context.IsElevated);
+		// if (args.Length == 0 || args[0] == "run")
+		// 	ConsoleExt.InitialConsole(true, Context.IsElevated);
 		_logger = Services.Get<ILogger<ArgumentProcessor>>();
 	}
 

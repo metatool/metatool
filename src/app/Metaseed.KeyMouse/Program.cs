@@ -32,13 +32,13 @@ public static class Program
 
         void SetupContextMenu(INotify notify)
         {
-            notify.AddContextMenuItem("Show Log", e =>
+/*             notify.AddContextMenuItem("Show Log", e =>
             {
                 if (e.IsChecked)
                     ConsoleExt.ShowConsole();
                 else
                     ConsoleExt.HideConsole();
-            }, null, true, Debugger.IsAttached);
+            }, null, true, Debugger.IsAttached); */
         }
     }
 }

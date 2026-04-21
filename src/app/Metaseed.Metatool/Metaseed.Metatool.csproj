@@ -2,7 +2,7 @@
 	<Import Project="..\..\common.props" />
 	<PropertyGroup>
 		<UseWPF>true</UseWPF>
-		<OutputType>Exe</OutputType>
+		<OutputType>WinExe</OutputType>
 		<ApplicationIcon>Metatool.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<UseRidGraph>true</UseRidGraph>

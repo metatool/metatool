@@ -53,7 +53,7 @@ public static class Program
 	private static string[] RestartAsAdminIfRequested(string[] args)
 	{
 		var isElevated = Context.IsElevated;
-		Console.WriteLine($"Is Elevated: {isElevated}");
+		// Console.WriteLine($"Is Elevated: {isElevated}");
 
 		var shiftDown = KeyboardState.Current().IsDown(Key.Shift);
 		// when starting with `Shift` key pressed, or with `--admin` flag, but not already elevated, restart with admin rights
