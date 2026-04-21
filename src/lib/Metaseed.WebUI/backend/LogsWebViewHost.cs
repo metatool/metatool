@@ -5,13 +5,17 @@ namespace Metatool.WebViewHost;
 
 public class LogsWebViewHost : WebViewHost
 {
-    public void ShowLogs(IEnumerable<LogEntryDto> bufferedLogs)
+    public LogsWebViewHost( )
+    {
+        Title = "Logs";
+    }
+    public async Task ShowLogs(IEnumerable<LogEntryDto> bufferedLogs)
     {
         var logsJson = JsonSerializer.Serialize(bufferedLogs);
         var messageJson = $"{{\"type\":\"showLogs\",\"logs\":{logsJson}}}";
         Debug.WriteLine("ShowLogs() called");
 
-        ShowUI(messageJson);
+        await ShowUI(messageJson);
     }
 
     public void SendLog(LogEntryDto entry)

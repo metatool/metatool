@@ -170,7 +170,7 @@ public class KeyEventArgsExt(KeyCodes keyData) : IKeyEventArgs
         time = time.AddMilliseconds(Timestamp - Environment.TickCount);
         var keyEvent = IsKeyUp ? "Up" : "Down";
         return
-            $"{time:hh:mm:ss.fff} {KeyCode,-16} {keyEvent,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:0x{ScanCode,-8:X} Extended:{IsExtendedKey}  State: {KeyboardState}";
+            $"{KeyCode,-16} {keyEvent,-6}Handled:{Handled,-8} IsVirtual: {IsVirtual,-8} Scan:0x{ScanCode,-8:X} Extended:{IsExtendedKey}  State: {KeyboardState} {time:hh:mm:ss.fff}";
     }
 
     private static KeyEventArgsExt _lastKeyEventGlobalBuffer = new(KeyCodes.None);

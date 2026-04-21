@@ -5,6 +5,10 @@ namespace Metatool.WebViewHost;
 
 public class HotKeySearchWebViewHost : WebViewHost
 {
+    public HotKeySearchWebViewHost()
+    {
+        Title = "HotKeys";
+    }
     private TipItem[] hotkeys;
     private Action<TipItem> _selectionAction;
 
@@ -20,7 +24,7 @@ public class HotKeySearchWebViewHost : WebViewHost
             _selectionAction?.Invoke(key);
         }
     }
-    public async void ShowSearch(IEnumerable<(string key, IEnumerable<string> descriptions)> tips, Action<TipItem> selectionAction = null)
+    public async Task ShowSearch(IEnumerable<(string key, IEnumerable<string> descriptions)> tips, Action<TipItem> selectionAction = null)
     {
         hotkeys = tips.SelectMany(
             t => t.descriptions.Select(
@@ -30,6 +34,6 @@ public class HotKeySearchWebViewHost : WebViewHost
         var hotkeyJson = JsonSerializer.Serialize(hotkeys);
         Debug.WriteLine("ShowSearch() called");
         var messageJson = $"{{\"type\":\"showSearch\",\"hotkeys\":{hotkeyJson}}}";
-        ShowUI(messageJson);
+        await ShowUI(messageJson);
     }
 }

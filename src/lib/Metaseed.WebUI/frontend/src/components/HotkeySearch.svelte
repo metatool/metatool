@@ -77,15 +77,16 @@
   })
 </script>
 
-<div class="h-full min-h-0 flex-1 overflow-hidden flex flex-col">
-  <div class="bg-white flex items-center gap-3 shrink-0">
+<div class="h-full min-h-0 flex-1 overflow-hidden flex flex-col bg-gray-900 text-gray-200 rounded-lg">
+  <div class="bg-gray-800 border-b border-gray-700 flex items-center gap-3 shrink-0 px-3 py-2">
     <input
       bind:this={inputEl}
       bind:value={query}
       on:input={handleInput}
       on:keydown={onKey}
       on:blur={() => inputEl?.focus()}
-      class="flex-1 px-3 py-1.5 text-sm mx-4 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      class="flex-1 px-3 py-1.5 text-sm rounded-md border border-gray-600 bg-gray-700 text-gray-200
+             focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400"
       placeholder="Search hotkeys... (use ↑↓ to navigate, Enter to execute)"
       autocomplete="off"
     />

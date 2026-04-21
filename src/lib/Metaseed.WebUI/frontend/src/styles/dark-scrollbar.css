@@ -1,0 +1,22 @@
+.dark-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #111827;
+}
+
+.dark-scrollbar::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 9999px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

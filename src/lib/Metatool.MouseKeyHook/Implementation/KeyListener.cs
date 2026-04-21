@@ -127,7 +127,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 			return true;
 		}
 
-		_logger?.LogDebug(new string('\t', _indentCounter++) + "→" + args);
+		_logger?.LogDebug(new string('\t', _indentCounter++) + "→ " + args);
 		// down
 		InvokeKeyDown(args);
 		// press
@@ -138,7 +138,7 @@ internal abstract class KeyListener(Subscribe subscribe) : BaseListener(subscrib
 		// up
 		InvokeKeyUp(args);
 
-		_logger?.LogDebug(new string('\t', --_indentCounter) + "←" + args);
+		_logger?.LogDebug(new string('\t', --_indentCounter) + "← " + args);
 
 		if (argExt.HandleVirtualKeyBackup.HasValue)
 		{

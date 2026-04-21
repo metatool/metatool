@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Metatool.Core.Log;
 using Metatool.Service;
@@ -8,7 +10,7 @@ namespace Metatool.UI;
 
 /// <summary>
 /// WebUI host for top-level Metatool UI surfaces (currently the log viewer).
-/// Owns a <see cref="WebViewHost.WebViewHost"/> window and forwards log entries
+/// Owns a <see cref="WebViewHost"/> window and forwards log entries
 /// from <see cref="WebUILogSink"/> to the web UI in real time.
 /// </summary>
 public class MetaToolUI : IMetaToolUI
@@ -17,11 +19,19 @@ public class MetaToolUI : IMetaToolUI
 
     public MetaToolUI()
     {
-        Application.Current.Dispatcher.BeginInvoke(() =>
+        Init();
+    }
+
+    private void Init()
+    {
+        if (!Application.Current.Dispatcher.CheckAccess())
         {
-            _webUI = new WebViewHost.LogsWebViewHost();
-            WebUILogSink.LogReceived += OnLogReceived;
-        });
+            Application.Current.Dispatcher.BeginInvoke(Init);
+            return;
+        }
+
+        _webUI = new WebViewHost.LogsWebViewHost();
+        WebUILogSink.LogReceived += OnLogReceived;
     }
 
     private void OnLogReceived(LogEntry entry)
@@ -36,9 +46,22 @@ public class MetaToolUI : IMetaToolUI
         _webUI.SendLog(dto);
     }
 
-    public void ShowLogs()
+    public async Task ShowLogs()
     {
-        if (_webUI == null) return;
+
+        int counter = 0;
+        if (_webUI == null)
+        {
+            while (_webUI == null)
+            {
+                Thread.Sleep(100);
+                if (counter++ >= 100)
+                {
+                    break;
+                }
+            }
+            Thread.Sleep(150);//additional wait to ensure the web UI is fully initialized before sending logs
+        }
 
         var entries = WebUILogSink.GetBufferedLogs();
         var dtos = entries.Select(e => new LogEntryDto(
@@ -46,6 +69,6 @@ public class MetaToolUI : IMetaToolUI
             e.Level,
             e.Category,
             e.Message));
-        _webUI.ShowLogs(dtos);
+        await _webUI.ShowLogs(dtos);
     }
 }

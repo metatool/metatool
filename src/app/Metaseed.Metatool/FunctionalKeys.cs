@@ -42,9 +42,9 @@ public class FunctionalKeys
 		hotKeys.TryGetValue("ShowLogs", out var showLogsTrigger);
 		showLogsTrigger ??= new HotkeyTrigger(Enter + L);
 		showLogsTrigger.Description = "Show/Hide Logs";
-		showLogsTrigger.OnEvent(e =>
+		showLogsTrigger.OnEvent(async e =>
 		{
-			Services.Get<IMetaToolUI>().ShowLogs();
+			await Services.Get<IMetaToolUI>().ShowLogs();
 			e.Handled = true;
 		});
 

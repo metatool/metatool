@@ -303,6 +303,8 @@ public class KeyStateTree
         //foreach (var eventTyp in eventTypes)
         var eventTyp = args.KeyEventType;
 
+        
+        
         foreach (var keyCommand in actionList[eventTyp])
         {
             if (keyCommand.CanExecute != null && !keyCommand.CanExecute(args))

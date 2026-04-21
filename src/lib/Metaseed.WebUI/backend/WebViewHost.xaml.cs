@@ -1,9 +1,12 @@
-using System.ComponentModel;
-using System.Windows;
 using Microsoft.Web.WebView2.Core;
-using System.Text.Json;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Threading;
 
 namespace Metatool.WebViewHost
 {
@@ -19,6 +22,7 @@ namespace Metatool.WebViewHost
         public WebViewHost()
         {
             InitializeComponent();
+            SourceInitialized += (_, _) => ApplyDarkTitleBar();
             // defined in launchSettings.json
             dev = Environment.GetEnvironmentVariable("DEV_WEBUI");
             if (dev == "0") dev = null;
@@ -156,37 +160,44 @@ namespace Metatool.WebViewHost
             }
         }
 
-        public void ShowUI(string messageJson)
+        public async Task ShowUI(string messageJson)
         {
-            _ = Dispatcher.BeginInvoke(async () =>
+            if (!Dispatcher.CheckAccess())
             {
-                if (WindowState == WindowState.Minimized)
-                {
-                    Debug.WriteLine("Window is minimized, restoring");
-                    WindowState = WindowState.Normal;
-                    return;
-                }
-                ViewVisible = !ViewVisible;
-                if (!ViewVisible) //IsVisible
-                {
-                    Debug.WriteLine("Log view toggled off, hiding");
-                    Hide();
-                    return;
-                }
+                await Dispatcher.BeginInvoke(async () => await ShowUI(messageJson));
+                return;
+            }
 
-                // Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-                // Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
-                ShowInTaskbar = true;
-                Show();
-                Activate();
-                webView.Focus();
-                await webView.EnsureCoreWebView2Async(_webViewEnv);
-                webView.CoreWebView2.PostWebMessageAsJson(messageJson);
-                // Schedule a resize after content is rendered in webUI
-                //await Task.Delay(100);
-                //ResizeToContent();
-            });
+            //while (!IsLoaded)
+            //{
+            //    await Task.Delay(100);
+            //}
 
+            if (WindowState == WindowState.Minimized)
+            {
+                Debug.WriteLine("Window is minimized, restoring");
+                WindowState = WindowState.Normal;
+                return;
+            }
+            ViewVisible = !ViewVisible;
+            if (!ViewVisible) //IsVisible
+            {
+                Debug.WriteLine("Log view toggled off, hiding");
+                Hide();
+                return;
+            }
+
+            // Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+            // Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
+            ShowInTaskbar = true;
+            Show();
+            Activate();
+            webView.Focus();
+            await webView.EnsureCoreWebView2Async(_webViewEnv);
+            webView.CoreWebView2.PostWebMessageAsJson(messageJson);
+            // Schedule a resize after content is rendered in webUI
+            //await Task.Delay(100);
+            //ResizeToContent();
         }
 
     }

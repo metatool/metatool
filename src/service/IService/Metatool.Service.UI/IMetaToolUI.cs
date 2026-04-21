@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace Metatool.Service;
 
 public interface IMetaToolUI
@@ -6,5 +8,5 @@ public interface IMetaToolUI
     /// Toggles the web UI log window. Streams log entries from
     /// <see cref="Metatool.Core.Log.WebUILogSink"/> in real time while visible.
     /// </summary>
-    void ShowLogs();
+    Task  ShowLogs();
 }

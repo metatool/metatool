@@ -1,12 +1,13 @@
 <script>
-  import { onMount, afterUpdate, tick } from 'svelte'
-  import { sendClose } from '../lib/messaging.js'
+  import { onMount, afterUpdate } from 'svelte'
+  import { virtualizeList } from '../lib/logListVirtualize.js'
 
   export let logs = []
   export let onClose = () => {}
 
   const MAX_LOGS = 2000
-  const ROW_HEIGHT = 28
+  const MIN_CATEGORY_COL_CH = 10
+  const MAX_CATEGORY_COL_CH = 18
 
   let filterLevel = 'all'
   let searchQuery = ''
@@ -24,15 +25,22 @@
     return true
   })
 
-  // Virtualized rendering
   let scrollTop = 0
   let containerHeight = 0
 
-  $: totalHeight = filteredLogs.length * ROW_HEIGHT
-  $: startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - 5)
-  $: endIndex = Math.min(filteredLogs.length, Math.ceil((scrollTop + containerHeight) / ROW_HEIGHT) + 5)
-  $: visibleLogs = filteredLogs.slice(startIndex, endIndex)
-  $: offsetY = startIndex * ROW_HEIGHT
+  $: ({
+    rowHeights,
+    totalHeight,
+    startIndex,
+    visibleItems: visibleLogs,
+    offsetY,
+    singleRowHeight,
+  } = virtualizeList(filteredLogs, scrollTop, containerHeight))
+  $: maxCategoryChars = filteredLogs.reduce((max, log) => {
+    const categoryName = (log.category || '').split('.').pop() || ''
+    return Math.max(max, categoryName.length)
+  }, 0)
+  $: categoryColCh = Math.min(MAX_CATEGORY_COL_CH, Math.max(MIN_CATEGORY_COL_CH, maxCategoryChars + 1))
 
   function handleScroll() {
     if (!containerEl) return
@@ -75,6 +83,18 @@
       case 'Debug': return 'text-gray-500'
       case 'Trace': return 'text-gray-400'
       default: return 'text-gray-600'
+    }
+  }
+
+  function levelMsgColor(level) {
+    switch (level) {
+      case 'Critical': return 'text-white bg-red-700'
+      case 'Error': return 'text-red-600'
+      case 'Warning': return 'text-yellow-400'
+      case 'Information': return 'text-gray-200'
+      case 'Debug': return 'text-gray-400'
+      case 'Trace': return 'text-gray-400'
+      default: return 'text-gray-200'
     }
   }
 
@@ -165,21 +185,26 @@
   <div
     bind:this={containerEl}
     on:scroll={handleScroll}
-    class="flex-1 overflow-y-auto font-mono text-xs leading-none"
+    class="dark-scrollbar flex-1 overflow-y-auto font-mono text-xs leading-none"
   >
     <div style="height: {totalHeight}px; position: relative;">
       <div style="transform: translateY({offsetY}px);">
         {#each visibleLogs as log, i (startIndex + i)}
+          {@const h = rowHeights[startIndex + i]}
+          {@const multi = h > singleRowHeight}
           <div
-            class="flex items-baseline gap-2 px-3 hover:bg-gray-800/60 border-b border-gray-800"
-            style="height: {ROW_HEIGHT}px;"
+            class="grid gap-2 px-3 hover:bg-gray-800/60 border-b border-gray-800 {multi ? 'items-start py-1.5' : 'items-center'}"
+            style="height: {h}px; grid-template-columns: 74px 36px {categoryColCh}ch minmax(0, 1fr);"
           >
-            <span class="text-gray-500 shrink-0 tabular-nums w-[72px]">{log.timestamp}</span>
-            <span class="shrink-0 w-[28px] font-bold {levelColor(log.level)}">{levelBadge(log.level)}</span>
-            <span class="text-gray-500 shrink-0 max-w-[200px] truncate" title={log.category}>
+            <span class="text-gray-500 tabular-nums">{log.timestamp}</span>
+            <span class="text-center font-bold {levelColor(log.level)}">{levelBadge(log.level)}</span>
+            <span class="text-gray-500 truncate" title={log.category}>
               {log.category.split('.').pop()}
             </span>
-            <span class="text-gray-200 truncate flex-1" title={log.message}>{log.message}</span>
+            <span
+              class="text-gray-200 truncate min-w-0 overflow-hidden whitespace-pre tab-size-4 {levelMsgColor(log.level)} {multi ? 'leading-4' : 'text-ellipsis'}"
+              title={log.message}
+            >{log.message}</span>
           </div>
         {/each}
       </div>
