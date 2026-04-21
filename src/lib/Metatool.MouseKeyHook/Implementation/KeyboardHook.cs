@@ -58,13 +58,13 @@ public class KeyboardHook
         set => _eventSource.DisablePressEvent = value;
     }
 
-    private WebViewHost.WebViewHost _webUI;
+    private WebViewHost.HotKeySearchWebViewHost _webUI;
 
     public KeyboardHook(ILogger<KeyboardHook> logger, INotify notify)
     {
         _logger = logger;
         _eventSource = Hook.GlobalEvents();
-        Application.Current.Dispatcher.BeginInvoke(() => _webUI = new WebViewHost.WebViewHost());
+        Application.Current.Dispatcher.BeginInvoke(() => _webUI = new WebViewHost.HotKeySearchWebViewHost());
         var notifier = new KeyTipNotifier((key, tips) =>
         {
             if (key == "Forest")

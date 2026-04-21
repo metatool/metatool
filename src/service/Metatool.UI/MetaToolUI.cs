@@ -13,13 +13,13 @@ namespace Metatool.UI;
 /// </summary>
 public class MetaToolUI : IMetaToolUI
 {
-    private WebViewHost.WebViewHost _webUI;
+    private WebViewHost.LogsWebViewHost _webUI;
 
     public MetaToolUI()
     {
         Application.Current.Dispatcher.BeginInvoke(() =>
         {
-            _webUI = new WebViewHost.WebViewHost();
+            _webUI = new WebViewHost.LogsWebViewHost();
             WebUILogSink.LogReceived += OnLogReceived;
         });
     }

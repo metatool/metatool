@@ -14,14 +14,14 @@ namespace Metatool.WebViewHost
     {
         private readonly string dev;
         private CoreWebView2Environment _webViewEnv;
-        private bool _logViewVisible;
+        protected bool ViewVisible;
 
         public WebViewHost()
         {
             InitializeComponent();
             // defined in launchSettings.json
             dev = Environment.GetEnvironmentVariable("DEV_WEBUI");
-            if(dev == "0") dev = null;
+            if (dev == "0") dev = null;
             if (!string.IsNullOrEmpty(dev))
             {
                 // support vscode debugging
@@ -32,13 +32,20 @@ namespace Metatool.WebViewHost
             // Show off-screen to initialize WebView2, then hide
             ShowInTaskbar = false;
             WindowStartupLocation = WindowStartupLocation.Manual;
-            Left = -10000;
+            var leftBackup = Left;
+            var topBackup = Top;
+            Left = -10000; // overcome flashing issue
             Top = -10000;
             Loaded += async (s, e) =>
             {
                 await InitWebView();
                 Debug.WriteLine("WebView2 initialized, remote debugging available on port 9222");
                 Hide();
+                //restore to normal position for when the window is shown later
+                //Left = leftBackup;
+                //Top = topBackup;
+                Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+                Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
             };
             Show(); // Triggers Loaded event
         }
@@ -47,7 +54,7 @@ namespace Metatool.WebViewHost
         {
             // Hide on user close; app shutdown still tears down the window.
             e.Cancel = true;
-            _logViewVisible = false;
+            ViewVisible = false;
             Hide();
             base.OnClosing(e);
         }
@@ -79,7 +86,6 @@ namespace Metatool.WebViewHost
 
             webView.CoreWebView2.WebMessageReceived += WebMessageReceived;
         }
-
         private void WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             var json = e.WebMessageAsJson;
@@ -88,23 +94,12 @@ namespace Metatool.WebViewHost
             {
                 using var doc = JsonDocument.Parse(json);
                 var msg = doc.RootElement;
-                if (msg.TryGetProperty("type", out var t))
-                {
-                    var type = t.GetString();
-                    if (type == "close")
-                    {
-                        _logViewVisible = false;
-                        Dispatcher.Invoke(Hide);
-                    }
-                    else if (type == "hotkeySelected")
-                    {
-                        var index = msg.GetProperty("index").GetInt32();
-                        var hotkey = msg.GetProperty("hotkey");
-                        var description = msg.GetProperty("description").GetString();
-                        var key = hotkeys[index];
-                        _selectionAction?.Invoke(key);
-                    }
-                }
+                if (!msg.TryGetProperty("type", out var t))
+                    return;
+
+                var type = t.GetString();
+                ProcessReceivedMsg(type, msg);
+
             }
             catch (Exception ex)
             {
@@ -112,52 +107,13 @@ namespace Metatool.WebViewHost
             }
         }
 
-
-        private TipItem[] hotkeys;
-        private Action<TipItem> _selectionAction;
-        public async void ShowSearch(IEnumerable<(string key, IEnumerable<string> descriptions)> tips, Action<TipItem> selectionAction = null)
+        protected virtual void ProcessReceivedMsg(string type, JsonElement msg)
         {
-            hotkeys = tips.SelectMany(
-                t => t.descriptions.Select(
-                    d => new TipItem( t.key,d ))
-            ).ToArray();
-            _selectionAction = selectionAction;
-            var hotkeyJson = JsonSerializer.Serialize(hotkeys);
-            Debug.WriteLine("ShowSearch() called");
-            _ = Dispatcher.BeginInvoke(async () =>
+            if (type == "close")
             {
-                _logViewVisible = false;
-                if (IsVisible)
-                {
-                    Debug.WriteLine("Window already visible, hiding");
-                    Hide();
-                }
-                else
-                {
-                    Debug.WriteLine("Window not visible, making visible");
-                    // Set initial size and center on screen
-                    //Width = 900;
-                    //Height = 300;
-                    Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-                    Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
-                    ShowInTaskbar = true;
-                    Show();
-                }
-                Debug.WriteLine("Calling Activate()");
-                Activate();
-                webView.Focus();
-                await webView.EnsureCoreWebView2Async(_webViewEnv);
-                Debug.WriteLine("Executing postMessage script via WebView2 postMessage");
-
-                // Create the message object with type and hotkeys data
-                var messageJson = $"{{\"type\":\"showSearch\",\"hotkeys\":{hotkeyJson}}}";
-
-                webView.CoreWebView2.PostWebMessageAsJson(messageJson);
-
-                // Schedule a resize after content is rendered
-                //await Task.Delay(100);
-                //ResizeToContent();
-            });
+                ViewVisible = false;
+                Dispatcher.Invoke(Hide);
+            }
         }
 
         private async void ResizeToContent()
@@ -200,50 +156,37 @@ namespace Metatool.WebViewHost
             }
         }
 
-        public void ShowLogs(IEnumerable<LogEntryDto> bufferedLogs)
+        public void ShowUI(string messageJson)
         {
-            var logsJson = JsonSerializer.Serialize(bufferedLogs);
-            Debug.WriteLine("ShowLogs() called");
             _ = Dispatcher.BeginInvoke(async () =>
             {
-                _logViewVisible = !_logViewVisible;
-                if (!_logViewVisible)
+                if (WindowState == WindowState.Minimized)
+                {
+                    Debug.WriteLine("Window is minimized, restoring");
+                    WindowState = WindowState.Normal;
+                    return;
+                }
+                ViewVisible = !ViewVisible;
+                if (!ViewVisible) //IsVisible
                 {
                     Debug.WriteLine("Log view toggled off, hiding");
                     Hide();
                     return;
                 }
 
-                Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-                Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
+                // Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
+                // Top = (SystemParameters.PrimaryScreenHeight - Height) / 3;
                 ShowInTaskbar = true;
                 Show();
                 Activate();
                 webView.Focus();
                 await webView.EnsureCoreWebView2Async(_webViewEnv);
-
-                var messageJson = $"{{\"type\":\"showLogs\",\"logs\":{logsJson}}}";
                 webView.CoreWebView2.PostWebMessageAsJson(messageJson);
+                // Schedule a resize after content is rendered in webUI
+                //await Task.Delay(100);
+                //ResizeToContent();
             });
-        }
 
-        public void SendLog(LogEntryDto entry)
-        {
-            if (!_logViewVisible) return;
-
-            var entryJson = JsonSerializer.Serialize(entry);
-            _ = Dispatcher.BeginInvoke(() =>
-            {
-                try
-                {
-                    var messageJson = $"{{\"type\":\"addLog\",\"log\":{entryJson}}}";
-                    webView.CoreWebView2.PostWebMessageAsJson(messageJson);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Failed to send log to WebView: {ex.Message}");
-                }
-            });
         }
 
     }
